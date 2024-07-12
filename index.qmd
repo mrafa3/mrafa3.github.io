@@ -1,6 +1,6 @@
 ---
 title: "Mickey Rafa"
-image: media/headshot.jpg
+image: media/headshot.jpeg
 toc: false
 about: 
   template: trestles
