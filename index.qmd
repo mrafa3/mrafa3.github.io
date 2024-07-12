@@ -1,11 +1,20 @@
 ---
-title: "mrafa3.github.io"
+title: "Mickey Rafa"
+image: media/headshot.jpg
+toc: false
+about: 
+  template: trestles
+  #image-shape: round
+  image-width: 15em
+  links:
+    - text: LinkedIn
+      href: https://www.linkedin.com/in/mickey-rafa/
+    - text: GitHub
+      href: https://github.com/mrafa3
+    - text: Email
+      href: mailto:mickey.rafa3@gmail.com
 ---
 
-This is a Quarto website.
+Hello! My name is Mickey, and welcome to my personal portfolio website. I'll be adding a selection of data science and viz projects here that showcase the breadth of work that I've completed.
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
-```{r}
-1 + 1
-```
+Let's connect! Feel free to reach out to me on LinkedIn or send me an email.
