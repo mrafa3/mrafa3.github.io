@@ -9,7 +9,7 @@ date: 05-15-2018
 categories: [Quarto, R, tidyverse, ggplot] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-#image: tbl_top_scorers.png
+image: economist_plot.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
