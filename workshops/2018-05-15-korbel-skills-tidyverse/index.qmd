@@ -19,7 +19,7 @@ This workshop session will help you familiarize with two of R's most widely used
 
 <center>
 
-![Each tile is a package that makes up the "tidyverse"](http://www.dicook.org/files/rstudio/img/tidyverse.png)
+![Each tile is a package that makes up the "tidyverse"](tidyverse.png)
 
 </center>
 
