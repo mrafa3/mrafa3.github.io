@@ -104,11 +104,9 @@ We could do a full session on R projects and notebooks, but this should be suffi
 We'll learn the main `dplyr` functions using the **gapminder** dataset. Now that we have our project environment set up, some brief refreshers from the previous workshop:  
 
 1.  Install the tidyverse and gapminder packages (`install.packages()`)  
-```{r install_gapminder, include=TRUE, echo=TRUE, include=TRUE}
-install.packages("tidyverse")
+```{r install_gapminder, include=FALSE, echo=TRUE}
+#install.packages("tidyverse")
 ```
-
-
 
 2.  Load the tidyverse and gapminder packages (`library()` and `require()` effectively do the same thing, but `library()` provides more information that is occasionally useful)  
 
