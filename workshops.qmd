@@ -1,5 +1,5 @@
 ---
-title: "Workshops Delivered"
+title: "Workshops"
 listing: 
   contents: workshops # all Quarto docs in the `workshops` directory will be included on your listing page
   type: grid # or `default` or `table`; each type has its own set of yaml options to include
