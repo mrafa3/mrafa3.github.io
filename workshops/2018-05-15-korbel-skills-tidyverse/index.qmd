@@ -1,5 +1,5 @@
 ---
-title: "Pardee Skills Workshop: Data Manipulation and Visualization Basics using R"
+title: "Skills Workshop: Data Manipulation and Visualization Basics using R"
 description: "This skills workshop introduced R and the tidyverse to Master's students at the University of Denver"
 author:
   - name: Mickey Rafa
