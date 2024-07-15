@@ -11,6 +11,8 @@ website:
       #- about.qmd
       - href: posts.qmd
         text: Portfolio
+      - href: workshops.qmd
+        text: Workshops
 
 format:
   html:
