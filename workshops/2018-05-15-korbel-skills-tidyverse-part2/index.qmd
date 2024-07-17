@@ -139,7 +139,7 @@ sup_court %>%
 
 *  What are the trends in the types of case heard by term? What is the trend in civil rights cases -- compared with other issue areas -- over time? (hint: **BY term and issue area**)
 
-```{r sup_court_term_issue_df, include=TRUE, echo=TRUE, eval=FALSE}
+```{r sup_court_term_issue_df, include=TRUE, echo=TRUE}
 (sup_court_term_issue <- sup_court %>% 
   group_by(term, issueAreaName) %>% 
   summarise(count_cases = n()) %>% 
