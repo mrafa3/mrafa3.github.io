@@ -1,0 +1,149 @@
+---
+title: "Animating the Gapminder dataset using gganimate"
+description: "This post outlines the value in building nested models using the purrr and broom packages"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 10-15-2017
+categories: [R, data-viz, tidyverse, gganimate] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+#image: model_fit_plot.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+## Setup
+
+```{r setup, include=FALSE}
+library(tidyverse)    #for data management and visualization
+library(gapminder)    #for gapminder data
+library(gganimate)    #for animation of ggplots
+library(tweenr)       #for smoother transitions of gapminder data
+
+data(gapminder)
+
+my.theme <- theme(
+  plot.title = element_text(family="Arial", color="black", face="bold", size=18, hjust=0), 
+  plot.subtitle = element_text(family="Arial", color="black", size=16, hjust=0), 
+  axis.title = element_text(family="Arial", color="black", face="bold", size=12), 
+  axis.text = element_text(family="Arial", size=11), 
+  plot.caption = element_text(family="Arial", color="black", size=12), 
+  panel.background =  element_rect(fill = "#F7F7F7", colour = NA), 
+  panel.grid.major = element_line(colour = "grey90", size = 0.5),
+  panel.grid.minor = element_line(colour = "grey93", size = 0.5),
+  panel.border = element_rect(colour = "black", size = 0.5, fill=NA, linetype = 1),
+  legend.title=element_blank(), 
+  legend.text = element_text(family="Arial", color="black", size=12, hjust=0),
+  strip.text = element_text(family="Arial", color="black", size=14))
+```
+
+```{r summary_gapminder, include=TRUE, echo=FALSE}
+summary(gapminder)
+```
+
+<center>
+
+[](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.gapminder.org%2Ftag%2Fgapminder-world%2F&psig=AOvVaw2IwfQSTFDghid4GnL0WUtb&ust=1721330817600000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLjn9pPnrocDFQAAAAAdAAAAABAE)
+
+</center>
+
+## gganimate::
+
+In this graphic, I want to spotlight China's development path, and also show the story of differences by continent. First, I'll show all the data, which makes clear the need for animation of this data.
+
+```{r fig.height=6.2, fig.width=10, fig.align='center'}
+gapminder %>% 
+  ggplot(.,
+         aes(x=gdpPercap,
+             y=lifeExp,
+             size=pop,
+             color=continent)) +
+  geom_point() + 
+  geom_text(data=gapminder %>% filter(country == 'China'),
+                           aes(label=country), 
+                           family='Arial', size= 3, color='black', nudge_y = 2) + 
+  scale_x_log10() + 
+  ggtitle('Change in life expectancy and income over time',
+          subtitle = 'Bubble size indicates population size') + 
+  labs(x='GDP per capita (logged)\n',
+       y='Life expectancy (years)',
+       caption='Source: Gapminder dataset') + 
+  theme(legend.position = 'top') + 
+  guides(size='none')
+```
+
+## gganimate::
+
+```{r fig.height=6.2, fig.width=10, fig.align='center'}
+gapminder %>% 
+  ggplot(.,
+         aes(x=gdpPercap,
+             y=lifeExp,
+             size=pop,
+             color=continent)) +
+  geom_point() + 
+  geom_text(data=gapminder %>% filter(country == 'China'),
+                           aes(label=country), 
+                           family='Arial', size= 3, color='black', nudge_y = 2) + 
+  scale_x_log10() + 
+  ggtitle('Change in life expectancy and income over time in {closest_state}',
+          subtitle = 'Bubble size indicates population size') + 
+  labs(x='GDP per capita (logged)\n',
+       y='Life expectancy (years)',
+       caption='Source: Gapminder dataset') + 
+  theme(legend.position = 'top') + 
+  guides(size='none') + 
+  my.theme + 
+  transition_states(
+    year,
+    transition_length = 2,
+    state_length = 1,
+    wrap = TRUE
+  ) + 
+  enter_fade() + 
+  exit_shrink() +
+  ease_aes()
+```
+
+# Using the tweener:: package
+
+The `gganimate::` code is simple enough to use, but the dataset is every five years, which makes for a somewhat jerky animation experience. With the `tweener::` package, we can quickly interpolate between values to smooth out the animation.
+
+```{r fig.width=10}
+gapminder_edit <- gapminder %>%
+  arrange(country, year) %>%
+  select(gdpPercap,lifeExp,year,country, continent, pop) %>%
+  rename(x=gdpPercap,y=lifeExp,time=year,id=country) %>%
+  mutate(ease="linear")
+
+gapminder_tween <- tween_elements(gapminder_edit,
+                                  "time", "id", "ease", nframes = 300) %>%
+  mutate(year = round(time), country = .group) %>%
+  left_join(gapminder, by=c("country","year","continent")) %>%
+  rename(population = pop.x)
+
+
+gapminder_tween %>% 
+  mutate(IsChina = ifelse(country == 'China', 'China', 'Other')) %>% 
+  ggplot(.,
+         aes(x=x, y=y, frame = .frame)) +
+  geom_point(aes(size=population, color=continent, alpha=IsChina)) +
+  ggtitle('GDP per capita and life expectancy in {closest_state}',
+          subtitle = 'China highlighted') + 
+  labs(x='GDP per capita (logged)\n',
+       y='Life expectancy (years)',
+       caption='Source: Gapminder dataset') + 
+  scale_x_log10() + 
+  my.theme + 
+  transition_states(
+    year,
+    transition_length = 2,
+    state_length = 1,
+    wrap = TRUE
+  ) + 
+  scale_alpha_discrete(range = c('China' = 1,
+                                  'Other' = .1)) + 
+  theme(legend.position = 'top') + 
+  guides(size='none', alpha='none')
+```
