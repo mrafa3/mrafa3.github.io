@@ -196,7 +196,7 @@ all voting justices by issue area. For instance, if you explored the previous qu
 sup_court_fedtax <- sup_court %>% 
   filter(term > 1980, issueAreaName == 'Federal Taxation') %>% 
   group_by(justiceName, issueAreaName, directionName) %>% 
-  summarise(count_cases = n()) %>% 
+  summarise(count_cases = n(), .groups = "drop_last") %>% 
   mutate(perc_cases = count_cases / sum(count_cases)) %>% 
   filter(directionName == 'liberal') %>% 
   ungroup() %>% 
@@ -236,9 +236,9 @@ sup_court_fedtax %>%
   theme(legend.position = 'top',
         text = element_text(size=15),
         plot.title = element_text(size=18, face='bold'),
+
         plot.subtitle = element_text(size=16),
         strip.text = element_text(size=15, face='bold'))
 ```
-
 
 
