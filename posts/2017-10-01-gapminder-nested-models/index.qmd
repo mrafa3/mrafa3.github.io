@@ -1,0 +1,131 @@
+---
+title: "Analysis of Gapminder data using nested models in R"
+description: "This post outlines the value in building nested models using the purrr and broom packages"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 07-15-2024
+categories: [R, regression, data-viz, tidyverse, international-development] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+image: model_fit_plot.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+Working on nesting models following the workflow from **R for Data Science**.
+
+```{r setup, include=FALSE}
+library(tidyverse)    #for data management and visualization
+library(gapminder)    #for gapminder data
+library(ggridges)     #to enable joyplots
+library(extrafont)    #to import preferred font
+library(ggrepel)      #for spacing geom_text() in ggplot
+library(broom)
+library(gganimate)
+
+data(gapminder)
+
+my.theme <- theme(
+  plot.title = element_text(family="Arial", color="black", face="bold", size=18, hjust=0), 
+  plot.subtitle = element_text(family="Arial", color="black", size=16, hjust=0), 
+  axis.title = element_text(family="Arial", color="black", face="bold", size=12), 
+  axis.text = element_text(family="Arial", size=11), 
+  plot.caption = element_text(family="Arial", color="black", size=12), 
+  panel.background =  element_rect(fill = "#F7F7F7", colour = NA), 
+  panel.grid.major = element_line(colour = "grey90", size = 0.5),
+  panel.grid.minor = element_line(colour = "grey93", size = 0.5),
+  panel.border = element_rect(colour = "black", size = 0.5, fill=NA, linetype = 1),
+  legend.title=element_blank(), 
+  legend.text = element_text(family="Arial", color="black", size=12, hjust=0),
+  strip.text = element_text(family="Arial", color="black", size=14))
+```
+
+```{r summary_gapminder, include=TRUE, echo=FALSE}
+summary(gapminder)
+```
+
+```{r nested_model_building, include=TRUE, echo=TRUE}
+#create year_since_1950
+gapminder <- gapminder %>% 
+  mutate(year_since_1950 = year - 1950)
+#group by data that you want to produce multiple models by
+#then nest to create data column of remaining columns
+nest_gapminder <- gapminder %>% 
+  group_by(continent, country) %>% 
+  nest()
+
+#create function for model that you want to build
+#df will be the only parametre
+continent_year_model <- function(df) {
+  lm(lifeExp ~ year_since_1950, data = df)
+}
+
+#take nested df and map function to the data column
+#model will keep nested model statistics by country/year
+nest_gapminder <- nest_gapminder %>% 
+  mutate(model = map(data, continent_year_model),
+         glance = map(model, broom::glance))
+
+glance_gapminder_model <- nest_gapminder %>% 
+  unnest(glance) %>% 
+  arrange(desc(adj.r.squared))
+```
+
+```{r visualize_models, include=TRUE, echo=FALSE, fig.height=6.2}
+glance_gapminder_model %>% 
+  ggplot(.) + 
+  geom_jitter(aes(x=continent,
+                 y=r.squared,
+                 color=continent)) + 
+  ggtitle('Distribution of model fit by continent',
+          subtitle = 'Each dot is a country model') + 
+  labs(x='Continent',
+       y='R-squared',
+       caption='LifeExp ~ year') + 
+  my.theme
+```
+
+```{r joyplot_nested_model_fit, include=TRUE, echo=FALSE, fig.height=6.2}
+glance_gapminder_model %>% 
+  ggplot(.) + 
+  geom_density_ridges(aes(x=r.squared, 
+                          y=continent,
+                          fill=continent)) + 
+  ggtitle('Distribution of model fits by continent',
+          subtitle = 'Time does not explain variance in African life expectancy as strongly as others') + 
+  labs(x='R-squared',
+       y='Continent') + 
+  my.theme
+```
+
+```{r bad_fit, include=TRUE, fig.height=6.2}
+#which countries have the poor fits?
+bad_fit <- glance_gapminder_model %>% filter(r.squared < 0.4)
+
+gapminder %>% 
+  semi_join(bad_fit, by = "country") %>% 
+  ggplot(.) + 
+    geom_line(aes(x=year, 
+                  y=lifeExp, 
+                  color=country), linewidth=1.1) + 
+  ggtitle('Countries in which time does not adequately explain life expectancy',
+          subtitle = 'Visualizing countries with model fits less than .4') + 
+  labs(x='Year',
+       y='Life expectancy') + 
+  my.theme
+```
+
+This demonstrates that:  
+
+*  The 10 countries with the poorest model fits are all in Africa.  
+*  The fit seems to be due to a dramatic decline in life expectancy that begins around 1990. This is the HIV/AIDS epidemic.  
+From R for Data Science (http://r4ds.had.co.nz/many-models.html#making-tidy-data-with-broom):  
+
+**Making tidy data with broom**:  
+
+The broom package provides three general tools for turning models into tidy data frames:  
+
+*  broom::glance(model) returns a row for each model. Each column gives a model summary: either a measure of model quality, or complexity, or a combination of the two.  
+*  broom::tidy(model) returns a row for each coefficient in the model. Each column gives information about the estimate or its variability.  
+*  broom::augment(model, data) returns a row for each row in data, adding extra values like residuals, and influence statistics.  
