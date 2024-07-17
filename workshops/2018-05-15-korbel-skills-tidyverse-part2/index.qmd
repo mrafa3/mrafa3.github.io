@@ -146,7 +146,7 @@ sup_court %>%
   arrange(term, desc(count_cases)))
 ```
 
-```{r sup_court_issue_history_viz1, include=TRUE, echo=TRUE, fig.height=6.2, fig.align='center'}
+```{r sup_court_issue_history_viz1, include=TRUE, echo=TRUE, fig.height=6.2, fig.width=10, fig.align='center'}
 sup_court_term_issue %>% 
   filter(!is.na(issueAreaName)) %>% 
   ggplot(.) + 
@@ -181,7 +181,7 @@ subtitle_text <- glue("<br>Count of cases")
 caption_text <- glue("*The Supreme Court Database* at the Washington University in St. Louis Law School")
 ```
 
-```{r sup_court_issue_history_viz2, include=TRUE, echo=TRUE, fig.height=6.2, fig.align='center'}
+```{r sup_court_issue_history_viz2, include=TRUE, echo=TRUE, fig.height=6.2, fig.width=10, fig.align='center'}
 sup_court_term_issue %>% 
   filter(!is.na(issueAreaName)) %>% 
   mutate(CivilRights = ifelse(issueAreaName=='Civil Rights', 'Civil Rights', 'Other')) %>% 
@@ -255,7 +255,7 @@ all voting justices by issue area. For instance, if you explored the previous qu
 library(scales)                 #for changing axis label to include '%'
 ```
 
-```{r plot_fedtax, include=TRUE, echo=TRUE, fig.height=6.2, eval=TRUE}
+```{r plot_fedtax, include=TRUE, echo=TRUE, fig.height=6.2, fig.width=10, eval=TRUE, fig.align='center'}
 sup_court_fedtax %>% 
   filter(count_cases >=10) %>% 
   mutate(fedtax_lean = ifelse(perc_cases > baseline_issue_vote, 'Liberal', 'Conservative')) %>% 

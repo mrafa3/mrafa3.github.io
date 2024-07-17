@@ -574,53 +574,97 @@ override using the `.groups` argument.</code></pre>
 <ul>
 <li>To truly answer a question like the previous one, you would want to take into account the directionality of all voting justices by issue area. For instance, if you explored the previous question, you found that Scalia voted “liberal” on almost 70% of Federal Taxation cases. However, if the Court has a tendency to vote liberal on this issue, then Scalia might not be as “liberal” on this issue as it might seem. This question is a bit more complicated, but does Scalia <em>lean liberal</em> based on the Court’s tendencies in Federal Taxation Cases? (<em>This question still uses <code>dplyr</code> – and if you’d like, <code>ggplot2</code> – but with a few bells and whistles.</em>)</li>
 </ul>
-<p><strong>Temporarily commenting out this code</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#(sup_court_fedtax &lt;- sup_court %&gt;% </span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># filter(term &gt; 1980, issueAreaName == 'Federal Taxation') %&gt;% </span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#group_by(justiceName, issueAreaName, directionName) %&gt;% </span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#summarise(count_cases = n(), .groups = "drop_last") %&gt;% </span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(perc_cases = count_cases / sum(count_cases)) %&gt;% </span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter(directionName == 'liberal') %&gt;% </span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#ungroup() %&gt;% </span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#left_join(x=.,</span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>   <span class="co">#         y=baseline_vote,</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">#        by='issueAreaName'))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>(sup_court_fedtax <span class="ot">&lt;-</span> sup_court <span class="sc">%&gt;%</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(term <span class="sc">&gt;</span> <span class="dv">1980</span>, issueAreaName <span class="sc">==</span> <span class="st">'Federal Taxation'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(justiceName, issueAreaName, directionName) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count_cases =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop_last"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">perc_cases =</span> count_cases <span class="sc">/</span> <span class="fu">sum</span>(count_cases)) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(directionName <span class="sc">==</span> <span class="st">'liberal'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>baseline_vote,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="st">'issueAreaName'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 19 × 6
+   justiceName issueAreaName    directionName count_cases perc_cases
+   &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;               &lt;int&gt;      &lt;dbl&gt;
+ 1 AMKennedy   Federal Taxation liberal                47      0.746
+ 2 AScalia     Federal Taxation liberal                47      0.691
+ 3 BRWhite     Federal Taxation liberal                47      0.922
+ 4 CThomas     Federal Taxation liberal                27      0.574
+ 5 DHSouter    Federal Taxation liberal                29      0.707
+ 6 EKagan      Federal Taxation liberal                 4      0.5  
+ 7 HABlackmun  Federal Taxation liberal                41      0.774
+ 8 JGRoberts   Federal Taxation liberal                10      0.833
+ 9 JPStevens   Federal Taxation liberal                48      0.6  
+10 LFPowell    Federal Taxation liberal                16      0.64 
+11 RBGinsburg  Federal Taxation liberal                29      0.784
+12 SAAlito     Federal Taxation liberal                 9      0.75 
+13 SDOConnor   Federal Taxation liberal                44      0.579
+14 SGBreyer    Federal Taxation liberal                27      0.771
+15 SSotomayor  Federal Taxation liberal                 7      0.875
+16 TMarshall   Federal Taxation liberal                28      0.683
+17 WEBurger    Federal Taxation liberal                16      0.8  
+18 WHRehnquist Federal Taxation liberal                55      0.724
+19 WJBrennan   Federal Taxation liberal                29      0.744
+# ℹ 1 more variable: baseline_issue_vote &lt;dbl&gt;</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(scales)                 #for changing axis label to include '%'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)                 <span class="co">#for changing axis label to include '%'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'scales'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:purrr':
+
+    discard</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:readr':
+
+    col_factor</code></pre>
+</div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co">#sup_court_fedtax %&gt;% </span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a> <span class="co"># filter(count_cases &gt;=10) %&gt;% </span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(fedtax_lean = ifelse(perc_cases &gt; baseline_issue_vote, 'Liberal', 'Conservative')) %&gt;% </span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#ggplot(.) + </span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_point(aes(x=perc_cases,</span></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>   <span class="co">#              y=reorder(justiceName, perc_cases),</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">#             color=fedtax_lean), size=5) + </span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_vline(xintercept = sup_court_fedtax$baseline_issue_vote) + </span></span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#annotate(geom='text', x=.48, y='JGRoberts', </span></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>   <span class="co">#        label=paste('Baseline vote for Federal Taxation cases is ', </span></span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">#                   round(sup_court_fedtax$baseline_issue_vote[1] * 100), '%', sep = ''),</span></span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>     <span class="co">#      size=5) + </span></span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#scale_x_continuous(labels = percent,</span></span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>   <span class="co">#                  limits = c(0, 1)) + </span></span>
-<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#ggtitle('The Court leans liberal on Federal Taxation cases',</span></span>
-<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>   <span class="co">#       subtitle = 'Percent of Federal Taxation cases with liberal decision by Justice since 1980') + </span></span>
-<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#labs(x='Percent of cases coded as a liberal decision\n',</span></span>
-<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>   <span class="co">#    y='',</span></span>
-<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">#   color='',</span></span>
-<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>     <span class="co">#  caption='Source: Washington University of St. Louis\nThe Supreme Court Database\nExcluded Justices with less than 10 Federal Taxation cases') + </span></span>
-<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#theme_minimal() + </span></span>
-<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#scale_color_manual(values = c('Liberal' = 'blue',</span></span>
-<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>   <span class="co">#                             'Conservative' = 'red')) + </span></span>
-<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="co">#theme(legend.position = 'top',</span></span>
-<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a> <span class="co">#       text = element_text(size=15),</span></span>
-<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">#      plot.title = element_text(size=18, face='bold'),</span></span>
-<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a> <span class="co">#       plot.subtitle = element_text(size=16),</span></span>
-<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">#      strip.text = element_text(size=15, face='bold'))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>sup_court_fedtax <span class="sc">%&gt;%</span> </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(count_cases <span class="sc">&gt;=</span><span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fedtax_lean =</span> <span class="fu">ifelse</span>(perc_cases <span class="sc">&gt;</span> baseline_issue_vote, <span class="st">'Liberal'</span>, <span class="st">'Conservative'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.) <span class="sc">+</span> </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_cases,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y=</span><span class="fu">reorder</span>(justiceName, perc_cases),</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span>fedtax_lean), <span class="at">size=</span><span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> sup_court_fedtax<span class="sc">$</span>baseline_issue_vote) <span class="sc">+</span> </span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">'text'</span>, <span class="at">x=</span>.<span class="dv">48</span>, <span class="at">y=</span><span class="st">'JGRoberts'</span>, </span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'Baseline vote for Federal Taxation cases is '</span>, </span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">round</span>(sup_court_fedtax<span class="sc">$</span>baseline_issue_vote[<span class="dv">1</span>] <span class="sc">*</span> <span class="dv">100</span>), <span class="st">'%'</span>, <span class="at">sep =</span> <span class="st">''</span>),</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">size=</span><span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> percent,</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>                     <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="sc">+</span> </span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">'The Court leans liberal on Federal Taxation cases'</span>,</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">'Percent of Federal Taxation cases with liberal decision by Justice since 1980'</span>) <span class="sc">+</span> </span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'Percent of cases coded as a liberal decision</span><span class="sc">\n</span><span class="st">'</span>,</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">''</span>,</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">color=</span><span class="st">''</span>,</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'Source: Washington University of St. Louis</span><span class="sc">\n</span><span class="st">The Supreme Court Database</span><span class="sc">\n</span><span class="st">Excluded Justices with less than 10 Federal Taxation cases'</span>) <span class="sc">+</span> </span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'Liberal'</span> <span class="ot">=</span> <span class="st">'blue'</span>,</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>                                <span class="st">'Conservative'</span> <span class="ot">=</span> <span class="st">'red'</span>)) <span class="sc">+</span> </span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'top'</span>,</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">15</span>),</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">18</span>, <span class="at">face=</span><span class="st">'bold'</span>),</span>
+<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">16</span>),</span>
+<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">15</span>, <span class="at">face=</span><span class="st">'bold'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/plot_fedtax-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
 </div>
 
 
