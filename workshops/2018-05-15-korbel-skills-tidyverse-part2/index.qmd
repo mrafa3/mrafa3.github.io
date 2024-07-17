@@ -181,7 +181,7 @@ subtitle_text <- glue("<br>Count of cases")
 caption_text <- glue("*The Supreme Court Database* at the Washington University in St. Louis Law School")
 ```
 
-```{r sup_court_issue_history_viz2, include=TRUE, echo=TRUE, eval=FALSE, fig.height=6.2, fig.align='center'}
+```{r sup_court_issue_history_viz2, include=TRUE, echo=TRUE, fig.height=6.2, fig.align='center'}
 sup_court_term_issue %>% 
   filter(!is.na(issueAreaName)) %>% 
   mutate(CivilRights = ifelse(issueAreaName=='Civil Rights', 'Civil Rights', 'Other')) %>% 
