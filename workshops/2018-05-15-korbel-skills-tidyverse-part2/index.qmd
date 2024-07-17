@@ -9,7 +9,7 @@ date: 05-15-2018
 categories: [R, tidyverse, ggplot, data-viz, domestic-politics] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-#image: economist_plot.png
+image: civil_rights.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
@@ -43,14 +43,20 @@ This workshop session will help you familiarize with two of R's most widely used
 </center>
 
 1.  Install the tidyverse and gapminder packages (`install.packages()`)  
+
 ```{r install_tidyverse, include=FALSE, echo=TRUE}
 #install.packages("tidyverse")
 ```
 
 2.  Load the tidyverse and gapminder packages (`library()` and `require()` effectively do the same thing, but `library()` provides more information that is occasionally useful)  
 
-```{r read_tidyverse, include=TRUE, echo=TRUE}
+```{r read_libraries, include=TRUE, echo=TRUE}
 library(tidyverse)      #for data management, manipulation, visualization, and exploratory data analysis
+
+#for graphics styling
+library(ggtext)         #for use of richtext in graphics
+library(glue)           #to embed html in text
+library(patchwork)      #for plot_annotation() function
 ```
 
 3.  I am providing a dataset on all U.S. Supreme Court decisions since 1946, which are organized by case and justice vote. These data come from The Supreme Court Database at the Washington University in St. Louis Law School.[^10] I'd like for you to put together the skills that you've learned in this session to do some exploratory analysis of the data. 
@@ -149,6 +155,32 @@ sup_court_term_issue %>%
                 color=issueAreaName))
 ```
 
+To create a graphic, I'll show how you can create a theme to add to your ggplot object.
+
+```{r my.theme, include=TRUE}
+my.theme <- theme(
+  text = element_text(family = 'Arial'), 
+  plot.title = element_textbox_simple(color="black", face="bold", size=18, hjust=0), 
+  plot.subtitle = element_textbox_simple(color="black", size=12, hjust=0), 
+  axis.text = element_text(size=15), 
+  axis.ticks = element_line(color="gray90"),
+  plot.caption = element_textbox_simple(color="black", size=12), 
+  panel.background =  element_blank(), 
+  panel.grid.major = element_line(color="gray90"),
+  panel.border = element_blank(), 
+  legend.position = 'none',
+  strip.text = element_text(color="black", size=14, face='bold'),
+  strip.background = element_blank())
+```
+
+And I'll create objects for the title, subtitle, and caption text.
+
+```{r plot_text, include=TRUE}
+title_text <- glue("Count of <span style='color:darkgreen;font-face:bold'>civil rights</span> cases heard by the U.S. Supreme Court over time")
+subtitle_text <- glue("<br>Count of cases")
+caption_text <- glue("*The Supreme Court Database* at the Washington University in St. Louis Law School")
+```
+
 ```{r sup_court_issue_history_viz2, include=TRUE, echo=TRUE, eval=FALSE, fig.height=6.2, fig.align='center'}
 sup_court_term_issue %>% 
   filter(!is.na(issueAreaName)) %>% 
@@ -157,16 +189,30 @@ sup_court_term_issue %>%
   geom_line(aes(x=term,
                 y=count_cases,
                 group=issueAreaName,
-                color=CivilRights)) + 
+                color=CivilRights),
+            linewidth=1.1) + 
+  labs(x='',
+       y='') + 
   scale_color_manual(values = c('Civil Rights' = 'darkgreen',
-                                'Other' = 'lightgray'))
+                                'Other' = 'lightgray')) +
+  my.theme + 
+  plot_annotation(
+    title = title_text,
+    subtitle = subtitle_text,
+    caption = caption_text, 
+    theme = theme(text = element_text(family = 'Arial'),
+                  plot.title = element_textbox_simple(color="black", 
+                                                      face="bold", size=20, hjust=0),
+                  plot.subtitle = element_textbox_simple(color="black", 
+                                                      size=15, hjust=0),
+                  plot.caption = element_textbox_simple(color="black")))
 ```
 
 *  Does the Court seem to have strong tendencies for votes based on the issue area? (*Probably many ways that you could think about answering this one.*)
 
 ```{r baseline_vote, include=FALSE, echo=TRUE, eval=FALSE, fig.height=7}
 #Restricting to cases since 1980
-baseline_vote <- sup_court %>% 
+(baseline_vote <- sup_court %>% 
   filter(term > 1980) %>% 
   mutate(liberal_vote = ifelse(directionName == 'liberal', 1,
                         ifelse(directionName == 'conservative', 0, NA))) %>% 
@@ -174,7 +220,7 @@ baseline_vote <- sup_court %>%
   summarise(baseline_issue_vote = mean(liberal_vote, na.rm = TRUE)) %>% 
   filter(!is.na(baseline_issue_vote)) %>% 
   arrange(-baseline_issue_vote) %>% 
-  ungroup()
+  ungroup())
 ```
 
 *  Justice Scalia was known as a staunch conservative presence on the bench. Were there some issues that he leaned more centrist? (hint: `group_by()` and `summarise()` would come in handy here, yet again)  
@@ -192,53 +238,56 @@ sup_court %>%
 * To truly answer a question like the previous one, you would want to take into account the directionality of 
 all voting justices by issue area. For instance, if you explored the previous question, you found that Scalia voted "liberal" on almost 70% of Federal Taxation cases. However, if the Court has a tendency to vote liberal on this issue, then Scalia might not be as "liberal" on this issue as it might seem. This question is a bit more complicated, but does Scalia *lean liberal* based on the Court's tendencies in Federal Taxation Cases? (*This question still uses `dplyr` -- and if you'd like, `ggplot2` -- but with a few bells and whistles.*)
 
+**Temporarily commenting out this code**
+
 ```{r baseline_vote_fedtax, include=TRUE, echo=TRUE}
-sup_court_fedtax <- sup_court %>% 
-  filter(term > 1980, issueAreaName == 'Federal Taxation') %>% 
-  group_by(justiceName, issueAreaName, directionName) %>% 
-  summarise(count_cases = n(), .groups = "drop_last") %>% 
-  mutate(perc_cases = count_cases / sum(count_cases)) %>% 
-  filter(directionName == 'liberal') %>% 
-  ungroup() %>% 
-  left_join(x=.,
-            y=baseline_vote,
-            by='issueAreaName')
+#(sup_court_fedtax <- sup_court %>% 
+ # filter(term > 1980, issueAreaName == 'Federal Taxation') %>% 
+  #group_by(justiceName, issueAreaName, directionName) %>% 
+  #summarise(count_cases = n(), .groups = "drop_last") %>% 
+  #mutate(perc_cases = count_cases / sum(count_cases)) %>% 
+  #filter(directionName == 'liberal') %>% 
+  #ungroup() %>% 
+  #left_join(x=.,
+   #         y=baseline_vote,
+    #        by='issueAreaName'))
 ```
 
 ```{r library_scales, include=TRUE, echo=TRUE}
-library(scales)                 #for changing axis label to include '%'
+#library(scales)                 #for changing axis label to include '%'
 ```
 
 ```{r plot_fedtax, include=TRUE, echo=TRUE, fig.height=6.2, eval=TRUE}
-sup_court_fedtax %>% 
-  filter(count_cases >=10) %>% 
-  mutate(fedtax_lean = ifelse(perc_cases > baseline_issue_vote, 'Liberal', 'Conservative')) %>% 
-  ggplot(.) + 
-  geom_point(aes(x=perc_cases,
-                 y=reorder(justiceName, perc_cases),
-                 color=fedtax_lean), size=5) + 
-  geom_vline(xintercept = sup_court_fedtax$baseline_issue_vote) + 
-  annotate(geom='text', x=.48, y='JGRoberts', 
-           label=paste('Baseline vote for Federal Taxation cases is ', 
-                       round(sup_court_fedtax$baseline_issue_vote[1] * 100), '%', sep = ''),
-           size=5) + 
-  scale_x_continuous(labels = percent,
-                     limits = c(0, 1)) + 
-  ggtitle('The Court leans liberal on Federal Taxation cases',
-          subtitle = 'Percent of Federal Taxation cases with liberal decision by Justice since 1980') + 
-  labs(x='Percent of cases coded as a liberal decision\n',
-       y='',
-       color='',
-       caption='Source: Washington University of St. Louis\nThe Supreme Court Database\nExcluded Justices with less than 10 Federal Taxation cases') + 
-  theme_minimal() + 
-  scale_color_manual(values = c('Liberal' = 'blue',
-                                'Conservative' = 'red')) + 
-  theme(legend.position = 'top',
-        text = element_text(size=15),
-        plot.title = element_text(size=18, face='bold'),
-
-        plot.subtitle = element_text(size=16),
-        strip.text = element_text(size=15, face='bold'))
+#sup_court_fedtax %>% 
+ # filter(count_cases >=10) %>% 
+  #mutate(fedtax_lean = ifelse(perc_cases > baseline_issue_vote, 'Liberal', 'Conservative')) %>% 
+  #ggplot(.) + 
+  #geom_point(aes(x=perc_cases,
+   #              y=reorder(justiceName, perc_cases),
+    #             color=fedtax_lean), size=5) + 
+  #geom_vline(xintercept = sup_court_fedtax$baseline_issue_vote) + 
+  #annotate(geom='text', x=.48, y='JGRoberts', 
+   #        label=paste('Baseline vote for Federal Taxation cases is ', 
+    #                   round(sup_court_fedtax$baseline_issue_vote[1] * 100), '%', sep = ''),
+     #      size=5) + 
+  #scale_x_continuous(labels = percent,
+   #                  limits = c(0, 1)) + 
+  #ggtitle('The Court leans liberal on Federal Taxation cases',
+   #       subtitle = 'Percent of Federal Taxation cases with liberal decision by Justice since 1980') + 
+  #labs(x='Percent of cases coded as a liberal decision\n',
+   #    y='',
+    #   color='',
+     #  caption='Source: Washington University of St. Louis\nThe Supreme Court Database\nExcluded Justices with less than 10 Federal Taxation cases') + 
+  #theme_minimal() + 
+  #scale_color_manual(values = c('Liberal' = 'blue',
+   #                             'Conservative' = 'red')) + 
+  
+#theme(legend.position = 'top',
+ #       text = element_text(size=15),
+  #      plot.title = element_text(size=18, face='bold'),
+#
+ #       plot.subtitle = element_text(size=16),
+  #      strip.text = element_text(size=15, face='bold'))
 ```
 
 
