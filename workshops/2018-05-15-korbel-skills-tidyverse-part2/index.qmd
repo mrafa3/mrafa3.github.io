@@ -164,7 +164,7 @@ sup_court_term_issue %>%
 
 *  Does the Court seem to have strong tendencies for votes based on the issue area? (*Probably many ways that you could think about answering this one.*)
 
-```{r baseline_vote, include=TRUE, echo=TRUE, eval=FALSE, fig.height=7}
+```{r baseline_vote, include=FALSE, echo=TRUE, eval=FALSE, fig.height=7}
 #Restricting to cases since 1980
 baseline_vote <- sup_court %>% 
   filter(term > 1980) %>% 
