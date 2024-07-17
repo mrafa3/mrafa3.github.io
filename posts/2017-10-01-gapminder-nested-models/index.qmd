@@ -5,7 +5,7 @@ author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
-date: 07-15-2024
+date: 10-01-2017
 categories: [R, regression, data-viz, tidyverse, international-development] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
