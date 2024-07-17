@@ -238,56 +238,53 @@ sup_court %>%
 * To truly answer a question like the previous one, you would want to take into account the directionality of 
 all voting justices by issue area. For instance, if you explored the previous question, you found that Scalia voted "liberal" on almost 70% of Federal Taxation cases. However, if the Court has a tendency to vote liberal on this issue, then Scalia might not be as "liberal" on this issue as it might seem. This question is a bit more complicated, but does Scalia *lean liberal* based on the Court's tendencies in Federal Taxation Cases? (*This question still uses `dplyr` -- and if you'd like, `ggplot2` -- but with a few bells and whistles.*)
 
-**Temporarily commenting out this code**
-
 ```{r baseline_vote_fedtax, include=TRUE, echo=TRUE}
-#(sup_court_fedtax <- sup_court %>% 
- # filter(term > 1980, issueAreaName == 'Federal Taxation') %>% 
-  #group_by(justiceName, issueAreaName, directionName) %>% 
-  #summarise(count_cases = n(), .groups = "drop_last") %>% 
-  #mutate(perc_cases = count_cases / sum(count_cases)) %>% 
-  #filter(directionName == 'liberal') %>% 
-  #ungroup() %>% 
-  #left_join(x=.,
-   #         y=baseline_vote,
-    #        by='issueAreaName'))
+(sup_court_fedtax <- sup_court %>% 
+  filter(term > 1980, issueAreaName == 'Federal Taxation') %>% 
+  group_by(justiceName, issueAreaName, directionName) %>% 
+  summarise(count_cases = n(), .groups = "drop_last") %>% 
+  mutate(perc_cases = count_cases / sum(count_cases)) %>% 
+  filter(directionName == 'liberal') %>% 
+  ungroup() %>% 
+  left_join(x=.,
+            y=baseline_vote,
+            by='issueAreaName'))
 ```
 
 ```{r library_scales, include=TRUE, echo=TRUE}
-#library(scales)                 #for changing axis label to include '%'
+library(scales)                 #for changing axis label to include '%'
 ```
 
 ```{r plot_fedtax, include=TRUE, echo=TRUE, fig.height=6.2, eval=TRUE}
-#sup_court_fedtax %>% 
- # filter(count_cases >=10) %>% 
-  #mutate(fedtax_lean = ifelse(perc_cases > baseline_issue_vote, 'Liberal', 'Conservative')) %>% 
-  #ggplot(.) + 
-  #geom_point(aes(x=perc_cases,
-   #              y=reorder(justiceName, perc_cases),
-    #             color=fedtax_lean), size=5) + 
-  #geom_vline(xintercept = sup_court_fedtax$baseline_issue_vote) + 
-  #annotate(geom='text', x=.48, y='JGRoberts', 
-   #        label=paste('Baseline vote for Federal Taxation cases is ', 
-    #                   round(sup_court_fedtax$baseline_issue_vote[1] * 100), '%', sep = ''),
-     #      size=5) + 
-  #scale_x_continuous(labels = percent,
-   #                  limits = c(0, 1)) + 
-  #ggtitle('The Court leans liberal on Federal Taxation cases',
-   #       subtitle = 'Percent of Federal Taxation cases with liberal decision by Justice since 1980') + 
-  #labs(x='Percent of cases coded as a liberal decision\n',
-   #    y='',
-    #   color='',
-     #  caption='Source: Washington University of St. Louis\nThe Supreme Court Database\nExcluded Justices with less than 10 Federal Taxation cases') + 
-  #theme_minimal() + 
-  #scale_color_manual(values = c('Liberal' = 'blue',
-   #                             'Conservative' = 'red')) + 
-  
-#theme(legend.position = 'top',
- #       text = element_text(size=15),
-  #      plot.title = element_text(size=18, face='bold'),
-#
- #       plot.subtitle = element_text(size=16),
-  #      strip.text = element_text(size=15, face='bold'))
+sup_court_fedtax %>% 
+  filter(count_cases >=10) %>% 
+  mutate(fedtax_lean = ifelse(perc_cases > baseline_issue_vote, 'Liberal', 'Conservative')) %>% 
+  ggplot(.) + 
+  geom_point(aes(x=perc_cases,
+                 y=reorder(justiceName, perc_cases),
+                 color=fedtax_lean), size=5) + 
+  geom_vline(xintercept = sup_court_fedtax$baseline_issue_vote) + 
+  annotate(geom='text', x=.48, y='JGRoberts', 
+           label=paste('Baseline vote for Federal Taxation cases is ', 
+                       round(sup_court_fedtax$baseline_issue_vote[1] * 100), '%', sep = ''),
+           size=5) + 
+  scale_x_continuous(labels = percent,
+                     limits = c(0, 1)) + 
+  ggtitle('The Court leans liberal on Federal Taxation cases',
+          subtitle = 'Percent of Federal Taxation cases with liberal decision by Justice since 1980') + 
+  labs(x='Percent of cases coded as a liberal decision\n',
+       y='',
+       color='',
+       caption='Source: Washington University of St. Louis\nThe Supreme Court Database\nExcluded Justices with less than 10 Federal Taxation cases') + 
+  theme_minimal() + 
+  scale_color_manual(values = c('Liberal' = 'blue',
+                                'Conservative' = 'red')) + 
+theme(legend.position = 'top',
+        text = element_text(size=15),
+        plot.title = element_text(size=18, face='bold'),
+
+        plot.subtitle = element_text(size=16),
+        strip.text = element_text(size=15, face='bold'))
 ```
 
 
