@@ -52,7 +52,7 @@ summary(gapminder)
 
 In this graphic, I want to spotlight China's development path, and also show the story of differences by continent. First, I'll show all the data, which makes clear the need for animation of this data.
 
-```{r fig.height=6.2, fig.width=10, fig.align='center'}
+```{r fig1, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 
   ggplot(.,
          aes(x=gdpPercap,
@@ -75,7 +75,7 @@ gapminder %>%
 
 ## gganimate::
 
-```{r fig.height=6.2, fig.width=10, fig.align='center'}
+```{r gganimate, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 
   ggplot(.,
          aes(x=gdpPercap,
@@ -110,7 +110,7 @@ gapminder %>%
 
 The `gganimate::` code is simple enough to use, but the dataset is every five years, which makes for a somewhat jerky animation experience. With the `tweener::` package, we can quickly interpolate between values to smooth out the animation.
 
-```{r fig.width=10}
+```{r tweenr, fig.height=6.2, fig.width=10, fig.align='center', warning=FALSE}
 gapminder_edit <- gapminder %>%
   arrange(country, year) %>%
   select(gdpPercap,lifeExp,year,country, continent, pop) %>%
