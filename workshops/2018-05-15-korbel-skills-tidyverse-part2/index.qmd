@@ -77,7 +77,7 @@ Explore the dataset on your own, and see what you can find! Try to ask a questio
 
 *  Which Chief Justice has presided over the most cases since 1946? Which has heard the fewest?  
 
-```{r sup_court_q1, include=TRUE, eval=FALSE, echo=TRUE}
+```{r sup_court_q1, include=TRUE, echo=TRUE}
 sup_court %>% 
   group_by(chief) %>% 
   summarise(count_cases = n()) %>% 
@@ -86,28 +86,28 @@ sup_court %>%
 
 *  How many decisions has Justice Gorsuch made in his short tenure on the bench? How often has he cast a dissenting opinion? How often has he made decisions that would be considered conservative? What types of cases has he heard most often to this point? (hint: Gorsuch can be found using the justiceName variable with **NMGorsuch**.) 
 
-```{r sup_court_q2_1, include=TRUE, eval=FALSE, echo=TRUE}
+```{r sup_court_q2_1, include=TRUE, echo=TRUE}
 sup_court %>% 
   filter(justiceName == 'NMGorsuch') %>% 
   group_by(justiceName) %>% 
   summarise(count_cases = n())
 ```
 
-```{r sup_court_q2_2, include=TRUE, eval=FALSE, echo=TRUE}
+```{r sup_court_q2_2, include=TRUE, echo=TRUE}
 sup_court %>% 
   filter(justiceName == 'NMGorsuch') %>% 
   group_by(justiceName, majorityName) %>% 
   summarise(count_cases = n())
 ```
 
-```{r sup_court_q2_3, include=TRUE, eval=FALSE, echo=TRUE}
+```{r sup_court_q2_3, include=TRUE, echo=TRUE}
 sup_court %>% 
   filter(justiceName == 'NMGorsuch') %>% 
   group_by(justiceName, directionName) %>% 
   summarise(count_cases = n())
 ```
 
-```{r sup_court_q2_4, include=TRUE, echo=TRUE, eval=FALSE}
+```{r sup_court_q2_4, include=TRUE, echo=TRUE}
 sup_court %>% 
   filter(justiceName == 'NMGorsuch') %>% 
   group_by(justiceName, issueAreaName) %>% 
@@ -118,7 +118,7 @@ sup_court %>%
 
 *  Justice Kennedy has a reputation as being the swing voter on the Supreme Court. How might you test this conventional wisdom with this dataset? (hint: you might consider using the **majVotes** and **minVotes** variables for this question) 
 
-```{r sup_court_q3, include=TRUE, echo=TRUE, eval=FALSE}
+```{r sup_court_q3, include=TRUE, echo=TRUE}
 sup_court %>% 
   filter(majVotes == 5,
          minVotes == 4) %>% 
@@ -130,7 +130,7 @@ sup_court %>%
 
 *  Which justice has heard the most Supreme Court Cases since 1946? (hint: the justice is the primary unit of analysis) 
 
-```{r sup_court_q4, include=TRUE, echo=TRUE, eval=FALSE}
+```{r sup_court_q4, include=TRUE, echo=TRUE}
 sup_court %>% 
   group_by(justiceName) %>% 
   summarise(count_cases = n()) %>% 
@@ -146,7 +146,7 @@ sup_court %>%
   arrange(term, desc(count_cases)))
 ```
 
-```{r sup_court_issue_history_viz1, include=TRUE, echo=TRUE, eval=FALSE, fig.height=6.2, fig.align='center'}
+```{r sup_court_issue_history_viz1, include=TRUE, echo=TRUE, fig.height=6.2, fig.align='center'}
 sup_court_term_issue %>% 
   filter(!is.na(issueAreaName)) %>% 
   ggplot(.) + 
@@ -210,7 +210,7 @@ sup_court_term_issue %>%
 
 *  Does the Court seem to have strong tendencies for votes based on the issue area? (*Probably many ways that you could think about answering this one.*)
 
-```{r baseline_vote, include=FALSE, echo=TRUE, eval=FALSE, fig.height=7}
+```{r baseline_vote, include=FALSE, echo=TRUE, fig.height=7}
 #Restricting to cases since 1980
 (baseline_vote <- sup_court %>% 
   filter(term > 1980) %>% 
@@ -225,7 +225,7 @@ sup_court_term_issue %>%
 
 *  Justice Scalia was known as a staunch conservative presence on the bench. Were there some issues that he leaned more centrist? (hint: `group_by()` and `summarise()` would come in handy here, yet again)  
 
-```{r sup_court_scalia_issues, include=TRUE, echo=TRUE, eval=FALSE, fig.height=10}
+```{r sup_court_scalia_issues, include=TRUE, echo=TRUE, fig.height=10}
 sup_court %>% 
   filter(justiceName == 'AScalia') %>% 
   group_by(justiceName, issueAreaName, directionName) %>% 
