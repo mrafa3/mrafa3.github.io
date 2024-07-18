@@ -19,7 +19,6 @@ draft: false # setting this to `true` will prevent your post from appearing on y
 library(tidyverse)    #for data management and visualization
 library(gapminder)    #for gapminder data
 library(gganimate)    #for animation of ggplots
-library(tweenr)       #for smoother transitions of gapminder data
 
 data(gapminder)
 
@@ -110,44 +109,42 @@ gapminder %>%
   ease_aes()
 ```
 
-# Using the tweener:: package
+## Using the gganimate::shadow_wake() function to leave a trail
 
-The `gganimate::` code is simple enough to use, but the dataset is every five years, which makes for a somewhat jerky animation experience. With the `tweener::` package, we can quickly interpolate between values to smooth out the animation.
-
-```{r tweenr, fig.height=6.2, fig.width=10, fig.align='center', warning=FALSE}
-gapminder_edit <- gapminder %>%
-  arrange(country, year) %>%
-  select(gdpPercap,lifeExp,year,country, continent, pop) %>%
-  rename(x=gdpPercap,y=lifeExp,time=year,id=country) %>%
-  mutate(ease="linear")
-
-gapminder_tween <- tween_elements(gapminder_edit,
-                                  "time", "id", "ease", nframes = 300) %>%
-  mutate(year = round(time), country = .group) %>%
-  left_join(gapminder, by=c("country","year","continent")) %>%
-  rename(population = pop.x)
-
-
-gapminder_tween %>% 
-  mutate(IsChina = ifelse(country == 'China', 'China', 'Other')) %>% 
+```{r gganimate2, fig.height=6.2, fig.width=10, fig.align='center'}
+gapminder %>% 
   ggplot(.,
-         aes(x=x, y=y, frame = .frame)) +
-  geom_point(aes(size=population, color=continent, alpha=IsChina)) +
-  ggtitle('GDP per capita and life expectancy in {closest_state}',
-          subtitle = 'China highlighted') + 
+         aes(x=gdpPercap,
+             y=lifeExp,
+             size=pop,
+             color=continent)) +
+  geom_point() + 
+  geom_text(data=gapminder %>% filter(country == 'China'),
+                           aes(label=country), 
+                           family='Arial', size= 3, color='black', nudge_y = 2) + 
+  geom_text(aes(x=min(gdpPercap), 
+                y=min(lifeExp),
+                label=as.factor(year)), 
+            hjust=-2, vjust=-0.2, alpha=0.2, color='gray70', size=20) +
+  scale_x_log10() + 
+  ggtitle('Change in life expectancy and income over time',
+          subtitle = 'Bubble size indicates population size') + 
   labs(x='GDP per capita (logged)\n',
        y='Life expectancy (years)',
        caption='Source: Gapminder dataset') + 
-  scale_x_log10() + 
+  theme(legend.position = 'top') + 
+  guides(size='none') + 
   my.theme + 
   transition_states(
     year,
     transition_length = 2,
-    state_length = 1,
+    state_length = 0,
     wrap = TRUE
   ) + 
-  scale_alpha_discrete(range = c('China' = 1,
-                                  'Other' = .1)) + 
-  theme(legend.position = 'top') + 
-  guides(size='none', alpha='none')
+  shadow_wake(wake_length = 0.1, alpha = FALSE, exclude_layer = c(2,3)) + 
+  enter_fade() + 
+  exit_shrink() +
+  ease_aes()
+
+?shadow_wake()
 ```
