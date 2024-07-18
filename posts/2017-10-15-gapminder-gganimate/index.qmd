@@ -88,7 +88,7 @@ gapminder %>%
   geom_text(aes(x=min(gdpPercap), 
                 y=min(lifeExp),
                 label=as.factor(year)), 
-            hjust=-1.5, vjust=-0.2, alpha=0.2, color='gray70', size=20) +
+            hjust=-3.5, vjust=-0.2, alpha=0.2, color='gray70', size=20) +
   scale_x_log10() + 
   ggtitle('Change in life expectancy and income over time',
           subtitle = 'Bubble size indicates population size') + 
