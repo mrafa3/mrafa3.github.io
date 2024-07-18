@@ -95,7 +95,8 @@ glance_gapminder_model %>%
   ggtitle('Distribution of model fits by continent',
           subtitle = 'Time does not explain variance in African life expectancy as strongly as others') + 
   labs(x='R-squared',
-       y='Continent') + 
+       y='Continent',
+       caption='LifeExp ~ year') + 
   my.theme
 ```
 
@@ -112,7 +113,8 @@ gapminder %>%
   ggtitle('Countries in which time does not adequately explain life expectancy',
           subtitle = 'Visualizing countries with model fits less than .4') + 
   labs(x='Year',
-       y='Life expectancy') + 
+       y='Life expectancy',
+       caption='LifeExp ~ year') + 
   my.theme
 ```
 
