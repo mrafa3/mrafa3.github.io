@@ -1,6 +1,6 @@
 ---
 title: "Animating the Gapminder dataset using gganimate"
-description: "This post outlines the value in building nested models using the purrr and broom packages"
+description: "This post outlines how to easily add animation to ggplot graphics"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
