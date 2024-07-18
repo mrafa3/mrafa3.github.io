@@ -68,7 +68,8 @@ gapminder %>%
   labs(x='GDP per capita (logged)\n',
        y='Life expectancy (years)',
        caption='Source: Gapminder dataset') + 
-  theme(legend.position = 'top') + 
+  theme(legend.position = 'top',
+        legend.title = element_blank()) + 
   guides(size='none')
 ```
 
