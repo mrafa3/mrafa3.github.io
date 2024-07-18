@@ -47,8 +47,6 @@ summary(gapminder)
 
 </center>
 
-## gganimate::
-
 In this graphic, I want to spotlight China's development path, and also show the story of differences by continent. First, I'll show all the data, which makes clear the need for animation of this data.
 
 ```{r fig1, fig.height=6.2, fig.width=10, fig.align='center'}
