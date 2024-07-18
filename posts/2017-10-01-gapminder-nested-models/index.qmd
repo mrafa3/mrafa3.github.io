@@ -72,7 +72,7 @@ glance_gapminder_model <- nest_gapminder %>%
   arrange(desc(adj.r.squared))
 ```
 
-```{r visualize_models, include=TRUE, echo=FALSE, fig.height=6.2, fig.width=10, fig.align='center'}
+```{r visualize_models, include=TRUE, fig.height=6.2, fig.width=10, fig.align='center'}
 glance_gapminder_model %>% 
   ggplot(.) + 
   geom_jitter(aes(x=continent,
@@ -86,7 +86,7 @@ glance_gapminder_model %>%
   my.theme
 ```
 
-```{r joyplot_nested_model_fit, include=TRUE, echo=FALSE, fig.height=6.2, fig.width=10, fig.align='center'}
+```{r joyplot_nested_model_fit, include=TRUE, fig.height=6.2, fig.width=10, fig.align='center'}
 glance_gapminder_model %>% 
   ggplot(.) + 
   geom_density_ridges(aes(x=r.squared, 
