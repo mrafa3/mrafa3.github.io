@@ -13,7 +13,9 @@ categories: [R, data-viz, tidyverse, gganimate] # self-defined categories
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
+
 ## Setup
+
 
 ```{r setup, include=FALSE}
 library(tidyverse)    #for data management and visualization
@@ -41,6 +43,7 @@ my.theme <- theme(
 summary(gapminder)
 ```
 
+
 <center>
 
 [](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.gapminder.org%2Ftag%2Fgapminder-world%2F&psig=AOvVaw2IwfQSTFDghid4GnL0WUtb&ust=1721330817600000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLjn9pPnrocDFQAAAAAdAAAAABAE)
@@ -50,6 +53,7 @@ summary(gapminder)
 ## gganimate::
 
 In this graphic, I want to spotlight China's development path, and also show the story of differences by continent. First, I'll show all the data, which makes clear the need for animation of this data.
+
 
 ```{r fig1, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 
@@ -73,7 +77,9 @@ gapminder %>%
   guides(size='none')
 ```
 
+
 ## gganimate::
+
 
 ```{r gganimate, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 
@@ -110,7 +116,9 @@ gapminder %>%
   ease_aes()
 ```
 
+
 ## Using the gganimate::shadow_wake() function to leave a trail
+
 
 ```{r gganimate2, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 
