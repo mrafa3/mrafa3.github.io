@@ -86,8 +86,12 @@ gapminder %>%
   geom_text(data=gapminder %>% filter(country == 'China'),
                            aes(label=country), 
                            family='Arial', size= 3, color='black', nudge_y = 2) + 
+  geom_text(aes(x=min(gdpPercap), 
+                y=min(lifeExp),
+                label=as.factor(year)), 
+            hjust=-2, vjust=-0.2, alpha=0.2, color='gray70', size=20) +
   scale_x_log10() + 
-  ggtitle('Change in life expectancy and income over time in {closest_state}',
+  ggtitle('Change in life expectancy and income over time',
           subtitle = 'Bubble size indicates population size') + 
   labs(x='GDP per capita (logged)\n',
        y='Life expectancy (years)',
@@ -98,7 +102,7 @@ gapminder %>%
   transition_states(
     year,
     transition_length = 2,
-    state_length = 1,
+    state_length = 0,
     wrap = TRUE
   ) + 
   enter_fade() + 
