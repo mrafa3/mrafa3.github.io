@@ -10,7 +10,7 @@ categories: [R, data-viz, tidyverse, international-development, cluster-analysis
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 image: distance_plot.png
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
 ```{r libraries, include=TRUE}
