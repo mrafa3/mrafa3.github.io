@@ -15,7 +15,9 @@ about:
       href: mailto:mickey.rafa3@gmail.com
 ---
 
-My name is Mickey – welcome to my personal portfolio website! I'll be adding a selection of data science and viz projects here that showcase the breadth of work that I've completed.
+My name is Mickey – welcome to my personal portfolio website! I'm an analytics leader with nearly a decade of experience in high-growth environments, in both non-profit and for-profit organizations. I specialize in turning data into insights, improving the accessibility of dashboards and reports, and creating compelling data stories.
+
+On this page, I include a selection of data science and viz projects that showcase the breadth of work that I've completed.
 
 Let's connect! Feel free to reach out to me on LinkedIn or send me an email.
 
@@ -28,3 +30,11 @@ Let's connect! Feel free to reach out to me on LinkedIn or send me an email.
 **MA in International Studies** \| University of Denver
 
 **BA in Political Science** \| West Virginia University
+
+**Work Experience**
+
+------------------------------------------------------------------------
+
+**Sr. Manager, Employer Analytics** \| Guild Education
+
+**Assistant Director of Research** \| Pardee Center for International Futures, University of Denver
