@@ -15,11 +15,9 @@ about:
       href: mailto:mickey.rafa3@gmail.com
 ---
 
-My name is Mickey, and welcome to my personal portfolio website! I'll be adding a selection of data science and viz projects here that showcase the breadth of work that I've completed.
+My name is Mickey – welcome to my personal portfolio website! I'll be adding a selection of data science and viz projects here that showcase the breadth of work that I've completed.
 
 Let's connect! Feel free to reach out to me on LinkedIn or send me an email.
-
-🚧 **This site is under construction** 🚧
 
 **Education**
 
