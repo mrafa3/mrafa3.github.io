@@ -9,7 +9,7 @@ date: 06-18-2019
 categories: [R, data-viz, tidyverse, international-development, cluster-analysis] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-#image: model_fit_plot.png
+image: cluster_plot.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
@@ -244,5 +244,6 @@ kmeans_viz_data %>%
        y=expression('' %<-% '  Higher burden from AIDS, respiratory and injury deaths')) + 
   scale_color_jco() + 
   my.theme
+ggsave("cluster_plot.png", plot = last_plot(), width = 10, height = 7)
 ```
 
