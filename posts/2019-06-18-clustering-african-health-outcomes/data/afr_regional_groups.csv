@@ -1,0 +1,160 @@
+type,country,group
+Regional,Cameroon,Cenral Africa
+Regional,Central AfR,Cenral Africa
+Regional,Chad,Cenral Africa
+Regional,"Congo, Democratic Republic of",Cenral Africa
+Regional,"Congo, Republic of",Cenral Africa
+Regional,Equa Guinea,Cenral Africa
+Regional,Gabon,Cenral Africa
+Regional,Sao Tome and Principe,Cenral Africa
+Regional,Burundi,East Africa
+Regional,Comoros,East Africa
+Regional,Djibouti,East Africa
+Regional,Eritrea,East Africa
+Regional,Ethiopia,East Africa
+Regional,Kenya,East Africa
+Regional,Madagascar,East Africa
+Regional,Mauritius,East Africa
+Regional,Rwanda,East Africa
+Regional,Seychelles,East Africa
+Regional,Somalia,East Africa
+Regional,Sudan,East Africa
+Regional,Sudan South,East Africa
+Regional,Tanzania,East Africa
+Regional,Uganda,East Africa
+Regional,Algeria,Northern Africa
+Regional,Egypt,Northern Africa
+Regional,Libya,Northern Africa
+Regional,Mauritania,Northern Africa
+Regional,Morocco,Northern Africa
+Regional,Tunisia,Northern Africa
+Regional,Angola,Southern Africa
+Regional,Botswana,Southern Africa
+Regional,Lesotho,Southern Africa
+Regional,Malawi,Southern Africa
+Regional,Mozambique,Southern Africa
+Regional,Namibia,Southern Africa
+Regional,South Africa,Southern Africa
+Regional,Swaziland,Southern Africa
+Regional,Zambia,Southern Africa
+Regional,Zimbabwe,Southern Africa
+Regional,Benin,West Africa
+Regional,Burkina Faso,West Africa
+Regional,Cape Verde,West Africa
+Regional,Cote d'Ivoire,West Africa
+Regional,Gambia,West Africa
+Regional,Ghana,West Africa
+Regional,Guinea,West Africa
+Regional,GuineaBiss,West Africa
+Regional,Liberia,West Africa
+Regional,Mali,West Africa
+Regional,Niger,West Africa
+Regional,Nigeria,West Africa
+Regional,Senegal,West Africa
+Regional,SierraLeo,West Africa
+Regional,Togo,West Africa
+RECs,Algeria,AMU
+RECs,Libya,AMU
+RECs,Mauritania,AMU
+RECs,Morocco,AMU
+RECs,Tunisia,AMU
+RECs,Burundi,COMESA
+RECs,Comoros,COMESA
+RECs,"Congo, Democratic Republic of",COMESA
+RECs,Djibouti,COMESA
+RECs,Egypt,COMESA
+RECs,Eritrea,COMESA
+RECs,Ethiopia,COMESA
+RECs,Kenya,COMESA
+RECs,Libya,COMESA
+RECs,Madagascar,COMESA
+RECs,Malawi,COMESA
+RECs,Mauritius,COMESA
+RECs,Rwanda,COMESA
+RECs,Seychelles,COMESA
+RECs,Sudan,COMESA
+RECs,Sudan South,COMESA
+RECs,Swaziland,COMESA
+RECs,Uganda,COMESA
+RECs,Zambia,COMESA
+RECs,Zimbabwe,COMESA
+RECs,Benin,CEN-SAD
+RECs,Burkina Faso,CEN-SAD
+RECs,Central AfR,CEN-SAD
+RECs,Chad,CEN-SAD
+RECs,Comoros,CEN-SAD
+RECs,Cote d'Ivoire,CEN-SAD
+RECs,Djibouti,CEN-SAD
+RECs,Egypt,CEN-SAD
+RECs,Eritrea,CEN-SAD
+RECs,Gambia,CEN-SAD
+RECs,Ghana,CEN-SAD
+RECs,Guinea,CEN-SAD
+RECs,GuineaBiss,CEN-SAD
+RECs,Kenya,CEN-SAD
+RECs,Liberia,CEN-SAD
+RECs,Libya,CEN-SAD
+RECs,Mali,CEN-SAD
+RECs,Mauritania,CEN-SAD
+RECs,Morocco,CEN-SAD
+RECs,Niger,CEN-SAD
+RECs,Nigeria,CEN-SAD
+RECs,Sao Tome and Principe,CEN-SAD
+RECs,Senegal,CEN-SAD
+RECs,SierraLeo,CEN-SAD
+RECs,Somalia,CEN-SAD
+RECs,Sudan,CEN-SAD
+RECs,Togo,CEN-SAD
+RECs,Tunisia,CEN-SAD
+RECs,Burundi,EAC
+RECs,Kenya,EAC
+RECs,Rwanda,EAC
+RECs,Tanzania,EAC
+RECs,Uganda,EAC
+RECs,Angola,ECCAS
+RECs,Burundi,ECCAS
+RECs,Cameroon,ECCAS
+RECs,Central AfR,ECCAS
+RECs,Chad,ECCAS
+RECs,"Congo, Democratic Republic of",ECCAS
+RECs,"Congo, Republic of",ECCAS
+RECs,Equa Guinea,ECCAS
+RECs,Gabon,ECCAS
+RECs,Sao Tome and Principe,ECCAS
+RECs,Benin,ECOWAS
+RECs,Burkina Faso,ECOWAS
+RECs,Cape Verde,ECOWAS
+RECs,Cote d'Ivoire,ECOWAS
+RECs,Gambia,ECOWAS
+RECs,Ghana,ECOWAS
+RECs,Guinea,ECOWAS
+RECs,GuineaBiss,ECOWAS
+RECs,Liberia,ECOWAS
+RECs,Mali,ECOWAS
+RECs,Niger,ECOWAS
+RECs,Nigeria,ECOWAS
+RECs,SierraLeo,ECOWAS
+RECs,Togo,ECOWAS
+RECs,Angola,SADC
+RECs,Botswana,SADC
+RECs,"Congo, Democratic Republic of",SADC
+RECs,Lesotho,SADC
+RECs,Madagascar,SADC
+RECs,Malawi,SADC
+RECs,Mauritius,SADC
+RECs,Mozambique,SADC
+RECs,Namibia,SADC
+RECs,Seychelles,SADC
+RECs,South Africa,SADC
+RECs,Swaziland,SADC
+RECs,Tanzania,SADC
+RECs,Zambia,SADC
+RECs,Zimbabwe,SADC
+RECs,Djibouti,IGAD
+RECs,Eritrea,IGAD
+RECs,Ethiopia,IGAD
+RECs,Kenya,IGAD
+RECs,Somalia,IGAD
+RECs,Sudan,IGAD
+RECs,Sudan South,IGAD
+RECs,Uganda,IGAD

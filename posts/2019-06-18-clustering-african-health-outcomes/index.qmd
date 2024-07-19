@@ -1,0 +1,257 @@
+---
+title: "Cluster Analysis of African Health Outcomes"
+description: "Exploring how African countries cluster based on their health outcomes"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 06-18-2019
+categories: [R, data-viz, tidyverse, international-development, cluster-analysis] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+#image: model_fit_plot.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+## Setup
+
+```{r setup, include=TRUE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(factoextra)
+library(NbClust)
+library(ggsci)              #for jco color palette
+library(psych)              #for PCA
+#library(extrafont)
+#library(class)             #for kNN
+#library(caret)             #backup kNN function
+
+my.theme <- theme(
+  plot.title = element_text(color="black", face="plain", size=17, hjust=0), 
+  plot.subtitle = element_text(color="black", size=15, hjust=0), 
+  axis.title = element_text(color="black", face="plain", size=14), 
+  axis.text.y = element_text(size=16), 
+  axis.text.x = element_text(angle = 90, hjust = 1, size=13), 
+  plot.caption = element_text(color="black", size=13), 
+  panel.background =  element_rect(fill = "#F7F7F7", colour = NA), 
+  panel.grid.major = element_line(colour = "grey90", linewidth = 0.5),
+  panel.grid.minor = element_line(colour = "grey93", linewidth = 0.5),
+  panel.border = element_rect(colour = "black", linewidth = 0.5, fill=NA, linetype = 1),
+  legend.title=element_blank(), 
+  legend.text = element_text(color="black", size=14, hjust=0),
+  legend.spacing.x = unit(.5, 'cm'), 
+  legend.position = 'bottom',
+  strip.text = element_text(color="black", face="plain", size=16),
+  strip.background = element_rect(fill = "white"))
+```
+
+The dataset contains country-level health outcomes projections from the International Futures model from 2015-2065. For this clustering exercise, I am using the 2019 results.
+
+```{r read_data, include=TRUE}
+(df <- readxl::read_xlsx('.//data/cluster_health_afr_14mar2019.xlsx')) 
+```
+
+```{r distinct_variable, include=TRUE, echo=FALSE}
+df %>% distinct(variable)
+```
+
+```{r wrangle_df, include=TRUE}
+(df <- df %>% 
+  #pivot data
+   gather(year, val, 6:56) %>% 
+  #filter on 2019 results
+   filter(year == '2019') %>% 
+  #select variable, country, and val
+   select(1:2, 7) %>% 
+  #group by variable and generate z-score for clustering
+   group_by(variable) %>% 
+   mutate(val = scale(val)) %>% 
+   ungroup() %>% 
+   spread(variable, val)) 
+```
+
+## Clustering
+
+The `NbClust::` package has a handy function for evaluating possible cluster counts on the data
+
+```{r nbclust, include=TRUE}
+(nbclust_eval <- NbClust(df %>% select(-1), 
+                            min.nc = 3,
+                            max.nc = 10, 
+                            method = "complete",
+                            index = "all"))
+```
+This function evaluates 23 heuristics for choosing the cluster amount, and recommends the best number to use based on the count that the most tests recommend. In this case, four clusters is recommended by the largest number of heuristics.
+
+The elbow plot of four clusters supports this recommendation.
+
+```{r elbow_plot, include=TRUE}
+fviz_nbclust(df %>% select(-1), FUNcluster = kmeans, method='wss')
+```
+
+```{r kmeans, include=TRUE}
+set.seed(1234)
+(kmeans_sdg3 <- kmeans(df %>% select(-c(1)), 4))
+```
+
+### Wrangling cluster results
+
+```{r broom, include=TRUE}
+(df_cluster_4_results <- kmeans_sdg3 %>% 
+  #broom to pull the cluster into the dataframe
+  broom::augment(df) %>% 
+  ungroup() %>% 
+  select(.cluster, everything()) %>% 
+  mutate(.cluster = as.character(.cluster)))
+```
+
+```{r read_afr_regions, include=TRUE, echo=FALSE}
+(afr_regional_groups <- read_csv('.//data/afr_regional_groups.csv') %>% 
+   filter(type == 'Regional'))
+```
+
+```{r add_regions, include=TRUE, echo=FALSE}
+(df_cluster_4_results <- df_cluster_4_results %>% 
+  left_join(x=.,
+            y=afr_regional_groups %>% select(-type),
+            by='country') %>% 
+  select(.cluster, country, group, everything()))
+```
+
+##Analysis of results
+
+First, I'll use the `fiz_cluster()` function to visualize cluster membership. (There's further clean-up needed, but I want to see the initial viz).
+
+```{r kmeans_vis, include=TRUE, fig.height=6.2, fig.width=10, fig.align='center'}
+(kmeans_viz <- fviz_cluster(kmeans_sdg3, 
+             data=df %>% select(-1),
+             stand = FALSE, 
+             ellipse.type = "convex",
+             palette = "jco") + 
+  my.theme)
+```
+
+What do each of these clusters mean? What do they represent?
+
+```{r spot_vars, include=TRUE, echo=FALSE}
+spot_vars <- c('DR_AIDS', 'MATMORTRATIO', 'DR_CardioVasc', 'HLSTUNT',
+               'DR_IntInj', 'DR_Malaria', 'LIFEXP_Female', 'DR_Diabetes', 'DR_Respiratory')
+```
+
+```{r cluster_smallmults, include=TRUE, fig.height=5.5, fig.width=9.5, fig.align='center'}
+cluster_fill <- c("#868686FF", "#CD534CFF", "#EFC000FF", "#0073C2FF")
+
+df_cluster_4_results %>% 
+  gather(variable, val, 4:23) %>% 
+  filter(variable %in% spot_vars) %>% 
+  mutate(variable = recode(variable,
+                           'DR_AIDS' = 'AIDS death rate',
+                           'DR_CardioVasc' = 'Cardiovascular death rate',
+                           'MATMORTRATIO' = 'Maternal mortality rate',
+                           'DR_Respiratory' = 'Respiratory mortality rate', 
+                           'HLSTUNT' = 'Stunting rate',
+                           'DR_IntInj' = 'Intentional injury death rate', 
+                           'DR_Malaria' = 'Malaria death rate', 
+                           'DR_Diabetes' = 'Diabetes death rate'),
+         clust_name = case_when(.cluster == '1' ~ 'CDs',
+                                .cluster == '2' ~ 'NCDs',
+                                .cluster == '3' ~ 'NCDs & HIV',
+                                .cluster == '4' ~ 'Double Burden')) %>% 
+  ggplot(., 
+         aes(x=.cluster,
+             y=val,
+             fill=.cluster)) + 
+  geom_violin() + 
+  geom_jitter(width = .2, height = .1) + 
+  facet_wrap(~variable, 
+             nrow = 2,
+             scales = 'free',
+             labeller = label_wrap_gen()) + 
+  ggtitle('',
+          subtitle = 'Each dot represents an African country within its cluster') + 
+  labs(y='z-score',
+       x='Cluster') + 
+  my.theme + 
+  scale_fill_manual(values = cluster_fill) + 
+  theme(strip.text = element_text(size = 12),
+        strip.text.x = element_text(margin = margin(.25,0,.25,0, "cm")),
+        legend.position = 'none')
+
+```
+
+**Cluster 1**: Higher levels of non-communicable disease reflecting higher development.
+
+**Cluster 2**: Highest burdens of HIV/AIDS, diabetes, respiratory illnesses, traffic fatalities, and deaths from intentional injuries.
+
+**Cluster 3**: Countries in the middle of the “double burden” of disease, with elevated (but generally falling) burden of communicable disease and rising burdens from non-communicable disease.
+
+**Cluster 4**: Communicable disease mortality characterizes these countries.  Countries in this cluster are at the beginning of development towards the “double burden” of disease.
+
+```{r test, fig.height=28, fig.width=10, include=FALSE}
+df_cluster_4_results %>% 
+  gather(variable, val, 4:23) %>% 
+  ggplot(.) + 
+  geom_boxplot(aes(x=.cluster,
+                   y=val,
+                   fill=.cluster)) + 
+  facet_wrap(~variable, ncol = 2) + 
+  scale_fill_manual(values = cluster_fill) + 
+  my.theme
+```
+Some quick clean-up to support putting labels on the cluster graphic. 
+
+```{r df_label_help, include=TRUE}
+(df_label_help <- df %>% 
+  select(1) %>%
+  rownames_to_column())
+```
+
+```{r spotlight_countries, include=TRUE, echo=FALSE}
+spotlight <- c('Rwanda', 'Congo, Democratic Republic of', 'Kenya', 'Algeria', 'South Africa', 
+               'Swaziland', 'Niger', 'SierraLeo', 'Liberia', 'Botswana', 'Seychelles', 'Mauritius',
+               'Egypt', 'Ethiopia', 'Sudan', 'Zimbabwe', "Cote d'Ivoire", 'Cameroon', 'Nigeria',
+               'Chad', 'Somalia', 'Lesotho', 'Tunisia', 'Namibia', 'Cape Verde', 'Senegal',
+               'GuineaBiss', 'Central AfR', 'Uganda', 'Algeria', 'Libya', 'Morocco', 'Sudan South',
+               'Mauritania', 'Comoros', 'Madagascar')
+```
+
+```{r kmeans_viz_data, include=TRUE, echo=FALSE}
+(kmeans_viz_data <- kmeans_viz$data %>% 
+  left_join(x=.,
+            y=df_label_help,
+            by=c('name' = 'rowname')))
+```
+
+**Cluster 1**: Higher levels of non-communicable disease reflecting higher development.
+
+**Cluster 2**: Highest burdens of HIV/AIDS, diabetes, respiratory illnesses, traffic fatalities, and deaths from intentional injuries.
+
+**Cluster 3**: Countries in the middle of the “double burden” of disease, with elevated (but generally falling) burden of communicable disease and rising burdens from non-communicable disease.
+
+**Cluster 4**: Communicable disease mortality characterizes these countries.  Countries in this cluster are at the beginning of development towards the “double burden” of disease.
+
+
+```{r kmeans_viz_data_2, include=TRUE, echo=FALSE}
+(kmeans_viz_data <- kmeans_viz_data %>% 
+  mutate(clust_name = case_when(cluster == '1' ~ 'NCDs',
+                                cluster == '2' ~ 'NCDs & HIV',
+                                cluster == '3' ~ 'Double Burden',
+                                cluster == '4' ~ 'CDs'),
+         africa = '1'))
+```
+
+```{r final_viz, include=TRUE, fig.height=7, fig.width=10, fig.align='center'}
+kmeans_viz_data %>% 
+  ggplot(aes(x=x,
+             y=y,
+             color=clust_name,
+             shape=clust_name)) + 
+  geom_point(size=3) + 
+  ggrepel::geom_text_repel(data=. %>% filter(country %in% spotlight),
+                           aes(label = country), force = 10, size=4) + 
+  #ggtitle('K-means') + 
+  labs(x=expression('' %<-% '  Higher NCD burden, higher life expectancy    -    Higher CD burden, lower life expectancy  ' %->% ''),
+       y=expression('' %<-% '  Higher burden from AIDS, respiratory and injury deaths')) + 
+  scale_color_jco() + 
+  my.theme
+```
+
