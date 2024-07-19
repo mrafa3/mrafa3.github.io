@@ -95,9 +95,6 @@ my.theme.minimal <- theme(
   filter(country != 'TARGET'))
 ```
 
-```{r cntry_order2, include=TRUE, echo=FALSE}
-(cntry_order <- factor(cntry_order$country))
-```
 
 ```{r dist_plot_df, include=TRUE}
 (dist_plot_df <- df_scaled_dist_results %>% 
@@ -112,12 +109,8 @@ my.theme.minimal <- theme(
   gather(var, val, 2:8))
 ```
 
-```{r dist_plot_df2, include=TRUE}
-#Turn your 'treatment' column into a character vector
-dist_plot_df$country <- as.character(dist_plot_df$country)
-#Then turn it back into a factor with the levels in the correct order
-dist_plot_df$country <- as.factor(dist_plot_df$country)
-dist_plot_df$country <- factor(dist_plot_df$country, levels=cntry_order)
+```{r cntry_order2, include=TRUE}
+cntry_order$country <- as.factor(cntry_order$country)
 ```
 
 
@@ -167,7 +160,7 @@ dist_plot_df_2 %>%
   filter(achieve == 0) %>% 
   ggplot(.,
          aes(x=val, 
-             y=country)) + 
+             y=factor(country, levels=cntry_order$country))) + 
   geom_point(aes(color=var), 
              #height=.25, width=0,
              alpha=.5, size=8) + 
