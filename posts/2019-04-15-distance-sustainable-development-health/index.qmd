@@ -1,0 +1,193 @@
+---
+title: "Experimenting with distance as a concept for SDG achievement"
+description: "Exploring how to conceptualize and visualize distance from Sustainable Development Goal targets"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 04-15-2019
+categories: [R, data-viz, tidyverse, international-development, cluster-analysis, mapping] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+image: distance_plot.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+```{r libraries, include=TRUE}
+library(tidyverse)
+```
+
+```{r read_data, include=TRUE, warning=FALSE}
+#code for the targets of each health-related goal
+sdg_targets <- data.frame(
+  variable = c("MATMORTRATIO", "NEONATMOR", "CHILDDTHR", "NonCommun", "TrafficAcc", "AIDS", "Malaria"),
+  country = rep("TARGET", 7),
+  `2030` = c(70, 12, 25, 2/3, 0.5, 0.001, 0.001)
+) %>% 
+  rename("2030" = "X2030")
+
+(df <- read_csv('.//data/IFs_results_02apr2019.csv') %>% 
+   filter(scenario == '00CP_adj_ADB') %>% 
+   select(1:5, `2015`, `2020`, `2030`, `2063`))
+```
+
+```{r df_scaled_dist_results, include=TRUE, warning=FALSE}
+(df_scaled_dist_results <- df %>% 
+  filter(variable %in% c('MATMORTRATIO', 'NEONATMOR', 'CHILDDTHR') | 
+         unit %in% c('AIDS', 'Malaria')) %>% 
+  mutate(variable = ifelse(unit %in% c('AIDS', 'Malaria'), as.character(unit), as.character(variable))) %>% 
+  select(variable, country, `2030`) %>% 
+  spread(variable, `2030`) %>% 
+  #add targets as row by reshaping the targets dataframe
+  bind_rows(., 
+            sdg_targets %>%
+              spread(variable, `2030`)) %>% 
+  mutate_at(vars(AIDS:NEONATMOR), funs(scale(.))) %>% 
+  select(-c(7:8)))
+```
+
+```{r df_scaled_dist_results_rel_targets, include=TRUE}
+(df_scaled_dist_results_rel_targets <- df %>% 
+  filter(unit %in% c('TrafficAcc', 'NonCommun')) %>% 
+  select(unit, country, `2015`, `2020`, `2030`) %>% 
+  rename('variable' = 'unit') %>% 
+  mutate(ratio_ = ifelse(variable == 'TrafficAcc', `2020` / `2015`, `2030` / `2015`)) %>% 
+  select(-c(3:5)) %>% 
+  spread(variable, ratio_) %>% 
+  bind_rows(., 
+            #add targets as row by reshaping the targets dataframe
+            sdg_targets %>%
+              filter(variable %in% c('TrafficAcc', 'NonCommun')) %>% 
+              spread(variable, `2030`)) %>% 
+  mutate_at(vars(NonCommun:TrafficAcc), funs(scale(.))))
+```
+
+```{r my.theme.minimal, include=TRUE}
+my.theme.minimal <- theme(
+  plot.title = element_text(color="black", face="plain", size=10, hjust=0), 
+  plot.subtitle = element_text(color="black", size=15, hjust=0), 
+  axis.title = element_text(color="black", face="plain", size=14), 
+  axis.text.y = element_text(size=13), 
+  axis.text.x = element_text(angle = 90, hjust = 1, size=16), 
+  axis.line = element_line(linewidth = .5, color = "black"),
+  plot.caption = element_text(color="black", size=13), 
+  panel.background =  element_blank(), 
+  panel.border = element_blank(), 
+  legend.title=element_blank(), 
+  legend.text = element_text(color="black", size=14, hjust=0),
+  legend.spacing.x = unit(.5, 'cm'), 
+  legend.position = 'bottom',
+  strip.text = element_text(color="black", face="plain", size=16),
+  strip.background = element_rect(fill = "white"))
+```
+
+```{r cnry_order, include=TRUE, echo=FALSE, warning=FALSE}
+(cntry_order <- df_scaled_dist_results %>% 
+  left_join(x=.,
+            y=df_scaled_dist_results_rel_targets,
+            by='country') %>% 
+  gather(var, val, 2:8) %>% 
+  group_by(country) %>% 
+  summarise(avg_val = mean(val)) %>% 
+  arrange(avg_val) %>% 
+  filter(country != 'TARGET'))
+```
+
+```{r cntry_order, include=TRUE, echo=FALSE}
+(cntry_order <- factor(cntry_order$country))
+```
+
+```{r}
+(dist_plot_df <- df_scaled_dist_results %>% 
+  filter(country != 'TARGET') %>% 
+  left_join(x=.,
+            y=df_scaled_dist_results_rel_targets,
+            by='country') %>% 
+  left_join(x=.,
+            y=cntry_order,
+            by='country') %>% 
+  arrange(-avg_val) %>% 
+  gather(var, val, 2:8))
+```
+
+```{r}
+#Turn your 'treatment' column into a character vector
+dist_plot_df$country <- as.character(dist_plot_df$country)
+#Then turn it back into a factor with the levels in the correct order
+dist_plot_df$country <- as.factor(dist_plot_df$country)
+
+dist_plot_df$country <- factor(dist_plot_df$country, levels=cntry_order)
+```
+
+
+```{r}
+(df_target_scaled_vals <- df_scaled_dist_results %>% 
+  filter(country == 'TARGET') %>% 
+  left_join(x=.,
+            y=df_scaled_dist_results_rel_targets %>% filter(country == 'TARGET'),
+            by='country') %>% 
+  gather(var, target, 2:8) %>% 
+  select(2:3))
+```
+
+
+```{r}
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+```{r}
+targ_cols <- c('AIDS' = "#E69F00", 
+               'CHILDDTHR' = "#56B4E9",
+               'Malaria' = "#009E73",
+               'MATMORTRATIO' = "#F0E442",
+               'NEONATMOR' = "#0072B2",
+               'NonCommun' = "#D55E00",
+               'TrafficAcc' = "#CC79A7")
+```
+
+```{r}
+(dist_plot_df_2 <- dist_plot_df %>% 
+  left_join(x=.,
+            y=df_target_scaled_vals,
+            by='var'))
+```
+
+```{r}
+(seg_length <- dist_plot_df_2 %>% 
+  mutate(achieve = ifelse(val <= target, 1, 0)) %>% 
+  filter(achieve == 0) %>% 
+  group_by(country) %>% 
+  summarise(min_val = min(val),
+            max_val = max(val)))
+```
+
+
+
+```{r fig.width=10, fig.height=35}
+dist_plot_df_2 %>% 
+  mutate(achieve = ifelse(val <= target, 1, 0)) %>% 
+  filter(achieve == 0) %>% 
+  ggplot(.,
+         aes(x=val, 
+             y=country)) + 
+  geom_point(aes(color=var), 
+             #height=.25, width=0,
+             alpha=.5, size=8) + 
+  geom_segment(data=seg_length,
+               aes(x=min_val, xend=max_val, yend=country),
+               color='gray60', linewidth=1) + 
+  labs(x='',
+       y='') + 
+  my.theme.minimal + 
+  theme(legend.position = 'top') + 
+  scale_color_manual(values = targ_cols,
+                     labels = c('MATMORTRATIO' = 'Maternal Mortality',
+                               'NEONATMOR' = 'Neonatal Mortality',
+                               'CHILDDTHR' = '< 5 Mortality',
+                               'NonCommun' = 'NCDs',
+                               'TrafficAcc' = 'Traffic Mortality')) + 
+  scale_y_discrete(labels = function(x) str_wrap(x, width = 10)) + 
+  scale_x_continuous(position = 'top')
+
+ggsave('distance_plot.png', plot = last_plot(), width = 10, height = 20)
+```
