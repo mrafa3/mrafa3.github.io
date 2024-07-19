@@ -244,6 +244,5 @@ kmeans_viz_data %>%
        y=expression('' %<-% '  Higher burden from AIDS, respiratory and injury deaths')) + 
   scale_color_jco() + 
   my.theme
-ggsave("cluster_plot.png", plot = last_plot(), width = 10, height = 7)
 ```
 
