@@ -81,6 +81,8 @@ my.theme.minimal <- theme(
   strip.background = element_rect(fill = "white"))
 ```
 
+## Setting order by distance from achievement 
+
 ```{r cnry_order, include=TRUE, echo=FALSE, warning=FALSE}
 (cntry_order <- df_scaled_dist_results %>% 
   left_join(x=.,
@@ -93,11 +95,11 @@ my.theme.minimal <- theme(
   filter(country != 'TARGET'))
 ```
 
-```{r cntry_order, include=TRUE, echo=FALSE}
+```{r cntry_order2, include=TRUE, echo=FALSE}
 (cntry_order <- factor(cntry_order$country))
 ```
 
-```{r}
+```{r dist_plot_df, include=TRUE}
 (dist_plot_df <- df_scaled_dist_results %>% 
   filter(country != 'TARGET') %>% 
   left_join(x=.,
@@ -110,17 +112,16 @@ my.theme.minimal <- theme(
   gather(var, val, 2:8))
 ```
 
-```{r}
+```{r dist_plot_df2, include=TRUE}
 #Turn your 'treatment' column into a character vector
 dist_plot_df$country <- as.character(dist_plot_df$country)
 #Then turn it back into a factor with the levels in the correct order
 dist_plot_df$country <- as.factor(dist_plot_df$country)
-
 dist_plot_df$country <- factor(dist_plot_df$country, levels=cntry_order)
 ```
 
 
-```{r}
+```{r df_target_scaled_vals, include=TRUE}
 (df_target_scaled_vals <- df_scaled_dist_results %>% 
   filter(country == 'TARGET') %>% 
   left_join(x=.,
@@ -130,12 +131,9 @@ dist_plot_df$country <- factor(dist_plot_df$country, levels=cntry_order)
   select(2:3))
 ```
 
-
-```{r}
+```{r palette, include=TRUE}
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-```
 
-```{r}
 targ_cols <- c('AIDS' = "#E69F00", 
                'CHILDDTHR' = "#56B4E9",
                'Malaria' = "#009E73",
@@ -152,7 +150,7 @@ targ_cols <- c('AIDS' = "#E69F00",
             by='var'))
 ```
 
-```{r}
+```{r seg_length, include=TRUE}
 (seg_length <- dist_plot_df_2 %>% 
   mutate(achieve = ifelse(val <= target, 1, 0)) %>% 
   filter(achieve == 0) %>% 
@@ -188,6 +186,4 @@ dist_plot_df_2 %>%
                                'TrafficAcc' = 'Traffic Mortality')) + 
   scale_y_discrete(labels = function(x) str_wrap(x, width = 10)) + 
   scale_x_continuous(position = 'top')
-
-ggsave('distance_plot.png', plot = last_plot(), width = 10, height = 20)
 ```
