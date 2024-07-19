@@ -1,5 +1,5 @@
 ---
-title: "Cluster Analysis of African Health Outcomes"
+title: "PART ONE: Cluster Analysis of African Health Outcomes"
 description: "Exploring how African countries cluster based on their health outcomes"
 author:
   - name: Mickey Rafa
