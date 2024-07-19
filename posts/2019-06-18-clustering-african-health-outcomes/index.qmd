@@ -117,7 +117,7 @@ set.seed(1234)
   select(.cluster, country, group, everything()))
 ```
 
-##Analysis of results
+## Analysis of results
 
 First, I'll use the `fiz_cluster()` function to visualize cluster membership. (There's further clean-up needed, but I want to see the initial viz).
 
@@ -220,15 +220,6 @@ spotlight <- c('Rwanda', 'Congo, Democratic Republic of', 'Kenya', 'Algeria', 'S
             y=df_label_help,
             by=c('name' = 'rowname')))
 ```
-
-**Cluster 1**: Higher levels of non-communicable disease reflecting higher development.
-
-**Cluster 2**: Highest burdens of HIV/AIDS, diabetes, respiratory illnesses, traffic fatalities, and deaths from intentional injuries.
-
-**Cluster 3**: Countries in the middle of the “double burden” of disease, with elevated (but generally falling) burden of communicable disease and rising burdens from non-communicable disease.
-
-**Cluster 4**: Communicable disease mortality characterizes these countries.  Countries in this cluster are at the beginning of development towards the “double burden” of disease.
-
 
 ```{r kmeans_viz_data_2, include=TRUE, echo=FALSE}
 (kmeans_viz_data <- kmeans_viz_data %>% 
