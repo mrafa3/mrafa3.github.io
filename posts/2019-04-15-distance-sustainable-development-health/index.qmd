@@ -13,6 +13,24 @@ image: distance_plot.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
+# Introduction
+
+## Purpose
+The United Nations created the Sustainable Development Goals (SDGs) to set an ambitious global development agenda to work toward by 2030. A continental development organization in Africa asked, *how could we think about [SDG 3](https://www.globalgoals.org/goals/3-good-health-and-well-being/?gad_source=1&gclid=Cj0KCQjwwO20BhCJARIsAAnTIVSlatprBbt62rxkZomR6BOTcxeXDvYPvAkShEGVRG-_DfDC9T6Cb84aAjzqEALw_wcB) (the health goals) in a holistic and aggregate sense?*
+
+## Dataset
+This analysis uses results from the International Futures global forecasting model and its **Current Path** scenario. The results span many of the measurable targets of SDG3, including:
+
+* Maternal mortality ratio
+* Neonatal mortality ratio
+* Under-5 mortality rate
+* Non-communicable disease death rate
+* Traffic accident death rate
+* AIDS death rate
+* Malaria death rate
+
+# Setup
+
 ```{r libraries, include=TRUE}
 library(tidyverse)
 ```
