@@ -13,6 +13,35 @@ image: cluster_plot.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
+# Introduction
+
+## Purpose
+The United Nations created the Sustainable Development Goals (SDGs) to set an ambitious global development agenda to work toward by 2030. 
+
+## Dataset
+This analysis uses results from the International Futures global forecasting model and its **Current Path** scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results. 
+
+DR_OthCommumDis				
+DR_MaligNeoPl				
+DR_CardioVasc				
+DR_Digestive				
+DR_Respiratory				
+DR_OtherNonComm				
+DR_TrafficAcc				
+DR_UnIntInj				
+DR_IntInj				
+DR_Diabetes
+DR_AIDS				
+DR_Diarrhea				
+DR_Malaria				
+DR_RespInfec				
+DR_MentalHealth				
+CLPC				
+HLSTUNT				
+HLSMOKING				
+INFMOR				
+MATMORTRATIO
+
 ## Setup
 
 ```{r setup, include=TRUE, message=FALSE, warning=FALSE}
@@ -20,7 +49,8 @@ library(tidyverse)
 library(factoextra)
 library(NbClust)
 library(ggsci)              #for jco color palette
-library(psych)              #for PCA
+library(psych)              
+#library(gtExtras)
 #library(extrafont)
 #library(class)             #for kNN
 #library(caret)             #backup kNN function
@@ -43,8 +73,6 @@ my.theme <- theme(
   strip.text = element_text(color="black", face="plain", size=16),
   strip.background = element_rect(fill = "white"))
 ```
-
-The dataset contains country-level health outcomes projections from the International Futures model from 2015-2065. For this clustering exercise, I am using the 2019 results.
 
 ```{r read_data, include=TRUE}
 (df <- readxl::read_xlsx('.//data/cluster_health_afr_14mar2019.xlsx')) 
