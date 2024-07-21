@@ -5,7 +5,7 @@ author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
-date: 07-15-2024
+date: 12-23-2022
 categories: [R, web-scraping, gt, sports] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
@@ -13,9 +13,12 @@ image: tbl_top_scorers.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
+# Introduction
+
+## Purpose
 In this project, I wanted to experiment with the `gt::` package to create a beautiful table using R. This code will walk through scraping a table from Wikipedia of the top international goal scorers in men's soccer history.
 
-# Setup 
+## Setup and data preparation
 
 Required packages: 
 
@@ -43,7 +46,7 @@ flag_db <- read.csv("https://query.data.world/s/cnheo22w5mwowz2tfxrbb3z2i3mzya?d
   select(Country, flag_URL = ImageURL)
 ```
 
-# Scrape Wikipedia Data 
+## Scrape Wikipedia Data 
 
 ```{r url, include=TRUE}
 url_goals <- 'https://en.wikipedia.org/wiki/List_of_men%27s_footballers_with_50_or_more_international_goals'
