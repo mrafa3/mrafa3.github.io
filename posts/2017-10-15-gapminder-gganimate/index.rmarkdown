@@ -13,6 +13,7 @@ categories: [R, data-viz, tidyverse, gganimate] # self-defined categories
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
+
 # Introduction
 
 ## Purpose
@@ -22,6 +23,7 @@ In this project, I wanted to experiment with `gganimate::` to reproduce the clas
 The Gapminder dataset, compiled by the Gapminder Foundation, provides data on global development trends, including indicators like life expectancy, GDP per capita, and population. The dataset is known for its use in dynamic visualizations that illustrate changes in global indicators over time.
 
 ## Setup
+
 
 ```{r setup, include=FALSE}
 library(tidyverse)    #for data management and visualization
@@ -49,7 +51,9 @@ my.theme <- theme(
 summary(gapminder)
 ```
 
+
 In this graphic, I want to spotlight China's development path, and also show the story of differences by continent. First, I'll show all the data, which makes clear the need for animation of this data.
+
 
 ```{r fig1, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 
@@ -72,7 +76,9 @@ gapminder %>%
         legend.title = element_blank()) + 
   guides(size='none')
 ```
+
 ## gganimate::
+
 
 ```{r gganimate, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 
@@ -109,7 +115,9 @@ gapminder %>%
   ease_aes()
 ```
 
+
 ## Using the gganimate::shadow_wake() function to leave a trail
+
 
 ```{r gganimate2, fig.height=6.2, fig.width=10, fig.align='center'}
 gapminder %>% 

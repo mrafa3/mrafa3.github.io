@@ -192,9 +192,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#purpose" id="toc-purpose" class="nav-link" data-scroll-target="#purpose">Purpose</a></li>
+  <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
   <li><a href="#gganimate" id="toc-gganimate" class="nav-link" data-scroll-target="#gganimate">gganimate::</a></li>
   <li><a href="#using-the-gganimateshadow_wake-function-to-leave-a-trail" id="toc-using-the-gganimateshadow_wake-function-to-leave-a-trail" class="nav-link" data-scroll-target="#using-the-gganimateshadow_wake-function-to-leave-a-trail">Using the gganimate::shadow_wake() function to leave a trail</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -205,6 +210,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<section id="purpose" class="level2">
+<h2 class="anchored" data-anchor-id="purpose">Purpose</h2>
+<p>In this project, I wanted to experiment with <code>gganimate::</code> to reproduce the classic animated visualization by Hans Rosling of Gapminder data.</p>
+</section>
+<section id="dataset" class="level2">
+<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
+<p>The Gapminder dataset, compiled by the Gapminder Foundation, provides data on global development trends, including indicators like life expectancy, GDP per capita, and population. The dataset is known for its use in dynamic visualizations that illustrate changes in global indicators over time.</p>
+<center>
+<p><a href="https://www.google.com/url?sa=i&amp;url=https%3A%2F%2Fwww.gapminder.org%2Ftag%2Fgapminder-world%2F&amp;psig=AOvVaw2IwfQSTFDghid4GnL0WUtb&amp;ust=1721330817600000&amp;source=images&amp;cd=vfe&amp;opi=89978449&amp;ved=0CBQQjRxqFwoTCLjn9pPnrocDFQAAAAAdAAAAABAE"></a></p>
+</center>
+</section>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <div class="cell">
@@ -227,9 +245,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                                        </code></pre>
 </div>
 </div>
-<center>
-<p><a href="https://www.google.com/url?sa=i&amp;url=https%3A%2F%2Fwww.gapminder.org%2Ftag%2Fgapminder-world%2F&amp;psig=AOvVaw2IwfQSTFDghid4GnL0WUtb&amp;ust=1721330817600000&amp;source=images&amp;cd=vfe&amp;opi=89978449&amp;ved=0CBQQjRxqFwoTCLjn9pPnrocDFQAAAAAdAAAAABAE"></a></p>
-</center>
 <p>In this graphic, I want to spotlight China’s development path, and also show the story of differences by continent. First, I’ll show all the data, which makes clear the need for animation of this data.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gapminder <span class="sc">%&gt;%</span> </span>
@@ -350,6 +365,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
