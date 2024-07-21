@@ -193,12 +193,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#purpose" id="toc-purpose" class="nav-link" data-scroll-target="#purpose">Purpose</a></li>
+  <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#setup-and-data-preparation" id="toc-setup-and-data-preparation" class="nav-link" data-scroll-target="#setup-and-data-preparation">Setup and data preparation</a></li>
+  </ul></li>
   <li><a href="#clustering" id="toc-clustering" class="nav-link" data-scroll-target="#clustering">Clustering</a>
   <ul class="collapse">
   <li><a href="#wrangling-cluster-results" id="toc-wrangling-cluster-results" class="nav-link" data-scroll-target="#wrangling-cluster-results">Wrangling cluster results</a></li>
-  </ul></li>
   <li><a href="#analysis-of-results" id="toc-analysis-of-results" class="nav-link" data-scroll-target="#analysis-of-results">Analysis of results</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -209,102 +214,146 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="setup" class="level2">
-<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<section id="purpose" class="level2">
+<h2 class="anchored" data-anchor-id="purpose">Purpose</h2>
+<p>The United Nations created the Sustainable Development Goals (SDGs) to set an ambitious global development agenda to work toward by 2030. A continental development organization in Africa asked, <em>how could we think about <a href="https://www.globalgoals.org/goals/3-good-health-and-well-being/?gad_source=1&amp;gclid=Cj0KCQjwwO20BhCJARIsAAnTIVSlatprBbt62rxkZomR6BOTcxeXDvYPvAkShEGVRG-_DfDC9T6Cb84aAjzqEALw_wcB">SDG 3</a> (the health goals) in a holistic and aggregate sense?</em></p>
+<p>To get a clearer picture of how health outcomes are spread across the continent, I use cluster analysis to group countries by primary health outcomes data.</p>
+</section>
+<section id="dataset" class="level2">
+<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
+<p>This analysis uses results from the International Futures global forecasting model and its <strong>Base Case</strong> (or Current Path) scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results.</p>
+<ul>
+<li>DR_OthCommumDis: Death Rate from other communicable diseases<br>
+</li>
+<li>DR_MaligNeoPl: Death Rate from malignant neoplasms (cancers)</li>
+<li>DR_CardioVasc: Death Rate from cariovascular diseases</li>
+<li>DR_Digestive: Death Rate from digestive illnesses</li>
+<li>DR_Respiratory: Death Rate from respiratory illnesses</li>
+<li>DR_OtherNonComm: Death Rate from other non-communicable diseases</li>
+<li>DR_TrafficAcc: Death Rate from traffic accidents</li>
+<li>DR_UnIntInj: Death Rate from unintentional injuries</li>
+<li>DR_IntInj: Death Rate from intentional injuries</li>
+<li>DR_Diabetes: Death Rate from diabetes</li>
+<li>DR_AIDS: Death Rate from HIV/AIDS</li>
+<li>DR_Diarrhea: Death Rate from diarrheal illnesses</li>
+<li>DR_Malaria: Death Rate from malaria</li>
+<li>DR_RespInfec: Death Rate from respiratory infections</li>
+<li>DR_MentalHealth: Death Rate from mental health illnesses</li>
+<li>CLPC: Calories consumed per capita</li>
+<li>HLSTUNT: Stunting rate for under-5 population</li>
+<li>HLSMOKING: Smoking rate</li>
+<li>INFMOR: Infant mortality rate (deaths per 1,000 live births)</li>
+<li>MATMORTRATIO: Maternal mortality rate (deaths per 100,000 live births)</li>
+</ul>
+<p>For more information on these fields, see the <a href="https://korbel.du.edu/sites/default/files/2021-12/IFs%20Health%20Model%20Documentation.pdf">International Futures Health Model documentation</a>.</p>
+</section>
+<section id="setup-and-data-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="setup-and-data-preparation">Setup and data preparation</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(NbClust)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggsci)              <span class="co">#for jco color palette</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)              <span class="co">#for PCA</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#library(extrafont)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#library(class)             #for kNN</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#library(caret)             #backup kNN function</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>my.theme <span class="ot">&lt;-</span> <span class="fu">theme</span>(</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">face=</span><span class="st">"plain"</span>, <span class="at">size=</span><span class="dv">17</span>, <span class="at">hjust=</span><span class="dv">0</span>), </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">size=</span><span class="dv">15</span>, <span class="at">hjust=</span><span class="dv">0</span>), </span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">face=</span><span class="st">"plain"</span>, <span class="at">size=</span><span class="dv">14</span>), </span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">16</span>), </span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size=</span><span class="dv">13</span>), </span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">size=</span><span class="dv">13</span>), </span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.background =</span>  <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#F7F7F7"</span>, <span class="at">colour =</span> <span class="cn">NA</span>), </span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"grey90"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>),</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"grey93"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>),</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">linetype =</span> <span class="dv">1</span>),</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="fu">element_blank</span>(), </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">size=</span><span class="dv">14</span>, <span class="at">hjust=</span><span class="dv">0</span>),</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.spacing.x =</span> <span class="fu">unit</span>(.<span class="dv">5</span>, <span class="st">'cm'</span>), </span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.position =</span> <span class="st">'bottom'</span>,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">face=</span><span class="st">"plain"</span>, <span class="at">size=</span><span class="dv">16</span>),</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)              </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>my.theme <span class="ot">&lt;-</span> <span class="fu">theme</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">face=</span><span class="st">"plain"</span>, <span class="at">size=</span><span class="dv">17</span>, <span class="at">hjust=</span><span class="dv">0</span>), </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">size=</span><span class="dv">15</span>, <span class="at">hjust=</span><span class="dv">0</span>), </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">face=</span><span class="st">"plain"</span>, <span class="at">size=</span><span class="dv">14</span>), </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">16</span>), </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size=</span><span class="dv">13</span>), </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">size=</span><span class="dv">13</span>), </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.background =</span>  <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#F7F7F7"</span>, <span class="at">colour =</span> <span class="cn">NA</span>), </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"grey90"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"grey93"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">colour =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">linetype =</span> <span class="dv">1</span>),</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.title=</span><span class="fu">element_blank</span>(), </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">size=</span><span class="dv">14</span>, <span class="at">hjust=</span><span class="dv">0</span>),</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.spacing.x =</span> <span class="fu">unit</span>(.<span class="dv">5</span>, <span class="st">'cm'</span>), </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">legend.position =</span> <span class="st">'bottom'</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">color=</span><span class="st">"black"</span>, <span class="at">face=</span><span class="st">"plain"</span>, <span class="at">size=</span><span class="dv">16</span>),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">strip.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The dataset contains country-level health outcomes projections from the International Futures model from 2015-2065. For this clustering exercise, I am using the 2019 results.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(df <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">'.//data/cluster_health_afr_14mar2019.xlsx'</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_xlsx</span>(<span class="st">'.//data/cluster_health_afr_14mar2019.xlsx'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,080 × 56
-   variable      country dim   unit  scenario `2015` `2016` `2017` `2018` `2019`
-   &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
- 1 DR_OthCommum… Algeria Total &lt;NA&gt;  Base      0.445  0.425  0.41   0.394  0.377
- 2 DR_MaligNeoPl Algeria Total &lt;NA&gt;  Base      0.512  0.517  0.521  0.526  0.531
- 3 DR_CardioVasc Algeria Total &lt;NA&gt;  Base      1.76   1.80   1.83   1.86   1.89 
- 4 DR_Digestive  Algeria Total &lt;NA&gt;  Base      0.063  0.064  0.064  0.064  0.065
- 5 DR_Respirato… Algeria Total &lt;NA&gt;  Base      0.153  0.157  0.161  0.164  0.168
- 6 DR_OtherNonC… Algeria Total &lt;NA&gt;  Base      0.622  0.618  0.617  0.616  0.614
- 7 DR_TrafficAcc Algeria Total &lt;NA&gt;  Base      0.276  0.28   0.279  0.278  0.278
- 8 DR_UnIntInj   Algeria Total &lt;NA&gt;  Base      0.146  0.146  0.148  0.149  0.15 
- 9 DR_IntInj     Algeria Total &lt;NA&gt;  Base      0.053  0.053  0.053  0.053  0.053
-10 DR_Diabetes   Algeria Total &lt;NA&gt;  Base      0.214  0.218  0.223  0.229  0.234
-# ℹ 1,070 more rows
-# ℹ 46 more variables: `2020` &lt;dbl&gt;, `2021` &lt;dbl&gt;, `2022` &lt;dbl&gt;, `2023` &lt;dbl&gt;,
-#   `2024` &lt;dbl&gt;, `2025` &lt;dbl&gt;, `2026` &lt;dbl&gt;, `2027` &lt;dbl&gt;, `2028` &lt;dbl&gt;,
-#   `2029` &lt;dbl&gt;, `2030` &lt;dbl&gt;, `2031` &lt;dbl&gt;, `2032` &lt;dbl&gt;, `2033` &lt;dbl&gt;,
-#   `2034` &lt;dbl&gt;, `2035` &lt;dbl&gt;, `2036` &lt;dbl&gt;, `2037` &lt;dbl&gt;, `2038` &lt;dbl&gt;,
-#   `2039` &lt;dbl&gt;, `2040` &lt;dbl&gt;, `2041` &lt;dbl&gt;, `2042` &lt;dbl&gt;, `2043` &lt;dbl&gt;,
-#   `2044` &lt;dbl&gt;, `2045` &lt;dbl&gt;, `2046` &lt;dbl&gt;, `2047` &lt;dbl&gt;, `2048` &lt;dbl&gt;, …</code></pre>
+<pre><code>Rows: 1,080
+Columns: 56
+$ variable &lt;chr&gt; "DR_OthCommumDis", "DR_MaligNeoPl", "DR_CardioVasc", "DR_Dige…
+$ country  &lt;chr&gt; "Algeria", "Algeria", "Algeria", "Algeria", "Algeria", "Alger…
+$ dim      &lt;chr&gt; "Total", "Total", "Total", "Total", "Total", "Total", "Total"…
+$ unit     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ scenario &lt;chr&gt; "Base", "Base", "Base", "Base", "Base", "Base", "Base", "Base…
+$ `2015`   &lt;dbl&gt; 0.4450, 0.5120, 1.7640, 0.0630, 0.1530, 0.6220, 0.2760, 0.146…
+$ `2016`   &lt;dbl&gt; 0.4250, 0.5170, 1.8020, 0.0640, 0.1570, 0.6180, 0.2800, 0.146…
+$ `2017`   &lt;dbl&gt; 0.4100, 0.5210, 1.8300, 0.0640, 0.1610, 0.6170, 0.2790, 0.148…
+$ `2018`   &lt;dbl&gt; 0.3940, 0.5260, 1.8630, 0.0640, 0.1640, 0.6160, 0.2780, 0.149…
+$ `2019`   &lt;dbl&gt; 0.3770, 0.5310, 1.8940, 0.0650, 0.1680, 0.6140, 0.2780, 0.150…
+$ `2020`   &lt;dbl&gt; 0.3600, 0.5360, 1.9260, 0.0660, 0.1720, 0.6110, 0.2780, 0.151…
+$ `2021`   &lt;dbl&gt; 0.3430, 0.5420, 1.9530, 0.0670, 0.1760, 0.6080, 0.2780, 0.151…
+$ `2022`   &lt;dbl&gt; 0.3260, 0.5480, 1.9830, 0.0670, 0.1800, 0.6050, 0.2790, 0.152…
+$ `2023`   &lt;dbl&gt; 0.3110, 0.5550, 2.0140, 0.0680, 0.1850, 0.6040, 0.2790, 0.153…
+$ `2024`   &lt;dbl&gt; 0.2970, 0.5610, 2.0430, 0.0690, 0.1890, 0.6030, 0.2790, 0.153…
+$ `2025`   &lt;dbl&gt; 0.2840, 0.5680, 2.0720, 0.0700, 0.1940, 0.6020, 0.2800, 0.154…
+$ `2026`   &lt;dbl&gt; 0.2720, 0.5750, 2.1020, 0.0710, 0.1980, 0.6030, 0.2810, 0.154…
+$ `2027`   &lt;dbl&gt; 0.2610, 0.5820, 2.1330, 0.0720, 0.2030, 0.6030, 0.2830, 0.154…
+$ `2028`   &lt;dbl&gt; 0.2500, 0.5900, 2.1680, 0.0730, 0.2080, 0.6050, 0.2840, 0.155…
+$ `2029`   &lt;dbl&gt; 0.2400, 0.5980, 2.2020, 0.0740, 0.2140, 0.6070, 0.2860, 0.155…
+$ `2030`   &lt;dbl&gt; 0.2320, 0.6050, 2.2400, 0.0760, 0.2190, 0.6100, 0.2880, 0.156…
+$ `2031`   &lt;dbl&gt; 0.2230, 0.6130, 2.2760, 0.0770, 0.2250, 0.6140, 0.2910, 0.157…
+$ `2032`   &lt;dbl&gt; 0.2160, 0.6210, 2.3170, 0.0780, 0.2310, 0.6180, 0.2930, 0.157…
+$ `2033`   &lt;dbl&gt; 0.2080, 0.6290, 2.3580, 0.0800, 0.2380, 0.6230, 0.2950, 0.158…
+$ `2034`   &lt;dbl&gt; 0.2020, 0.6370, 2.4020, 0.0810, 0.2440, 0.6280, 0.2980, 0.159…
+$ `2035`   &lt;dbl&gt; 0.1960, 0.6440, 2.4440, 0.0830, 0.2510, 0.6330, 0.3000, 0.159…
+$ `2036`   &lt;dbl&gt; 0.1900, 0.6520, 2.4870, 0.0840, 0.2580, 0.6390, 0.3030, 0.160…
+$ `2037`   &lt;dbl&gt; 0.1840, 0.6600, 2.5320, 0.0860, 0.2650, 0.6450, 0.3050, 0.161…
+$ `2038`   &lt;dbl&gt; 0.1790, 0.6680, 2.5770, 0.0870, 0.2720, 0.6510, 0.3080, 0.162…
+$ `2039`   &lt;dbl&gt; 0.1740, 0.6750, 2.6220, 0.0890, 0.2790, 0.6570, 0.3100, 0.163…
+$ `2040`   &lt;dbl&gt; 0.1690, 0.6830, 2.6660, 0.0910, 0.2870, 0.6640, 0.3130, 0.165…
+$ `2041`   &lt;dbl&gt; 0.1650, 0.6910, 2.7110, 0.0930, 0.2950, 0.6700, 0.3150, 0.166…
+$ `2042`   &lt;dbl&gt; 0.1610, 0.6990, 2.7550, 0.0940, 0.3030, 0.6770, 0.3170, 0.167…
+$ `2043`   &lt;dbl&gt; 0.1580, 0.7070, 2.8010, 0.0960, 0.3110, 0.6850, 0.3190, 0.169…
+$ `2044`   &lt;dbl&gt; 0.1560, 0.7150, 2.8470, 0.0990, 0.3190, 0.6940, 0.3210, 0.171…
+$ `2045`   &lt;dbl&gt; 0.1540, 0.7220, 2.8920, 0.1010, 0.3270, 0.7020, 0.3230, 0.173…
+$ `2046`   &lt;dbl&gt; 0.1510, 0.7290, 2.9410, 0.1030, 0.3360, 0.7110, 0.3240, 0.175…
+$ `2047`   &lt;dbl&gt; 0.1490, 0.7360, 2.9880, 0.1050, 0.3450, 0.7190, 0.3250, 0.177…
+$ `2048`   &lt;dbl&gt; 0.1460, 0.7430, 3.0370, 0.1070, 0.3540, 0.7280, 0.3260, 0.179…
+$ `2049`   &lt;dbl&gt; 0.1430, 0.7500, 3.0860, 0.1100, 0.3630, 0.7370, 0.3280, 0.182…
+$ `2050`   &lt;dbl&gt; 0.1400, 0.7560, 3.1340, 0.1120, 0.3720, 0.7440, 0.3290, 0.184…
+$ `2051`   &lt;dbl&gt; 0.1360, 0.7630, 3.1780, 0.1150, 0.3810, 0.7510, 0.3300, 0.186…
+$ `2052`   &lt;dbl&gt; 0.1330, 0.7690, 3.2230, 0.1170, 0.3900, 0.7570, 0.3310, 0.188…
+$ `2053`   &lt;dbl&gt; 0.1300, 0.7750, 3.2690, 0.1190, 0.4000, 0.7640, 0.3320, 0.190…
+$ `2054`   &lt;dbl&gt; 0.1260, 0.7810, 3.3190, 0.1220, 0.4100, 0.7720, 0.3330, 0.193…
+$ `2055`   &lt;dbl&gt; 0.1230, 0.7870, 3.3690, 0.1250, 0.4200, 0.7790, 0.3330, 0.195…
+$ `2056`   &lt;dbl&gt; 0.1200, 0.7920, 3.4220, 0.1280, 0.4300, 0.7870, 0.3340, 0.198…
+$ `2057`   &lt;dbl&gt; 0.1180, 0.7970, 3.4830, 0.1300, 0.4410, 0.7970, 0.3340, 0.201…
+$ `2058`   &lt;dbl&gt; 0.1150, 0.8030, 3.5360, 0.1330, 0.4520, 0.8050, 0.3350, 0.204…
+$ `2059`   &lt;dbl&gt; 0.1120, 0.8080, 3.5950, 0.1370, 0.4640, 0.8130, 0.3360, 0.207…
+$ `2060`   &lt;dbl&gt; 0.1100, 0.8130, 3.6500, 0.1400, 0.4750, 0.8210, 0.3360, 0.210…
+$ `2061`   &lt;dbl&gt; 0.108, 0.817, 3.705, 0.143, 0.487, 0.829, 0.337, 0.213, 0.061…
+$ `2062`   &lt;dbl&gt; 0.105, 0.822, 3.755, 0.146, 0.498, 0.835, 0.338, 0.215, 0.061…
+$ `2063`   &lt;dbl&gt; 0.103, 0.826, 3.805, 0.149, 0.509, 0.842, 0.339, 0.218, 0.061…
+$ `2064`   &lt;dbl&gt; 0.101, 0.830, 3.852, 0.152, 0.520, 0.848, 0.340, 0.222, 0.061…
+$ `2065`   &lt;dbl&gt; 0.099, 0.833, 3.894, 0.155, 0.531, 0.854, 0.340, 0.224, 0.061…</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 20 × 1
-   variable       
-   &lt;chr&gt;          
- 1 DR_OthCommumDis
- 2 DR_MaligNeoPl  
- 3 DR_CardioVasc  
- 4 DR_Digestive   
- 5 DR_Respiratory 
- 6 DR_OtherNonComm
- 7 DR_TrafficAcc  
- 8 DR_UnIntInj    
- 9 DR_IntInj      
-10 DR_Diabetes    
-11 DR_AIDS        
-12 DR_Diarrhea    
-13 DR_Malaria     
-14 DR_RespInfec   
-15 DR_MentalHealth
-16 CLPC           
-17 HLSTUNT        
-18 HLSMOKING      
-19 INFMOR         
-20 MATMORTRATIO   </code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#pivot data</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">gather</span>(year, val, <span class="dv">6</span><span class="sc">:</span><span class="dv">56</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter on 2019 results</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">'2019'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#select variable, country, and val</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">7</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#group by variable and generate z-score for clustering</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">val =</span> <span class="fu">scale</span>(val)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">spread</span>(variable, val)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>(df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#pivot data</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">gather</span>(year, val, <span class="dv">6</span><span class="sc">:</span><span class="dv">56</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter on 2019 results</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">'2019'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#select variable, country, and val</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="dv">7</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#group by variable and generate z-score for clustering</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">group_by</span>(variable) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">val =</span> <span class="fu">scale</span>(val)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">spread</span>(variable, val)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 54 × 21
    country       CLPC DR_AIDS DR_CardioVasc DR_Diabetes DR_Diarrhea DR_Digestive
@@ -328,15 +377,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="clustering" class="level2">
-<h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
+</section>
+<section id="clustering" class="level1">
+<h1>Clustering</h1>
 <p>The <code>NbClust::</code> package has a handy function for evaluating possible cluster counts on the data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>(nbclust_eval <span class="ot">&lt;-</span> <span class="fu">NbClust</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>), </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">min.nc =</span> <span class="dv">3</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">max.nc =</span> <span class="dv">10</span>, </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"complete"</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">index =</span> <span class="st">"all"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(nbclust_eval <span class="ot">&lt;-</span> <span class="fu">NbClust</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>), </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">min.nc =</span> <span class="dv">3</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">max.nc =</span> <span class="dv">10</span>, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"complete"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">index =</span> <span class="st">"all"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -442,7 +492,7 @@ $Best.partition
 <p>This function evaluates 23 heuristics for choosing the cluster amount, and recommends the best number to use based on the count that the most tests recommend. In this case, four clusters is recommended by the largest number of heuristics.</p>
 <p>The elbow plot of four clusters supports this recommendation.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>), <span class="at">FUNcluster =</span> kmeans, <span class="at">method=</span><span class="st">'wss'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>), <span class="at">FUNcluster =</span> kmeans, <span class="at">method=</span><span class="st">'wss'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -452,8 +502,8 @@ $Best.partition
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>(kmeans_sdg3 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)), <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>(kmeans_sdg3 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)), <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>K-means clustering with 4 clusters of sizes 8, 5, 28, 13
 
@@ -496,12 +546,12 @@ Available components:
 <section id="wrangling-cluster-results" class="level3">
 <h3 class="anchored" data-anchor-id="wrangling-cluster-results">Wrangling cluster results</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>(df_cluster_4_results <span class="ot">&lt;-</span> kmeans_sdg3 <span class="sc">%&gt;%</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#broom to pull the cluster into the dataframe</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment</span>(df) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.cluster, <span class="fu">everything</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.cluster =</span> <span class="fu">as.character</span>(.cluster)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(df_cluster_4_results <span class="ot">&lt;-</span> kmeans_sdg3 <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#broom to pull the cluster into the dataframe</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  broom<span class="sc">::</span><span class="fu">augment</span>(df) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(.cluster, <span class="fu">everything</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">.cluster =</span> <span class="fu">as.character</span>(.cluster)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 54 × 22
    .cluster country         CLPC DR_AIDS DR_CardioVasc DR_Diabetes DR_Diarrhea
@@ -575,17 +625,16 @@ chr (3): type, country, group
 </div>
 </div>
 </section>
-</section>
 <section id="analysis-of-results" class="level2">
 <h2 class="anchored" data-anchor-id="analysis-of-results">Analysis of results</h2>
 <p>First, I’ll use the <code>fiz_cluster()</code> function to visualize cluster membership. (There’s further clean-up needed, but I want to see the initial viz).</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>(kmeans_viz <span class="ot">&lt;-</span> <span class="fu">fviz_cluster</span>(kmeans_sdg3, </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>),</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">stand =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">ellipse.type =</span> <span class="st">"convex"</span>,</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">palette =</span> <span class="st">"jco"</span>) <span class="sc">+</span> </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  my.theme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>(kmeans_viz <span class="ot">&lt;-</span> <span class="fu">fviz_cluster</span>(kmeans_sdg3, </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">data=</span>df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">stand =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">ellipse.type =</span> <span class="st">"convex"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">palette =</span> <span class="st">"jco"</span>) <span class="sc">+</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  my.theme)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -596,43 +645,43 @@ chr (3): type, country, group
 </div>
 <p>What do each of these clusters mean? What do they represent?</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>cluster_fill <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#868686FF"</span>, <span class="st">"#CD534CFF"</span>, <span class="st">"#EFC000FF"</span>, <span class="st">"#0073C2FF"</span>)</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>df_cluster_4_results <span class="sc">%&gt;%</span> </span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(variable, val, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> spot_vars) <span class="sc">%&gt;%</span> </span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">variable =</span> <span class="fu">recode</span>(variable,</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_AIDS'</span> <span class="ot">=</span> <span class="st">'AIDS death rate'</span>,</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_CardioVasc'</span> <span class="ot">=</span> <span class="st">'Cardiovascular death rate'</span>,</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'MATMORTRATIO'</span> <span class="ot">=</span> <span class="st">'Maternal mortality rate'</span>,</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_Respiratory'</span> <span class="ot">=</span> <span class="st">'Respiratory mortality rate'</span>, </span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'HLSTUNT'</span> <span class="ot">=</span> <span class="st">'Stunting rate'</span>,</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_IntInj'</span> <span class="ot">=</span> <span class="st">'Intentional injury death rate'</span>, </span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_Malaria'</span> <span class="ot">=</span> <span class="st">'Malaria death rate'</span>, </span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_Diabetes'</span> <span class="ot">=</span> <span class="st">'Diabetes death rate'</span>),</span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">clust_name =</span> <span class="fu">case_when</span>(.cluster <span class="sc">==</span> <span class="st">'1'</span> <span class="sc">~</span> <span class="st">'CDs'</span>,</span>
-<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>                                .cluster <span class="sc">==</span> <span class="st">'2'</span> <span class="sc">~</span> <span class="st">'NCDs'</span>,</span>
-<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>                                .cluster <span class="sc">==</span> <span class="st">'3'</span> <span class="sc">~</span> <span class="st">'NCDs &amp; HIV'</span>,</span>
-<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>                                .cluster <span class="sc">==</span> <span class="st">'4'</span> <span class="sc">~</span> <span class="st">'Double Burden'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(., </span>
-<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>.cluster,</span>
-<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>val,</span>
-<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill=</span>.cluster)) <span class="sc">+</span> </span>
-<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> </span>
-<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> .<span class="dv">2</span>, <span class="at">height =</span> .<span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, </span>
-<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">nrow =</span> <span class="dv">2</span>,</span>
-<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">scales =</span> <span class="st">'free'</span>,</span>
-<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>             <span class="at">labeller =</span> <span class="fu">label_wrap_gen</span>()) <span class="sc">+</span> </span>
-<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">''</span>,</span>
-<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">'Each dot represents an African country within its cluster'</span>) <span class="sc">+</span> </span>
-<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'z-score'</span>,</span>
-<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'Cluster'</span>) <span class="sc">+</span> </span>
-<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>  my.theme <span class="sc">+</span> </span>
-<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cluster_fill) <span class="sc">+</span> </span>
-<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
-<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text.x =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(.<span class="dv">25</span>,<span class="dv">0</span>,.<span class="dv">25</span>,<span class="dv">0</span>, <span class="st">"cm"</span>)),</span>
-<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cluster_fill <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#868686FF"</span>, <span class="st">"#CD534CFF"</span>, <span class="st">"#EFC000FF"</span>, <span class="st">"#0073C2FF"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>df_cluster_4_results <span class="sc">%&gt;%</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(variable, val, <span class="dv">4</span><span class="sc">:</span><span class="dv">23</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> spot_vars) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">variable =</span> <span class="fu">recode</span>(variable,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_AIDS'</span> <span class="ot">=</span> <span class="st">'AIDS death rate'</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_CardioVasc'</span> <span class="ot">=</span> <span class="st">'Cardiovascular death rate'</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'MATMORTRATIO'</span> <span class="ot">=</span> <span class="st">'Maternal mortality rate'</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_Respiratory'</span> <span class="ot">=</span> <span class="st">'Respiratory mortality rate'</span>, </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'HLSTUNT'</span> <span class="ot">=</span> <span class="st">'Stunting rate'</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_IntInj'</span> <span class="ot">=</span> <span class="st">'Intentional injury death rate'</span>, </span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_Malaria'</span> <span class="ot">=</span> <span class="st">'Malaria death rate'</span>, </span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                           <span class="st">'DR_Diabetes'</span> <span class="ot">=</span> <span class="st">'Diabetes death rate'</span>),</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>         <span class="at">clust_name =</span> <span class="fu">case_when</span>(.cluster <span class="sc">==</span> <span class="st">'1'</span> <span class="sc">~</span> <span class="st">'CDs'</span>,</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                                .cluster <span class="sc">==</span> <span class="st">'2'</span> <span class="sc">~</span> <span class="st">'NCDs'</span>,</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                                .cluster <span class="sc">==</span> <span class="st">'3'</span> <span class="sc">~</span> <span class="st">'NCDs &amp; HIV'</span>,</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                                .cluster <span class="sc">==</span> <span class="st">'4'</span> <span class="sc">~</span> <span class="st">'Double Burden'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(., </span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>.cluster,</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>val,</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill=</span>.cluster)) <span class="sc">+</span> </span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> </span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> .<span class="dv">2</span>, <span class="at">height =</span> .<span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>variable, </span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">nrow =</span> <span class="dv">2</span>,</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>             <span class="at">scales =</span> <span class="st">'free'</span>,</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>             <span class="at">labeller =</span> <span class="fu">label_wrap_gen</span>()) <span class="sc">+</span> </span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">''</span>,</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">'Each dot represents an African country within its cluster'</span>) <span class="sc">+</span> </span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'z-score'</span>,</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'Cluster'</span>) <span class="sc">+</span> </span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>  my.theme <span class="sc">+</span> </span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cluster_fill) <span class="sc">+</span> </span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text.x =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(.<span class="dv">25</span>,<span class="dv">0</span>,.<span class="dv">25</span>,<span class="dv">0</span>, <span class="st">"cm"</span>)),</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -647,9 +696,9 @@ chr (3): type, country, group
 <p><strong>Cluster 4</strong>: Communicable disease mortality characterizes these countries. Countries in this cluster are at the beginning of development towards the “double burden” of disease.</p>
 <p>Some quick clean-up to support putting labels on the cluster graphic.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(df_label_help <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>(df_label_help <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 54 × 2
    rowname country     
@@ -896,19 +945,19 @@ chr (3): type, country, group
 </div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>kmeans_viz_data <span class="sc">%&gt;%</span> </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>x,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>y,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span>clust_name,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape=</span>clust_name)) <span class="sc">+</span> </span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(country <span class="sc">%in%</span> spotlight),</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">label =</span> country), <span class="at">force =</span> <span class="dv">10</span>, <span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#ggtitle('K-means') + </span></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="fu">expression</span>(<span class="st">''</span> <span class="sc">%&lt;-%</span> <span class="st">'  Higher NCD burden, higher life expectancy    -    Higher CD burden, lower life expectancy  '</span> <span class="sc">%-&gt;%</span> <span class="st">''</span>),</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="fu">expression</span>(<span class="st">''</span> <span class="sc">%&lt;-%</span> <span class="st">'  Higher burden from AIDS, respiratory and injury deaths'</span>)) <span class="sc">+</span> </span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_jco</span>() <span class="sc">+</span> </span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  my.theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>kmeans_viz_data <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>x,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>y,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span>clust_name,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape=</span>clust_name)) <span class="sc">+</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  ggrepel<span class="sc">::</span><span class="fu">geom_text_repel</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(country <span class="sc">%in%</span> spotlight),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>                           <span class="fu">aes</span>(<span class="at">label =</span> country), <span class="at">force =</span> <span class="dv">10</span>, <span class="at">size=</span><span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#ggtitle('K-means') + </span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="fu">expression</span>(<span class="st">''</span> <span class="sc">%&lt;-%</span> <span class="st">'  Higher NCD burden, higher life expectancy    -    Higher CD burden, lower life expectancy  '</span> <span class="sc">%-&gt;%</span> <span class="st">''</span>),</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="fu">expression</span>(<span class="st">''</span> <span class="sc">%&lt;-%</span> <span class="st">'  Higher burden from AIDS, respiratory and injury deaths'</span>)) <span class="sc">+</span> </span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_jco</span>() <span class="sc">+</span> </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  my.theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -919,6 +968,7 @@ chr (3): type, country, group
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
