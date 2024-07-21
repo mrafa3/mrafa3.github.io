@@ -16,33 +16,37 @@ draft: false # setting this to `true` will prevent your post from appearing on y
 # Introduction
 
 ## Purpose
-The United Nations created the Sustainable Development Goals (SDGs) to set an ambitious global development agenda to work toward by 2030. 
+The United Nations created the Sustainable Development Goals (SDGs) to set an ambitious global development agenda to work toward by 2030. A continental development organization in Africa asked, *how could we think about [SDG 3](https://www.globalgoals.org/goals/3-good-health-and-well-being/?gad_source=1&gclid=Cj0KCQjwwO20BhCJARIsAAnTIVSlatprBbt62rxkZomR6BOTcxeXDvYPvAkShEGVRG-_DfDC9T6Cb84aAjzqEALw_wcB) (the health goals) in a holistic and aggregate sense?*
+
+To get a clearer picture of how health outcomes are spread across the continent, I use cluster analysis to group countries by primary health outcomes data.
 
 ## Dataset
-This analysis uses results from the International Futures global forecasting model and its **Current Path** scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results. 
+This analysis uses results from the International Futures global forecasting model and its **Base Case** (or Current Path) scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results. 
 
-DR_OthCommumDis				
-DR_MaligNeoPl				
-DR_CardioVasc				
-DR_Digestive				
-DR_Respiratory				
-DR_OtherNonComm				
-DR_TrafficAcc				
-DR_UnIntInj				
-DR_IntInj				
-DR_Diabetes
-DR_AIDS				
-DR_Diarrhea				
-DR_Malaria				
-DR_RespInfec				
-DR_MentalHealth				
-CLPC				
-HLSTUNT				
-HLSMOKING				
-INFMOR				
-MATMORTRATIO
+* DR_OthCommumDis: Death Rate from other communicable diseases			
+* DR_MaligNeoPl: Death Rate from malignant neoplasms (cancers)
+* DR_CardioVasc: Death Rate from cariovascular diseases
+* DR_Digestive: Death Rate from digestive illnesses
+* DR_Respiratory: Death Rate from respiratory illnesses
+* DR_OtherNonComm: Death Rate from other non-communicable diseases
+* DR_TrafficAcc: Death Rate from traffic accidents
+* DR_UnIntInj: Death Rate from unintentional injuries
+* DR_IntInj: Death Rate from intentional injuries
+* DR_Diabetes: Death Rate from diabetes
+* DR_AIDS: Death Rate from HIV/AIDS
+* DR_Diarrhea: Death Rate from diarrheal illnesses
+* DR_Malaria: Death Rate from malaria
+* DR_RespInfec: Death Rate from respiratory infections
+* DR_MentalHealth: Death Rate from mental health illnesses
+* CLPC: Calories consumed per capita
+* HLSTUNT: Stunting rate for under-5 population
+* HLSMOKING: Smoking rate
+* INFMOR: Infant mortality rate (deaths per 1,000 live births)
+* MATMORTRATIO: Maternal mortality rate (deaths per 100,000 live births)
 
-## Setup
+For more information on these fields, see the [International Futures Health Model documentation](https://korbel.du.edu/sites/default/files/2021-12/IFs%20Health%20Model%20Documentation.pdf).
+
+## Setup and data preparation
 
 ```{r setup, include=TRUE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -50,10 +54,6 @@ library(factoextra)
 library(NbClust)
 library(ggsci)              #for jco color palette
 library(psych)              
-#library(gtExtras)
-#library(extrafont)
-#library(class)             #for kNN
-#library(caret)             #backup kNN function
 
 my.theme <- theme(
   plot.title = element_text(color="black", face="plain", size=17, hjust=0), 
@@ -75,11 +75,9 @@ my.theme <- theme(
 ```
 
 ```{r read_data, include=TRUE}
-(df <- readxl::read_xlsx('.//data/cluster_health_afr_14mar2019.xlsx')) 
-```
+df <- readxl::read_xlsx('.//data/cluster_health_afr_14mar2019.xlsx')
 
-```{r distinct_variable, include=TRUE, echo=FALSE}
-df %>% distinct(variable)
+df %>% glimpse()
 ```
 
 ```{r wrangle_df, include=TRUE}
@@ -97,7 +95,7 @@ df %>% distinct(variable)
    spread(variable, val)) 
 ```
 
-## Clustering
+# Clustering
 
 The `NbClust::` package has a handy function for evaluating possible cluster counts on the data
 
