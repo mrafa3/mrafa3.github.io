@@ -88,8 +88,6 @@ For data cleaning of this Wiki table, we need to:
   select(flag_URL, everything()))
 ```
 
-# Data Prep
-
 Now that I have the data scraped and cleaned, I'm interested in making some tables using the `::gt()` package. Tables are great for communicating summary information, so I'll first build a graphic of the top 12 international goal scorers of all time.
 
 ```{r join_flag_db, include=TRUE}
