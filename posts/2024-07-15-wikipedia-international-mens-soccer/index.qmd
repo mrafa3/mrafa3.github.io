@@ -26,14 +26,9 @@ Required packages:
 library(tidyverse)
 library(janitor)
 library(scales)
-library(ggtext)
 library(htmltools)
-library(sysfonts)
-library(showtext)
 library(rvest)
 library(gt)
-library(sysfonts)
-library(showtext)
 library(countrycode)
 ```
 
