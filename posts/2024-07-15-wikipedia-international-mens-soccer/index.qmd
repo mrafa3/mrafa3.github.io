@@ -174,7 +174,7 @@ For the first table, I'll put the columns and styling in place first. I'm going 
   cols_label(flag_URL = ""))
 ```
 
-# Top scorers by confederation or continent
+# Top scorers by confederation
 
 Next, I'd like to see who are the top-5 all-time goal scorers by confederation.
 
