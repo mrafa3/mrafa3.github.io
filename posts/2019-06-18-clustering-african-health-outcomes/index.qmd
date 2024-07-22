@@ -21,7 +21,7 @@ The United Nations created the Sustainable Development Goals (SDGs) to set an am
 To get a clearer picture of how health outcomes are spread across the continent, I use cluster analysis to group countries by primary health outcomes data.
 
 ## Dataset
-This analysis uses results from the International Futures global forecasting model and its **Base Case** (or Current Path) scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results. 
+This analysis uses results from the International Futures global forecasting model and its **Base Case** (or Current Path) scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results. The variables in this analysis include:  
 
 * DR_OthCommumDis: Death Rate from other communicable diseases			
 * DR_MaligNeoPl: Death Rate from malignant neoplasms (cancers)
@@ -97,7 +97,7 @@ df %>% glimpse()
 
 # Clustering
 
-The `NbClust::` package has a handy function for evaluating possible cluster counts on the data
+The `NbClust::` package has a handy function for evaluating possible cluster counts on the data. The `NbClust()` function evaluates 23 heuristics for choosing the cluster amount, and recommends the best number to use based on the count that the most tests recommend. In this case, four clusters is recommended by the largest number of heuristics.
 
 ```{r nbclust, include=TRUE}
 (nbclust_eval <- NbClust(df %>% select(-1), 
@@ -106,13 +106,14 @@ The `NbClust::` package has a handy function for evaluating possible cluster cou
                             method = "complete",
                             index = "all"))
 ```
-This function evaluates 23 heuristics for choosing the cluster amount, and recommends the best number to use based on the count that the most tests recommend. In this case, four clusters is recommended by the largest number of heuristics.
 
 The elbow plot of four clusters supports this recommendation.
 
 ```{r elbow_plot, include=TRUE}
 fviz_nbclust(df %>% select(-1), FUNcluster = kmeans, method='wss')
 ```
+
+Then, I run the `kmeans()` function on the dataset, telling the algorithm to use four clusters.
 
 ```{r kmeans, include=TRUE}
 set.seed(1234)
