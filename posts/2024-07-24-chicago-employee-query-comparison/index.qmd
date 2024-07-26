@@ -312,7 +312,7 @@ df %>%
   filter(salary_annual > avg_salary)
 ```
 
-```{python sub4.1_python, include=FALSE}
+```{python sub4.2_python, include=FALSE}
 # not ready yet
 # df['avg_salary'] = df.mean('salary_annual')
 ```
