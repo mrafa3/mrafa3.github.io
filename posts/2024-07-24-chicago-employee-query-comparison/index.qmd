@@ -287,20 +287,6 @@ df %>%
          !is.na(department))
 ```
 
-**Retrieve the details of employees who have a salary in the top five of their department. Show the name, title, department, salary, and ranking.**
-
-```{python}
-df.groupby('department')['salary_annual'].rank(method='dense', ascending=False)
-```
-
-
-```{python sub4.1_python, include=FALSE}
-df['salary_rank'] = df.groupby('department')['salary_annual'].rank(method='dense', ascending=False)
-
-df[['salary_rank'] <= 5]
-```
-
-
 **Find the names of employees who earn more than the average salary in their department.**
 
 ```{sql sub4.2_sql, connection="con", include=FALSE, eval=FALSE}
