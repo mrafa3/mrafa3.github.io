@@ -32,9 +32,10 @@ library(tidyverse)
 library(httr)           #to fetch the data
 library(readxl)
 library(janitor)        #for the clean_names() function for data cleaning
-library(sqldf)          #to run SQL in an R code-chunk
+# library(sqldf)          #to run SQL in an R code-chunk
 library(reticulate)     #to enable Python within R
 library(DBI)
+library(lubridate)      #for functions to handle dates
 ```
 
 About the dataset:
@@ -44,6 +45,7 @@ This dataset is from data.world, and includes information from Chicago's Departm
 ```{r read_data, include=TRUE}
 GET("https://query.data.world/s/hu5dkviuxd6k2ipuhpxjuyuds7aplu?dws=00000", write_disk(tf <- tempfile(fileext = ".xls")))
 ```
+
 ```{r make_df, include=TRUE}
 df <- read_excel(tf) %>% 
   #clean_names() to make all column names lowercase
@@ -77,57 +79,54 @@ In the sections that follow, I used ChatGPT to generate prompts as querying exer
 
 Retrieve all records of employees who have the job title "POLICE OFFICER."
 
-```{r}
+```{r basic1.1_r, include=TRUE}
 df %>% 
   filter(title == 'POLICE OFFICER')
 ```
 
-```{r}
-sqldf(" select *
-        from df
-        where title = 'POLICE OFFICER'")
-```
-
-```{python}
-df[df['title'] == 'POLICE OFFICER']
-```
-
-
-```{sql test_sql, connection="con", include=FALSE}
+```{sql basic1.1_sql, connection="con", include=TRUE}
 select *
 from df
 where title = 'POLICE OFFICER'
 ```
 
+```{python basic1.1_python, include=TRUE}
+df[df['title'] == 'POLICE OFFICER']
+```
+
 List the names and salaries of employees whose annual salary is greater than $100,000.
 
-```{r}
-sqldf(" select name, salary_annual
-        from df
-        where salary_annual > 100000")
+```{sql basic1.2_sql, connection="con", include=TRUE}
+select name, salary_annual
+from df
+where salary_annual > 100000
+```
 
+```{r basic1.2_r, include=TRUE}
 df %>% 
   filter(salary_annual > 100000) %>% 
   select(name, salary_annual)
 ```
 
-```{python}
+```{python basic1.2_python, include=TRUE}
 df[df['salary_annual'] > 100000][['name', 'salary_annual']]
 ```
 
 Find all employees who work in the "FINANCE" department.
 
-```{r}
-sqldf("select name
-        from df
-        where department = 'FINANCE'")
+```{sql basic1.3_sql, connection="con", include=TRUE}
+select name
+from df
+where department = 'FINANCE'
+```
 
+```{r basic1.3_r, include=TRUE}
 df %>% 
   filter(department == 'FINANCE') %>% 
   select(name)
 ```
 
-```{python}
+```{python basic1.3_python, include=TRUE}
 df[df['department'] == 'FINANCE']['name']
 ```
 
@@ -135,33 +134,37 @@ df[df['department'] == 'FINANCE']['name']
 
 Calculate the average salary for all employees.
 
-```{r}
-sqldf("select avg(salary_annual)
-        from df")
+```{sql agg2.1_sql, connection="con", include=TRUE}
+select avg(salary_annual)
+from df
+```
 
+```{r agg2.1_r, include=TRUE}
 df %>%
   summarize(mean(salary_annual))
 ```
 
-```{python}
+```{python agg2.1_python, include=TRUE}
 df['salary_annual'].mean()
 ```
 
 Find the total number of employees in each department.
 
-```{r}
-sqldf("select department, count(*) as ttl_employees
-      from df
-      group by department
-      order by ttl_employees desc")
+```{sql agg2.2_sql, connection="con", include=TRUE}
+select department, count(*) as ttl_employees
+from df
+group by department
+order by ttl_employees desc
+```
 
+```{r agg2.2_r, include=TRUE}
 df %>% 
   group_by(department) %>%
   count() %>% 
   arrange(-n)
 ```
 
-```{python}
+```{python agg2.2_python, include=TRUE}
 df.groupby('department').agg(
   ttl_employees = ('name', 'count')
 ).reset_index().sort_values(by='ttl_employees', ascending=False)
@@ -169,15 +172,17 @@ df.groupby('department').agg(
 
 Determine the highest salary in the dataset.
 
-```{r}
-sqldf("select max(salary_annual)
-      from df")
+```{sql agg2.3_sql, connection="con", include=TRUE}
+select max(salary_annual)
+from df
+```
 
+```{r agg2.3_r, include=TRUE}
 df %>% 
   summarize(max(salary_annual))
 ```
 
-```{python}
+```{python agg2.3_python, include=TRUE}
 df['salary_annual'].max()
 ```
 
@@ -185,19 +190,21 @@ df['salary_annual'].max()
 
 List the average salary for each job title.
 
-```{r}
-sqldf("select title, avg(salary_annual) as avg_salary
-      from df
-      group by title
-      order by avg_salary desc")
+```{sql grp3.1_sql, connection="con", include=TRUE}
+select title, avg(salary_annual) as avg_salary
+from df
+group by title
+order by avg_salary desc
+```
 
+```{r grp3.1_r, include=TRUE}
 df %>% 
   group_by(title) %>% 
   summarize(avg_salary = mean(salary_annual, na.rm = TRUE)) %>% 
   arrange(-avg_salary)
 ```
 
-```{python}
+```{python grp3.1_python, include=TRUE}
 df.groupby('title').agg(
   avg_salary = ('salary_annual', 'mean')
 ).reset_index().sort_values(by='avg_salary', ascending=False)
@@ -205,13 +212,15 @@ df.groupby('title').agg(
 
 Find the top 5 highest-paid departments.
 
-```{r}
-sqldf("select department, avg(salary_annual) as avg_salary
-      from df
-      group by department
-      order by avg_salary desc
-      limit 5")
+```{sql grp3.2_sql, connection="con", include=TRUE}
+select department, avg(salary_annual) as avg_salary
+from df
+group by department
+order by avg_salary desc
+limit 5
+```
 
+```{r grp3.2_r, include=TRUE}
 df %>% 
   group_by(department) %>% 
   summarize(avg_salary = mean(salary_annual)) %>% 
@@ -219,7 +228,7 @@ df %>%
   arrange(-avg_salary)
 ```
 
-```{python}
+```{python grp3.2_python, include=TRUE}
 df.groupby('department').agg(
   avg_salary = ('salary_annual', 'mean')
 ).reset_index().sort_values(by='avg_salary', ascending=False).head(5)
@@ -227,20 +236,21 @@ df.groupby('department').agg(
 
 Show the number of employees for each job title, ordered by the number of employees in descending order.
 
-```{r}
-sqldf("select title, count(*) as cnt_employees
-      from df
-      group by title
-      order by cnt_employees desc")
+```{sql grp3.3_sql, connection="con", include=TRUE}
+select title, count(*) as cnt_employees
+from df
+group by title
+order by cnt_employees desc
+```
 
+```{r grp3.3_r, include=TRUE}
 df %>% 
   group_by(title) %>% 
   count() %>% 
   arrange(-n)
 ```
 
-
-```{python}
+```{python grp3.3_python, include=TRUE}
 df.groupby('title').agg(
   cnt_employees = ('name', 'count')
 ).reset_index().sort_values(by='cnt_employees', ascending=False)
@@ -257,18 +267,21 @@ Retrieve the details of employees who have the same job title as the employee wi
 
 Find the names of employees who earn more than the average salary.
 
-```{r}
-# sqldf("select *, 
-#               avg(salary_annual) over() as avg_salary
-#       from df
-#       where salary_annual > avg_salary")
+```{sql sub4.1_sql, connection="con", include=FALSE}
+select *, avg(salary_annual) over(
+    order by salary_annual
+) as avg_salary
+from df
+where salary_annual > avg_salary
+```
 
+```{r sub4.1_r, include=TRUE}
 df %>% 
   mutate(avg_salary = mean(salary_annual)) %>% 
   filter(salary_annual > avg_salary)
 ```
 
-```{python}
+```{python sub4.1_python, include=FALSE}
 # not ready yet
 # df['avg_salary'] = df.mean('salary_annual')
 ```
@@ -277,8 +290,7 @@ df %>%
 
 Calculate the percentage of employees in each department relative to the total number of employees.
 
-```{r}
-sqldf("
+```{sql complex_5.1_sql, connection="con", include=TRUE}
 with dept_employees as (
   select department, count(*) cnt_employees
   from df
@@ -290,8 +302,10 @@ ttl_employees as (
 )
 select *, round(cnt_employees * 100.0 / ttl_count, 1) as pct_employees
 from dept_employees, ttl_employees
-order by pct_employees desc") 
+order by pct_employees desc
+```
 
+```{r complex5.1_r, include=TRUE}
 df %>% 
   group_by(department) %>% 
   count() %>% 
@@ -303,13 +317,15 @@ df %>%
 
 Identify job titles that have more than 100 employees.
 
-```{r}
-sqldf("select title, count(*) cnt_employees
-      from df
-      group by title
-      having cnt_employees > 100
-      order by cnt_employees desc")
+```{sql complex5.2_sql, connection="con", include=TRUE}
+select title, count(*) cnt_employees
+from df
+group by title
+having cnt_employees > 100
+order by cnt_employees desc
+```
 
+```{r complex5.2_r, include=TRUE}
 df %>% 
   group_by(title) %>% 
   count() %>% 
@@ -319,17 +335,16 @@ df %>%
 
 Find employees who have been in their current position for more than 5 years (assuming the dataset includes a hire date or a similar field).
 
-```{r}
-library(lubridate)
+```{sql complex5.3_sql, connection="con", include=FALSE}
+select 
+    name, 
+    start_date_in_present_position, 
+    DATE('now') as current_date, 
+    DATEDIFF(current_date, start_date_in_present_position) as tenure
+from df
+```
 
-# need to work on this one
-# sqldf("select 
-#         name, 
-#         start_date_in_present_position, 
-#         DATE('now') as current_date, 
-#         DATEDIFF(current_date, start_date_in_present_position) as tenure
-#       from df")
-
+```{r complex5.3_r, include=TRUE}
 df %>% 
   mutate(tenure = round(
     lubridate::time_length(
@@ -343,8 +358,8 @@ df %>%
 
 Pull the second title of all employees that have had more than one title.
 
-```{r}
-sqldf("with promotion_seq as (
+```{sql own6.1_sql, connection="con", include=TRUE}
+with promotion_seq as (
       select
           name,
           start_date_in_present_position,
@@ -356,9 +371,10 @@ sqldf("with promotion_seq as (
 )
 select *
 from promotion_seq
-where seq_promotion = 2")
+where seq_promotion = 2
+```
 
-
+```{r own6.1_r, include=TRUE}
 # need to think about how it's done with R
 df %>% 
   group_by(name) %>% 
@@ -368,10 +384,8 @@ df %>%
 
 How much, on average, do people see in terms of a salary bump after their promotion?
 
-```{r}
-# more work to be done with this one
-
-sqldf("with promotion_seq as (
+```{sql own6.2_sql, connection="con", include=TRUE}
+with promotion_seq as (
       select
           name,
           salary_annual,
@@ -392,12 +406,16 @@ from df
 select *
 from salary_change
 where salary_diff != 0
-order by salary_diff desc")
+order by salary_diff desc
+```
+
+```{r own6.2_r, include=TRUE}
+
 ```
 
 Extension of this question to remove changes in employment type or salary basis.
 
-```{r}
+```{sql own6.3_sql, connection="con", include=FALSE}
 # more work to do on this
 
 # sqldf("with promotion_seq as (
@@ -420,6 +438,10 @@ Extension of this question to remove changes in employment type or salary basis.
 # )
 # select *
 # from salary_lag")
+```
+
+```{r own6.3_r, include=FALSE}
+
 ```
 
 
