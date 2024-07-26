@@ -290,18 +290,31 @@ df %>%
 **Find the names of employees who earn more than the average salary in their department.**
 
 ```{sql sub4.2_sql, connection="con", include=FALSE, eval=FALSE}
-select * from df
+with dept_avg_salary as (
+select *,
+        AVG(salary_annual) OVER(
+          partition by department) as avg_salary_by_department 
+from df
+where department IS NOT NULL
+)
+select *
+from dept_avg_salary
+where salary_annual > avg_salary_by_department
+order by department, salary_annual desc
 ```
-
 
 ```{r sub4.2_r, include=TRUE}
 df %>% 
+  group_by(department) %>% 
   mutate(avg_salary = mean(salary_annual)) %>% 
-  filter(salary_annual > avg_salary)
+  filter(salary_annual > avg_salary) %>% 
+  arrange(department, -salary_annual)
 ```
 
-```{python sub4.2_python, include=FALSE}
-df['avg_salary'] = df.mean('salary_annual')
+```{python sub4.2_python, include=TRUE}
+df['avg_salary'] = df['salary_annual'].mean()
+
+df[df['salary_annual'] > df['avg_salary']]
 ```
 
 5. Complex Queries:
@@ -416,3 +429,13 @@ df %>%
 df.sort_values(by='start_date_in_present_position').groupby('name').apply(
   lambda x: x.assign(seq_promotion=range(1, len(x) + 1))).query('seq_promotion == 2').reset_index(drop=True).sort_values(by='name')
 ```
+
+# Conclusion 
+
+**This project had three purposes:**
+
+1. **To show how to run R, SQL, and Python all interchangeably in a Quarto document.** Quarto and the `reticulate::` and `DBI::` packages allow for the functionality to switch between different methods of handling, querying, and analyzing data. Practically speaking, you probably wouldn't switch between these as often as I did in this work, but it's useful to verify your work and could come in handy for specific circumstances (e.g. analyzing with Pandas and visualizing with ggplot2).
+
+2. **To compare the ease of writing code using dplyr (R), SQL, and pandas (Python).** Personally, I feel that R and `dplyr::` is the simplest syntax to use, followed by SQL and Python. `dplyr::` is very linear in its construction, and it rarely has extra characters to remember. Python's brackets, quotes, and chaining all take some getting used to, while R and SQL feel more direct.
+
+3. **To include some demonstration of SQL in my portfolio (which is often not included but remains a critical skill).** This was a fun way to demonstrate some SQL expertise while comparing and verifying output against R and Python.
