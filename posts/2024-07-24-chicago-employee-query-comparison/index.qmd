@@ -29,10 +29,9 @@ draft: false # setting this to `true` will prevent your post from appearing on y
 
 ```{r libraries, include=TRUE, message=FALSE, warning=FALSE}
 library(tidyverse)
-library(httr)           #to fetch the data
 library(readxl)
+library(httr)           #to fetch the data
 library(janitor)        #for the clean_names() function for data cleaning
-# library(sqldf)          #to run SQL in an R code-chunk
 library(reticulate)     #to enable Python within R
 library(DBI)            #to establish in-memory database of R dataframe
 library(RSQLite)        #for SQLite engine
@@ -64,7 +63,7 @@ The `DBI::` package allows you to create an in-memory database to query against.
 
 ```{r sql_setup, include=TRUE}
 con <- DBI::dbConnect(SQLite(), ":memory:")
-DBI::dbWriteTable(conn = con, name = "df", value = df)
+DBI::dbWriteTable(conn = con, name = "df", value = df, field.types = c("original_hire_date" = "Date"), row.names = FALSE)
 ```
 
 The `reticulate::` package allows for executing Python code in an R environment. The [reticulate project site](https://rstudio.github.io/reticulate/) includes useful examples for getting up and running with Python in R. This package includes an `r_to_py()` function that is needed to convert an R dataframe into a pandas dataframe.
@@ -76,8 +75,6 @@ py$df <- r_to_py(df)
 When inserting a code chunk to your Markdown file, it originally defaults to '{r}'. You can simply change this to 'python' or 'sql' and, with the above set up, the code works beautifully in a Quarto document!
 
 In the sections that follow, I used ChatGPT to generate prompts as querying exercises. For the initial code chunks, 
-
-*I'll display the code chunk options so that these can be replicated (if you are following along); for all prompts that follow, I'll hide these options for a cleaner reading experience.*
 
 # 1. Basic Selection and Filtering:
 
@@ -292,6 +289,11 @@ df %>%
 
 **Retrieve the details of employees who have a salary in the top five of their department. Show the name, title, department, salary, and ranking.**
 
+```{python}
+df.groupby('department')['salary_annual'].rank(method='dense', ascending=False)
+```
+
+
 ```{python sub4.1_python, include=FALSE}
 df['salary_rank'] = df.groupby('department')['salary_annual'].rank(method='dense', ascending=False)
 
@@ -313,8 +315,7 @@ df %>%
 ```
 
 ```{python sub4.2_python, include=FALSE}
-# not ready yet
-# df['avg_salary'] = df.mean('salary_annual')
+df['avg_salary'] = df.mean('salary_annual')
 ```
 
 5. Complex Queries:
@@ -364,7 +365,15 @@ df %>%
   arrange(-n)
 ```
 
+```{python}
+df.groupby('title').agg(
+  cnt_title = ('title', 'count')
+).reset_index().sort_values(by='cnt_title', ascending=False).query('cnt_title > 100')
+```
+
 **Find employees who have been in their current position for more than 5 years (assuming the dataset includes a hire date or a similar field).**
+
+*Note: need to do some more research on the `DBI::` package, as the SQL object is reading date fields in as a dbl data type.*
 
 ```{sql complex5.3_sql, connection="con", include=FALSE, eval=FALSE}
 select 
@@ -387,12 +396,14 @@ df %>%
 
 # 6. Own Questions
 
-**Pull the second title of all employees that have had more than one title.**
+**Pull the second title of all employees that have been promoted at least once.**
 
 ```{sql own6.1_sql, connection="con", include=TRUE}
 with promotion_seq as (
       select
           name,
+          title,
+          department,
           start_date_in_present_position,
           ROW_NUMBER() OVER(
             partition by name
@@ -403,74 +414,19 @@ with promotion_seq as (
 select *
 from promotion_seq
 where seq_promotion = 2
+order by name
 ```
 
 ```{r own6.1_r, include=TRUE}
-# need to think about how it's done with R
 df %>% 
   group_by(name) %>% 
-  count() %>% 
-  arrange(-n) 
+  arrange(start_date_in_present_position) %>% 
+  mutate(seq_promotion = row_number()) %>% 
+  filter(seq_promotion == 2) %>% 
+  arrange(name)
 ```
 
-**How much, on average, do people see in terms of a salary bump after their promotion?**
-
-```{sql own6.2_sql, connection="con", include=TRUE}
-with promotion_seq as (
-      select
-          name,
-          salary_annual,
-          start_date_in_present_position,
-          ROW_NUMBER() OVER(
-            partition by name
-            order by start_date_in_present_position
-          ) as seq_promotion
-      from df
-),
-salary_change as (select *,
-        salary_annual - LAG(salary_annual, 1, salary_annual) OVER(
-            partition by name
-            order by start_date_in_present_position
-          ) as salary_diff
-from df
-)
-select *
-from salary_change
-where salary_diff != 0
-order by salary_diff desc
-```
-
-```{r own6.2_r, include=TRUE}
-
-```
-
-**Extension of this question to remove changes in employment type or salary basis.**
-
-```{sql own6.3_sql, connection="con", include=FALSE, eval=FALSE}
-# more work to do on this
-
-# sqldf("with promotion_seq as (
-#       select
-#           name,
-#           salary_annual,
-#           start_date_in_present_position,
-#           ROW_NUMBER() OVER(
-#             partition by name
-#             order by start_date_in_present_position
-#           ) as seq_promotion
-#       from df
-# ),
-# with salary_lag as (select *,
-#        salary_annual - LAG(salary_annual, 1, salary_annual) OVER (
-#           partition by name
-#           order by seq_promotion
-#        ) as salary_diff
-# from promotion_seq
-# )
-# select *
-# from salary_lag")
-```
-
-```{r own6.3_r, include=FALSE}
-
+```{python own6.1_python, include=TRUE}
+df.sort_values(by='start_date_in_present_position').groupby('name').apply(
+  lambda x: x.assign(seq_promotion=range(1, len(x) + 1))).query('seq_promotion == 2').reset_index(drop=True).sort_values(by='name')
 ```
