@@ -9,15 +9,15 @@ date: 07-24-2024
 categories: [R, SQL, Python, Quarto, generative-AI] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-# image: tbl_top_scorers.png
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+image: sql-r-python.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
 # Introduction
 
 ## Purpose
 
-This project has three purposes:
+**This project has three purposes**:
 
 1. To show how to run R, SQL, and Python all interchangeably in a Quarto document
 2. To compare the ease of writing code using dplyr (R), SQL, and pandas (Python)
@@ -25,7 +25,7 @@ This project has three purposes:
 
 ## Setup and data preparation
 
-Required packages: 
+**Required packages**: 
 
 ```{r libraries, include=TRUE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -39,7 +39,7 @@ library(RSQLite)        #for SQLite engine
 library(lubridate)      #for functions to handle dates
 ```
 
-About the dataset:
+**About the dataset**:
 
 This dataset is from data.world, and includes information from Chicago's Department of Human Resources for city employees in 2017. It's a simple dataset to allow for comparisons across languages.
 
@@ -75,28 +75,29 @@ py$df <- r_to_py(df)
 
 When inserting a code chunk to your Markdown file, it originally defaults to '{r}'. You can simply change this to 'python' or 'sql' and, with the above set up, the code works beautifully in a Quarto document!
 
-In the sections that follow, I used ChatGPT to generate prompts as querying exercises.
+In the sections that follow, I used ChatGPT to generate prompts as querying exercises. For the initial code chunks, 
+
+*I'll display the code chunk options so that these can be replicated (if you are following along); for all prompts that follow, I'll hide these options for a cleaner reading experience.*
 
 # 1. Basic Selection and Filtering:
 
-Retrieve all records of employees who have the job title "POLICE OFFICER."
-
-```{r basic1.1_r, include=TRUE}
-df %>% 
-  filter(title == 'POLICE OFFICER')
-```
+**Retrieve all records of employees who have the job title "POLICE OFFICER".**
 
 ```{sql basic1.1_sql, connection="con", include=TRUE}
 select *
 from df
 where title = 'POLICE OFFICER'
 ```
+```{r basic1.1_r, include=TRUE}
+df %>% 
+  filter(title == 'POLICE OFFICER')
+```
 
 ```{python basic1.1_python, include=TRUE}
 df[df['title'] == 'POLICE OFFICER']
 ```
 
-List the names and salaries of employees whose annual salary is greater than $100,000.
+**List the names and salaries of employees whose annual salary is greater than $100,000.**
 
 ```{sql basic1.2_sql, connection="con", include=TRUE}
 select name, salary_annual
@@ -114,7 +115,7 @@ df %>%
 df[df['salary_annual'] > 100000][['name', 'salary_annual']]
 ```
 
-Find all employees who work in the "FINANCE" department.
+**Find all employees who work in the "FINANCE" department.**
 
 ```{sql basic1.3_sql, connection="con", include=TRUE}
 select name
@@ -134,7 +135,7 @@ df[df['department'] == 'FINANCE']['name']
 
 # 2. Aggregate Functions:
 
-Calculate the average salary for all employees.
+**Calculate the average salary for all employees.**
 
 ```{sql agg2.1_sql, connection="con", include=TRUE}
 select avg(salary_annual)
@@ -150,7 +151,7 @@ df %>%
 df['salary_annual'].mean()
 ```
 
-Find the total number of employees in each department.
+**Find the total number of employees in each department.**
 
 ```{sql agg2.2_sql, connection="con", include=TRUE}
 select department, count(*) as ttl_employees
@@ -172,7 +173,7 @@ df.groupby('department').agg(
 ).reset_index().sort_values(by='ttl_employees', ascending=False)
 ```
 
-Determine the highest salary in the dataset.
+**Determine the highest salary in the dataset.**
 
 ```{sql agg2.3_sql, connection="con", include=TRUE}
 select max(salary_annual)
@@ -190,7 +191,7 @@ df['salary_annual'].max()
 
 # 3. Grouping and Sorting:
 
-List the average salary for each job title.
+**List the average salary for each job title.**
 
 ```{sql grp3.1_sql, connection="con", include=TRUE}
 select title, avg(salary_annual) as avg_salary
@@ -212,7 +213,7 @@ df.groupby('title').agg(
 ).reset_index().sort_values(by='avg_salary', ascending=False)
 ```
 
-Find the top 5 highest-paid departments.
+**Find the top 5 highest-paid departments.**
 
 ```{sql grp3.2_sql, connection="con", include=TRUE}
 select department, avg(salary_annual) as avg_salary
@@ -236,7 +237,7 @@ df.groupby('department').agg(
 ).reset_index().sort_values(by='avg_salary', ascending=False).head(5)
 ```
 
-Show the number of employees for each job title, ordered by the number of employees in descending order.
+**Show the number of employees for each job title, ordered by the number of employees in descending order.**
 
 ```{sql grp3.3_sql, connection="con", include=TRUE}
 select title, count(*) as cnt_employees
@@ -260,16 +261,13 @@ df.groupby('title').agg(
 
 # 4. Joining and Subqueries:
 
-Retrieve the details of employees who have the same job title as the employee with the highest salary.
+**Retrieve the details of employees who have the same job title as the employee with the highest salary.**
 
-```{r}
-# passing on question for now -- unclear
+*Passing on question for now -- unclear*
 
-```
+**Find the names of employees who earn more than the average salary.**
 
-Find the names of employees who earn more than the average salary.
-
-```{sql sub4.1_sql, connection="con", include=FALSE}
+```{sql sub4.1_sql, connection="con", include=FALSE, eval=FALSE}
 select *, avg(salary_annual) over(
     order by salary_annual
 ) as avg_salary
@@ -290,7 +288,7 @@ df %>%
 
 5. Complex Queries:
 
-Calculate the percentage of employees in each department relative to the total number of employees.
+**Calculate the percentage of employees in each department relative to the total number of employees.**
 
 ```{sql complex_5.1_sql, connection="con", include=TRUE}
 with dept_employees as (
@@ -317,7 +315,7 @@ df %>%
   arrange(-pct_employees)
 ```
 
-Identify job titles that have more than 100 employees.
+**Identify job titles that have more than 100 employees.**
 
 ```{sql complex5.2_sql, connection="con", include=TRUE}
 select title, count(*) cnt_employees
@@ -335,9 +333,9 @@ df %>%
   arrange(-n)
 ```
 
-Find employees who have been in their current position for more than 5 years (assuming the dataset includes a hire date or a similar field).
+**Find employees who have been in their current position for more than 5 years (assuming the dataset includes a hire date or a similar field).**
 
-```{sql complex5.3_sql, connection="con", include=FALSE}
+```{sql complex5.3_sql, connection="con", include=FALSE, eval=FALSE}
 select 
     name, 
     start_date_in_present_position, 
@@ -358,7 +356,7 @@ df %>%
 
 # 6. Own Questions
 
-Pull the second title of all employees that have had more than one title.
+**Pull the second title of all employees that have had more than one title.**
 
 ```{sql own6.1_sql, connection="con", include=TRUE}
 with promotion_seq as (
@@ -384,7 +382,7 @@ df %>%
   arrange(-n) 
 ```
 
-How much, on average, do people see in terms of a salary bump after their promotion?
+**How much, on average, do people see in terms of a salary bump after their promotion?**
 
 ```{sql own6.2_sql, connection="con", include=TRUE}
 with promotion_seq as (
@@ -415,9 +413,9 @@ order by salary_diff desc
 
 ```
 
-Extension of this question to remove changes in employment type or salary basis.
+**Extension of this question to remove changes in employment type or salary basis.**
 
-```{sql own6.3_sql, connection="con", include=FALSE}
+```{sql own6.3_sql, connection="con", include=FALSE, eval=FALSE}
 # more work to do on this
 
 # sqldf("with promotion_seq as (
@@ -445,5 +443,3 @@ Extension of this question to remove changes in employment type or salary basis.
 ```{r own6.3_r, include=FALSE}
 
 ```
-
-
