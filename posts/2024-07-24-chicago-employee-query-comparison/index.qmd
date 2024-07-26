@@ -1,0 +1,425 @@
+---
+title: "Query comparison: SQL, R, and Python using Chicago Employees dataset"
+description: "This post demonstrates how to run these languages in Quarto"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 07-24-2024
+categories: [R, SQL, Python, Quarto, generative-AI] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: tbl_top_scorers.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+---
+
+# Introduction
+
+## Purpose
+
+This project has three purposes:
+
+1. To show how to run R, SQL, and Python all interchangeably in a Quarto document
+2. To compare the ease of writing code using dplyr (R), SQL, and pandas (Python)
+3. To include some demonstration of SQL in my portfolio (which is often not included but remains a critical skill)
+
+## Setup and data preparation
+
+Required packages: 
+
+```{r libraries, include=TRUE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(httr)           #to fetch the data
+library(readxl)
+library(janitor)        #for the clean_names() function for data cleaning
+library(sqldf)          #to run SQL in an R code-chunk
+library(reticulate)     #to enable Python within R
+library(DBI)
+```
+
+About the dataset:
+
+This dataset is from data.world, and includes information from Chicago's Department of Human Resources for city employees in 2017. It's a simple dataset to allow for comparisons across languages.
+
+```{r read_data, include=TRUE}
+GET("https://query.data.world/s/hu5dkviuxd6k2ipuhpxjuyuds7aplu?dws=00000", write_disk(tf <- tempfile(fileext = ".xls")))
+```
+```{r make_df, include=TRUE}
+df <- read_excel(tf) %>% 
+  #clean_names() to make all column names lowercase
+  clean_names()
+```
+
+```{r glimpse_df, echo=FALSE}
+df %>% glimpse()
+```
+
+## Setting up Python and SQL to execute
+
+The `DBI::` package allows you to create an in-memory database to query against. The [DBI project site](https://r-dbi.org/) is a great place to learn more about it. I'll start by doing some initial setup and establishing the connection between the R dataframe and the SQL table name that I'll query.
+
+```{r sql_setup, include=TRUE}
+con <- DBI::dbConnect(SQLite(), ":memory:")
+DBI::dbWriteTable(conn = con, name = "df", value = df)
+```
+
+The `reticulate::` package allows for executing Python code in an R environment. The [reticulate project site](https://rstudio.github.io/reticulate/) includes useful examples for getting up and running with Python in R. This package includes an `r_to_py()` function that is needed to convert an R dataframe into a pandas dataframe.
+
+```{r pandas_df, include=TRUE}
+py$df <- r_to_py(df)
+```
+
+When inserting a code chunk to your Markdown file, it originally defaults to '{r}'. You can simply change this to 'python' or 'sql' and, with the above set up, the code works beautifully in a Quarto document!
+
+In the sections that follow, I used ChatGPT to generate prompts as querying exercises.
+
+# 1. Basic Selection and Filtering:
+
+Retrieve all records of employees who have the job title "POLICE OFFICER."
+
+```{r}
+df %>% 
+  filter(title == 'POLICE OFFICER')
+```
+
+```{r}
+sqldf(" select *
+        from df
+        where title = 'POLICE OFFICER'")
+```
+
+```{python}
+df[df['title'] == 'POLICE OFFICER']
+```
+
+
+```{sql test_sql, connection="con", include=FALSE}
+select *
+from df
+where title = 'POLICE OFFICER'
+```
+
+List the names and salaries of employees whose annual salary is greater than $100,000.
+
+```{r}
+sqldf(" select name, salary_annual
+        from df
+        where salary_annual > 100000")
+
+df %>% 
+  filter(salary_annual > 100000) %>% 
+  select(name, salary_annual)
+```
+
+```{python}
+df[df['salary_annual'] > 100000][['name', 'salary_annual']]
+```
+
+Find all employees who work in the "FINANCE" department.
+
+```{r}
+sqldf("select name
+        from df
+        where department = 'FINANCE'")
+
+df %>% 
+  filter(department == 'FINANCE') %>% 
+  select(name)
+```
+
+```{python}
+df[df['department'] == 'FINANCE']['name']
+```
+
+# 2. Aggregate Functions:
+
+Calculate the average salary for all employees.
+
+```{r}
+sqldf("select avg(salary_annual)
+        from df")
+
+df %>%
+  summarize(mean(salary_annual))
+```
+
+```{python}
+df['salary_annual'].mean()
+```
+
+Find the total number of employees in each department.
+
+```{r}
+sqldf("select department, count(*) as ttl_employees
+      from df
+      group by department
+      order by ttl_employees desc")
+
+df %>% 
+  group_by(department) %>%
+  count() %>% 
+  arrange(-n)
+```
+
+```{python}
+df.groupby('department').agg(
+  ttl_employees = ('name', 'count')
+).reset_index().sort_values(by='ttl_employees', ascending=False)
+```
+
+Determine the highest salary in the dataset.
+
+```{r}
+sqldf("select max(salary_annual)
+      from df")
+
+df %>% 
+  summarize(max(salary_annual))
+```
+
+```{python}
+df['salary_annual'].max()
+```
+
+# 3. Grouping and Sorting:
+
+List the average salary for each job title.
+
+```{r}
+sqldf("select title, avg(salary_annual) as avg_salary
+      from df
+      group by title
+      order by avg_salary desc")
+
+df %>% 
+  group_by(title) %>% 
+  summarize(avg_salary = mean(salary_annual, na.rm = TRUE)) %>% 
+  arrange(-avg_salary)
+```
+
+```{python}
+df.groupby('title').agg(
+  avg_salary = ('salary_annual', 'mean')
+).reset_index().sort_values(by='avg_salary', ascending=False)
+```
+
+Find the top 5 highest-paid departments.
+
+```{r}
+sqldf("select department, avg(salary_annual) as avg_salary
+      from df
+      group by department
+      order by avg_salary desc
+      limit 5")
+
+df %>% 
+  group_by(department) %>% 
+  summarize(avg_salary = mean(salary_annual)) %>% 
+  top_n(5, avg_salary) %>% 
+  arrange(-avg_salary)
+```
+
+```{python}
+df.groupby('department').agg(
+  avg_salary = ('salary_annual', 'mean')
+).reset_index().sort_values(by='avg_salary', ascending=False).head(5)
+```
+
+Show the number of employees for each job title, ordered by the number of employees in descending order.
+
+```{r}
+sqldf("select title, count(*) as cnt_employees
+      from df
+      group by title
+      order by cnt_employees desc")
+
+df %>% 
+  group_by(title) %>% 
+  count() %>% 
+  arrange(-n)
+```
+
+
+```{python}
+df.groupby('title').agg(
+  cnt_employees = ('name', 'count')
+).reset_index().sort_values(by='cnt_employees', ascending=False)
+```
+
+# 4. Joining and Subqueries:
+
+Retrieve the details of employees who have the same job title as the employee with the highest salary.
+
+```{r}
+# passing on question for now -- unclear
+
+```
+
+Find the names of employees who earn more than the average salary.
+
+```{r}
+# sqldf("select *, 
+#               avg(salary_annual) over() as avg_salary
+#       from df
+#       where salary_annual > avg_salary")
+
+df %>% 
+  mutate(avg_salary = mean(salary_annual)) %>% 
+  filter(salary_annual > avg_salary)
+```
+
+```{python}
+# not ready yet
+# df['avg_salary'] = df.mean('salary_annual')
+```
+
+5. Complex Queries:
+
+Calculate the percentage of employees in each department relative to the total number of employees.
+
+```{r}
+sqldf("
+with dept_employees as (
+  select department, count(*) cnt_employees
+  from df
+  group by department
+),
+ttl_employees as (
+  select count(*) as ttl_count
+  from df
+)
+select *, round(cnt_employees * 100.0 / ttl_count, 1) as pct_employees
+from dept_employees, ttl_employees
+order by pct_employees desc") 
+
+df %>% 
+  group_by(department) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate(ttl_employees = sum(n),
+         pct_employees = round((n / ttl_employees) * 100, 1)) %>% 
+  arrange(-pct_employees)
+```
+
+Identify job titles that have more than 100 employees.
+
+```{r}
+sqldf("select title, count(*) cnt_employees
+      from df
+      group by title
+      having cnt_employees > 100
+      order by cnt_employees desc")
+
+df %>% 
+  group_by(title) %>% 
+  count() %>% 
+  filter(n > 100) %>% 
+  arrange(-n)
+```
+
+Find employees who have been in their current position for more than 5 years (assuming the dataset includes a hire date or a similar field).
+
+```{r}
+library(lubridate)
+
+# need to work on this one
+# sqldf("select 
+#         name, 
+#         start_date_in_present_position, 
+#         DATE('now') as current_date, 
+#         DATEDIFF(current_date, start_date_in_present_position) as tenure
+#       from df")
+
+df %>% 
+  mutate(tenure = round(
+    lubridate::time_length(
+    today() - lubridate::as_date(start_date_in_present_position), "year"),
+    1)) %>% 
+  filter(tenure > 5) %>% 
+  arrange(-tenure)
+```
+
+# 6. Own Questions
+
+Pull the second title of all employees that have had more than one title.
+
+```{r}
+sqldf("with promotion_seq as (
+      select
+          name,
+          start_date_in_present_position,
+          ROW_NUMBER() OVER(
+            partition by name
+            order by start_date_in_present_position
+          ) as seq_promotion
+      from df
+)
+select *
+from promotion_seq
+where seq_promotion = 2")
+
+
+# need to think about how it's done with R
+df %>% 
+  group_by(name) %>% 
+  count() %>% 
+  arrange(-n) 
+```
+
+How much, on average, do people see in terms of a salary bump after their promotion?
+
+```{r}
+# more work to be done with this one
+
+sqldf("with promotion_seq as (
+      select
+          name,
+          salary_annual,
+          start_date_in_present_position,
+          ROW_NUMBER() OVER(
+            partition by name
+            order by start_date_in_present_position
+          ) as seq_promotion
+      from df
+),
+salary_change as (select *,
+        salary_annual - LAG(salary_annual, 1, salary_annual) OVER(
+            partition by name
+            order by start_date_in_present_position
+          ) as salary_diff
+from df
+)
+select *
+from salary_change
+where salary_diff != 0
+order by salary_diff desc")
+```
+
+Extension of this question to remove changes in employment type or salary basis.
+
+```{r}
+# more work to do on this
+
+# sqldf("with promotion_seq as (
+#       select
+#           name,
+#           salary_annual,
+#           start_date_in_present_position,
+#           ROW_NUMBER() OVER(
+#             partition by name
+#             order by start_date_in_present_position
+#           ) as seq_promotion
+#       from df
+# ),
+# with salary_lag as (select *,
+#        salary_annual - LAG(salary_annual, 1, salary_annual) OVER (
+#           partition by name
+#           order by seq_promotion
+#        ) as salary_diff
+# from promotion_seq
+# )
+# select *
+# from salary_lag")
+```
+
+

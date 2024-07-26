@@ -223,7 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="dataset" class="level2">
 <h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
-<p>This analysis uses results from the International Futures global forecasting model and its <strong>Base Case</strong> (or Current Path) scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results.</p>
+<p>This analysis uses results from the International Futures global forecasting model and its <strong>Base Case</strong> (or Current Path) scenario. The dataset contains country-level health outcomes projections from 2015-2065. For this clustering exercise, I am using the 2019 results. The variables in this analysis include:</p>
 <ul>
 <li>DR_OthCommumDis: Death Rate from other communicable diseases<br>
 </li>
@@ -380,7 +380,7 @@ $ `2065`   &lt;dbl&gt; 0.099, 0.833, 3.894, 0.155, 0.531, 0.854, 0.340, 0.224, 0
 </section>
 <section id="clustering" class="level1">
 <h1>Clustering</h1>
-<p>The <code>NbClust::</code> package has a handy function for evaluating possible cluster counts on the data</p>
+<p>The <code>NbClust::</code> package has a handy function for evaluating possible cluster counts on the data. The <code>NbClust()</code> function evaluates 23 heuristics for choosing the cluster amount, and recommends the best number to use based on the count that the most tests recommend. In this case, four clusters is recommended by the largest number of heuristics.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>(nbclust_eval <span class="ot">&lt;-</span> <span class="fu">NbClust</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>), </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">min.nc =</span> <span class="dv">3</span>,</span>
@@ -489,7 +489,6 @@ $Best.partition
 [39] 3 3 3 1 2 2 4 3 2 3 3 3 1 3 3 3</code></pre>
 </div>
 </div>
-<p>This function evaluates 23 heuristics for choosing the cluster amount, and recommends the best number to use based on the count that the most tests recommend. In this case, four clusters is recommended by the largest number of heuristics.</p>
 <p>The elbow plot of four clusters supports this recommendation.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_nbclust</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>), <span class="at">FUNcluster =</span> kmeans, <span class="at">method=</span><span class="st">'wss'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -501,6 +500,7 @@ $Best.partition
 </div>
 </div>
 </div>
+<p>Then, I run the <code>kmeans()</code> function on the dataset, telling the algorithm to use four clusters.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>(kmeans_sdg3 <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>)), <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
