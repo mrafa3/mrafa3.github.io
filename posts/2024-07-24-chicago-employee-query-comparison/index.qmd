@@ -317,7 +317,7 @@ df['avg_salary'] = df['salary_annual'].mean()
 df[df['salary_annual'] > df['avg_salary']]
 ```
 
-5. Complex Queries:
+# 5. Complex Queries:
 
 **Calculate the percentage of employees in each department relative to the total number of employees.**
 
@@ -434,7 +434,7 @@ df.sort_values(by='start_date_in_present_position').groupby('name').apply(
 
 **This project had three purposes:**
 
-1. **To show how to run R, SQL, and Python all interchangeably in a Quarto document.** Quarto and the `reticulate::` and `DBI::` packages allow for the functionality to switch between different methods of handling, querying, and analyzing data. Practically speaking, you probably wouldn't switch between these as often as I did in this work, but it's useful to verify your work and could come in handy for specific circumstances (e.g. analyzing with Pandas and visualizing with ggplot2).
+1. **To show how to run R, SQL, and Python all interchangeably in a Quarto document.** Quarto and the `reticulate::` and `DBI::` packages allow for the functionality to switch between different methods of handling, querying, and analyzing data. Practically speaking, you probably wouldn't switch between these as often as I did in this work, but it's useful to verify your work and could come in handy for specific circumstances (e.g. analyzing with Pandas and visualizing with ggplot2). I did find that some of the work in SQL is clunky -- data types didn't read in correctly for dates -- but I have not yet dug more deeply into the `DBI::` package to troubleshoot.
 
 2. **To compare the ease of writing code using dplyr (R), SQL, and pandas (Python).** Personally, I feel that R and `dplyr::` is the simplest syntax to use, followed by SQL and Python. `dplyr::` is very linear in its construction, and it rarely has extra characters to remember. Python's brackets, quotes, and chaining all take some getting used to, while R and SQL feel more direct.
 

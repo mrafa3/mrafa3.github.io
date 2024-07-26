@@ -203,7 +203,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#aggregate-functions" id="toc-aggregate-functions" class="nav-link" data-scroll-target="#aggregate-functions">2. Aggregate Functions:</a></li>
   <li><a href="#grouping-and-sorting" id="toc-grouping-and-sorting" class="nav-link" data-scroll-target="#grouping-and-sorting">3. Grouping and Sorting:</a></li>
   <li><a href="#joining-and-subqueries" id="toc-joining-and-subqueries" class="nav-link" data-scroll-target="#joining-and-subqueries">4. Joining and Subqueries:</a></li>
+  <li><a href="#complex-queries" id="toc-complex-queries" class="nav-link" data-scroll-target="#complex-queries">5. Complex Queries:</a></li>
   <li><a href="#own-questions" id="toc-own-questions" class="nav-link" data-scroll-target="#own-questions">6. Own Questions</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
     </div>
@@ -245,11 +247,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">GET</span>(<span class="st">"https://query.data.world/s/hu5dkviuxd6k2ipuhpxjuyuds7aplu?dws=00000"</span>, <span class="fu">write_disk</span>(tf <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".xls"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Response [https://download.data.world/file_download/wbezchicago/chicago-employee-positions-and-salaries-for-2017/Employee%20Salary%20Data%20as%20of%20Sept.%202017.xls?auth=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9kLXVzZXItY2xpZW50Om1yYWZhMyIsImlzcyI6ImFnZW50Om1yYWZhMzo6ODg0MjQ2ZDItMTgzMy00NmZjLTk2YTMtZjQ2MWMzMDJjOTZiIiwiaWF0IjoxNzIxODc0NzgyLCJyb2xlIjpbInVzZXIiLCJ1c2VyX2FwaV9hZG1pbiIsInVzZXJfYXBpX2VudGVycHJpc2VfYWRtaW4iLCJ1c2VyX2FwaV9yZWFkIiwidXNlcl9hcGlfd3JpdGUiXSwiZ2VuZXJhbC1wdXJwb3NlIjpmYWxzZSwidXJsIjoiMjM2ZDZlZGQ3NjdkZmVmOGRjYzM0Mzg3YTExMDQ1N2EzMmU1OGY3ZSJ9.oTr9PF0rrsLdVhewmy2v1vRgYvT0jy_PBmqhmrufaRSB25PEm48ZPxvswiSrZw8bNaACxDWpxwBiJVCVSaM-Zg]
-  Date: 2024-07-26 19:54
+  Date: 2024-07-26 20:16
   Status: 200
   Content-Type: application/vnd.ms-excel
   Size: 4.72 MB
-&lt;ON DISK&gt;  /var/folders/ck/dmgn8lbx6vl8sl89vlhr0sv00000gn/T//RtmpqUZkvv/filed5da614fb07c.xls</code></pre>
+&lt;ON DISK&gt;  /var/folders/ck/dmgn8lbx6vl8sl89vlhr0sv00000gn/T//Rtmp44XQRB/filed76165bf9508.xls</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1276,23 +1278,26 @@ Name: name, Length: 563, dtype: object</code></pre>
 <p><strong>Find the names of employees who earn more than the average salary in their department.</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">avg_salary =</span> <span class="fu">mean</span>(salary_annual)) <span class="sc">%&gt;%</span> </span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(salary_annual <span class="sc">&gt;</span> avg_salary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(department) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">avg_salary =</span> <span class="fu">mean</span>(salary_annual)) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(salary_annual <span class="sc">&gt;</span> avg_salary) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(department, <span class="sc">-</span>salary_annual)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 19,902 × 9
-   name                  title      department salary_annual original_hire_date 
-   &lt;chr&gt;                 &lt;chr&gt;      &lt;chr&gt;              &lt;dbl&gt; &lt;dttm&gt;             
- 1 AARON,  JEFFERY M     SERGEANT   POLICE            101442 2005-09-26 00:00:00
- 2 AARON,  KARINA        POLICE OF… POLICE             94122 2005-09-26 00:00:00
- 3 AARON,  KIMBERLEI R   CHIEF CON… FLEET AND…        101592 1991-08-01 00:00:00
- 4 ABAD JR,  VICENTE M   CIVIL ENG… WATER MGM…        110064 1994-12-01 00:00:00
- 5 ABBATACOLA,  ROBERT J ELECTRICA… AVIATION           95888 1997-10-16 00:00:00
- 6 ABBATEMARCO,  JAMES J FIRE ENGI… FIRE              103350 2000-07-17 00:00:00
- 7 ABBATE,  TERRY M      POLICE OF… POLICE             93354 1995-12-04 00:00:00
- 8 ABDALLAH,  ZAID       POLICE OF… POLICE             84054 2012-11-30 00:00:00
- 9 ABDELHADI,  ABDALMAHD POLICE OF… POLICE             87006 2006-12-18 00:00:00
-10 ABDELLATIF,  AREF R   FIREFIGHT… FIRE              102228 2003-11-03 00:00:00
-# ℹ 19,892 more rows
+<pre><code># A tibble: 16,399 × 9
+# Groups:   department [35]
+   name                       title department salary_annual original_hire_date 
+   &lt;chr&gt;                      &lt;chr&gt; &lt;chr&gt;              &lt;dbl&gt; &lt;dttm&gt;             
+ 1 JACKOWIAK,  PATRICIA       DIR … ADMIN HEA…        156420 1989-09-01 00:00:00
+ 2 SHEELY,  STEVEN N          DEPU… ADMIN HEA…        131688 2003-07-16 00:00:00
+ 3 HENNIGAN,  KEVIN G         FISC… ADMIN HEA…        117660 1980-01-07 00:00:00
+ 4 HEIDT,  SANDRA E           ASST… ADMIN HEA…         98160 1985-09-09 00:00:00
+ 5 GOGOLA,  DEBORAH G         SENI… ADMIN HEA…         96636 1989-10-02 00:00:00
+ 6 PARKER-OKOJIE,  GABRIELLE… SENI… ADMIN HEA…         96636 2004-06-15 00:00:00
+ 7 RIZZO,  ANTHONY J          SENI… ADMIN HEA…         96636 1997-12-08 00:00:00
+ 8 WEINERT,  DARCI N          SENI… ADMIN HEA…         96636 2003-03-17 00:00:00
+ 9 RIZZO,  MARGARET A         ADMI… ADMIN HEA…         93300 1975-07-01 00:00:00
+10 SMITH,  PAMELA M           ASST… ADMIN HEA…         93300 1988-07-18 00:00:00
+# ℹ 16,389 more rows
 # ℹ 4 more variables: start_date_in_present_position &lt;dttm&gt;,
 #   salary_basis &lt;chr&gt;, employment_category &lt;chr&gt;, avg_salary &lt;dbl&gt;</code></pre>
 </div>
@@ -1318,9 +1323,9 @@ Name: name, Length: 563, dtype: object</code></pre>
 [19902 rows x 9 columns]</code></pre>
 </div>
 </div>
-<ol start="5" type="1">
-<li>Complex Queries:</li>
-</ol>
+</section>
+<section id="complex-queries" class="level1">
+<h1>5. Complex Queries:</h1>
 <p><strong>Calculate the percentage of employees in each department relative to the total number of employees.</strong></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="kw">with</span> dept_employees <span class="kw">as</span> (</span>
@@ -1767,6 +1772,15 @@ Name: name, Length: 563, dtype: object</code></pre>
 [284 rows x 10 columns]</code></pre>
 </div>
 </div>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p><strong>This project had three purposes:</strong></p>
+<ol type="1">
+<li><p><strong>To show how to run R, SQL, and Python all interchangeably in a Quarto document.</strong> Quarto and the <code>reticulate::</code> and <code>DBI::</code> packages allow for the functionality to switch between different methods of handling, querying, and analyzing data. Practically speaking, you probably wouldn’t switch between these as often as I did in this work, but it’s useful to verify your work and could come in handy for specific circumstances (e.g.&nbsp;analyzing with Pandas and visualizing with ggplot2). I did find that some of the work in SQL is clunky – data types didn’t read in correctly for dates – but I have not yet dug more deeply into the <code>DBI::</code> package to troubleshoot.</p></li>
+<li><p><strong>To compare the ease of writing code using dplyr (R), SQL, and pandas (Python).</strong> Personally, I feel that R and <code>dplyr::</code> is the simplest syntax to use, followed by SQL and Python. <code>dplyr::</code> is very linear in its construction, and it rarely has extra characters to remember. Python’s brackets, quotes, and chaining all take some getting used to, while R and SQL feel more direct.</p></li>
+<li><p><strong>To include some demonstration of SQL in my portfolio (which is often not included but remains a critical skill).</strong> This was a fun way to demonstrate some SQL expertise while comparing and verifying output against R and Python.</p></li>
+</ol>
 
 
 </section>
