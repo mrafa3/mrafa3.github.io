@@ -34,7 +34,8 @@ library(readxl)
 library(janitor)        #for the clean_names() function for data cleaning
 # library(sqldf)          #to run SQL in an R code-chunk
 library(reticulate)     #to enable Python within R
-library(DBI)
+library(DBI)            #to establish in-memory database of R dataframe
+library(RSQLite)        #for SQLite engine
 library(lubridate)      #for functions to handle dates
 ```
 
@@ -43,6 +44,7 @@ About the dataset:
 This dataset is from data.world, and includes information from Chicago's Department of Human Resources for city employees in 2017. It's a simple dataset to allow for comparisons across languages.
 
 ```{r read_data, include=TRUE}
+# reading as a temporary file, then saving as df
 GET("https://query.data.world/s/hu5dkviuxd6k2ipuhpxjuyuds7aplu?dws=00000", write_disk(tf <- tempfile(fileext = ".xls")))
 ```
 
