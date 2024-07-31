@@ -9,7 +9,7 @@ date: 07-30-2024
 categories: [R, SQL, Quarto] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-#image: sql-r-python.png
+image: query.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 ---
 
