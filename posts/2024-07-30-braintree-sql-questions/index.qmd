@@ -30,10 +30,10 @@ library(RSQLite)
 **About the dataset**:
 
 ```{r}
-countries <- read_csv('.//data_csv/countries.csv')
-continent_map <- read_csv('.//data_csv/continent_map.csv')
-continents <- read_csv('.//data_csv/continents.csv')
-per_capita <- read_csv('.//data_csv/per_capita.csv')
+countries <- read_csv('.//data/countries.csv')
+continent_map <- read_csv('.//data/continent_map.csv')
+continents <- read_csv('.//data/continents.csv')
+per_capita <- read_csv('.//data/per_capita.csv')
 ```
 
 ## Setting up SQL to execute
