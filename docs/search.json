@@ -47,5 +47,12 @@
     "title": "Query comparison: SQL, R, and Python using Chicago Employees dataset",
     "section": "",
     "text": "The DBI:: package allows you to create an in-memory database to query against. The DBI project site is a great place to learn more about it. I’ll start by doing some initial setup and establishing the connection between the R dataframe and the SQL table name that I’ll query.\n\ncon &lt;- DBI::dbConnect(SQLite(), \":memory:\")\nDBI::dbWriteTable(conn = con, name = \"df\", value = df, field.types = c(\"original_hire_date\" = \"Date\"), row.names = FALSE)\n\nThe reticulate:: package allows for executing Python code in an R environment. The reticulate project site includes useful examples for getting up and running with Python in R. This package includes an r_to_py() function that is needed to convert an R dataframe into a pandas dataframe.\n\npy$df &lt;- r_to_py(df)\n\nWhen inserting a code chunk to your Markdown file, it originally defaults to ‘{r}’. You can simply change this to ‘python’ or ‘sql’ and, with the above set up, the code works beautifully in a Quarto document!\nIn the sections that follow, I used ChatGPT to generate prompts as querying exercises. For the initial code chunks,"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Mickey Rafa",
+    "section": "",
+    "text": "My name is Mickey – welcome to my personal portfolio website! I’m an analytics leader with nearly a decade of experience in high-growth environments, in both non-profit and for-profit organizations. I specialize in turning data into insights, improving the accessibility of dashboards and reports, and creating compelling data stories.\nOn this page, I include a selection of data science and viz projects that showcase the breadth of work that I’ve completed.\nLet’s connect! Feel free to reach out to me on LinkedIn or send me an email.\n🚧 🚧 🚧\nI’ll be adding more past projects to this site over time. To see more of my projects today, I invite you to check out my LinkedIn or Github accounts!\n🚧 🚧 🚧\n\nEducation\n\nMS in Business Analytics | University of Denver\nMA in International Studies | University of Denver\nBA in Political Science | West Virginia University\n\nWork Experience\n\nSr. Manager, Employer Analytics | Guild Education\nAssistant Director of Research | Pardee Center for International Futures, University of Denver"
   }
 ]
