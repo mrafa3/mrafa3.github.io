@@ -21,7 +21,7 @@ draft: true # setting this to `true` will prevent your post from appearing on yo
 
 **Required packages**: 
 
-```{r}
+```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(DBI)
 library(RSQLite)
@@ -29,7 +29,7 @@ library(RSQLite)
 
 **About the dataset**:
 
-```{r}
+```{r read_data, include=TRUE}
 countries <- read_csv('.//data/countries.csv')
 continent_map <- read_csv('.//data/continent_map.csv')
 continents <- read_csv('.//data/continents.csv')
@@ -40,9 +40,12 @@ per_capita <- read_csv('.//data/per_capita.csv')
 
 The `DBI::` package allows you to create an in-memory database to query against. The [DBI project site](https://r-dbi.org/) is a great place to learn more about it. I'll start by doing some initial setup and establishing the connection between the R dataframe and the SQL table name that I'll query.
 
-```{r}
+```{r sql_setup, include=TRUE}
 con <- DBI::dbConnect(SQLite(), ":memory:")
 DBI::dbWriteTable(conn = con, name = "continent_map", value = continent_map)
+DBI::dbWriteTable(conn = con, name = "per_capita", value = per_capita)
+DBI::dbWriteTable(conn = con, name = "continents", value = continents)
+DBI::dbWriteTable(conn = con, name = "countries", value = countries)
 ```
 
 # Questions 
@@ -51,7 +54,7 @@ DBI::dbWriteTable(conn = con, name = "continent_map", value = continent_map)
 
 Alphabetically list all of the country codes in the continent_map table that appear more than once. Display any values where country_code is null as country_code = "FOO" and make this row appear first in the list, even though it should alphabetically sort to the middle. Provide the results of this query as your answer.
 
-```{sql, connection="con", include=TRUE}
+```{sql question1.1, connection="con", include=TRUE}
 select 
       CASE WHEN country_code IS NULL THEN "FOO" ELSE country_code END as country_code,
       count(*) as cnt_country
@@ -62,7 +65,7 @@ having cnt_country > 1
 
 For all countries that have multiple rows in the continent_map table, delete all multiple records leaving only the 1 record per country. The record that you keep should be the first one when sorted by the continent_code alphabetically ascending. Provide the query/ies and explanation of step(s) that you follow to delete these records.
 
-```{sql, connection="con", include=TRUE}
+```{sql question1.2, connection="con", include=TRUE}
 with continent_map_update as (
 select *,
         ROW_NUMBER() OVER(
@@ -86,19 +89,13 @@ The list should include the columns:
 * country_name
 * growth_percent
 
-```{r}
-DBI::dbWriteTable(conn = con, name = "per_capita", value = per_capita)
-DBI::dbWriteTable(conn = con, name = "continent_map", value = continent_map)
-DBI::dbWriteTable(conn = con, name = "continents", value = continents)
-DBI::dbWriteTable(conn = con, name = "countries", value = countries)
-```
-
-For this question, there are two elements of data cleaning:
+>>For this question, there are two elements of data cleaning:
 
 * To list the **countries** and their ranking, I filtered out the many country codes that actually represented regions or country income groupings.
 * The `continent_name` is NA for North America, and I wanted to generate the results in a cleaner way.
 
-```{sql, connection="con", include=TRUE}
+
+```{sql question2, connection="con", include=TRUE}
 with df as (
 select 
         p.*,
@@ -150,7 +147,7 @@ order by growth_percent desc
 Asia	Europe	Rest of World
 25.0%	25.0%	50.0%
 
-```{sql, connection="con", include=TRUE}
+```{sql question3, connection="con", include=TRUE}
 with df as (
 select 
         p.*,
@@ -208,7 +205,7 @@ FROM tbl_sums
 
 4a. What is the count of countries and sum of their related gdp_per_capita values for the year 2007 where the string 'an' (case insensitive) appears anywhere in the country name?
 
-```{sql, connection="con", include=TRUE}
+```{sql question4a, connection="con", include=TRUE}
 select
         count(*) as nbr_countries,
         sum(per_capita.gdp_per_capita) as sum_gdp_per_capita
@@ -221,7 +218,7 @@ and year = 2007
 
 4b. Repeat question 4a, but this time make the query case sensitive.
 
-```{sql, connection="con", include=TRUE}
+```{sql question4b, connection="con", include=TRUE}
 select
         count(*) as nbr_countries,
         sum(per_capita.gdp_per_capita) as sum_gdp_per_capita
@@ -231,13 +228,14 @@ on per_capita.country_code = countries.country_code
 where countries.country_name glob '*an*'
 and year = 2007
 ```
+
 5. Find the sum of gpd_per_capita by year and the count of countries for each year that have non-null gdp_per_capita where (i) the year is before 2012 and (ii) the country has a null gdp_per_capita in 2012. Your result should have the columns:
 
 year
 country_count
 total
 
-```{sql, connection="con", include=TRUE}
+```{sql question5, connection="con", include=TRUE}
 select 
     year,
     count(country_code) as country_count,
@@ -277,7 +275,7 @@ country_name
 gdp_per_capita
 running_total
 
-```{sql, connection="con", include=TRUE}
+```{sql question6, connection="con", include=TRUE}
 with df as (
 select
         CASE WHEN continents.continent_name IS NULL THEN 'North America'
@@ -330,7 +328,7 @@ where row_number = 1
 
 7. Find the country with the highest average gdp_per_capita for each continent for all years. Now compare your list to the following data set. Please describe any and all mistakes that you can find with the data set below. Include any code that you use to help detect these mistakes.
 
-```{sql, connection="con", include=TRUE}
+```{sql question7, connection="con", include=TRUE}
 with df as (
 select
         per_capita.country_code,
@@ -373,7 +371,7 @@ from rank
 where rank_gdp_per_capita = 1
 ```
 
-```{sql, connection="con", include=TRUE}
+```{sql question7_test, connection="con", include=TRUE}
 select  *
 from per_capita
 where country_code = 'SYC'
