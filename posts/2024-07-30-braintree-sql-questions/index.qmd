@@ -11,15 +11,21 @@ categories: [SQL, Quarto] # self-defined categories
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 image: query.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
 ---
 
 # Introduction
 
-The BrainTree SQL coding challenge is known as a great challenge for data analysts looking to test their skills. In this project, I am putting my skills to the test, using Quarto and the `DBI::` and `RSQLite::` packages to run SQL queries on an in-memory database.
+The BrainTree SQL coding challenge is known as a great challenge for
+data analysts looking to test their skills. In this project, I am
+putting my skills to the test, using Quarto and the `DBI::` and
+`RSQLite::` packages to run SQL queries on an in-memory database.
 
 ## Setup and data preparation
 
-**Required packages**: 
+**Required packages**:
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -31,17 +37,42 @@ library(RSQLite)
 
 Here is some text from the BrainTree challenge site:
 
->This is an opportunity for you to show us your grasp of SQL which plays a key role in the day-to-day job that you're applying for. All members of the Analytics Data team have taken this challenge and participated in its creation. If you feel that there are any questions that are either not fair or not clear, please do let us know; this is VERY important to us! A few important things to note before you get started:
+> This is an opportunity for you to show us your grasp of SQL which
+> plays a key role in the day-to-day job that you're applying for. All
+> members of the Analytics Data team have taken this challenge and
+> participated in its creation. If you feel that there are any questions
+> that are either not fair or not clear, please do let us know; this is
+> VERY important to us! A few important things to note before you get
+> started:
 
->*  All work should be done in SQL. Any variant is fine (e.g. MS SQL, Postgres, MySQL, etc.). If you normally use R, SAS, or other similar tools with SQL it's important that you show that you can work in SQL by itself to produce the correct answers to this challenge.
-*  If you are confused by a specific question, you can request clarification by replying to the message that this challenge was attached to. This is NOT intended for you to obtain technical help with solving the problems on this challenge or asking for hints; it should only be used for question clarification.
-This challenge is due back within 1 week (7 calendar days) of being sent to you.
-*  If you cannot answer a question, please do your best, show your work, leave comments, and let us know your general thoughts.
-*  We are interested in BOTH your answers and the work/code that you write to get them. Please leave plenty of comments for us to read when we review your work.
-*  There are some blank/null values in this set. That's how we found it and it reflects the nature of imperfect data. Please work with this and provide explanations of any issues or workarounds required to arrive at your answers.
-*  There are no intentional gotchas, trick questions, or traps; the challenge is intended to demonstrate some of the typical day-to-day SQL skills that the job requires.
-*  Some of these questions may seem nonsensical and you may find yourself asking, "why would anyone want to know that?!" They are intended purely as a measure of your SQL skills and not as actual questions that we would expect to ask of this type of data set. Please take them with a grain of salt.
-
+> -   All work should be done in SQL. Any variant is fine (e.g. MS SQL,
+>     Postgres, MySQL, etc.). If you normally use R, SAS, or other
+>     similar tools with SQL it's important that you show that you can
+>     work in SQL by itself to produce the correct answers to this
+>     challenge.
+> -   If you are confused by a specific question, you can request
+>     clarification by replying to the message that this challenge was
+>     attached to. This is NOT intended for you to obtain technical help
+>     with solving the problems on this challenge or asking for hints;
+>     it should only be used for question clarification. This challenge
+>     is due back within 1 week (7 calendar days) of being sent to you.
+> -   If you cannot answer a question, please do your best, show your
+>     work, leave comments, and let us know your general thoughts.
+> -   We are interested in BOTH your answers and the work/code that you
+>     write to get them. Please leave plenty of comments for us to read
+>     when we review your work.
+> -   There are some blank/null values in this set. That's how we found
+>     it and it reflects the nature of imperfect data. Please work with
+>     this and provide explanations of any issues or workarounds
+>     required to arrive at your answers.
+> -   There are no intentional gotchas, trick questions, or traps; the
+>     challenge is intended to demonstrate some of the typical
+>     day-to-day SQL skills that the job requires.
+> -   Some of these questions may seem nonsensical and you may find
+>     yourself asking, "why would anyone want to know that?!" They are
+>     intended purely as a measure of your SQL skills and not as actual
+>     questions that we would expect to ask of this type of data set.
+>     Please take them with a grain of salt.
 
 ```{r read_data, include=TRUE, message=FALSE, warning=FALSE}
 countries <- read_csv('.//data/countries.csv')
@@ -50,11 +81,13 @@ continents <- read_csv('.//data/continents.csv')
 per_capita <- read_csv('.//data/per_capita.csv')
 ```
 
-
-
 ## Setting up SQL to execute
 
-The `DBI::` package allows you to create an in-memory database to query against. The [DBI project site](https://r-dbi.org/) is a great place to learn more about it. I'll start by doing some initial setup and establishing the connection between the R dataframe and the SQL table name that I'll query.
+The `DBI::` package allows you to create an in-memory database to query
+against. The [DBI project site](https://r-dbi.org/) is a great place to
+learn more about it. I'll start by doing some initial setup and
+establishing the connection between the R dataframe and the SQL table
+name that I'll query.
 
 ```{r sql_setup, include=TRUE}
 con <- DBI::dbConnect(SQLite(), ":memory:")
@@ -64,11 +97,15 @@ DBI::dbWriteTable(conn = con, name = "continents", value = continents)
 DBI::dbWriteTable(conn = con, name = "countries", value = countries)
 ```
 
-# Questions 
+# Questions
 
-1. Data Integrity Checking & Cleanup
+1.  Data Integrity Checking & Cleanup
 
-Alphabetically list all of the country codes in the continent_map table that appear more than once. Display any values where country_code is null as country_code = "FOO" and make this row appear first in the list, even though it should alphabetically sort to the middle. Provide the results of this query as your answer.
+Alphabetically list all of the country codes in the continent_map table
+that appear more than once. Display any values where country_code is
+null as country_code = "FOO" and make this row appear first in the list,
+even though it should alphabetically sort to the middle. Provide the
+results of this query as your answer.
 
 ```{sql question1.1, connection="con", include=TRUE}
 select 
@@ -79,7 +116,11 @@ group by country_code
 having cnt_country > 1
 ```
 
-For all countries that have multiple rows in the continent_map table, delete all multiple records leaving only the 1 record per country. The record that you keep should be the first one when sorted by the continent_code alphabetically ascending. Provide the query/ies and explanation of step(s) that you follow to delete these records.
+For all countries that have multiple rows in the continent_map table,
+delete all multiple records leaving only the 1 record per country. The
+record that you keep should be the first one when sorted by the
+continent_code alphabetically ascending. Provide the query/ies and
+explanation of step(s) that you follow to delete these records.
 
 ```{sql question1.2, connection="con", include=TRUE}
 with continent_map_update as (
@@ -93,23 +134,27 @@ from continent_map_update
 where seq = 1
 ```
 
-2. List the countries ranked 10-12 in each continent by the percent of year-over-year growth descending from 2011 to 2012.
+2.  List the countries ranked 10-12 in each continent by the percent of
+    year-over-year growth descending from 2011 to 2012.
 
-The percent of growth should be calculated as: ((2012 gdp - 2011 gdp) / 2011 gdp)
+The percent of growth should be calculated as: ((2012 gdp - 2011 gdp) /
+2011 gdp)
 
 The list should include the columns:
 
-* rank
-* continent_name
-* country_code
-* country_name
-* growth_percent
+-   rank
+-   continent_name
+-   country_code
+-   country_name
+-   growth_percent
 
 For this question, there are two elements of data cleaning:
 
-* To list the **countries** and their ranking, I filtered out the many country codes that actually represented regions or country income groupings.
-* The `continent_name` is NA for North America, and I wanted to generate the results in a cleaner way.
-
+-   To list the **countries** and their ranking, I filtered out the many
+    country codes that actually represented regions or country income
+    groupings.
+-   The `continent_name` is NA for North America, and I wanted to
+    generate the results in a cleaner way.
 
 ```{sql question2, connection="con", include=TRUE}
 with df as (
@@ -156,12 +201,15 @@ from rank_2012
 order by growth_percent desc
 ```
 
-3. For the year 2012, create a 3 column, 1 row report showing the percent share of gdp_per_capita for the following regions:
+3.  For the year 2012, create a 3 column, 1 row report showing the
+    percent share of gdp_per_capita for the following regions:
 
-(i) Asia, (ii) Europe, (iii) the Rest of the World. Your result should look something like
+<!-- -->
 
-Asia	Europe	Rest of World
-25.0%	25.0%	50.0%
+(i) Asia, (ii) Europe, (iii) the Rest of the World. Your result should
+    look something like
+
+Asia Europe Rest of World 25.0% 25.0% 50.0%
 
 ```{sql question3, connection="con", include=TRUE}
 with df as (
@@ -219,7 +267,9 @@ select
 FROM tbl_sums
 ```
 
-4a. What is the count of countries and sum of their related gdp_per_capita values for the year 2007 where the string 'an' (case insensitive) appears anywhere in the country name?
+4a. What is the count of countries and sum of their related
+gdp_per_capita values for the year 2007 where the string 'an' (case
+insensitive) appears anywhere in the country name?
 
 ```{sql question4a, connection="con", include=TRUE}
 select
@@ -245,11 +295,12 @@ where countries.country_name glob '*an*'
 and year = 2007
 ```
 
-5. Find the sum of gpd_per_capita by year and the count of countries for each year that have non-null gdp_per_capita where (i) the year is before 2012 and (ii) the country has a null gdp_per_capita in 2012. Your result should have the columns:
+5.  Find the sum of gpd_per_capita by year and the count of countries
+    for each year that have non-null gdp_per_capita where (i) the year
+    is before 2012 and (ii) the country has a null gdp_per_capita
+    in 2012. Your result should have the columns:
 
-year
-country_count
-total
+year country_count total
 
 ```{sql question5, connection="con", include=TRUE}
 select 
@@ -267,29 +318,28 @@ and country_code IN
 group by year
 ```
 
-6. All in a single query, execute all of the steps below and provide the results as your final answer:
+6.  All in a single query, execute all of the steps below and provide
+    the results as your final answer:
 
-a. create a single list of all per_capita records for year 2009 that includes columns:
+<!-- -->
 
-continent_name
-country_code
-country_name
-gdp_per_capita
+a.  create a single list of all per_capita records for year 2009 that
+    includes columns:
 
-b. order this list by:
+continent_name country_code country_name gdp_per_capita
 
-continent_name ascending
-characters 2 through 4 (inclusive) of the country_name descending
+b.  order this list by:
 
-c. create a running total of gdp_per_capita by continent_name
+continent_name ascending characters 2 through 4 (inclusive) of the
+country_name descending
 
-d. return only the first record from the ordered list for which each continent's running total of gdp_per_capita meets or exceeds $70,000.00 with the following columns:
+c.  create a running total of gdp_per_capita by continent_name
 
-continent_name
-country_code
-country_name
-gdp_per_capita
-running_total
+d.  return only the first record from the ordered list for which each
+    continent's running total of gdp_per_capita meets or exceeds
+    \$70,000.00 with the following columns:
+
+continent_name country_code country_name gdp_per_capita running_total
 
 ```{sql question6, connection="con", include=TRUE}
 with df as (
@@ -342,7 +392,11 @@ from final
 where row_number = 1
 ```
 
-7. Find the country with the highest average gdp_per_capita for each continent for all years. Now compare your list to the following data set. Please describe any and all mistakes that you can find with the data set below. Include any code that you use to help detect these mistakes.
+7.  Find the country with the highest average gdp_per_capita for each
+    continent for all years. Now compare your list to the following data
+    set. Please describe any and all mistakes that you can find with the
+    data set below. Include any code that you use to help detect these
+    mistakes.
 
 ```{sql question7, connection="con", include=TRUE}
 with df as (
