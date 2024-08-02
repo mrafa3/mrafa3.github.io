@@ -1,5 +1,5 @@
 ---
-title: "Braintree SQL challenge"
+title: "BrainTree SQL challenge"
 description: "This post works through the SQL challenges used by PayPal"
 author:
   - name: Mickey Rafa
