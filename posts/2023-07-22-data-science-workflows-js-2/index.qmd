@@ -1,0 +1,61 @@
+---
+title: "Data Science Workflows in Javascript: Part Two"
+description: "This post is from the second session led by Observable HQ"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 07-11-2023
+categories: [Quarto, Javascript, data-viz, regression] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+#image: js_plot.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+Learning objectives
+After following along in Session #2, participants will be able to:
+
+Access remote data from an online repository with d3.csv
+Merge and wrangle data from multiple files
+Create interactive exploratory data viz with Observable Plot and Inputs
+Reuse community examples content using imports
+Perform and visualize cluster analysis by k-means
+Publish outcomes with embeds
+Background
+In this session, we’ll recreate the curated penguins dataset from scratch by accessing the raw data from the Environmental Data Initiative Data Portal, wrangling it to match the curated version, exploring the data in interactive data visualizations, then doing some cluster analysis by k-means and hierarchical clustering.
+
+The penguins data contains size measurements and blood isotope analysis for nesting pairs of three penguin species (Adélie, gentoo, and chinstrap), collected on islands near Palmer Archipelago, Antarctica, from 2007 - 2009 by Dr. Kristen B. Gorman and colleagues (Gorman et al. 2016).
+
+Gorman et al (2014). Ecological Sexual Dimorphism and Environmental Variability within a Community of Antarctic Penguins (Genus pygoscelis). PLoS ONE, 9(3): e90081. https://dx.plos.org/10.1371/journal.pone.0090081.
+
+Step 0: Fork this notebook!
+Fork this follow-along notebook to make your own copy, in your own account. Working in your own fork will ensure that changes you make during the session are saved.
+
+Note: You can work without an account by making changes in tinker mode (not recommended), but your changes will not be saved, and refreshing the page will erase any changes.
+
+**Step 1: Get the raw data from Environmental Data Initiative using d3.csv()**
+
+First, we’ll access the penguins data for each of the three species from the Environmental Data Initiative using d3.csv(). The links for the three species are:
+
+Gentoo penguins: https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381
+Adélie penguins: https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.219.5&entityid=002f3893385f710df69eeebe893144ff
+Chinstrap penguins: https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.221.8&entityid=fe853aa8f7a59aa84cdd3197619ef462
+Let’s store these in our notebook as gentoo, adelie, and chinstrap (note that they are stored as arrays of objects, with all properties as characters). We will use d3.autoType to parse the data (assign types), otherwise they will be automatically interpreted as characters.
+
+Learn more about accessing data from remote files and APIs.
+
+```{d3}
+gentoo = d3.csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381")
+```
+
+```{ojs}
+gentoo
+```
+
+
