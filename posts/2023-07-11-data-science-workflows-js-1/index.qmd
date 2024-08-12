@@ -1,0 +1,98 @@
+---
+title: "Data Science Workflows in Javascript: Part One"
+description: "This post is from the first session led by Observable HQ"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 08-02-2024
+categories: [Quarto, Javascript] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+#image: map_example.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+Data Science Workflows in JavaScript Workshop Series - Session #1
+
+Follow-along notebook
+Session 1 slides
+Session 1 notebook key
+
+**Step 0: Fork this notebook**
+
+Press the Fork button in the upper right of the shared notebook to create your own copy (requires an Observable account). You can follow along without an account in tinker mode, but your work will not be saved.
+
+**Step 1: Quick intro to working in a notebook**
+
+Cells and the Add cell menu
+Running cells
+Files pane
+
+**Step 2: Attach the data in your notebook**
+
+Click on the link below to download the fiddler crab data from the Environmental Data Initiative Data Portal. The file will be saved as HTL-MAL-FiddlerCrabBodySize.csv.
+
+Attach the file to your notebook using one of the following methods:
+
+Open the Files pane (paperclip icon) in the top right of the notebook, click the plus sign next to File attachments, then find and choose the HTL-MAL-FiddlerCrabBodySize.csv file you downloaded above.
+
+Drag the file over the Files pane in your notebook to attach it.
+
+**Step 3: Load and take a look at the data**
+
+In the Files pane, click the "Insert into notebook" icon to the right of the file. This will automatically create a new interactive Data table cell, where you can preview the data in tabular form and even do some basic exploration and data wrangling.
+
+```{ojs}
+crabs = FileAttachment(".//data/HTL-MAR-FiddlerCrabBodySize.csv").csv({ typed: true })
+```
+
+
+```{r setup, include=TRUE}
+library(tidyverse)
+crabs <- read_csv('.//data/HTL-MAR-FiddlerCrabBodySize.csv')
+```
+There are 9 variables in the Johnson 2019 dataset:
+
+* Date: record date
+* Site: a 3 character site identifier
+* Latitude: the site latitude in degrees
+* Replicate: a number, indicating the crab recorded (30 at each site)
+* carapace_width: crab carapace width, in millimeters
+* MATA: mean annual air temperature in degrees Celsius
+* SATA: standard deviation of annual air temperature in degrees Celsius
+* MATW: mean annual water temperature in degrees Celsius
+* SATW: standard deviation of annual water temperature in degrees Celsius
+
+What is crabs? An array of objects. Let's take a look at it outside of the Data table cell to see how that looks.
+
+```{r}
+crabs
+```
+
+**Step 4: A bit of data wrangling**
+
+This data is already tidy, but we may want to simplify it a bit more. Here, we will select and rename certain columns in two ways:
+
+Right in the Data table cell (no code)
+In JavaScript
+Then we’ll do the wrangling in JavaScript:
+
+```{ojs crabsJS, include=TRUE}
+crabsJS = crabs.map((d) => ({
+  lat: d.Latitude,
+  site: d["Site "],
+  sizeMm: d.carapace_width, //You could also mutate right within this map function (such as a unit transformation)
+  airTempC: d.MATA,
+  waterTempC: d.MATW
+}))
+
+// This array map method is like a select and rename function in one
+
+```
+
