@@ -16,6 +16,7 @@ editor:
     wrap: 72
 ---
 
+
 # Introduction
 
 Data Science Workflows in JavaScript Workshop Series - Session #1
@@ -48,15 +49,57 @@ Drag the file over the Files pane in your notebook to attach it.
 
 In the Files pane, click the "Insert into notebook" icon to the right of the file. This will automatically create a new interactive Data table cell, where you can preview the data in tabular form and even do some basic exploration and data wrangling.
 
+
 ```{ojs}
 crabs = FileAttachment(".//data/HTL-MAR-FiddlerCrabBodySize.csv").csv({ typed: true })
 ```
 
+::: {.cell}
 
-```{r setup, include=TRUE}
+```{.r .cell-code}
 library(tidyverse)
+```
+
+::: {.cell-output .cell-output-stderr}
+
+```
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+```
+
+
+:::
+
+```{.r .cell-code}
 crabs <- read_csv('.//data/HTL-MAR-FiddlerCrabBodySize.csv')
 ```
+
+::: {.cell-output .cell-output-stderr}
+
+```
+Rows: 392 Columns: 9
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (1): Site
+dbl  (7): Latitude, Replicate, carapace_width, MATA, SATA, MATW, SATW
+date (1): Date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+
+:::
+:::
+
 There are 9 variables in the Johnson 2019 dataset:
 
 * Date: record date
@@ -71,9 +114,36 @@ There are 9 variables in the Johnson 2019 dataset:
 
 What is crabs? An array of objects. Let's take a look at it outside of the Data table cell to see how that looks.
 
-```{r}
+
+::: {.cell}
+
+```{.r .cell-code}
 crabs
 ```
+
+::: {.cell-output .cell-output-stdout}
+
+```
+# A tibble: 392 × 9
+   Date       Latitude Site  Replicate carapace_width  MATA  SATA  MATW  SATW
+   <date>        <dbl> <chr>     <dbl>          <dbl> <dbl> <dbl> <dbl> <dbl>
+ 1 2016-07-24       30 GTM           1           12.4  21.8  6.39  24.5  6.12
+ 2 2016-07-24       30 GTM           2           14.2  21.8  6.39  24.5  6.12
+ 3 2016-07-24       30 GTM           3           14.5  21.8  6.39  24.5  6.12
+ 4 2016-07-24       30 GTM           4           12.9  21.8  6.39  24.5  6.12
+ 5 2016-07-24       30 GTM           5           12.4  21.8  6.39  24.5  6.12
+ 6 2016-07-24       30 GTM           6           13.0  21.8  6.39  24.5  6.12
+ 7 2016-07-24       30 GTM           7           10.3  21.8  6.39  24.5  6.12
+ 8 2016-07-24       30 GTM           8           11.2  21.8  6.39  24.5  6.12
+ 9 2016-07-24       30 GTM           9           12.7  21.8  6.39  24.5  6.12
+10 2016-07-24       30 GTM          11           14.6  21.8  6.39  24.5  6.12
+# ℹ 382 more rows
+```
+
+
+:::
+:::
+
 
 **Step 4: A bit of data wrangling**
 
@@ -83,7 +153,8 @@ Right in the Data table cell (no code)
 In JavaScript
 Then we’ll do the wrangling in JavaScript:
 
-```{ojs crabsJS, include=TRUE}
+
+```{ojs}
 crabsJS = crabs.map((d) => ({
   lat: d.Latitude,
   site: d["Site "],
@@ -96,6 +167,7 @@ crabsJS = crabs.map((d) => ({
 
 ```
 
+
 **Step 5: Exploratory data visualization** 
 
 Let’s make some quick exploratory charts with Observable Plot, a JavaScript library for data visualization by the team that built D3. We’ll do this in several ways:
@@ -107,6 +179,7 @@ A note on using Observable Plot in our notebooks: a number of JavaScript librari
 
 Chart cell
 First, let’s make a histogram of all crab sizes in the dataset. Then, we’ll facet by other variables to see if we can notice any interesting trends. Add a new Chart cell by searching for Chart in the Add cell menu, then choose the variable(s) you want to visualize.
+
 
 ```{ojs}
 Plot.plot({
@@ -122,6 +195,7 @@ Plot.plot({
 })
 ```
 
+
 Observable Plot snippets
 Open the Add cell menu, and begin typing "scatterplot." Choose the scatterplot snippet, which will automatically add a new JavaScript cell with some skeleton code for a basic scatterplot that we can update.
 
@@ -129,21 +203,26 @@ Open the Add cell menu, and begin typing "scatterplot." Choose the scatterplot s
 
 We will use the SimpleLinearRegression method from the ml.js JavaScript library. Since ml.js is not automatically available, we’ll use require to access it in our notebook:
 
+
 ```{ojs}
 ML = require("https://www.lactame.com/lib/ml/6.0.0/ml.min.js")
 ```
 
+
 Now, we have access to the methods in ml.js, including SimpleLinearRegression, which will estimate parameters for a linear model by ordinary least squares.
+
 
 ```{ojs}
 crabsLM = new ML.SimpleLinearRegression(crabsJS.map(d => d.lat), crabsJS.map(d => d.sizeMm))
 ```
+
 
 The slope is 0.485.
 
 **Step 7: Final visualization and summary statement**
 
 To wrap it up, let’s create a final visualization with a summary statement. We’ll again use Observable Plot to create and customize a chart.
+
 
 ```{ojs}
 Plot.plot({
@@ -154,6 +233,7 @@ Plot.plot({
   y: {label: "Carapace size (mm)"}
 })
 ```
+
 
 **Step 8: Share your notebook**
 
