@@ -187,10 +187,15 @@ editors, and even make your own custom URL.
 Send along the link, and anyone with permissions (or the public!) can
 see your work.
 
-Today we learned: \* How to attach a CSV in an Observable notebook \*
-Data table cell to inspect & wrangle data \* A little data wrangling in
-JS \* Chart cell and Observable Plot for quick exploratory data viz \*
-Require to load a JavaScript module \* Simple linear regression in JS
-with ml.js \* Creating a final visualization \* Referring to code
-outputs in markdown with template literals \* Sharing a notebook URL \*
-Bergmann's Rule!
+Today we learned:
+
+* How to attach a CSV in an Observable notebook
+* Data table cell to inspect & wrangle data
+* A little data wrangling in JS 
+* Chart cell and Observable Plot for quick exploratory data viz 
+* Require to load a JavaScript module 
+* Simple linear regression in JS with ml.js 
+* Creating a final visualization 
+* Referring to code outputs in markdown with template literals 
+* Sharing a notebook URL 
+* Bergmann's Rule!
