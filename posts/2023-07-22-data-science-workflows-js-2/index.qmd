@@ -50,12 +50,49 @@ Let’s store these in our notebook as gentoo, adelie, and chinstrap (note that 
 
 Learn more about accessing data from remote files and APIs.
 
-```{d3}
-gentoo = d3.csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381")
+*Note: `d3.csv()` was not working, so I've switched this to `read_csv()` from R.*
+
+```{r, include=TRUE, echo=FALSE}
+library(tidyverse)
 ```
+
+```{r read_data, include=TRUE, message=FALSE}
+gentoo <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381")
+
+adelie <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.219.5&entityid=002f3893385f710df69eeebe893144ff")
+
+chinstrap <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.221.8&entityid=fe853aa8f7a59aa84cdd3197619ef462")
+```
+
+**Step 2: Merge & wrangle the data**
+
+Our first step will be to get these all into a single array of objects. Since they all have the same properties, in the same order, we can use the concat() method to combine them.
 
 ```{ojs}
-gentoo
+// Make combined version, penguinsCombo, here
+penguinsCombo = adelie.concat(gentoo, chinstrap)
 ```
 
+Recreate the curated penguins data in JS
+Let’s wrangle the data in JavaScript to recreate the curated penguins data, updating to only keep and rename the following:
+
+* Species (renamed species, and limited to only the first word)
+* Island (renamed island)
+* Sex (renamed sex, and converted to lowercase)
+* Culmen Length (mm) (renamed bill_length_mm)
+* Culmen Depth (mm) (renamed bill_depth_mm)
+* Body Mass (g) (renamed body_mass_g)
+* Flipper Length (mm) (renamed flipper_length_mm)
+
+```{ojs}
+// Create the wrangled version of penguins here: 
+penguins = penguinsCombo.map((d) => ({
+  species: d.Species.split(" ")[0],
+  island: d.Island,
+  sex: d.Sex == null || d.Sex == "." ? null : d.Sex.toLowerCase(),
+  bill_length_mm: d["Culmen Length (mm)"],
+  bill_depth_mm: d["Culmen Depth (mm)"],
+  body_mass_g: d["Body Mass (g)"],
+  flipper_length_mm: d["Flipper Length (mm)"]})) 
+```
 
