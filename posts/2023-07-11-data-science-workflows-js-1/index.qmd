@@ -6,7 +6,7 @@ author:
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
 date: 07-11-2023
-categories: [Quarto, Javascript] # self-defined categories
+categories: [Quarto, Javascript, regression] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 image: js_plot.png
