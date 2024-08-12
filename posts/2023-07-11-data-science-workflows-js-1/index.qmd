@@ -9,8 +9,8 @@ date: 07-11-2023
 categories: [Quarto, Javascript] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-#image: map_example.png
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+image: js_plot.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
     wrap: 72
@@ -20,68 +20,71 @@ editor:
 
 Data Science Workflows in JavaScript Workshop Series - Session #1
 
-Follow-along notebook
-Session 1 slides
-Session 1 notebook key
+Follow-along notebook Session 1 slides Session 1 notebook key
 
 **Step 0: Fork this notebook**
 
-Press the Fork button in the upper right of the shared notebook to create your own copy (requires an Observable account). You can follow along without an account in tinker mode, but your work will not be saved.
+Press the Fork button in the upper right of the shared notebook to
+create your own copy (requires an Observable account). You can follow
+along without an account in tinker mode, but your work will not be
+saved.
 
 **Step 1: Quick intro to working in a notebook**
 
-Cells and the Add cell menu
-Running cells
-Files pane
+Cells and the Add cell menu Running cells Files pane
 
 **Step 2: Attach the data in your notebook**
 
-Click on the link below to download the fiddler crab data from the Environmental Data Initiative Data Portal. The file will be saved as HTL-MAL-FiddlerCrabBodySize.csv.
+Click on the link below to download the fiddler crab data from the
+Environmental Data Initiative Data Portal. The file will be saved as
+HTL-MAL-FiddlerCrabBodySize.csv.
 
 Attach the file to your notebook using one of the following methods:
 
-Open the Files pane (paperclip icon) in the top right of the notebook, click the plus sign next to File attachments, then find and choose the HTL-MAL-FiddlerCrabBodySize.csv file you downloaded above.
+Open the Files pane (paperclip icon) in the top right of the notebook,
+click the plus sign next to File attachments, then find and choose the
+HTL-MAL-FiddlerCrabBodySize.csv file you downloaded above.
 
 Drag the file over the Files pane in your notebook to attach it.
 
 **Step 3: Load and take a look at the data**
 
-In the Files pane, click the "Insert into notebook" icon to the right of the file. This will automatically create a new interactive Data table cell, where you can preview the data in tabular form and even do some basic exploration and data wrangling.
+In the Files pane, click the "Insert into notebook" icon to the right of
+the file. This will automatically create a new interactive Data table
+cell, where you can preview the data in tabular form and even do some
+basic exploration and data wrangling.
 
 ```{ojs}
 crabs = FileAttachment(".//data/HTL-MAR-FiddlerCrabBodySize.csv").csv({ typed: true })
 ```
-
-
-```{r setup, include=TRUE}
-library(tidyverse)
-crabs <- read_csv('.//data/HTL-MAR-FiddlerCrabBodySize.csv')
-```
-There are 9 variables in the Johnson 2019 dataset:
-
-* Date: record date
-* Site: a 3 character site identifier
-* Latitude: the site latitude in degrees
-* Replicate: a number, indicating the crab recorded (30 at each site)
-* carapace_width: crab carapace width, in millimeters
-* MATA: mean annual air temperature in degrees Celsius
-* SATA: standard deviation of annual air temperature in degrees Celsius
-* MATW: mean annual water temperature in degrees Celsius
-* SATW: standard deviation of annual water temperature in degrees Celsius
-
-What is crabs? An array of objects. Let's take a look at it outside of the Data table cell to see how that looks.
-
-```{r}
+```{ojs}
 crabs
 ```
 
+There are 9 variables in the Johnson 2019 dataset:
+
+-   Date: record date
+-   Site: a 3 character site identifier
+-   Latitude: the site latitude in degrees
+-   Replicate: a number, indicating the crab recorded (30 at each site)
+-   carapace_width: crab carapace width, in millimeters
+-   MATA: mean annual air temperature in degrees Celsius
+-   SATA: standard deviation of annual air temperature in degrees
+    Celsius
+-   MATW: mean annual water temperature in degrees Celsius
+-   SATW: standard deviation of annual water temperature in degrees
+    Celsius
+
+What is crabs? An array of objects. Let's take a look at it outside of
+the Data table cell to see how that looks.
+
 **Step 4: A bit of data wrangling**
 
-This data is already tidy, but we may want to simplify it a bit more. Here, we will select and rename certain columns in two ways:
+This data is already tidy, but we may want to simplify it a bit more.
+Here, we will select and rename certain columns in two ways:
 
-Right in the Data table cell (no code)
-In JavaScript
-Then we’ll do the wrangling in JavaScript:
+Right in the Data table cell (no code) In JavaScript Then we’ll do the
+wrangling in JavaScript:
 
 ```{ojs crabsJS, include=TRUE}
 crabsJS = crabs.map((d) => ({
@@ -96,17 +99,27 @@ crabsJS = crabs.map((d) => ({
 
 ```
 
-**Step 5: Exploratory data visualization** 
+**Step 5: Exploratory data visualization**
 
-Let’s make some quick exploratory charts with Observable Plot, a JavaScript library for data visualization by the team that built D3. We’ll do this in several ways:
+Let’s make some quick exploratory charts with Observable Plot, a
+JavaScript library for data visualization by the team that built D3.
+We’ll do this in several ways:
 
-Using the Chart cell in Observable, then ejecting to JS for customization
-Using code snippets for Observable Plot
+Using the Chart cell in Observable, then ejecting to JS for
+customization Using code snippets for Observable Plot
 
-A note on using Observable Plot in our notebooks: a number of JavaScript libraries are automatically available when working in Observable notebooks as recommended libraries in the standard library, including D3, Observable Plot, lodash, and others commonly used on the platform, which is why you don’t need to separately install or load Plot to use it here. In the next section we’ll see how we can load a library that is not automatically available for use in Observable.
+A note on using Observable Plot in our notebooks: a number of JavaScript
+libraries are automatically available when working in Observable
+notebooks as recommended libraries in the standard library, including
+D3, Observable Plot, lodash, and others commonly used on the platform,
+which is why you don’t need to separately install or load Plot to use it
+here. In the next section we’ll see how we can load a library that is
+not automatically available for use in Observable.
 
-Chart cell
-First, let’s make a histogram of all crab sizes in the dataset. Then, we’ll facet by other variables to see if we can notice any interesting trends. Add a new Chart cell by searching for Chart in the Add cell menu, then choose the variable(s) you want to visualize.
+Chart cell First, let’s make a histogram of all crab sizes in the
+dataset. Then, we’ll facet by other variables to see if we can notice
+any interesting trends. Add a new Chart cell by searching for Chart in
+the Add cell menu, then choose the variable(s) you want to visualize.
 
 ```{ojs}
 Plot.plot({
@@ -122,18 +135,24 @@ Plot.plot({
 })
 ```
 
-Observable Plot snippets
-Open the Add cell menu, and begin typing "scatterplot." Choose the scatterplot snippet, which will automatically add a new JavaScript cell with some skeleton code for a basic scatterplot that we can update.
+Observable Plot snippets Open the Add cell menu, and begin typing
+"scatterplot." Choose the scatterplot snippet, which will automatically
+add a new JavaScript cell with some skeleton code for a basic
+scatterplot that we can update.
 
 **Step 6: Simple linear regression**
 
-We will use the SimpleLinearRegression method from the ml.js JavaScript library. Since ml.js is not automatically available, we’ll use require to access it in our notebook:
+We will use the SimpleLinearRegression method from the ml.js JavaScript
+library. Since ml.js is not automatically available, we’ll use require
+to access it in our notebook:
 
 ```{ojs}
 ML = require("https://www.lactame.com/lib/ml/6.0.0/ml.min.js")
 ```
 
-Now, we have access to the methods in ml.js, including SimpleLinearRegression, which will estimate parameters for a linear model by ordinary least squares.
+Now, we have access to the methods in ml.js, including
+SimpleLinearRegression, which will estimate parameters for a linear
+model by ordinary least squares.
 
 ```{ojs}
 crabsLM = new ML.SimpleLinearRegression(crabsJS.map(d => d.lat), crabsJS.map(d => d.sizeMm))
@@ -143,7 +162,9 @@ The slope is 0.485.
 
 **Step 7: Final visualization and summary statement**
 
-To wrap it up, let’s create a final visualization with a summary statement. We’ll again use Observable Plot to create and customize a chart.
+To wrap it up, let’s create a final visualization with a summary
+statement. We’ll again use Observable Plot to create and customize a
+chart.
 
 ```{ojs}
 Plot.plot({
@@ -157,18 +178,19 @@ Plot.plot({
 
 **Step 8: Share your notebook**
 
-There are a number of ways to share your notebook with others. The easiest is to share the notebook link - that’s right, your notebook is already a live page. At the top of your notebook, click the Share notebook to update the sharing settings, add colleagues as viewers or editors, and even make your own custom URL.
+There are a number of ways to share your notebook with others. The
+easiest is to share the notebook link - that’s right, your notebook is
+already a live page. At the top of your notebook, click the Share
+notebook to update the sharing settings, add colleagues as viewers or
+editors, and even make your own custom URL.
 
-Send along the link, and anyone with permissions (or the public!) can see your work.
+Send along the link, and anyone with permissions (or the public!) can
+see your work.
 
-Today we learned:
-* How to attach a CSV in an Observable notebook
-* Data table cell to inspect & wrangle data
-* A little data wrangling in JS
-* Chart cell and Observable Plot for quick exploratory data viz
-* Require to load a JavaScript module
-* Simple linear regression in JS with ml.js
-* Creating a final visualization
-* Referring to code outputs in markdown with template literals
-* Sharing a notebook URL
-* Bergmann's Rule!
+Today we learned: \* How to attach a CSV in an Observable notebook \*
+Data table cell to inspect & wrangle data \* A little data wrangling in
+JS \* Chart cell and Observable Plot for quick exploratory data viz \*
+Require to load a JavaScript module \* Simple linear regression in JS
+with ml.js \* Creating a final visualization \* Referring to code
+outputs in markdown with template literals \* Sharing a notebook URL \*
+Bergmann's Rule!
