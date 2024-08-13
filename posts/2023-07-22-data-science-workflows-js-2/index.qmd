@@ -52,12 +52,36 @@ Learn more about accessing data from remote files and APIs.
 
 *Note: `d3.csv()` was not working, so I've switched this to `read_csv()` from R.*
 
-```{r, include=TRUE, echo=FALSE}
+```{ojs}
+d3 = require("d3@7")
+```
+
+```{ojs}
+csvURL = "https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381"
+```
+
+
+```{ojs}
+fetch(csvURL)
+  .then(response => {
+    if (!response.ok) throw new Error(response.status);
+    return response.text();
+  })
+```
+
+
+```{d3}
+gentoo = d3.csv(csvURL)
+```
+
+
+```{r include=FALSE, echo=FALSE}
 library(tidyverse)
 ```
 
-```{r read_data, include=TRUE, message=FALSE}
+```{r read_data, include=FALSE, message=FALSE}
 gentoo <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381")
+
 
 adelie <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.219.5&entityid=002f3893385f710df69eeebe893144ff")
 
@@ -68,7 +92,7 @@ chinstrap <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid
 
 Our first step will be to get these all into a single array of objects. Since they all have the same properties, in the same order, we can use the concat() method to combine them.
 
-```{ojs}
+```{ojs concat, include=TRUE}
 // Make combined version, penguinsCombo, here
 penguinsCombo = adelie.concat(gentoo, chinstrap)
 ```
