@@ -1,0 +1,75 @@
+---
+title: "Exploring the tidycensus R package"
+description: "This post uses the tidycensus package to access the Census API and visualize data"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 08-13-2024
+categories: [R, tidyverse, mapping] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: map_example.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+
+## Setup
+
+**Required packages**:
+
+```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidycensus)
+library(scales)
+
+census_api_key('ea0509826dec14205b1260b78cee1e2a22e3b85b')
+```
+
+```{r}
+load_variables(2022, "acs1", cache = TRUE)
+# used this to search for some Under 5 years variables of interest
+# %>% filter(str_detect(label, "Under 5 years"))
+
+# B01001_003 -- 'Estimate!!Total:!!Male:!!Under 5 years' (all racial groups)
+# B01001_027 -- 'Estimate!!Total:!!Female:!!Under 5 years' (all racial groups)
+# B17001_004 -- 'Estimate!!Total:!!Income in the past 12 months below poverty level:!!Male:!!Under 5 years'
+# B17001_018 -- 'Estimate!!Total:!!Income in the past 12 months below poverty level:!!Female:!!Under 5 years'
+```
+
+
+
+
+```{r}
+u5poverty_girls <- get_acs(geography = "state", 
+                           variables = "B17001_018", 
+                           year = 2021) %>% 
+  rename(estimate_poverty_pop = estimate,
+         moe_poverty_pop = moe)
+
+u5_girls <- get_acs(geography = "state", 
+                    variables = "B01001_027", 
+                    year = 2021) %>% 
+  rename(estimate_pop = estimate,
+         moe_pop = moe)
+
+u5_girls %>% 
+  left_join(x=.,
+            y=u5poverty_girls,
+            by=c('GEOID', 'NAME')) %>% 
+  select(-c(variable.x, variable.y)) %>% 
+  mutate(perc_poverty = estimate_poverty_pop / estimate_pop) %>% 
+  ggplot(
+    aes(x=perc_poverty, 
+        y=reorder(NAME, perc_poverty))) + 
+  geom_point() +
+  ggtitle('Percent of Girls (U5) in poverty',
+          subtitle = 'from the American Community Survey 2021') + 
+  scale_x_continuous(labels = percent)
+```
+
