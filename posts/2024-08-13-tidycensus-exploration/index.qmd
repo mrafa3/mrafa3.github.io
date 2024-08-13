@@ -70,11 +70,31 @@ load_variables(2022, "acs1", cache = TRUE)
 
 Each variable returns the geography, an estimate, and the margin of error ("moe").
 
-```{r}
-get_acs(geography = 'state',
+There are a bunch of useful helper functions/arguments in the `tidycensus::` package. Some noteworthy ones include:  
+
+* `summary_var=`: often the variable that you want would be made more meaningful as a ratio or with a demonminator. For example, the number of children in poverty could be useful on its own, but you're likely to want to see that series as a percent of the total children. With the summary_var argument, you can tell the function which secondary variable you want to grab in the same API call.
+* `ouput=wide`: related to the above, I wanted to look at child poverty in a way that would require multiple summary variables (e.g. the percent of girls *and* boys in poverty). Since you can only have one summary variable, `output='wide'` allows you to grab all of the series that you may need in the same call. 
+
+```{r get_acs, include=TRUE}
+df <- get_acs(geography = 'state',
         variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
         year = 2021,
         output = 'wide')
+```
+
+```{r update_colnames, include=TRUE}
+name_cols <- c('geoid', 'name', 
+               'u5_male_estimate', 'u5_male_moe', 
+               'u5_female_estimate', 'u5_female_moe',
+               'u5_male_pov_estimate', 'u5_male_pov_moe',
+               'u5_female_pov_estimate', 'u5_female_pov_moe')
+
+colnames(df) <- name_cols
+```
+
+```{r drop_cols, include=TRUE}
+df <- df %>% 
+  select(-contains("moe"))
 ```
 
 
