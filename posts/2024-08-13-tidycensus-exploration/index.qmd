@@ -9,7 +9,7 @@ date: 08-13-2024
 categories: [R, tidyverse, mapping, gt, tidycensus] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-# image: map_example.png
+image: us_child_poverty_map.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
@@ -40,7 +40,7 @@ my.theme <- theme(
   plot.caption = ggtext::element_textbox_simple(color="#444444"),
   axis.title = element_text(color="black", face="bold", size=12), 
   axis.text = element_text(color="black", size=18), 
-  axis.ticks.y = element_blank(), 
+  axis.ticks = element_blank(), 
   plot.background = element_rect(fill = 'white'),
   panel.background = element_blank(),
   panel.grid.major = element_blank(),
@@ -139,27 +139,29 @@ df_rank %>%
   geom_col()
 ```
 
-```{r dot_plot, include=TRUE, fig.width=6.2, fig.height=10, fig.align='center'}
+```{r dot_plot, include=TRUE, fig.width=10, fig.height=18, fig.align='center'}
 df %>% 
   filter(state != 'Puerto Rico') %>% 
   ggplot(
     aes(x=u5_perc_in_poverty, 
         y=reorder(state, u5_perc_in_poverty))) + 
-  geom_point() +
-  labs(y='') + 
+  geom_point(size=3) +
+  labs(y='',
+       x='') + 
   ggtitle('Percent of children under five in poverty',
           subtitle = 'from the American Community Survey 2021') + 
-  scale_x_continuous(labels = percent) + 
+  scale_x_continuous(labels = percent,
+                     position = 'top') + 
   my.theme
 ```
 
-# Quick mapping with the usmap:: package 
+# Quick mapping with usmap::
 
 The `usmapp::` package makes rendering a map of the US quick and easy. Though it's not meant to replace `sf::` or packages that allow for more sophisticated maps, it does allow for a quick way to make a U.S. map. For this demo, I'll plot the state-level poverty data that I collected and manipulated in earlier steps. 
 
 This shows that child poverty is concentrated in southern and southeastern states (as a percent of the child population).
 
-```{r plot_u5_poverty, include=TRUE, fig.width=6.2, fig.height=10, fig.align='center'}
+```{r plot_u5_poverty, include=TRUE, fig.align='center'}
 (perc_poverty_map <- plot_usmap(regions = 'states',
            data = df,
            values = 'u5_perc_in_poverty') + 
@@ -174,7 +176,7 @@ This shows that child poverty is concentrated in southern and southeastern state
 
 # Great tables with gt:: 
 
-```{r read_regions, include=TRUE, echo=FALSE}
+```{r read_regions, include=TRUE, echo=FALSE, message=FALSE}
 regions <- read_csv('.//data/census_regions.csv') %>% clean_names()
 ```
 
@@ -220,7 +222,7 @@ df <- df %>%
             )) %>% 
   data_color(
     columns = u5_perc_in_poverty,
-    colors = viridis::viridis(100)
+    palette = viridis::viridis(100)
   ) %>% 
   opt_all_caps() %>% 
   opt_table_font(
