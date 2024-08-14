@@ -6,7 +6,7 @@ author:
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
 date: 08-13-2024
-categories: [R, tidyverse, mapping] # self-defined categories
+categories: [R, tidyverse, mapping, gt, tidycensus] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 # image: map_example.png
@@ -18,10 +18,11 @@ editor:
 
 # Introduction
 
+I've used data from the U.S. Census Bureau several times, and for this project, I wanted to reacquaint myself with the `tidycensus::` package to gather and wrangle data. I also wanted to use the `usmap::` package to generate a simple U.S. map, and the `gt::` package to display the data in a nice table format.
 
 ## Setup
 
-```{r my.theme, include=TRUE}
+```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
   plot.title = ggtext::element_textbox_simple(face="bold", size=24, margin=margin(b=5)),
   plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14, margin=margin(b=10)),
@@ -38,24 +39,14 @@ my.theme <- theme(
   legend.text = element_text(color="black", size=12, hjust=0),
   legend.position = 'top',
   strip.text = element_text(color="black", size=14))
-
-my.theme.map <- theme(
-  plot.title = element_text(family="Gill Sans", color="#666666", face="bold", size=16, hjust=.5), 
-  plot.subtitle = element_text(family="Gill Sans", color="#666666", size=14, hjust=.5), 
-  axis.title = element_blank(),
-  axis.text = element_blank(),
-  axis.ticks = element_blank(), 
-  axis.line = element_blank(),
-  plot.caption = element_text(family="Gill Sans", color="#666666", size=12), 
-  panel.background =  element_blank(), 
-  legend.title = element_text(family="Gill Sans", color="#666666", size=14, hjust=.5),
-  legend.text = element_text(family="Gill Sans", color="#666666", size=12, hjust=0))
 ```
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(tidycensus)
 library(scales)
+library(gt)
+library(usmap)
 
 # census_api_key('INSERT KEY HERE')
 ```
@@ -111,6 +102,8 @@ df <- df %>%
   select(-contains("moe"))
 ```
 
+Next, I'll create some fields to combine gender-based poverty estimates and calculate a percent of the child population measure.
+
 ```{r df_mutate, include=TRUE}
 (df <- df %>% 
   mutate(u5_pop_total = u5_male_estimate + u5_female_estimate,
@@ -118,7 +111,7 @@ df <- df %>%
          u5_perc_in_poverty = u5_pov_total / u5_pop_total))
 ```
 
-```{r}
+```{r df_rank, include=FALSE}
 df_rank <- df %>% 
   mutate(rank_u5_poverty = rank(-u5_pov_total),
          state_group = if_else(rank_u5_poverty <= 15, state, 'Remaining States')) %>% 
@@ -126,7 +119,7 @@ df_rank <- df %>%
   summarise(u5_pov_total = sum(u5_pov_total))
 ```
 
-```{r}
+```{r df_rank_2, include=FALSE}
 df_rank %>% 
   arrange(-u5_pov_total) %>% 
   pull(state_group)
@@ -136,8 +129,7 @@ state_order <- c("Texas", "California", "New York", "Florida", "Ohio", "Georgia"
                   "Tennessee", "Louisiana", "Arizona", "Indiana", "New Jersey", "Remaining States")
 ```
 
-
-```{r}
+```{r df_rank_viz, include=FALSE}
 df_rank %>% 
   mutate(state_group = factor(state_group, levels = rev(state_order))) %>% 
   ggplot(.,
@@ -145,11 +137,6 @@ df_rank %>%
              y=state_group)) + 
   geom_col()
 ```
-
-```{r}
-library(gt)
-```
-
 
 ```{r dot_plot, include=TRUE, fig.width=6.2, fig.height=10, fig.align='center'}
 df %>% 
@@ -165,21 +152,121 @@ df %>%
   my.theme
 ```
 
-
 # Quick mapping with the usmap:: package 
 
+The `usmapp::` package makes rendering a map of the US quick and easy. Though it's not meant to replace `sf::` or packages that allow for more sophisticated maps, it does allow for a quick way to make a U.S. map. For this demo, I'll plot the state-level poverty data that I collected and manipulated in earlier steps. 
 
-```{r }
-library(usmap)
-```
+This shows that child poverty is concentrated in southern and southeastern states (as a percent of the child population).
 
-```{r plot_u5_poverty, include=TRUE}
-plot_usmap(regions = 'states',
+```{r plot_u5_poverty, include=TRUE, fig.width=6.2, fig.height=10, fig.align='center'}
+(perc_poverty_map <- plot_usmap(regions = 'states',
            data = df,
            values = 'u5_perc_in_poverty') + 
-  scale_fill_viridis_c() + 
-  theme(legend.position = 'top')
+  # scale_fill_viridis_c() + 
+  scale_fill_viridis_c(labels = scales::percent_format()) + 
+  labs(title = md("**Estimated child poverty in U.S. states in 2021**"),
+       subtitle = "as a % of the total child population under 5 y.o.",
+       caption = "Source: 2021 American Community Survey") %>%
+  theme(legend.position = 'top',
+        legend.title = element_blank()))
 ```
+
+## Great tables with gt:: 
+
+```{r read_regions, include=TRUE, echo=FALSE}
+regions <- read_csv('.//data/census_regions.csv') %>% clean_names()
+```
+
+```{r add_regions, include=TRUE, echo=FALSE}
+df <- df %>% 
+  left_join(x=.,
+            y=regions %>% select(state, region, division),
+            by='state')
+```
+
+```{r create_df_tbl, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
+(df_tbl <- df %>% 
+  select(state, region, u5_pov_total, u5_pop_total, u5_perc_in_poverty) %>% 
+  # removing P.R. because it's not within a U.S. Census region
+  filter(state != 'Puerto Rico') %>% 
+  arrange(-u5_perc_in_poverty) %>% 
+  # mutate(u5_perc_in_poverty = u5_perc_in_poverty * 100) %>% 
+  gt(groupname_col = "region") %>% 
+    cols_label(state = 'State',
+               u5_pop_total = 'Total children < 5 y.o.',
+               u5_pov_total = 'Total children < 5 y.o. living in poverty in last 12 mos.',
+               u5_perc_in_poverty = '% of children < 5 y.o. living in poverty in last 12 mos.') %>% 
+  # formatting numeric fields
+  fmt_number(columns = c(u5_pop_total, u5_pov_total), decimals = 0, use_seps = TRUE) %>% 
+  fmt_percent(columns = u5_perc_in_poverty, decimals = 1) %>%  
+  #add table title
+  tab_header(title = md("**Estimated child poverty in U.S. states in 2021**")) %>% 
+  tab_source_note(source_note = "Data from 2021 American Community Survey from the U.S. Census Bureau") %>% 
+  #apply new style to all column headers
+  tab_style(
+    locations = cells_column_labels(columns = everything()),
+    style = list(
+      #thick border
+      cell_borders(sides = "bottom", weight = px(3)),
+      #make text bold
+      cell_text(weight = "bold")
+    )
+  ) %>% 
+  #apply different style to title
+  tab_style(locations = cells_title(groups = "title"),
+            style = list(
+              cell_text(weight = "bold", size = 24)
+            )) %>% 
+  data_color(
+    columns = u5_perc_in_poverty,
+    colors = viridis::viridis(100)
+  ) %>% 
+  opt_all_caps() %>% 
+  opt_table_font(
+    font = list(
+      google_font("Chivo"),
+      default_fonts()
+    )
+  ) %>% 
+  tab_options(
+    #remove border between column headers and title
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    #remove border around the table
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    #adjust font sizes and alignment
+    source_notes.font.size = 12,
+    heading.align = "left"
+  )
+)
+```
+
+# Conclusion
+
+
+
+
+```{r load_patchwork, include=TRUE, echo=FALSE}
+library(patchwork)
+library(maps)
+```
+
+```{r}
+# Create a ggplot object from the sf object
+(ggplot_object <- ggplot(data = df) +
+  geom_sf(aes(fill = AREA)) +  # Use the AREA attribute to fill the polygons
+  scale_fill_viridis_c() +     # Apply the viridis color scale
+  theme_minimal())
+
+```
+
+
+```{r}
+perc_poverty_map | df_tbl
+```
+
+
 
 ```{r plot_u5_poverty_2, include=TRUE}
 plot_usmap(regions = 'states',
