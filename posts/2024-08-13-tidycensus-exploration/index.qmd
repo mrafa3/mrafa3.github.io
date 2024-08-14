@@ -22,6 +22,16 @@ I've used data from the U.S. Census Bureau several times, and for this project, 
 
 ## Setup
 
+```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidycensus)
+library(scales)
+library(gt)
+library(usmap)
+
+# census_api_key('INSERT KEY HERE')
+```
+
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
   plot.title = ggtext::element_textbox_simple(face="bold", size=24, margin=margin(b=5)),
@@ -39,16 +49,6 @@ my.theme <- theme(
   legend.text = element_text(color="black", size=12, hjust=0),
   legend.position = 'top',
   strip.text = element_text(color="black", size=14))
-```
-
-```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
-library(tidyverse)
-library(tidycensus)
-library(scales)
-library(gt)
-library(usmap)
-
-# census_api_key('INSERT KEY HERE')
 ```
 
 For this analysis, I'm interested in looking at the most recent state-level child poverty data available from the U.S. Census Bureau. The `tidycensus::` package allows API access to the decennial Census, as well as the more frequent American Community Survey (ACS).
