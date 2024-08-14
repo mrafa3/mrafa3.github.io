@@ -24,8 +24,7 @@ editor:
 ```{r my.theme, include=TRUE}
 my.theme <- theme(
   plot.title = ggtext::element_textbox_simple(face="bold", size=24, margin=margin(b=5)),
-  plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14, 
-                                                       margin=margin(b=10)),
+  plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14, margin=margin(b=10)),
   plot.caption = ggtext::element_textbox_simple(color="#444444"),
   axis.title = element_text(color="black", face="bold", size=12), 
   axis.text = element_text(color="black", size=18), 
@@ -41,37 +40,36 @@ my.theme <- theme(
   strip.text = element_text(color="black", size=14))
 ```
 
-**Required packages**:
-
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(tidycensus)
 library(scales)
 
-census_api_key('ea0509826dec14205b1260b78cee1e2a22e3b85b')
+# census_api_key('INSERT KEY HERE')
 ```
+
+For this analysis, I'm interested in looking at the most recent state-level child poverty data available from the U.S. Census Bureau. The `tidycensus::` package allows API access to the decennial Census, as well as the more frequent American Community Survey (ACS).
+
+The `tidycensus::load_variables()` function provides a simple way to query the available data within each product. Combining this with `stringr::str_detect()` is a nice way to search through the tens of thousands of data series that are available through the U.S. Census API.
 
 ```{r inspect_variables, include=TRUE}
-load_variables(2022, "acs1", cache = TRUE)
-# used this to search for some Under 5 years variables of interest
-# %>% filter(str_detect(label, "Under 5 years"))
-
-# B01001_003 -- 'Estimate!!Total:!!Male:!!Under 5 years' (all racial groups)
-# B01001_027 -- 'Estimate!!Total:!!Female:!!Under 5 years' (all racial groups)
-# B17001_004 -- 'Estimate!!Total:!!Income in the past 12 months below poverty level:!!Male:!!Under 5 years'
-# B17001_018 -- 'Estimate!!Total:!!Income in the past 12 months below poverty level:!!Female:!!Under 5 years'
+load_variables(2022, "acs1", cache = TRUE) %>% 
+  # used this to search for some Under 5 years variables of interest
+  filter(str_detect(label, "Under 5 years"))
 ```
 
-```{r}
-?get_acs()
+For this demo, I'll use the following series:
 
-?group_by()
-```
+* *B01001_003*: Estimate!!Total:!!Male:!!Under 5 years (all racial groups)
+* *B01001_027*: Estimate!!Total:!!Female:!!Under 5 years (all racial groups)
+* *B17001_004*: Estimate!!Total:!!Income in the past 12 months below poverty level:!!Male:!!Under 5 years
+* *B17001_018*: Estimate!!Total:!!Income in the past 12 months below poverty level:!!Female:!!Under 5 years
 
-Each variable returns the geography, an estimate, and the margin of error ("moe").
+## Initial tour of key tidycensus::get_acs() function 
 
-There are a bunch of useful helper functions/arguments in the `tidycensus::` package. Some noteworthy ones include:  
+The `tidycensus::` package has so much to offer (and I still have plenty to learn!). There are a bunch of useful helper functions/arguments to assist in fetching data. Some noteworthy ones include:  
 
+* Each variable returns the geography, an estimate, and the margin of error ("moe"). Geographies can span from states, regions and the country as a whole, down to areas like school districts, voting districts, census block groups, and many others.
 * `summary_var=`: often the variable that you want would be made more meaningful as a ratio or with a demonminator. For example, the number of children in poverty could be useful on its own, but you're likely to want to see that series as a percent of the total children. With the summary_var argument, you can tell the function which secondary variable you want to grab in the same API call.
 * `ouput=wide`: related to the above, I wanted to look at child poverty in a way that would require multiple summary variables (e.g. the percent of girls *and* boys in poverty). Since you can only have one summary variable, `output='wide'` allows you to grab all of the series that you may need in the same call. 
 
@@ -82,8 +80,10 @@ df <- get_acs(geography = 'state',
         output = 'wide')
 ```
 
+To make the data more user-friendly, I'll update the column names of the table.
+
 ```{r update_colnames, include=TRUE}
-name_cols <- c('geoid', 'name', 
+name_cols <- c('geoid', 'state', 
                'u5_male_estimate', 'u5_male_moe', 
                'u5_female_estimate', 'u5_female_moe',
                'u5_male_pov_estimate', 'u5_male_pov_moe',
@@ -92,13 +92,44 @@ name_cols <- c('geoid', 'name',
 colnames(df) <- name_cols
 ```
 
+And for this exercise, I'll also drop the margin of error fields, since I'm not doing a statistical analysis that would require it.
+
 ```{r drop_cols, include=TRUE}
 df <- df %>% 
   select(-contains("moe"))
 ```
 
+```{r df_mutate, include=TRUE}
+(df <- df %>% 
+  mutate(u5_pop_total = u5_male_estimate + u5_female_estimate,
+         u5_pov_total = u5_male_pov_estimate + u5_female_pov_estimate,
+         u5_perc_in_poverty = u5_pov_total / u5_pop_total))
+```
 
-```{r}
+# Quick mapping with the usmap:: package 
+
+
+```{r }
+library(usmap)
+```
+
+```{r plot_u5_poverty, include=TRUE}
+plot_usmap(regions = 'states',
+           data = df,
+           values = 'u5_perc_in_poverty') + 
+  scale_fill_continuous(low = "blue", high = "yellow") + 
+  theme(legend.position = 'top')
+```
+
+```{r plot_u5_poverty_2, include=TRUE}
+plot_usmap(regions = 'states',
+           data = df,
+           values = 'u5_pov_total') + 
+  scale_fill_continuous(low = "blue", high = "yellow") + 
+  theme(legend.position = 'top')
+```
+
+```{r test, include=FALSE}
 u5poverty_girls <- get_acs(geography = "state", 
                            variables = "B17001_018", 
                            year = 2021) %>% 
