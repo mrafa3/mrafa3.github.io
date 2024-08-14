@@ -172,7 +172,7 @@ This shows that child poverty is concentrated in southern and southeastern state
         legend.title = element_blank()))
 ```
 
-## Great tables with gt:: 
+# Great tables with gt:: 
 
 ```{r read_regions, include=TRUE, echo=FALSE}
 regions <- read_csv('.//data/census_regions.csv') %>% clean_names()
@@ -245,64 +245,10 @@ df <- df %>%
 
 # Conclusion
 
+In this first `tidycensus::` post, I demonstrated: 
 
-
-
-```{r load_patchwork, include=TRUE, echo=FALSE}
-library(patchwork)
-library(maps)
-```
-
-```{r}
-# Create a ggplot object from the sf object
-(ggplot_object <- ggplot(data = df) +
-  geom_sf(aes(fill = AREA)) +  # Use the AREA attribute to fill the polygons
-  scale_fill_viridis_c() +     # Apply the viridis color scale
-  theme_minimal())
-
-```
-
-
-```{r}
-perc_poverty_map | df_tbl
-```
-
-
-
-```{r plot_u5_poverty_2, include=TRUE}
-plot_usmap(regions = 'states',
-           data = df,
-           values = 'u5_pov_total') + 
-  scale_fill_viridis_c() + 
-  # my.theme.map + 
-  theme(legend.position = 'top')
-```
-
-```{r test, include=FALSE}
-u5poverty_girls <- get_acs(geography = "state", 
-                           variables = "B17001_018", 
-                           year = 2021) %>% 
-  rename(estimate_poverty_pop = estimate,
-         moe_poverty_pop = moe)
-
-u5_girls <- get_acs(geography = "state", 
-                    variables = "B01001_027", 
-                    year = 2021) %>% 
-  rename(estimate_pop = estimate,
-         moe_pop = moe)
-
-u5_girls %>% 
-  left_join(x=.,
-            y=u5poverty_girls,
-            by=c('GEOID', 'NAME')) %>% 
-  select(-c(variable.x, variable.y)) %>% 
-  mutate(perc_poverty = estimate_poverty_pop / estimate_pop) %>% 
-  ggplot(
-    aes(x=perc_poverty, 
-        y=reorder(NAME, perc_poverty))) + 
-  geom_point() +
-  ggtitle('Percent of Girls (U5) in poverty',
-          subtitle = 'from the American Community Survey 2021') + 
-  scale_x_continuous(labels = percent)
-```
-
+* How to fetch data from the U.S. Census Bureau
+* A simple way to search for the type of data that you're interested in exploring
+* How to use some of the `tidycensus::` functions and arguments to support in data wrangling
+* How to make a simple map using the `usmap::` package
+* How to make a clean and visually appealing table using the `gt::` package
