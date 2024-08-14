@@ -26,6 +26,7 @@ I've used data from the U.S. Census Bureau several times, and for this project, 
 library(tidyverse)
 library(tidycensus)
 library(scales)
+library(janitor)
 library(gt)
 library(usmap)
 
