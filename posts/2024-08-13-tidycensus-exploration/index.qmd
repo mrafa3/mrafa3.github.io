@@ -38,6 +38,18 @@ my.theme <- theme(
   legend.text = element_text(color="black", size=12, hjust=0),
   legend.position = 'top',
   strip.text = element_text(color="black", size=14))
+
+my.theme.map <- theme(
+  plot.title = element_text(family="Gill Sans", color="#666666", face="bold", size=16, hjust=.5), 
+  plot.subtitle = element_text(family="Gill Sans", color="#666666", size=14, hjust=.5), 
+  axis.title = element_blank(),
+  axis.text = element_blank(),
+  axis.ticks = element_blank(), 
+  axis.line = element_blank(),
+  plot.caption = element_text(family="Gill Sans", color="#666666", size=12), 
+  panel.background =  element_blank(), 
+  legend.title = element_text(family="Gill Sans", color="#666666", size=14, hjust=.5),
+  legend.text = element_text(family="Gill Sans", color="#666666", size=12, hjust=0))
 ```
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
@@ -106,6 +118,54 @@ df <- df %>%
          u5_perc_in_poverty = u5_pov_total / u5_pop_total))
 ```
 
+```{r}
+df_rank <- df %>% 
+  mutate(rank_u5_poverty = rank(-u5_pov_total),
+         state_group = if_else(rank_u5_poverty <= 15, state, 'Remaining States')) %>% 
+  group_by(state_group) %>% 
+  summarise(u5_pov_total = sum(u5_pov_total))
+```
+
+```{r}
+df_rank %>% 
+  arrange(-u5_pov_total) %>% 
+  pull(state_group)
+
+state_order <- c("Texas", "California", "New York", "Florida", "Ohio", "Georgia", "Illinois", 
+                 "North Carolina", "Pennsylvania", "Michigan", 
+                  "Tennessee", "Louisiana", "Arizona", "Indiana", "New Jersey", "Remaining States")
+```
+
+
+```{r}
+df_rank %>% 
+  mutate(state_group = factor(state_group, levels = rev(state_order))) %>% 
+  ggplot(.,
+         aes(x=u5_pov_total,
+             y=state_group)) + 
+  geom_col()
+```
+
+```{r}
+library(gt)
+```
+
+
+```{r dot_plot, include=TRUE, fig.width=6.2, fig.height=10, fig.align='center'}
+df %>% 
+  filter(state != 'Puerto Rico') %>% 
+  ggplot(
+    aes(x=u5_perc_in_poverty, 
+        y=reorder(state, u5_perc_in_poverty))) + 
+  geom_point() +
+  labs(y='') + 
+  ggtitle('Percent of children under five in poverty',
+          subtitle = 'from the American Community Survey 2021') + 
+  scale_x_continuous(labels = percent) + 
+  my.theme
+```
+
+
 # Quick mapping with the usmap:: package 
 
 
@@ -117,7 +177,7 @@ library(usmap)
 plot_usmap(regions = 'states',
            data = df,
            values = 'u5_perc_in_poverty') + 
-  scale_fill_continuous(low = "blue", high = "yellow") + 
+  scale_fill_viridis_c() + 
   theme(legend.position = 'top')
 ```
 
@@ -125,7 +185,8 @@ plot_usmap(regions = 'states',
 plot_usmap(regions = 'states',
            data = df,
            values = 'u5_pov_total') + 
-  scale_fill_continuous(low = "blue", high = "yellow") + 
+  scale_fill_viridis_c() + 
+  # my.theme.map + 
   theme(legend.position = 'top')
 ```
 
