@@ -6,10 +6,10 @@ author:
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
 date: 07-11-2023
-categories: [Quarto, Javascript, data-viz, regression] # self-defined categories
+categories: [Quarto, Javascript, data-viz, cluster-analysis] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-#image: js_plot.png
+image: penguin_plot.png
 draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
@@ -50,42 +50,14 @@ Let’s store these in our notebook as gentoo, adelie, and chinstrap (note that 
 
 Learn more about accessing data from remote files and APIs.
 
-*Note: `d3.csv()` was not working, so I've switched this to `read_csv()` from R.*
+*Note: `d3.csv()` was not working, so I've switched this to `FileAttachment()`.*
 
 ```{ojs}
-d3 = require("d3@7")
-```
+gentoo = FileAttachment(".//data/gentoo.csv").csv({ typed: true })
 
-```{ojs}
-csvURL = "https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381"
-```
+adelie = FileAttachment(".//data/adelie.csv").csv({ typed: true })
 
-
-```{ojs}
-fetch(csvURL)
-  .then(response => {
-    if (!response.ok) throw new Error(response.status);
-    return response.text();
-  })
-```
-
-
-```{d3}
-gentoo = d3.csv(csvURL)
-```
-
-
-```{r include=FALSE, echo=FALSE}
-library(tidyverse)
-```
-
-```{r read_data, include=FALSE, message=FALSE}
-gentoo <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&entityid=e03b43c924f226486f2f0ab6709d2381")
-
-
-adelie <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.219.5&entityid=002f3893385f710df69eeebe893144ff")
-
-chinstrap <- read_csv("https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.221.8&entityid=fe853aa8f7a59aa84cdd3197619ef462")
+chinstrap = FileAttachment(".//data/chinstrap.csv").csv({ typed: true })
 ```
 
 **Step 2: Merge & wrangle the data**
@@ -94,7 +66,7 @@ Our first step will be to get these all into a single array of objects. Since th
 
 ```{ojs concat, include=TRUE}
 // Make combined version, penguinsCombo, here
-penguinsCombo = adelie.concat(gentoo, chinstrap)
+penguinsCombo = chinstrap.concat(gentoo, adelie)
 ```
 
 Recreate the curated penguins data in JS
@@ -120,3 +92,168 @@ penguins = penguinsCombo.map((d) => ({
   flipper_length_mm: d["Flipper Length (mm)"]})) 
 ```
 
+Meet Arquero
+Although we could continue do all of our wrangling in plain JavaScript, let’s explore a different tool for working with data in JavaScript - the Arquero library. Arquero may feel more familiar for data scientists who have been working in pandas (Python users) or dplyr / tidyr (R users).
+
+In the last session, we used require to load an external library. Here, we’ll use import to access library components from another Observable notebook. This highlights another cool way we can reuse content (functions, data, text, really anything we want...) from the Observable ecosystem.
+
+The following line imports all aq and op module functions from the notebook https://observablehq.com/@uwdata/arquero (notice that the slug after observable.com in the URL is what's used to import from the notebook):
+
+```{ojs}
+import {aq, op} from "@uwdata/arquero"
+```
+
+To use the Arquero verbs, we need to convert our array of objects to an Arquero table:
+
+```{ojs}
+// Convert your array of objects to an Arquero table here:
+penguinsTable = aq.from(penguins).view
+// you can append .view() at the end to show the table
+```
+
+And from there, we can chain together Arquero methods much like we would in dplyr or pandas. For example, let’s write a sequence where we:
+
+Filter to create a subset only of female penguins
+Select columns for species, bill depth and bill length
+Add a new column with the ratio of bill length to bill depth
+Group by species, and find the mean bill ratio by group
+
+```{ojs}
+// Write Arquero code to perform the steps above here: 
+penguinsTable
+  .filter((d) => d.sex == "female")
+  .select('species', 'bill_depth_mm', 'bill_length_mm')
+  .derive({bill_ratio: d => d.bill_length_mm / d.bill_depth_mm}) //like mutate() in dplyr
+  .groupby('species')
+  .rollup({ mean_bill_ratio: d => op.mean(d.bill_ratio)})
+  .view()
+//need to review more of the map function and arrow function process
+```
+
+Step 3: Exploratory data visualization
+First, let’s quickly refresh how we can make some quick plots using Observable Plot.
+
+Chart cell
+Use the Chart cell to get started with charts, without code. You can always eject to JavaScript to keep customizing! Let’s use the Chart cell to make a scatterplot of bill dimensions by species. Then we’ll eject to Plot code to keep customizing.
+
+```{ojs}
+Plot.plot({
+  color: { legend: true },
+  marks: [
+    Plot.dot(penguins, {
+      x: "bill_length_mm",
+      y: "bill_depth_mm",
+      fill: "species",
+      tip: true,
+      r: "body_mass_g",
+      opacity: 0.5
+    }),
+    Plot.frame()
+  ],
+  color: {range: ["teal", "darkorange", "orchid"]},
+  r: {domain: d3.extent(penguins.map(d => d.body_mass_g)), range: [1, 20]},
+  grid: true
+})
+```
+
+Import an visualize a pairplot
+What if we want to make a pair plot so that we can simultaneously explore different relationships and distributions? Well, we could build that ourselves...or we can use something that’s already built in another notebook!
+
+Observable imports let us access content (functions, charts, any content really...) from another notebook. Here, we’ll import the PlotMatrix function (to create an interactive chart) from the @observablehq/autoplot-matrix notebook.
+
+```{ojs}
+import {PlotMatrix} with {data} from "@observablehq/autoplot-matrix"
+```
+
+
+That function expects the data to be stored as data, so we’ll make a copy of penguins named data:
+
+```{ojs}
+data = penguins
+```
+
+Then we can feed data into the PlotMatrix function to create a pairplot:
+
+```{ojs}
+PlotMatrix(data)
+```
+
+Interactivity with Inputs
+In Session 1, we briefly saw how we can add Inputs and connect their values to chart elements for interactivity. Let’s practice a few more that can help us explore different slices of the data.
+
+Step 4: k-means and hierarchical clustering
+Now, we will see how clustering by k-means and hierarchical clustering do. Both are an unsupervised learning method, meaning that we don’t try to fit our data or estimates based on a known outcome.
+
+Prep the data
+Our first step is to make a subset with only the variables we’ll include in our cluster analysis, then scale the data (we’ll use Christoph Pahmeyer’s scale function, imported below, which will scale all properties to have a mean value of 0 and standard deviation of 1).
+
+Disclaimer: there are different ways to scale data, which we do not cover here. For your own projects, it is important to consider appropriate scaling and analysis beyond what we cover in this brief introduction to cluster analysis in JavaScript.
+
+```{ojs}
+import {scale} from "@chrispahm/hierarchical-clustering"
+```
+
+```{ojs}
+// Make a subset of penguins with complete cases (filter out values where bill length is null):
+penguinsComplete = penguins.filter((d) => d.bill_length_mm !== null)// && d.sex == "female")
+```
+
+```{ojs}
+// Create a scaled version of the values (non-numeric will be NaN, which is fine..): 
+penguinsScale = scale(penguinsComplete)
+```
+
+```{ojs}
+// Convert the array of objects to an array of arrays: 
+penguinsArray = penguinsScale.map(
+  (d) => [d.bill_length_mm, d.bill_depth_mm, d.body_mass_g, d.flipper_length_mm]
+)
+```
+
+# k-means with ml.js KMeans()
+
+As in Session 1, we’ll use the ml.js library, which contains methods for k-means and hierarchical clustering. Because ml.js isn’t recommended automatically as part of Observable’s standard library, it is loaded in the appendix of this notebook.
+
+```{ojs}
+ML = require("https://www.lactame.com/lib/ml/6.0.0/ml.min.js")
+```
+
+```{ojs}
+// Use ml.js KMeans() method to perform k-means clustering for k centroids: 
+penguinsClusters = ML.KMeans(penguinsArray, 3)
+```
+
+Let’s see how these clusters map onto the three different penguin species.
+
+```{ojs}
+// Combine the cluster values for each element with the original female penguins data:
+penguinsKmeans = penguinsComplete.map((d,i) => ({...d, clusterNo: penguinsClusters.clusters[i]}))
+```
+
+Finally, we’ll visualize the output of our k-means clustering in Observable Plot. Add a snippet to create a scatterplot, then we’ll customize to show our clusters that we can explore across different variables.
+
+```{ojs}
+myChart = Plot.plot({ // Remember to name if you want to use embeds! 
+  marks: [
+    Plot.text(penguinsKmeans, {
+      x: "body_mass_g",
+      y: "flipper_length_mm",
+      text: "clusterNo",
+      fontSize: "15px",
+      fontWeight: 500,
+      fill: "species",
+      tip: true
+    })
+  ],
+  color: { legend: true }
+})
+```
+
+Citations
+A. Horst, A. Hill, and K.B. Gorman. Palmer Archipelago Penguins Data in the palmerpenguins R Package - An Alternative to Anderson's Irises. The R Journal, 2022. https://journal.r-project.org/articles/RJ-2022-020/)
+
+Palmer Station Antarctica LTER and K. Gorman, 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Adélie penguins (Pygoscelis adeliae) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 5. Environmental Data Initiative. https://doi.org/10.6073/pasta/98b16d7d563f265cb52372c8ca99e60f
+
+Palmer Station Antarctica LTER and K. Gorman, 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Gentoo penguin (Pygoscelis papua) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 5. Environmental Data Initiative. https://doi.org/10.6073/pasta/7fca67fb28d56ee2ffa3d9370ebda689
+
+Palmer Station Antarctica LTER and K. Gorman, 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Chinstrap penguin (Pygoscelis antarcticus) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 6. Environmental Data Initiative. https://doi.org/10.6073/pasta/c14dfcfada8ea13a17536e73eb6fbe9e

@@ -160,7 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                 <div class="quarto-category">Quarto</div>
                 <div class="quarto-category">Javascript</div>
                 <div class="quarto-category">data-viz</div>
-                <div class="quarto-category">regression</div>
+                <div class="quarto-category">cluster-analysis</div>
               </div>
                   </div>
   </div>
@@ -195,6 +195,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#k-means-with-ml.js-kmeans" id="toc-k-means-with-ml.js-kmeans" class="nav-link" data-scroll-target="#k-means-with-ml.js-kmeans">k-means with ml.js KMeans()</a></li>
   </ul>
 </nav>
     </div>
@@ -217,45 +218,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>First, we’ll access the penguins data for each of the three species from the Environmental Data Initiative using d3.csv(). The links for the three species are:</p>
 <p>Gentoo penguins: https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&amp;entityid=e03b43c924f226486f2f0ab6709d2381 Adélie penguins: https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.219.5&amp;entityid=002f3893385f710df69eeebe893144ff Chinstrap penguins: https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.221.8&amp;entityid=fe853aa8f7a59aa84cdd3197619ef462 Let’s store these in our notebook as gentoo, adelie, and chinstrap (note that they are stored as arrays of objects, with all properties as characters). We will use d3.autoType to parse the data (assign types), otherwise they will be automatically interpreted as characters.</p>
 <p>Learn more about accessing data from remote files and APIs.</p>
-<p><em>Note: <code>d3.csv()</code> was not working, so I’ve switched this to <code>read_csv()</code> from R.</em></p>
+<p><em>Note: <code>d3.csv()</code> was not working, so I’ve switched this to <code>FileAttachment()</code>.</em></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" data-startfrom="55" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 54;"><span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>d3 <span class="op">=</span> <span class="pp">require</span>(<span class="st">"d3@7"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1" data-startfrom="56" data-source-offset="-0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 55;"><span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>gentoo <span class="op">=</span> <span class="fu">FileAttachment</span>(<span class="st">".//data/gentoo.csv"</span>)<span class="op">.</span><span class="fu">csv</span>({ <span class="dt">typed</span><span class="op">:</span> <span class="kw">true</span> })</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>adelie <span class="op">=</span> <span class="fu">FileAttachment</span>(<span class="st">".//data/adelie.csv"</span>)<span class="op">.</span><span class="fu">csv</span>({ <span class="dt">typed</span><span class="op">:</span> <span class="kw">true</span> })</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>chinstrap <span class="op">=</span> <span class="fu">FileAttachment</span>(<span class="st">".//data/chinstrap.csv"</span>)<span class="op">.</span><span class="fu">csv</span>({ <span class="dt">typed</span><span class="op">:</span> <span class="kw">true</span> })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-1" data-nodetype="declaration">
+<div>
+<div id="ojs-cell-1-1" data-nodetype="declaration">
 
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" data-startfrom="59" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 58;"><span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>csvURL <span class="op">=</span> <span class="st">"https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-pal.220.7&amp;entityid=e03b43c924f226486f2f0ab6709d2381"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-2" data-nodetype="declaration">
+<div>
+<div id="ojs-cell-1-2" data-nodetype="declaration">
 
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3" data-startfrom="64" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 63;"><span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(csvURL)</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">then</span>(response <span class="kw">=&gt;</span> {</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>response<span class="op">.</span><span class="at">ok</span>) <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(response<span class="op">.</span><span class="at">status</span>)<span class="op">;</span></span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response<span class="op">.</span><span class="fu">text</span>()<span class="op">;</span></span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-3" data-nodetype="expression">
+<div>
+<div id="ojs-cell-1-3" data-nodetype="declaration">
 
 </div>
 </div>
 </div>
-<div class="cell">
-<pre class="d3 cell-code"><code>gentoo = d3.csv(csvURL)</code></pre>
 </div>
 <p><strong>Step 2: Merge &amp; wrangle the data</strong></p>
 <p>Our first step will be to get these all into a single array of objects. Since they all have the same properties, in the same order, we can use the concat() method to combine them.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5" data-startfrom="95" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 94;"><span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="co">// Make combined version, penguinsCombo, here</span></span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>penguinsCombo <span class="op">=</span> adelie<span class="op">.</span><span class="fu">concat</span>(gentoo<span class="op">,</span> chinstrap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2" data-startfrom="67" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 66;"><span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="co">// Make combined version, penguinsCombo, here</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>penguinsCombo <span class="op">=</span> chinstrap<span class="op">.</span><span class="fu">concat</span>(gentoo<span class="op">,</span> adelie)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="ojs-cell-4" data-nodetype="declaration">
+<div id="ojs-cell-2" data-nodetype="declaration">
 
 </div>
 </div>
@@ -271,28 +269,220 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Flipper Length (mm) (renamed flipper_length_mm)</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6" data-startfrom="111" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 110;"><span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a><span class="co">// Create the wrangled version of penguins here: </span></span>
-<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>penguins <span class="op">=</span> penguinsCombo<span class="op">.</span><span class="fu">map</span>((d) <span class="kw">=&gt;</span> ({</span>
-<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>  <span class="dt">species</span><span class="op">:</span> d<span class="op">.</span><span class="at">Species</span><span class="op">.</span><span class="fu">split</span>(<span class="st">" "</span>)[<span class="dv">0</span>]<span class="op">,</span></span>
-<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>  <span class="dt">island</span><span class="op">:</span> d<span class="op">.</span><span class="at">Island</span><span class="op">,</span></span>
-<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>  <span class="dt">sex</span><span class="op">:</span> d<span class="op">.</span><span class="at">Sex</span> <span class="op">==</span> <span class="kw">null</span> <span class="op">||</span> d<span class="op">.</span><span class="at">Sex</span> <span class="op">==</span> <span class="st">"."</span> <span class="op">?</span> <span class="kw">null</span> <span class="op">:</span> d<span class="op">.</span><span class="at">Sex</span><span class="op">.</span><span class="fu">toLowerCase</span>()<span class="op">,</span></span>
-<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bill_length_mm</span><span class="op">:</span> d[<span class="st">"Culmen Length (mm)"</span>]<span class="op">,</span></span>
-<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bill_depth_mm</span><span class="op">:</span> d[<span class="st">"Culmen Depth (mm)"</span>]<span class="op">,</span></span>
-<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>  <span class="dt">body_mass_g</span><span class="op">:</span> d[<span class="st">"Body Mass (g)"</span>]<span class="op">,</span></span>
-<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>  <span class="dt">flipper_length_mm</span><span class="op">:</span> d[<span class="st">"Flipper Length (mm)"</span>]}))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3" data-startfrom="83" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 82;"><span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="co">// Create the wrangled version of penguins here: </span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>penguins <span class="op">=</span> penguinsCombo<span class="op">.</span><span class="fu">map</span>((d) <span class="kw">=&gt;</span> ({</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>  <span class="dt">species</span><span class="op">:</span> d<span class="op">.</span><span class="at">Species</span><span class="op">.</span><span class="fu">split</span>(<span class="st">" "</span>)[<span class="dv">0</span>]<span class="op">,</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>  <span class="dt">island</span><span class="op">:</span> d<span class="op">.</span><span class="at">Island</span><span class="op">,</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>  <span class="dt">sex</span><span class="op">:</span> d<span class="op">.</span><span class="at">Sex</span> <span class="op">==</span> <span class="kw">null</span> <span class="op">||</span> d<span class="op">.</span><span class="at">Sex</span> <span class="op">==</span> <span class="st">"."</span> <span class="op">?</span> <span class="kw">null</span> <span class="op">:</span> d<span class="op">.</span><span class="at">Sex</span><span class="op">.</span><span class="fu">toLowerCase</span>()<span class="op">,</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bill_length_mm</span><span class="op">:</span> d[<span class="st">"Culmen Length (mm)"</span>]<span class="op">,</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>  <span class="dt">bill_depth_mm</span><span class="op">:</span> d[<span class="st">"Culmen Depth (mm)"</span>]<span class="op">,</span></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>  <span class="dt">body_mass_g</span><span class="op">:</span> d[<span class="st">"Body Mass (g)"</span>]<span class="op">,</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>  <span class="dt">flipper_length_mm</span><span class="op">:</span> d[<span class="st">"Flipper Length (mm)"</span>]}))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-3" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>Meet Arquero Although we could continue do all of our wrangling in plain JavaScript, let’s explore a different tool for working with data in JavaScript - the Arquero library. Arquero may feel more familiar for data scientists who have been working in pandas (Python users) or dplyr / tidyr (R users).</p>
+<p>In the last session, we used require to load an external library. Here, we’ll use import to access library components from another Observable notebook. This highlights another cool way we can reuse content (functions, data, text, really anything we want…) from the Observable ecosystem.</p>
+<p>The following line imports all aq and op module functions from the notebook https://observablehq.com/<span class="citation" data-cites="uwdata/arquero">@uwdata/arquero</span> (notice that the slug after observable.com in the URL is what’s used to import from the notebook):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" data-startfrom="102" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 101;"><span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {aq<span class="op">,</span> op} <span class="im">from</span> <span class="st">"@uwdata/arquero"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-4" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>To use the Arquero verbs, we need to convert our array of objects to an Arquero table:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" data-startfrom="108" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 107;"><span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a><span class="co">// Convert your array of objects to an Arquero table here:</span></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>penguinsTable <span class="op">=</span> aq<span class="op">.</span><span class="fu">from</span>(penguins)<span class="op">.</span><span class="at">view</span></span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a><span class="co">// you can append .view() at the end to show the table</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div id="ojs-cell-5" data-nodetype="declaration">
 
 </div>
 </div>
 </div>
+<p>And from there, we can chain together Arquero methods much like we would in dplyr or pandas. For example, let’s write a sequence where we:</p>
+<p>Filter to create a subset only of female penguins Select columns for species, bill depth and bill length Add a new column with the ratio of bill length to bill depth Group by species, and find the mean bill ratio by group</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" data-startfrom="121" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 120;"><span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a><span class="co">// Write Arquero code to perform the steps above here: </span></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>penguinsTable</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">filter</span>((d) <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">sex</span> <span class="op">==</span> <span class="st">"female"</span>)</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">select</span>(<span class="st">'species'</span><span class="op">,</span> <span class="st">'bill_depth_mm'</span><span class="op">,</span> <span class="st">'bill_length_mm'</span>)</span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">derive</span>({<span class="dt">bill_ratio</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">bill_length_mm</span> <span class="op">/</span> d<span class="op">.</span><span class="at">bill_depth_mm</span>}) <span class="co">//like mutate() in dplyr</span></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">groupby</span>(<span class="st">'species'</span>)</span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">rollup</span>({ <span class="dt">mean_bill_ratio</span><span class="op">:</span> d <span class="kw">=&gt;</span> op<span class="op">.</span><span class="fu">mean</span>(d<span class="op">.</span><span class="at">bill_ratio</span>)})</span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">view</span>()</span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a><span class="co">//need to review more of the map function and arrow function process</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-6" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<p>Step 3: Exploratory data visualization First, let’s quickly refresh how we can make some quick plots using Observable Plot.</p>
+<p>Chart cell Use the Chart cell to get started with charts, without code. You can always eject to JavaScript to keep customizing! Let’s use the Chart cell to make a scatterplot of bill dimensions by species. Then we’ll eject to Plot code to keep customizing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" data-startfrom="139" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 138;"><span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>  <span class="dt">color</span><span class="op">:</span> { <span class="dt">legend</span><span class="op">:</span> <span class="kw">true</span> }<span class="op">,</span></span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">dot</span>(penguins<span class="op">,</span> {</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"bill_length_mm"</span><span class="op">,</span></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"bill_depth_mm"</span><span class="op">,</span></span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> <span class="st">"species"</span><span class="op">,</span></span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>      <span class="dt">tip</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>      <span class="dt">r</span><span class="op">:</span> <span class="st">"body_mass_g"</span><span class="op">,</span></span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>      <span class="dt">opacity</span><span class="op">:</span> <span class="fl">0.5</span></span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>    })<span class="op">,</span></span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">frame</span>()</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>  <span class="dt">color</span><span class="op">:</span> {<span class="dt">range</span><span class="op">:</span> [<span class="st">"teal"</span><span class="op">,</span> <span class="st">"darkorange"</span><span class="op">,</span> <span class="st">"orchid"</span>]}<span class="op">,</span></span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>  <span class="dt">r</span><span class="op">:</span> {<span class="dt">domain</span><span class="op">:</span> d3<span class="op">.</span><span class="fu">extent</span>(penguins<span class="op">.</span><span class="fu">map</span>(d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">body_mass_g</span>))<span class="op">,</span> <span class="dt">range</span><span class="op">:</span> [<span class="dv">1</span><span class="op">,</span> <span class="dv">20</span>]}<span class="op">,</span></span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>  <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span></span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-7" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<p>Import an visualize a pairplot What if we want to make a pair plot so that we can simultaneously explore different relationships and distributions? Well, we could build that ourselves…or we can use something that’s already built in another notebook!</p>
+<p>Observable imports let us access content (functions, charts, any content really…) from another notebook. Here, we’ll import the PlotMatrix function (to create an interactive chart) from the <span class="citation" data-cites="observablehq/autoplot-matrix">@observablehq/autoplot-matrix</span> notebook.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" data-startfrom="164" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 163;"><span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {PlotMatrix} <span class="cf">with</span> {data} <span class="im">from</span> <span class="st">"@observablehq/autoplot-matrix"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-8" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>That function expects the data to be stored as data, so we’ll make a copy of penguins named data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" data-startfrom="171" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 170;"><span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> penguins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-9" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>Then we can feed data into the PlotMatrix function to create a pairplot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" data-startfrom="177" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 176;"><span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a><span class="fu">PlotMatrix</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-10" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<p>Interactivity with Inputs In Session 1, we briefly saw how we can add Inputs and connect their values to chart elements for interactivity. Let’s practice a few more that can help us explore different slices of the data.</p>
+<p>Step 4: k-means and hierarchical clustering Now, we will see how clustering by k-means and hierarchical clustering do. Both are an unsupervised learning method, meaning that we don’t try to fit our data or estimates based on a known outcome.</p>
+<p>Prep the data Our first step is to make a subset with only the variables we’ll include in our cluster analysis, then scale the data (we’ll use Christoph Pahmeyer’s scale function, imported below, which will scale all properties to have a mean value of 0 and standard deviation of 1).</p>
+<p>Disclaimer: there are different ways to scale data, which we do not cover here. For your own projects, it is important to consider appropriate scaling and analysis beyond what we cover in this brief introduction to cluster analysis in JavaScript.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" data-startfrom="192" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 191;"><span id="cb11-192"><a href="#cb11-192" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> {scale} <span class="im">from</span> <span class="st">"@chrispahm/hierarchical-clustering"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-11" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" data-startfrom="196" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 195;"><span id="cb12-196"><a href="#cb12-196" aria-hidden="true" tabindex="-1"></a><span class="co">// Make a subset of penguins with complete cases (filter out values where bill length is null):</span></span>
+<span id="cb12-197"><a href="#cb12-197" aria-hidden="true" tabindex="-1"></a>penguinsComplete <span class="op">=</span> penguins<span class="op">.</span><span class="fu">filter</span>((d) <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">bill_length_mm</span> <span class="op">!==</span> <span class="kw">null</span>)<span class="co">// &amp;&amp; d.sex == "female")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-12" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" data-startfrom="201" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 200;"><span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a><span class="co">// Create a scaled version of the values (non-numeric will be NaN, which is fine..): </span></span>
+<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a>penguinsScale <span class="op">=</span> <span class="fu">scale</span>(penguinsComplete)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-13" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14" data-startfrom="206" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 205;"><span id="cb14-206"><a href="#cb14-206" aria-hidden="true" tabindex="-1"></a><span class="co">// Convert the array of objects to an array of arrays: </span></span>
+<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a>penguinsArray <span class="op">=</span> penguinsScale<span class="op">.</span><span class="fu">map</span>(</span>
+<span id="cb14-208"><a href="#cb14-208" aria-hidden="true" tabindex="-1"></a>  (d) <span class="kw">=&gt;</span> [d<span class="op">.</span><span class="at">bill_length_mm</span><span class="op">,</span> d<span class="op">.</span><span class="at">bill_depth_mm</span><span class="op">,</span> d<span class="op">.</span><span class="at">body_mass_g</span><span class="op">,</span> d<span class="op">.</span><span class="at">flipper_length_mm</span>]</span>
+<span id="cb14-209"><a href="#cb14-209" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-14" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+</section>
+<section id="k-means-with-ml.js-kmeans" class="level1">
+<h1>k-means with ml.js KMeans()</h1>
+<p>As in Session 1, we’ll use the ml.js library, which contains methods for k-means and hierarchical clustering. Because ml.js isn’t recommended automatically as part of Observable’s standard library, it is loaded in the appendix of this notebook.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" data-startfrom="217" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 216;"><span id="cb15-217"><a href="#cb15-217" aria-hidden="true" tabindex="-1"></a>ML <span class="op">=</span> <span class="pp">require</span>(<span class="st">"https://www.lactame.com/lib/ml/6.0.0/ml.min.js"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-15" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" data-startfrom="221" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 220;"><span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a><span class="co">// Use ml.js KMeans() method to perform k-means clustering for k centroids: </span></span>
+<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a>penguinsClusters <span class="op">=</span> ML<span class="op">.</span><span class="fu">KMeans</span>(penguinsArray<span class="op">,</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-16" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>Let’s see how these clusters map onto the three different penguin species.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17" data-startfrom="228" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 227;"><span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a><span class="co">// Combine the cluster values for each element with the original female penguins data:</span></span>
+<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a>penguinsKmeans <span class="op">=</span> penguinsComplete<span class="op">.</span><span class="fu">map</span>((d<span class="op">,</span>i) <span class="kw">=&gt;</span> ({<span class="op">...</span>d<span class="op">,</span> <span class="dt">clusterNo</span><span class="op">:</span> penguinsClusters<span class="op">.</span><span class="at">clusters</span>[i]}))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-17" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>Finally, we’ll visualize the output of our k-means clustering in Observable Plot. Add a snippet to create a scatterplot, then we’ll customize to show our clusters that we can explore across different variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18" data-startfrom="235" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 234;"><span id="cb18-235"><a href="#cb18-235" aria-hidden="true" tabindex="-1"></a>myChart <span class="op">=</span> Plot<span class="op">.</span><span class="fu">plot</span>({ <span class="co">// Remember to name if you want to use embeds! </span></span>
+<span id="cb18-236"><a href="#cb18-236" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb18-237"><a href="#cb18-237" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">text</span>(penguinsKmeans<span class="op">,</span> {</span>
+<span id="cb18-238"><a href="#cb18-238" aria-hidden="true" tabindex="-1"></a>      <span class="dt">x</span><span class="op">:</span> <span class="st">"body_mass_g"</span><span class="op">,</span></span>
+<span id="cb18-239"><a href="#cb18-239" aria-hidden="true" tabindex="-1"></a>      <span class="dt">y</span><span class="op">:</span> <span class="st">"flipper_length_mm"</span><span class="op">,</span></span>
+<span id="cb18-240"><a href="#cb18-240" aria-hidden="true" tabindex="-1"></a>      <span class="dt">text</span><span class="op">:</span> <span class="st">"clusterNo"</span><span class="op">,</span></span>
+<span id="cb18-241"><a href="#cb18-241" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fontSize</span><span class="op">:</span> <span class="st">"15px"</span><span class="op">,</span></span>
+<span id="cb18-242"><a href="#cb18-242" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fontWeight</span><span class="op">:</span> <span class="dv">500</span><span class="op">,</span></span>
+<span id="cb18-243"><a href="#cb18-243" aria-hidden="true" tabindex="-1"></a>      <span class="dt">fill</span><span class="op">:</span> <span class="st">"species"</span><span class="op">,</span></span>
+<span id="cb18-244"><a href="#cb18-244" aria-hidden="true" tabindex="-1"></a>      <span class="dt">tip</span><span class="op">:</span> <span class="kw">true</span></span>
+<span id="cb18-245"><a href="#cb18-245" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb18-246"><a href="#cb18-246" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb18-247"><a href="#cb18-247" aria-hidden="true" tabindex="-1"></a>  <span class="dt">color</span><span class="op">:</span> { <span class="dt">legend</span><span class="op">:</span> <span class="kw">true</span> }</span>
+<span id="cb18-248"><a href="#cb18-248" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-18" data-nodetype="declaration">
+
+</div>
+</div>
+</div>
+<p>Citations A. Horst, A. Hill, and K.B. Gorman. Palmer Archipelago Penguins Data in the palmerpenguins R Package - An Alternative to Anderson’s Irises. The R Journal, 2022. https://journal.r-project.org/articles/RJ-2022-020/)</p>
+<p>Palmer Station Antarctica LTER and K. Gorman, 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Adélie penguins (Pygoscelis adeliae) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 5. Environmental Data Initiative. https://doi.org/10.6073/pasta/98b16d7d563f265cb52372c8ca99e60f</p>
+<p>Palmer Station Antarctica LTER and K. Gorman, 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Gentoo penguin (Pygoscelis papua) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 5. Environmental Data Initiative. https://doi.org/10.6073/pasta/7fca67fb28d56ee2ffa3d9370ebda689</p>
+<p>Palmer Station Antarctica LTER and K. Gorman, 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Chinstrap penguin (Pygoscelis antarcticus) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 6. Environmental Data Initiative. https://doi.org/10.6073/pasta/c14dfcfada8ea13a17536e73eb6fbe9e</p>
 
 
 </section>
 
 </main> <!-- /main -->
 <script type="ojs-module-contents">
-eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImQzID0gcmVxdWlyZShcImQzQDdcIilcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMiIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImNzdlVSTCA9IFwiaHR0cHM6Ly9wb3J0YWwuZWRpcmVwb3NpdG9yeS5vcmcvbmlzL2RhdGF2aWV3ZXI/cGFja2FnZWlkPWtuYi1sdGVyLXBhbC4yMjAuNyZlbnRpdHlpZD1lMDNiNDNjOTI0ZjIyNjQ4NmYyZjBhYjY3MDlkMjM4MVwiXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTMiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJmZXRjaChjc3ZVUkwpXG4gIC50aGVuKHJlc3BvbnNlID0+IHtcbiAgICBpZiAoIXJlc3BvbnNlLm9rKSB0aHJvdyBuZXcgRXJyb3IocmVzcG9uc2Uuc3RhdHVzKTtcbiAgICByZXR1cm4gcmVzcG9uc2UudGV4dCgpO1xuICB9KVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC00IiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiLy8gTWFrZSBjb21iaW5lZCB2ZXJzaW9uLCBwZW5ndWluc0NvbWJvLCBoZXJlXG5wZW5ndWluc0NvbWJvID0gYWRlbGllLmNvbmNhdChnZW50b28sIGNoaW5zdHJhcClcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtNSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6Ii8vIENyZWF0ZSB0aGUgd3JhbmdsZWQgdmVyc2lvbiBvZiBwZW5ndWlucyBoZXJlOiBcbnBlbmd1aW5zID0gcGVuZ3VpbnNDb21iby5tYXAoKGQpID0+ICh7XG4gIHNwZWNpZXM6IGQuU3BlY2llcy5zcGxpdChcIiBcIilbMF0sXG4gIGlzbGFuZDogZC5Jc2xhbmQsXG4gIHNleDogZC5TZXggPT0gbnVsbCB8fCBkLlNleCA9PSBcIi5cIiA/IG51bGwgOiBkLlNleC50b0xvd2VyQ2FzZSgpLFxuICBiaWxsX2xlbmd0aF9tbTogZFtcIkN1bG1lbiBMZW5ndGggKG1tKVwiXSxcbiAgYmlsbF9kZXB0aF9tbTogZFtcIkN1bG1lbiBEZXB0aCAobW0pXCJdLFxuICBib2R5X21hc3NfZzogZFtcIkJvZHkgTWFzcyAoZylcIl0sXG4gIGZsaXBwZXJfbGVuZ3RoX21tOiBkW1wiRmxpcHBlciBMZW5ndGggKG1tKVwiXX0pKSBcbiJ9XX0=
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImdlbnRvbyA9IEZpbGVBdHRhY2htZW50KFwiLi8vZGF0YS9nZW50b28uY3N2XCIpLmNzdih7IHR5cGVkOiB0cnVlIH0pXG5cbmFkZWxpZSA9IEZpbGVBdHRhY2htZW50KFwiLi8vZGF0YS9hZGVsaWUuY3N2XCIpLmNzdih7IHR5cGVkOiB0cnVlIH0pXG5cbmNoaW5zdHJhcCA9IEZpbGVBdHRhY2htZW50KFwiLi8vZGF0YS9jaGluc3RyYXAuY3N2XCIpLmNzdih7IHR5cGVkOiB0cnVlIH0pXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTIiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiIvLyBNYWtlIGNvbWJpbmVkIHZlcnNpb24sIHBlbmd1aW5zQ29tYm8sIGhlcmVcbnBlbmd1aW5zQ29tYm8gPSBjaGluc3RyYXAuY29uY2F0KGdlbnRvbywgYWRlbGllKVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0zIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiLy8gQ3JlYXRlIHRoZSB3cmFuZ2xlZCB2ZXJzaW9uIG9mIHBlbmd1aW5zIGhlcmU6IFxucGVuZ3VpbnMgPSBwZW5ndWluc0NvbWJvLm1hcCgoZCkgPT4gKHtcbiAgc3BlY2llczogZC5TcGVjaWVzLnNwbGl0KFwiIFwiKVswXSxcbiAgaXNsYW5kOiBkLklzbGFuZCxcbiAgc2V4OiBkLlNleCA9PSBudWxsIHx8IGQuU2V4ID09IFwiLlwiID8gbnVsbCA6IGQuU2V4LnRvTG93ZXJDYXNlKCksXG4gIGJpbGxfbGVuZ3RoX21tOiBkW1wiQ3VsbWVuIExlbmd0aCAobW0pXCJdLFxuICBiaWxsX2RlcHRoX21tOiBkW1wiQ3VsbWVuIERlcHRoIChtbSlcIl0sXG4gIGJvZHlfbWFzc19nOiBkW1wiQm9keSBNYXNzIChnKVwiXSxcbiAgZmxpcHBlcl9sZW5ndGhfbW06IGRbXCJGbGlwcGVyIExlbmd0aCAobW0pXCJdfSkpIFxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC00IiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiaW1wb3J0IHthcSwgb3B9IGZyb20gXCJAdXdkYXRhL2FycXVlcm9cIlxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC01IiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiLy8gQ29udmVydCB5b3VyIGFycmF5IG9mIG9iamVjdHMgdG8gYW4gQXJxdWVybyB0YWJsZSBoZXJlOlxucGVuZ3VpbnNUYWJsZSA9IGFxLmZyb20ocGVuZ3VpbnMpLnZpZXdcbi8vIHlvdSBjYW4gYXBwZW5kIC52aWV3KCkgYXQgdGhlIGVuZCB0byBzaG93IHRoZSB0YWJsZVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC02IiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiLy8gV3JpdGUgQXJxdWVybyBjb2RlIHRvIHBlcmZvcm0gdGhlIHN0ZXBzIGFib3ZlIGhlcmU6IFxucGVuZ3VpbnNUYWJsZVxuICAuZmlsdGVyKChkKSA9PiBkLnNleCA9PSBcImZlbWFsZVwiKVxuICAuc2VsZWN0KCdzcGVjaWVzJywgJ2JpbGxfZGVwdGhfbW0nLCAnYmlsbF9sZW5ndGhfbW0nKVxuICAuZGVyaXZlKHtiaWxsX3JhdGlvOiBkID0+IGQuYmlsbF9sZW5ndGhfbW0gLyBkLmJpbGxfZGVwdGhfbW19KSAvL2xpa2UgbXV0YXRlKCkgaW4gZHBseXJcbiAgLmdyb3VwYnkoJ3NwZWNpZXMnKVxuICAucm9sbHVwKHsgbWVhbl9iaWxsX3JhdGlvOiBkID0+IG9wLm1lYW4oZC5iaWxsX3JhdGlvKX0pXG4gIC52aWV3KClcbi8vbmVlZCB0byByZXZpZXcgbW9yZSBvZiB0aGUgbWFwIGZ1bmN0aW9uIGFuZCBhcnJvdyBmdW5jdGlvbiBwcm9jZXNzXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTciLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJQbG90LnBsb3Qoe1xuICBjb2xvcjogeyBsZWdlbmQ6IHRydWUgfSxcbiAgbWFya3M6IFtcbiAgICBQbG90LmRvdChwZW5ndWlucywge1xuICAgICAgeDogXCJiaWxsX2xlbmd0aF9tbVwiLFxuICAgICAgeTogXCJiaWxsX2RlcHRoX21tXCIsXG4gICAgICBmaWxsOiBcInNwZWNpZXNcIixcbiAgICAgIHRpcDogdHJ1ZSxcbiAgICAgIHI6IFwiYm9keV9tYXNzX2dcIixcbiAgICAgIG9wYWNpdHk6IDAuNVxuICAgIH0pLFxuICAgIFBsb3QuZnJhbWUoKVxuICBdLFxuICBjb2xvcjoge3JhbmdlOiBbXCJ0ZWFsXCIsIFwiZGFya29yYW5nZVwiLCBcIm9yY2hpZFwiXX0sXG4gIHI6IHtkb21haW46IGQzLmV4dGVudChwZW5ndWlucy5tYXAoZCA9PiBkLmJvZHlfbWFzc19nKSksIHJhbmdlOiBbMSwgMjBdfSxcbiAgZ3JpZDogdHJ1ZVxufSlcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtOCIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImltcG9ydCB7UGxvdE1hdHJpeH0gd2l0aCB7ZGF0YX0gZnJvbSBcIkBvYnNlcnZhYmxlaHEvYXV0b3Bsb3QtbWF0cml4XCJcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtOSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6ImRhdGEgPSBwZW5ndWluc1xuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0xMCIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IlBsb3RNYXRyaXgoZGF0YSlcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMTEiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJpbXBvcnQge3NjYWxlfSBmcm9tIFwiQGNocmlzcGFobS9oaWVyYXJjaGljYWwtY2x1c3RlcmluZ1wiXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTEyIiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiLy8gTWFrZSBhIHN1YnNldCBvZiBwZW5ndWlucyB3aXRoIGNvbXBsZXRlIGNhc2VzIChmaWx0ZXIgb3V0IHZhbHVlcyB3aGVyZSBiaWxsIGxlbmd0aCBpcyBudWxsKTpcbnBlbmd1aW5zQ29tcGxldGUgPSBwZW5ndWlucy5maWx0ZXIoKGQpID0+IGQuYmlsbF9sZW5ndGhfbW0gIT09IG51bGwpLy8gJiYgZC5zZXggPT0gXCJmZW1hbGVcIilcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMTMiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiIvLyBDcmVhdGUgYSBzY2FsZWQgdmVyc2lvbiBvZiB0aGUgdmFsdWVzIChub24tbnVtZXJpYyB3aWxsIGJlIE5hTiwgd2hpY2ggaXMgZmluZS4uKTogXG5wZW5ndWluc1NjYWxlID0gc2NhbGUocGVuZ3VpbnNDb21wbGV0ZSlcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMTQiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiIvLyBDb252ZXJ0IHRoZSBhcnJheSBvZiBvYmplY3RzIHRvIGFuIGFycmF5IG9mIGFycmF5czogXG5wZW5ndWluc0FycmF5ID0gcGVuZ3VpbnNTY2FsZS5tYXAoXG4gIChkKSA9PiBbZC5iaWxsX2xlbmd0aF9tbSwgZC5iaWxsX2RlcHRoX21tLCBkLmJvZHlfbWFzc19nLCBkLmZsaXBwZXJfbGVuZ3RoX21tXVxuKVxuIn0seyJtZXRob2ROYW1lIjoiaW50ZXJwcmV0IiwiY2VsbE5hbWUiOiJvanMtY2VsbC0xNSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6Ik1MID0gcmVxdWlyZShcImh0dHBzOi8vd3d3LmxhY3RhbWUuY29tL2xpYi9tbC82LjAuMC9tbC5taW4uanNcIilcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMTYiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiIvLyBVc2UgbWwuanMgS01lYW5zKCkgbWV0aG9kIHRvIHBlcmZvcm0gay1tZWFucyBjbHVzdGVyaW5nIGZvciBrIGNlbnRyb2lkczogXG5wZW5ndWluc0NsdXN0ZXJzID0gTUwuS01lYW5zKHBlbmd1aW5zQXJyYXksIDMpXG4ifSx7Im1ldGhvZE5hbWUiOiJpbnRlcnByZXQiLCJjZWxsTmFtZSI6Im9qcy1jZWxsLTE3IiwiaW5saW5lIjpmYWxzZSwic291cmNlIjoiLy8gQ29tYmluZSB0aGUgY2x1c3RlciB2YWx1ZXMgZm9yIGVhY2ggZWxlbWVudCB3aXRoIHRoZSBvcmlnaW5hbCBmZW1hbGUgcGVuZ3VpbnMgZGF0YTpcbnBlbmd1aW5zS21lYW5zID0gcGVuZ3VpbnNDb21wbGV0ZS5tYXAoKGQsaSkgPT4gKHsuLi5kLCBjbHVzdGVyTm86IHBlbmd1aW5zQ2x1c3RlcnMuY2x1c3RlcnNbaV19KSlcbiJ9LHsibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMTgiLCJpbmxpbmUiOmZhbHNlLCJzb3VyY2UiOiJteUNoYXJ0ID0gUGxvdC5wbG90KHsgLy8gUmVtZW1iZXIgdG8gbmFtZSBpZiB5b3Ugd2FudCB0byB1c2UgZW1iZWRzISBcbiAgbWFya3M6IFtcbiAgICBQbG90LnRleHQocGVuZ3VpbnNLbWVhbnMsIHtcbiAgICAgIHg6IFwiYm9keV9tYXNzX2dcIixcbiAgICAgIHk6IFwiZmxpcHBlcl9sZW5ndGhfbW1cIixcbiAgICAgIHRleHQ6IFwiY2x1c3Rlck5vXCIsXG4gICAgICBmb250U2l6ZTogXCIxNXB4XCIsXG4gICAgICBmb250V2VpZ2h0OiA1MDAsXG4gICAgICBmaWxsOiBcInNwZWNpZXNcIixcbiAgICAgIHRpcDogdHJ1ZVxuICAgIH0pXG4gIF0sXG4gIGNvbG9yOiB7IGxlZ2VuZDogdHJ1ZSB9XG59KVxuIn1dfQ==
 </script>
 <script type="module">
 if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
