@@ -9,12 +9,269 @@ date: 07-29-2023
 categories: [Quarto, Javascript, data-viz, pca, environment] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-# image: penguin_plot.png
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+image: biplot.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
     wrap: 72
 ---
 
 # Introduction
+
+Today we’ll be exploring multivariate meteorological data from Mar Casado Beach, Sao Paulo (Brazil). By the end of the lesson, participants will be able to:
+
+Create a database in a notebook using DuckDBClient.of()
+Query the database in SQL cells
+Visualize relationships between variables
+Import and reuse existing content using import with
+Perform and visualize results of principal component analysis
+In this session, we will work with data from da Silva et al (2019) describing monthly atmospheric and ocean data (e.g. air pressure, windspeed, tides, sea surface temperature).
+
+Data source: Marcos Gonçalves da Silva, Juliana Nascimento Silva, Helena Rodrigues Fragoso, Natalia Pirani Ghilardi-Lopes (2019). Temporal series analysis of abiotic data for a subtropical Brazilian rocky shore. Data in Brief, Volume 24. ISSN 2352-3409, https://doi.org/10.1016/j.dib.2019.103873.
+
+Step 1: Combine the tables into a database
+The data are already attached here in two parts: marCasadoAir, and marCasadoSea:
+
+```{ojs}
+marCasadoAir = FileAttachment(".//data/marCasadoAir@5.csv").csv({typed: true}) // Date issue
+```
+
+```{ojs}
+marCasadoSea = FileAttachment(".//data/marCasadoSea@4.csv").csv({typed: true}) // Date issue
+```
+
+We can create a database containing both tables using DuckDBClient.of():
+
+```{ojs}
+// Write code to create a database called marCasadoDB, with tables 'air' and 'sea':
+marCasadoDB = DuckDBClient.of({air: marCasadoAir, sea: marCasadoSea})
+```
+
+Now, open the Database pane in the right margin of your notebook. There, you can explore the schema and variables of your newly created database.
+
+Step 2: Wrangle & analyze data in a SQL cell
+We want to combine some data from both tables in the database. The column we’re able to join by is month. We will also keep the following columns, and add a new column for season:
+
+From air:
+
+* month
+* meanPressure (mmHg)
+* windSpeed (kilometers per hour)
+* PAR (photoactive radiation in E/m s2)
+* meanHumidity (percent)
+* windDirection (degrees)
+
+From sea:
+
+* maxTide (meters)
+* minTide (meters)
+* salinity (practical salinity units)
+* seaSurfaceTemp (degrees Celsius)
+
+From da Silva et al (2019): “...two distinct seasons: (I) a hot and moist season from October to March (encompassing Spring and Summer) and (II) a cold and dry season from April to September (encompassing Autumn and Winter); an expected result for subtropical zones.”
+
+We'll also add a new column, season, containing "cool dry" for October thru March, otherwise "hot moist."
+
+```{r library, include=TRUE, echo=FALSE}
+library(tidyverse)
+library(DBI)
+library(RSQLite)
+```
+
+```{r sql_setup, include=TRUE, echo=FALSE}
+con <- DBI::dbConnect(SQLite(), ":memory:")
+marCasadoAir <- read_csv('.//data/marCasadoAir@5.csv')
+marCasadoSea <- read_csv('.//data/marCasadoSea@4.csv')
+DBI::dbWriteTable(conn = con, name = "air", value = marCasadoAir)
+DBI::dbWriteTable(conn = con, name = "sea", value = marCasadoSea)
+```
+
+```{sql sql_query, include=TRUE, connection="con"}
+select  cast(strftime('%m', a.month) as integer) as month,
+        a.meanPressure, 
+        a.windSpeed,
+        a.PAR,
+        a.meanHumidity, 
+        a.windDirection,
+        s.maxTide,
+        s.minTide,
+        s.salinity,
+        s.seaSurfaceTemp,
+        CASE WHEN cast(strftime('%m', a.month) as integer) IN (10, 11, 12, 1, 2, 3) THEN 'hot moist' ELSE 'cool dry' END AS season
+from air as a
+left join sea as s
+on a.month = s.month
+```
+
+```{r marCasado, include=FALSE, echo=FALSE}
+marCasado <- marCasadoAir %>% 
+  select(month, meanPressure, windSpeed, PAR, meanHumidity, windDirection) %>% 
+  mutate(season = if_else(month %in% c(10, 11, 12, 1, 2, 3), 'hot moist', 'cool dry')) %>% 
+  left_join(x=.,
+            y=marCasadoSea %>% select(month, maxTide, minTide, salinity, seaSurfaceTemp),
+            by='month')
+```
+
+If you want, you can work in SQL to wrangle & analyze an array (doesn’t have to be a database):
+
+```{sql, sql_query2, include=TRUE, connection="con"}
+SELECT cast(strftime('%m', month) as integer) as month,
+      avg(seaSurfaceTemp) as meanSST 
+  FROM sea
+GROUP BY month
+```
+
+```{ojs}
+marCasado = FileAttachment(".//data/marCasado.csv").csv({typed: true})
+```
+
+
+```{ojs}
+// Write Plot code to create a heatmap of sea surface temperature (SST) by year and month, starting from the 'cell' snippet:
+Plot.plot({
+  marks: [
+    Plot.cell(marCasado, {
+      y: d => d.month.getUTCFullYear(),
+      x: d => d.month.getUTCMonth(),
+      fill: "seaSurfaceTemp",
+      tip: true
+    })
+  ],
+  width: 500,
+  height: 250,
+  y: {tickFormat: "Y", padding: 0},
+  x: {padding: 0, tickFormat: Plot.formatMonth()}
+})
+```
+
+
+Step 4: Interactive data visualization
+Use import with to import content from another notebook, and replace what it expects with something new:
+
+```{ojs}
+import {PlotMatrix} with {marCasado as data} from "@observablehq/autoplot-matrix"
+```
+
+
+```{ojs}
+// Use the PlotMatrix function (expecting marCasado) to create a pair plot:
+PlotMatrix(marCasado)
+```
+
+
+Step 5: Principal component analysis
+Imports & libraries for PCA
+Use require to access methods from the ml.js package (which includes the PCA function we’ll use):
+
+```{ojs}
+ML = require("https://www.lactame.com/lib/ml/6.0.0/ml.min.js")
+```
+
+Import the scale and asMatrix functions from Christoph Pahmeyer’s hierarchical clustering notebook. The scale function will scale values of a property to have a mean of 0 and standard deviation of 1. We use asMatrix to get a 2D array of predictions to project our points in the PC space.
+
+```{ojs}
+import {scale, asMatrix} from "@chrispahm/hierarchical-clustering"
+```
+
+Scaling and PCA
+Create a scaled version of the data, only including the numeric variables (excluding season and month) that will be included in principal component analysis:
+
+```{ojs}
+// Create a scaled version of the numeric variables
+marCasadoScaled = scale(marCasado.map(({ season, month, ...rest }) => rest))
+```
+
+Then convert the array of objects to an array of arrays (which is what the PCA method from ml.js is expecting):
+
+```{ojs}
+// Convert to an array of arrays, just containing the values (no keys):
+marCasadoArray = marCasadoScaled.map(Object.values)
+```
+
+Now, we’re ready to perform PCA using the PCA function in ml.js (nicknamed ML when we used require above):
+
+```{ojs}
+// Perform principal component analysis:
+marCasadoPCA = new ML.PCA(marCasadoArray) // Already scaled above - otherwise can add {scale: true} here! 
+```
+
+Explore PCA results
+Use getExplainedVariance() to see variance explained by each PC:
+
+```{ojs}
+// Get variance explained by each PC:
+variancePC = marCasadoPCA.getExplainedVariance()
+```
+
+Use getCumulativeVariance() to see cumulative variance explained:
+
+```{ojs}
+// Get cumulative variance explained: 
+cumulativeVariance = marCasadoPCA.getCumulativeVariance()
+```
+
+Step 6: Visualize PCA results
+import with to reuse community contributions
+We’ll again use import with to access and reuse materials, this time from Christoph Pahmeyer’s notebook on principal component analysis.
+
+```{ojs}
+import {loadings} from "@chrispahm/principal-component-analysis"
+```
+
+```{ojs}
+// Import viewof loadings from the notebook, with marCasadoScaled as food_scaled:
+import {viewof loadings} with {marCasadoScaled as food_scaled} from "@chrispahm/principal-component-analysis"
+```
+
+```{ojs}
+// Look at viewof loadings:
+loadings_df = viewof loadings
+```
+
+```{ojs}
+import {scores} from "@chrispahm/principal-component-analysis"
+```
+
+```{ojs}
+// import viewof scores from the notebook, with marCasadoScaled as food_scaled and marCasado as food:
+import {viewof scores} with {marCasadoScaled as food_scaled, marCasado as food} from "@chrispahm/principal-component-analysis"
+```
+
+```{ojs}
+// Look at viewof scores:
+scores_df = viewof scores
+```
+
+```{ojs}
+// Do some wrangling to get the month and season alongside scores: 
+scoresCombined = scores_df.map((d, i) => ({ ...d, Name: marCasado[i].month, season: marCasado[i].season }))
+```
+
+```{ojs}
+scalingFactor = 5
+```
+
+```{ojs}
+// Create a PCA biplot with the scores and loadings
+Plot.plot({
+  marks: [
+    Plot.dot(scoresCombined, { x: "PC1", y: "PC2", fill: "season", r: 5 }),
+    Plot.arrow(loadings_df, {
+      x1: 0, x2: d => d.PC1 * scalingFactor, y1: 0, y2: (d) => d.PC2 * scalingFactor
+    }),
+    Plot.text(loadings_df, {
+      x: (d) => d.PC1 * scalingFactor, y: (d) => d.PC2 * scalingFactor,
+      text: "Variable",
+      dy: -5,
+      dx: 30,
+      fill: "black",
+      stroke: "white",
+      fontSize: 14
+    })
+  ],
+  color: { legend: true },
+  inset: 20
+}) 
+```
+
 
