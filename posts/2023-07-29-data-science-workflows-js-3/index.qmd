@@ -1,0 +1,20 @@
+---
+title: "Data Science Workflows in Javascript: Part Three"
+description: "This post is from the third session led by Observable HQ"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 07-29-2023
+categories: [Quarto, Javascript, data-viz, pca, environment] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: penguin_plot.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
