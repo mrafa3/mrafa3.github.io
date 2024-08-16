@@ -17,7 +17,7 @@ about:
 
 My name is Mickey – welcome to my portfolio website! I'm an analytics leader with nearly a decade of experience in high-growth environments, in both non-profit and for-profit organizations. I specialize in turning data into insights, improving the accessibility of dashboards and reports, and creating compelling data stories.
 
-On this page, I include a selection of data science and viz projects that showcase the breadth of work that I've completed.
+On this site, I include a selection of data science and viz projects that showcase the breadth of work that I've completed.
 
 Let's connect! Feel free to reach out to me on LinkedIn or send me an email.
 
