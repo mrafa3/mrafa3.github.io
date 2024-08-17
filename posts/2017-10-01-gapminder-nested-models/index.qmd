@@ -21,8 +21,7 @@ library(gapminder)    #for gapminder data
 library(ggridges)     #to enable joyplots
 library(extrafont)    #to import preferred font
 library(ggrepel)      #for spacing geom_text() in ggplot
-library(broom)
-library(gganimate)
+library(broom)        #for nested model stats
 
 data(gapminder)
 
