@@ -1,0 +1,101 @@
+---
+title: "Using DuckDB as an in-memory database in R"
+description: "This post uses the tidycensus package to access the Census API and visualize data"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 08-13-2024
+categories: [R, tidyverse, duckdb, javascript] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: us_child_poverty_map.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+[DuckDB](https://duckdb.org/why_duckdb#simple) is an in-process SQL database management system designed for fast and efficient data analysis. It's particularly advantageous for data analysts due to its seamless integration with popular programming languages like Python and R, allowing easy querying of large datasets directly from within those environments. DuckDB's columnar storage format and vectorized execution enable high-performance analytics on large datasets without the need for complex setups, making it an ideal choice for exploratory data analysis, interactive queries, and handling structured data efficiently on local machines.
+
+For this project, I wanted to explore the advantages of using DuckDB in an analysis workflow, using the `duckdb::` package.
+
+# Data
+
+Air quality using the `RAQSAPI::`
+
+
+## Setup
+
+
+https://cran.r-project.org/web/packages/RAQSAPI/vignettes/RAQSAPIvignette.html#:~:text=RAQSAPI%20is%20a%20package%20for,of%20ambient%20air%20pollution%20data.
+
+```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(duckdb)
+library(janitor)
+library(RAQSAPI)
+
+```
+
+```{r}
+# RAQSAPI::aqs_sign_up("mrafa3.du@gmail.com")
+RAQSAPI::aqs_credentials()
+```
+
+
+```{r}
+openair::
+```
+
+
+```{r}
+con <- DBI::dbConnect(duckdb(), path = ":memory:")
+
+# airquality <- copy_to(con, airquality %>% clean_names(), overwrite = TRUE)
+```
+
+```{r}
+# make an in-memory db and store the connection in a variable
+con <- dbConnect(duckdb::duckdb())
+
+# write our prices data to duckdb table
+table_name <- "airquality"
+duckdb::dbWriteTable(con, table_name, airquality)
+
+copy_to(con, airquality, overwrite = TRUE)
+
+```
+
+
+
+```{r}
+airquality %>% 
+  group_by(month) %>% 
+  summarise_all(mean, na.rm=TRUE) %>% 
+  collect()
+
+tbl(con, "airquality") %>%
+  head(5) %>%
+  collect()
+
+dbGetQuery(con, 
+           "SELECT 
+              month,
+              avg(ozone) as avg_ozone
+           FROM airquality
+           GROUP BY month")
+
+```
+
+
+
+# Runtime showdown: duckdb vs. dplyr 
+
+
+
+
+# Conclusion
+
