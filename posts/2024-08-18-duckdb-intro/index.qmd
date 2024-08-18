@@ -6,7 +6,7 @@ author:
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
 date: 08-13-2024
-categories: [R, tidyverse, duckdb, javascript] # self-defined categories
+categories: [R, tidyverse, duckdb, environment] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 # image: us_child_poverty_map.png
@@ -26,28 +26,42 @@ For this project, I wanted to explore the advantages of using DuckDB in an analy
 
 Air quality using the `RAQSAPI::`
 
-
-## Setup
-
-
 https://cran.r-project.org/web/packages/RAQSAPI/vignettes/RAQSAPIvignette.html#:~:text=RAQSAPI%20is%20a%20package%20for,of%20ambient%20air%20pollution%20data.
+
+https://www.epa.gov/outdoor-air-quality-data/air-data-daily-air-quality-tracker
+
+The RAQSAPI R package provides a streamlined interface for accessing air quality data from the U.S. EPA's Air Quality System Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits. It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.
+
+In this project, I'd like to retrieve air quality data from the EPA and understand how air quality has changed in the Denver area over time. 
+
+# Setup
+
+## Libraries 
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(duckdb)
 library(janitor)
 library(RAQSAPI)
-
+library(keyring)
+library(raqs)
 ```
 
+```{r raqs_setup, include=TRUE, echo=FALSE}
+raqs::set_aqs_user(email = "mrafa3.du@gmail.com",
+                   key = )
+```
+
+
+## API credentials, Fetching, and Duckdb setup
+
 ```{r}
-# RAQSAPI::aqs_sign_up("mrafa3.du@gmail.com")
+# RAQSAPI::aqs_sign_up("mrafa3.du/@gmail.com")
 RAQSAPI::aqs_credentials()
-```
 
+raqs::aqs_signup("mrafa3.du@gmail.com")
 
-```{r}
-openair::
+?aqs_sign_up()
 ```
 
 
