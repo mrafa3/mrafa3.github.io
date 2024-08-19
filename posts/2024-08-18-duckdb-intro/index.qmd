@@ -24,13 +24,13 @@ For this project, I wanted to explore the advantages of using DuckDB in an analy
 
 # Data
 
-Air quality using the `RAQSAPI::`
 
-https://cran.r-project.org/web/packages/RAQSAPI/vignettes/RAQSAPIvignette.html#:~:text=RAQSAPI%20is%20a%20package%20for,of%20ambient%20air%20pollution%20data.
 
 https://www.epa.gov/outdoor-air-quality-data/air-data-daily-air-quality-tracker
 
-The RAQSAPI R package provides a streamlined interface for accessing air quality data from the U.S. EPA's Air Quality System Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits. It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.
+The `RAQSAPI::` package provides a streamlined interface for accessing air quality data from the U.S. EPA's Air Quality System Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits.[^1] It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.
+
+[^1]: CRAN documentation can be found at: https://cran.r-project.org/web/packages/RAQSAPI/vignettes/RAQSAPIvignette.html#:~:text=RAQSAPI%20is%20a%20package%20for,of%20ambient%20air%20pollution%20data.
 
 In this project, I'd like to retrieve air quality data from the EPA and understand how air quality has changed in the Denver area over time. 
 
@@ -42,9 +42,10 @@ In this project, I'd like to retrieve air quality data from the EPA and understa
 library(tidyverse)
 library(duckdb)
 library(janitor)
-library(RAQSAPI)
-library(keyring)
-library(raqs)
+library(microbenchmark)
+# library(RAQSAPI)
+# library(keyring)
+# library(raqs)
 ```
 
 ```{r raqs_setup, include=TRUE, echo=FALSE}
@@ -56,10 +57,10 @@ raqs::set_aqs_user(email = "mrafa3.du@gmail.com",
 ## API credentials, Fetching, and Duckdb setup
 
 ```{r}
-# RAQSAPI::aqs_sign_up("mrafa3.du/@gmail.com")
+RAQSAPI::aqs_sign_up("mickey.rafa3@gmail.com")
 RAQSAPI::aqs_credentials()
 
-raqs::aqs_signup("mrafa3.du@gmail.com")
+raqs::aqs_signup("mickey.rafa3@gmail.com")
 
 ?aqs_sign_up()
 ```
@@ -83,33 +84,34 @@ copy_to(con, airquality, overwrite = TRUE)
 
 ```
 
-
-
-```{r}
-airquality %>% 
+```{r test_dplyr, include=TRUE}
+test_dplyr <- airquality %>% 
   group_by(month) %>% 
   summarise_all(mean, na.rm=TRUE) %>% 
   collect()
-
-tbl(con, "airquality") %>%
-  head(5) %>%
-  collect()
-
-dbGetQuery(con, 
-           "SELECT 
-              month,
-              avg(ozone) as avg_ozone
-           FROM airquality
-           GROUP BY month")
-
 ```
 
-
+```{r test_duckdb_query, include=TRUE}
+test_duckdb_query <- dbGetQuery(con, 
+           "SELECT 
+              month,
+              avg(ozone) as avg_ozone,
+              avg(solar_r) as avg_solar_r,
+              avg(wind) as avg_wind,
+              avg(temp) as avg_temp
+           FROM airquality
+           GROUP BY month")
+```
 
 # Runtime showdown: duckdb vs. dplyr 
 
-
-
+```{r microbenchmark_test, include=TRUE, warning=FALSE}
+microbenchmark(
+  code1 = test_dplyr,
+  code2 = test_duckdb_query,
+  times = 100L  # Number of iterations to run
+)
+```
 
 # Conclusion
 
