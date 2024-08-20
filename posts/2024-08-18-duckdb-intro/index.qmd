@@ -116,6 +116,16 @@ test_dplyr <- airquality %>%
 dbGetQuery(con,
            "SELECT *
            FROM ozone")
+
+dbGetQuery(con,
+           "SELECT
+                sample_duration, 
+                local_site_name,
+                AVG(aqi) as avg_aqi,
+                AVG(arithmetic_mean) as avg_arithmetic_mean,
+                AVG(first_max_value) as avg_first_max_value
+           FROM ozone
+           GROUP BY sample_duration, local_site_name")
 ```
 
 
