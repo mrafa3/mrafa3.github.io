@@ -56,18 +56,42 @@ library(RAQSAPI)
 
 ```{r aqs_credentials, include=TRUE, echo=FALSE}
 # RAQSAPI::aqs_sign_up("mickey.rafa3@gmail.com")
-RAQSAPI::aqs_credentials(username = 'mickey.rafa3@gmail.com', key = 'greengoose68')
+RAQSAPI::aqs_credentials(username = 'mickey.rafa3@gmail.com', key = 'tealbird21')
+```
+
+```{r df_ozone, include=TRUE}
+# ?RAQSAPI::aqs_dailysummary_by_county()
+
+df_ozone <- RAQSAPI::aqs_dailysummary_by_county(
+  parameter = '44201',
+  bdate = as.Date('20240101',
+                  format = "%Y%m%d"),
+  edate = as.Date('20240810',
+                  format = "%Y%m%d"),
+  stateFIPS = '08',
+  county = '059'
+)
 ```
 
 ```{r}
-# RAQSAPI::
+summary(df_ozone)
+```
+```{r}
+df_ozone %>% glimpse()
+
+df_ozone %>% distinct(sample_duration, sample_duration_code)
 ```
 
+```{r}
+df_ozone %>% 
+  filter(sample_duration_code == '1') %>% 
+  group_by(local_site_name, date_local) 
+```
 
 ```{r}
 con <- DBI::dbConnect(duckdb(), path = ":memory:")
 
-# airquality <- copy_to(con, airquality %>% clean_names(), overwrite = TRUE)
+ozone <- copy_to(con, df_ozone %>% filter(sample_duration_code == '1'), overwrite = TRUE)
 ```
 
 ```{r}
@@ -75,10 +99,10 @@ con <- DBI::dbConnect(duckdb(), path = ":memory:")
 con <- dbConnect(duckdb::duckdb())
 
 # write our prices data to duckdb table
-table_name <- "airquality"
-duckdb::dbWriteTable(con, table_name, airquality)
+table_name <- "ozone"
+duckdb::dbWriteTable(con, table_name, df_ozone)
 
-copy_to(con, airquality, overwrite = TRUE)
+# copy_to(con, airquality, overwrite = TRUE)
 
 ```
 
@@ -88,6 +112,12 @@ test_dplyr <- airquality %>%
   summarise_all(mean, na.rm=TRUE) %>% 
   collect()
 ```
+```{r}
+dbGetQuery(con,
+           "SELECT *
+           FROM ozone")
+```
+
 
 ```{r test_duckdb_query, include=TRUE}
 test_duckdb_query <- dbGetQuery(con, 
