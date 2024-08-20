@@ -24,8 +24,6 @@ For this project, I wanted to explore the advantages of using DuckDB in an analy
 
 # Data
 
-
-
 https://www.epa.gov/outdoor-air-quality-data/air-data-daily-air-quality-tracker
 
 The `RAQSAPI::` package provides a streamlined interface for accessing air quality data from the U.S. EPA's Air Quality System Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits.[^1] It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.
@@ -43,26 +41,26 @@ library(tidyverse)
 library(duckdb)
 library(janitor)
 library(microbenchmark)
-# library(RAQSAPI)
+library(RAQSAPI)
 # library(keyring)
 # library(raqs)
 ```
 
 ```{r raqs_setup, include=TRUE, echo=FALSE}
-raqs::set_aqs_user(email = "mrafa3.du@gmail.com",
-                   key = )
+# raqs::set_aqs_user(email = "mrafa3.du@gmail.com",
+#                    key = )
 ```
 
 
 ## API credentials, Fetching, and Duckdb setup
 
+```{r aqs_credentials, include=TRUE, echo=FALSE}
+# RAQSAPI::aqs_sign_up("mickey.rafa3@gmail.com")
+RAQSAPI::aqs_credentials(username = 'mickey.rafa3@gmail.com', key = 'greengoose68')
+```
+
 ```{r}
-RAQSAPI::aqs_sign_up("mickey.rafa3@gmail.com")
-RAQSAPI::aqs_credentials()
-
-raqs::aqs_signup("mickey.rafa3@gmail.com")
-
-?aqs_sign_up()
+# RAQSAPI::
 ```
 
 
