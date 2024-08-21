@@ -1,0 +1,71 @@
+---
+title: "Exploring U.S. dams data from the National Inventory of Dams"
+description: "This post analyzes and visualizes data on dams in the U.S."
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 08-18-2024
+categories: [R, tidyverse, duckdb, environment, sql, api] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: query.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+
+# Data
+
+
+# Setup
+
+## Libraries 
+
+```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(janitor)
+```
+
+## EDA
+
+```{r read_dams, include=TRUE, echo=FALSE, warning=FALSE}
+df_dam <- read_csv('.//data/nation.csv',
+                   # row 1 has metadata
+                   skip = 1
+  ) %>% 
+  # converts column names to snake case
+  clean_names()
+```
+```{r}
+df_dam %>% 
+  mutate(state = as.factor(state),
+         state_regulated_dam = as.factor(state_regulated_dam))
+```
+
+
+```{r glimpse_dam, include=TRUE}
+df_dam %>% glimpse()
+```
+
+
+```{r include=TRUE}
+df_dam %>% 
+  group_by(owner_types) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  ungroup() %>% 
+  mutate(percent = round(100 * (n / sum(n)), 1))
+```
+
+
+
+## Setting up and querying DuckDB in R
+
+
+# Conclusion
+
