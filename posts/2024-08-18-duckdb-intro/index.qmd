@@ -20,8 +20,6 @@ editor:
 
 [DuckDB](https://duckdb.org/why_duckdb#simple) is an in-process SQL database management system designed for fast and efficient data analysis. It's particularly advantageous for data analysts due to its seamless integration with popular programming languages like Python and R, allowing easy querying of large datasets directly from within those environments. DuckDB's columnar storage format and vectorized execution enable high-performance analytics on large datasets without the need for complex setups, making it an ideal choice for exploratory data analysis, interactive queries, and handling structured data efficiently on local machines.
 
-For this project, I wanted to explore the advantages of using DuckDB in an analysis workflow, using the `duckdb::` package.
-
 # Data
 
 The `RAQSAPI::` package provides a streamlined interface for accessing air quality data from the U.S. EPA's Air Quality System (AQS) Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits.[^1] It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.
