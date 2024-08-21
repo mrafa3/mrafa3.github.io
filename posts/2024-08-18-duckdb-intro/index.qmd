@@ -64,6 +64,7 @@ Some common arguments that you'll find in `RAQSAPI::` package:
 ```{r df_ozone, include=TRUE}
 df_ozone <- RAQSAPI::aqs_dailysummary_by_county(
   # '44201' is ozone
+  # '43201' is methane
   parameter = '44201',
   bdate = as.Date('20240101',
                   format = "%Y%m%d"),
