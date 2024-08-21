@@ -1,16 +1,16 @@
 ---
-title: "Using DuckDB as an in-memory database in R"
-description: "This post uses the tidycensus package to access the Census API and visualize data"
+title: "Setting up an EPA air quality database using DuckDB"
+description: "This post uses the RAQSAPI package to access the EPA API and query the results with DuckDB"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
-date: 08-13-2024
-categories: [R, tidyverse, duckdb, environment] # self-defined categories
+date: 08-18-2024
+categories: [R, tidyverse, duckdb, environment, sql, api] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-# image: us_child_poverty_map.png
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+image: query.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
     wrap: 72
@@ -24,13 +24,9 @@ For this project, I wanted to explore the advantages of using DuckDB in an analy
 
 # Data
 
-https://www.epa.gov/outdoor-air-quality-data/air-data-daily-air-quality-tracker
-
-The `RAQSAPI::` package provides a streamlined interface for accessing air quality data from the U.S. EPA's Air Quality System Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits.[^1] It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.
+The `RAQSAPI::` package provides a streamlined interface for accessing air quality data from the U.S. EPA's Air Quality System (AQS) Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits.[^1] It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.
 
 [^1]: CRAN documentation can be found at: https://cran.r-project.org/web/packages/RAQSAPI/vignettes/RAQSAPIvignette.html#:~:text=RAQSAPI%20is%20a%20package%20for,of%20ambient%20air%20pollution%20data.
-
-In this project, I'd like to retrieve air quality data from the EPA and understand how air quality has changed in the Denver area over time. 
 
 # Setup
 
@@ -39,84 +35,80 @@ In this project, I'd like to retrieve air quality data from the EPA and understa
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(duckdb)
-library(janitor)
-library(microbenchmark)
 library(RAQSAPI)
-# library(keyring)
-# library(raqs)
 ```
 
-```{r raqs_setup, include=TRUE, echo=FALSE}
-# raqs::set_aqs_user(email = "mrafa3.du@gmail.com",
-#                    key = )
+## Fetching data from the EPA's Air Quality Service Data Mart API 
+
+If it's your first time accessing the AQS API, you'll need to use the `RAQSAPI::aqs_sign_up()` function, and provide your email address as a string. (Note: when I first set up my credentials, it took about 48 hours to receive the email from their service).
+
+```{r aqs_credentials, include=TRUE, echo=TRUE}
+# RAQSAPI::aqs_sign_up("abcd@efg.com")
 ```
 
+Then, use the `RAQSAPI::aqs_credentials()` function to provide your username and key.
 
-## API credentials, Fetching, and Duckdb setup
-
-```{r aqs_credentials, include=TRUE, echo=FALSE}
-# RAQSAPI::aqs_sign_up("mickey.rafa3@gmail.com")
+```{r provide_credentials, include=TRUE, echo=FALSE}
 RAQSAPI::aqs_credentials(username = 'mickey.rafa3@gmail.com', key = 'tealbird21')
 ```
 
-```{r df_ozone, include=TRUE}
-# ?RAQSAPI::aqs_dailysummary_by_county()
+The AQS service is rich with a variety of functions and arguments that help you pull exactly what you need. There is **so** much available through their API, and I won't even begin to cover it here. For this demo, I'd like to look at ozone measurements over the last year in Colorado.
 
+Some common arguments that you'll find in `RAQSAPI::` package:  
+
+*  `parameter=`:the specific pollutant that you're interested in. You can feed this a vector of multiple pollutants.[^2]
+*  `bdate=`: start date. If the grain of analysis is daily, the API limits each call to one year of data.
+*  `edate=`: end date.
+*  `stateFIPS` and `county`: FIPS codes for your states or counties (if that's your grain of analysis)
+
+[^2]: See "parameter code" here: https://aqs.epa.gov/aqsweb/documents/codetables/methods_all.html
+
+```{r df_ozone, include=TRUE}
 df_ozone <- RAQSAPI::aqs_dailysummary_by_county(
+  # '44201' is ozone
   parameter = '44201',
   bdate = as.Date('20240101',
                   format = "%Y%m%d"),
   edate = as.Date('20240810',
                   format = "%Y%m%d"),
+  # '08' is Colorado
   stateFIPS = '08',
+  # '059' is Jefferson County
   county = '059'
 )
 ```
 
-```{r}
-summary(df_ozone)
-```
-```{r}
-df_ozone %>% glimpse()
+Now, I'll `dplyr::glimpse()` to see the structure of the data.
 
-df_ozone %>% distinct(sample_duration, sample_duration_code)
-```
-
-```{r}
+```{r glimpse_ozone, include=TRUE}
 df_ozone %>% 
-  filter(sample_duration_code == '1') %>% 
-  group_by(local_site_name, date_local) 
+  glimpse()
 ```
 
-```{r}
+## Setting up and querying DuckDB in R
+
+(This section is not meant to be analysis! I'm just demonstrating the setup and querying of the database.)
+
+```{r setup_con, include=TRUE}
 con <- DBI::dbConnect(duckdb(), path = ":memory:")
 
 ozone <- copy_to(con, df_ozone %>% filter(sample_duration_code == '1'), overwrite = TRUE)
 ```
 
-```{r}
-# make an in-memory db and store the connection in a variable
-con <- dbConnect(duckdb::duckdb())
-
-# write our prices data to duckdb table
+```{r duckdb_tbl_setup, include=TRUE}
+# write our data to duckdb table
 table_name <- "ozone"
 duckdb::dbWriteTable(con, table_name, df_ozone)
-
-# copy_to(con, airquality, overwrite = TRUE)
-
 ```
 
-```{r test_dplyr, include=TRUE}
-test_dplyr <- airquality %>% 
-  group_by(month) %>% 
-  summarise_all(mean, na.rm=TRUE) %>% 
-  collect()
-```
-```{r}
+```{r query1, include=TRUE}
 dbGetQuery(con,
            "SELECT *
-           FROM ozone")
+           FROM ozone
+           limit 10")
+```
 
+```{r query2}
 dbGetQuery(con,
            "SELECT
                 sample_duration, 
@@ -128,28 +120,12 @@ dbGetQuery(con,
            GROUP BY sample_duration, local_site_name")
 ```
 
-
-```{r test_duckdb_query, include=TRUE}
-test_duckdb_query <- dbGetQuery(con, 
-           "SELECT 
-              month,
-              avg(ozone) as avg_ozone,
-              avg(solar_r) as avg_solar_r,
-              avg(wind) as avg_wind,
-              avg(temp) as avg_temp
-           FROM airquality
-           GROUP BY month")
-```
-
-# Runtime showdown: duckdb vs. dplyr 
-
-```{r microbenchmark_test, include=TRUE, warning=FALSE}
-microbenchmark(
-  code1 = test_dplyr,
-  code2 = test_duckdb_query,
-  times = 100L  # Number of iterations to run
-)
-```
-
 # Conclusion
 
+```{r disconnect, include=TRUE}
+DBI::dbDisconnect(conn = con)
+```
+
+This post shows how to use the `RAQSAPI::` package to access air quality data from the Environmental Protection Agency, and how to use the `duckdb::` package to set up an in-memory DuckDB database in R. 
+
+In future posts, I'll begin analyzing and visualizing Colorado's air pollution data from the EPA's Air Quality Service.

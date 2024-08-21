@@ -65,13 +65,11 @@ continent_year_model <- function(df) {
 nest_gapminder <- nest_gapminder %>% 
   mutate(model = map(data, continent_year_model),
          glance = map(model, broom::glance))
-```
 
-```{r}
-nest_gapminder %>% 
-  unnest(model[1])
+glance_gapminder_model <- nest_gapminder %>% 
+  unnest(glance) %>% 
+  arrange(desc(adj.r.squared))
 ```
-
 
 ```{r visualize_models, include=TRUE, fig.height=6.2, fig.width=10, fig.align='center'}
 glance_gapminder_model %>% 

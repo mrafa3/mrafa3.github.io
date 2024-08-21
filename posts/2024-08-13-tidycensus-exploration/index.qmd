@@ -6,7 +6,7 @@ author:
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
 date: 08-13-2024
-categories: [R, tidyverse, mapping, gt, tidycensus] # self-defined categories
+categories: [R, tidyverse, mapping, gt, tidycensus, api] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 image: us_child_poverty_map.png
