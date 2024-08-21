@@ -245,6 +245,18 @@ df <- df %>%
 )
 ```
 
+```{r df_county, include=FALSE}
+# considering a map like this one: https://observablehq.com/@observablehq/plot-us-bubble-map?intent=fork
+df_county <- get_acs(geography = 'county',
+        variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
+        year = 2021,
+        output = 'wide') %>% 
+  mutate(
+    state_fips = str_sub(GEOID, 1, 2),
+    county_fips = str_sub(GEOID, 3, 5)
+  )
+```
+
 # Conclusion
 
 In this first `tidycensus::` post, I demonstrated: 
