@@ -144,8 +144,9 @@ southeastern states (as a percent of the child population).
 
 ```{r plot_u5_poverty, include=TRUE, fig.align='center'}
 (perc_poverty_map <- plot_usmap(regions = 'counties',
-           data = df %>% rename(fips = geoid),
-           values = 'u5_perc_in_poverty') + 
+                                include = "CO", 
+                                data = df %>% rename(fips = geoid),
+                                values = 'u5_perc_in_poverty') + 
   # scale_fill_viridis_c() + 
   scale_fill_viridis_c(labels = scales::percent_format()) + 
   labs(title = md("**Estimated child poverty in U.S. states in 2021**"),
