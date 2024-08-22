@@ -160,6 +160,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
                 <div class="quarto-category">mapping</div>
                 <div class="quarto-category">gt</div>
                 <div class="quarto-category">tidycensus</div>
+                <div class="quarto-category">api</div>
               </div>
                   </div>
   </div>
@@ -263,7 +264,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>Each variable returns the geography, an estimate, and the margin of error (“moe”). Geographies can span from states, regions and the country as a whole, down to areas like school districts, voting districts, census block groups, and many others.</li>
 <li><code>summary_var=</code>: often the variable that you want would be made more meaningful as a ratio or with a demonminator. For example, the number of children in poverty could be useful on its own, but you’re likely to want to see that series as a percent of the total children. With the summary_var argument, you can tell the function which secondary variable you want to grab in the same API call.</li>
-<li><code>ouput=wide</code>: related to the above, I wanted to look at child poverty in a way that would require multiple summary variables (e.g.&nbsp;the percent of girls <em>and</em> boys in poverty). Since you can only have one summary variable, <code>output='wide'</code> allows you to grab all of the series that you may need in the same call.</li>
+<li><code>ouput=wide</code>: related to the above, I wanted to look at child poverty in a way that would require multiple summary variables (e.g. the percent of girls <em>and</em> boys in poverty). Since you can only have one summary variable, <code>output='wide'</code> allows you to grab all of the series that you may need in the same call.</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">'state'</span>,</span>
@@ -421,24 +422,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="hclnzwonbf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="yhnownblho" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#hclnzwonbf table {
+#yhnownblho table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#hclnzwonbf thead, #hclnzwonbf tbody, #hclnzwonbf tfoot, #hclnzwonbf tr, #hclnzwonbf td, #hclnzwonbf th {
+#yhnownblho thead, #yhnownblho tbody, #yhnownblho tfoot, #yhnownblho tr, #yhnownblho td, #yhnownblho th {
   border-style: none;
 }
 
-#hclnzwonbf p {
+#yhnownblho p {
   margin: 0;
   padding: 0;
 }
 
-#hclnzwonbf .gt_table {
+#yhnownblho .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -464,12 +465,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_caption {
+#yhnownblho .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#hclnzwonbf .gt_title {
+#yhnownblho .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -481,7 +482,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#hclnzwonbf .gt_subtitle {
+#yhnownblho .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -493,7 +494,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#hclnzwonbf .gt_heading {
+#yhnownblho .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -505,13 +506,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_bottom_border {
+#yhnownblho .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_col_headings {
+#yhnownblho .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -526,7 +527,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_col_heading {
+#yhnownblho .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -546,7 +547,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#hclnzwonbf .gt_column_spanner_outer {
+#yhnownblho .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -558,15 +559,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#hclnzwonbf .gt_column_spanner_outer:first-child {
+#yhnownblho .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hclnzwonbf .gt_column_spanner_outer:last-child {
+#yhnownblho .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hclnzwonbf .gt_column_spanner {
+#yhnownblho .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -578,11 +579,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#hclnzwonbf .gt_spanner_row {
+#yhnownblho .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#hclnzwonbf .gt_group_heading {
+#yhnownblho .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -608,7 +609,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#hclnzwonbf .gt_empty_group_heading {
+#yhnownblho .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -623,15 +624,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#hclnzwonbf .gt_from_md > :first-child {
+#yhnownblho .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hclnzwonbf .gt_from_md > :last-child {
+#yhnownblho .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hclnzwonbf .gt_row {
+#yhnownblho .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -650,7 +651,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#hclnzwonbf .gt_stub {
+#yhnownblho .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -663,7 +664,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#hclnzwonbf .gt_stub_row_group {
+#yhnownblho .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -677,15 +678,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#hclnzwonbf .gt_row_group_first td {
+#yhnownblho .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hclnzwonbf .gt_row_group_first th {
+#yhnownblho .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#hclnzwonbf .gt_summary_row {
+#yhnownblho .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -695,16 +696,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#hclnzwonbf .gt_first_summary_row {
+#yhnownblho .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_first_summary_row.thick {
+#yhnownblho .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hclnzwonbf .gt_last_summary_row {
+#yhnownblho .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -714,7 +715,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_grand_summary_row {
+#yhnownblho .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -724,7 +725,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#hclnzwonbf .gt_first_grand_summary_row {
+#yhnownblho .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -734,7 +735,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_last_grand_summary_row_top {
+#yhnownblho .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -744,11 +745,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_striped {
+#yhnownblho .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hclnzwonbf .gt_table_body {
+#yhnownblho .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -757,7 +758,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_footnotes {
+#yhnownblho .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -771,7 +772,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_footnote {
+#yhnownblho .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -780,7 +781,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#hclnzwonbf .gt_sourcenotes {
+#yhnownblho .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -794,7 +795,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#hclnzwonbf .gt_sourcenote {
+#yhnownblho .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -802,71 +803,86 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#hclnzwonbf .gt_left {
+#yhnownblho .gt_left {
   text-align: left;
 }
 
-#hclnzwonbf .gt_center {
+#yhnownblho .gt_center {
   text-align: center;
 }
 
-#hclnzwonbf .gt_right {
+#yhnownblho .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hclnzwonbf .gt_font_normal {
+#yhnownblho .gt_font_normal {
   font-weight: normal;
 }
 
-#hclnzwonbf .gt_font_bold {
+#yhnownblho .gt_font_bold {
   font-weight: bold;
 }
 
-#hclnzwonbf .gt_font_italic {
+#yhnownblho .gt_font_italic {
   font-style: italic;
 }
 
-#hclnzwonbf .gt_super {
+#yhnownblho .gt_super {
   font-size: 65%;
 }
 
-#hclnzwonbf .gt_footnote_marks {
+#yhnownblho .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#hclnzwonbf .gt_asterisk {
+#yhnownblho .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hclnzwonbf .gt_indent_1 {
+#yhnownblho .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hclnzwonbf .gt_indent_2 {
+#yhnownblho .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hclnzwonbf .gt_indent_3 {
+#yhnownblho .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hclnzwonbf .gt_indent_4 {
+#yhnownblho .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hclnzwonbf .gt_indent_5 {
+#yhnownblho .gt_indent_5 {
   text-indent: 25px;
+}
+
+#yhnownblho .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#yhnownblho div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
 }
 </style>
 
 <table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
 <thead>
 <tr class="header gt_heading">
-<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-size: 24; font-weight: bold"><strong>Estimated child poverty in U.S. states in 2021</strong></th>
+<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-size: 24; font-weight: bold"><p><strong>Estimated child poverty in U.S. states in 2021</strong></p></th>
 </tr>
 <tr class="odd gt_col_headings">
 <th id="State" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-weight: bold" scope="col">State</th>

@@ -30,6 +30,7 @@ library(tidycensus)
 library(scales)
 library(janitor)
 library(gt)
+library(usmap)
 
 # census_api_key('INSERT KEY HERE')
 ```
@@ -159,32 +160,29 @@ southeastern states (as a percent of the child population).
 ```{r read_regions, include=TRUE, echo=FALSE, message=FALSE}
 regions <- read_csv('.//data/census_regions.csv') %>% clean_names()
 
-# df_2 <- df %>% 
-#   separate(county_state, into = c('county', 'state'), sep = ', ') %>%
-#   left_join(x=.,
-#             y=fips,
-#             by=c('geoid' = 'fips'))
+df_2 <- df %>%
+  separate(county_state, into = c('county', 'state'), sep = ', ')
 
 # fips <- fips_codes %>% 
 #   mutate(fips = paste(state_code, county_code, sep = ''))
 ```
 
-```{r add_regions, include=TRUE, echo=FALSE}
-df <- df %>% 
+```{r add_regions, include=FALSE, echo=FALSE}
+df_2 <- df_2 %>% 
   left_join(x=.,
             y=regions %>% select(state, region, division),
             by='state')
 ```
 
 ```{r create_df_tbl, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
-(df_tbl <- df %>% 
-  select(state, region, u5_pov_total, u5_pop_total, u5_perc_in_poverty) %>% 
-  # removing P.R. because it's not within a U.S. Census region
-  filter(state != 'Puerto Rico') %>% 
+(df_tbl <- df_2 %>% 
+  filter(state == 'Colorado') %>% 
+  select(county, u5_pov_total, u5_pop_total, u5_perc_in_poverty) %>% 
   arrange(-u5_perc_in_poverty) %>% 
   # mutate(u5_perc_in_poverty = u5_perc_in_poverty * 100) %>% 
-  gt(groupname_col = "region") %>% 
-    cols_label(state = 'State',
+  # gt(groupname_col = "region") %>% 
+  gt() %>%
+  cols_label(county = 'County',
                u5_pop_total = 'Total children < 5 y.o.',
                u5_pov_total = 'Total children < 5 y.o. living in poverty in last 12 mos.',
                u5_perc_in_poverty = '% of children < 5 y.o. living in poverty in last 12 mos.') %>% 
@@ -192,7 +190,7 @@ df <- df %>%
   fmt_number(columns = c(u5_pop_total, u5_pov_total), decimals = 0, use_seps = TRUE) %>% 
   fmt_percent(columns = u5_perc_in_poverty, decimals = 1) %>%  
   #add table title
-  tab_header(title = md("**Estimated child poverty in U.S. states in 2021**")) %>% 
+  tab_header(title = md("**Estimated child poverty in Colorado by county in 2021**")) %>% 
   tab_source_note(source_note = "Data from 2021 American Community Survey from the U.S. Census Bureau") %>% 
   #apply new style to all column headers
   tab_style(
@@ -236,14 +234,6 @@ df <- df %>%
 
 ```{r df_county, include=FALSE}
 # considering a map like this one: https://observablehq.com/@observablehq/plot-us-bubble-map?intent=fork
-df_county <- get_acs(geography = 'county',
-        variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
-        year = 2021,
-        output = 'wide') %>% 
-  mutate(
-    state_fips = str_sub(GEOID, 1, 2),
-    county_fips = str_sub(GEOID, 3, 5)
-  )
 ```
 
 # Conclusion

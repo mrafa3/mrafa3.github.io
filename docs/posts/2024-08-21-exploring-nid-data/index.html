@@ -8,9 +8,9 @@
 
 <meta name="author" content="Mickey Rafa">
 <meta name="dcterms.date" content="2024-08-18">
-<meta name="description" content="This post uses the RAQSAPI package to access the EPA API and query the results with DuckDB">
+<meta name="description" content="This post analyzes and visualizes data on dams in the U.S.">
 
-<title>Setting up an EPA air quality database using DuckDB</title>
+<title>Exploring U.S. dams data from the National Inventory of Dams</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -148,10 +148,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">Setting up an EPA air quality database using DuckDB</h1>
+      <h1 class="title">Exploring U.S. dams data from the National Inventory of Dams</h1>
                   <div>
         <div class="description">
-          This post uses the RAQSAPI package to access the EPA API and query the results with DuckDB
+          This post analyzes and visualizes data on dams in the U.S.
         </div>
       </div>
                           <div class="quarto-categories">
@@ -199,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a>
   <ul class="collapse">
   <li><a href="#libraries" id="toc-libraries" class="nav-link" data-scroll-target="#libraries">Libraries</a></li>
-  <li><a href="#fetching-data-from-the-epas-air-quality-service-data-mart-api" id="toc-fetching-data-from-the-epas-air-quality-service-data-mart-api" class="nav-link" data-scroll-target="#fetching-data-from-the-epas-air-quality-service-data-mart-api">Fetching data from the EPA’s Air Quality Service Data Mart API</a></li>
+  <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda">EDA</a></li>
   <li><a href="#setting-up-and-querying-duckdb-in-r" id="toc-setting-up-and-querying-duckdb-in-r" class="nav-link" data-scroll-target="#setting-up-and-querying-duckdb-in-r">Setting up and querying DuckDB in R</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
@@ -215,11 +215,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p><a href="https://duckdb.org/why_duckdb#simple">DuckDB</a> is an in-process SQL database management system designed for fast and efficient data analysis. It’s particularly advantageous for data analysts due to its seamless integration with popular programming languages like Python and R, allowing easy querying of large datasets directly from within those environments. DuckDB’s columnar storage format and vectorized execution enable high-performance analytics on large datasets without the need for complex setups, making it an ideal choice for exploratory data analysis, interactive queries, and handling structured data efficiently on local machines.</p>
 </section>
 <section id="data" class="level1">
 <h1>Data</h1>
-<p>The <code>RAQSAPI::</code> package provides a streamlined interface for accessing air quality data from the U.S. EPA’s Air Quality System (AQS) Data Mart API, handling tasks like formatting requests, parsing JSON responses, and managing API rate limits.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> It allows users to easily retrieve and analyze large-scale air quality datasets directly within R.</p>
 </section>
 <section id="setup" class="level1">
 <h1>Setup</h1>
@@ -227,228 +225,178 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="libraries">Libraries</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RAQSAPI)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="fetching-data-from-the-epas-air-quality-service-data-mart-api" class="level2">
-<h2 class="anchored" data-anchor-id="fetching-data-from-the-epas-air-quality-service-data-mart-api">Fetching data from the EPA’s Air Quality Service Data Mart API</h2>
-<p>If it’s your first time accessing the AQS API, you’ll need to use the <code>RAQSAPI::aqs_sign_up()</code> function, and provide your email address as a string. (Note: when I first set up my credentials, it took about 48 hours to receive the email from their service).</p>
+<section id="eda" class="level2">
+<h2 class="anchored" data-anchor-id="eda">EDA</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># RAQSAPI::aqs_sign_up("abcd@efg.com")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 92401 Columns: 83
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (54): Dam Name, Other Names, Former Names, NID ID, Other Structure ID, ...
+dbl  (22): Number of Associated Structures, Latitude, Longitude, Distance to...
+lgl   (2): Length of Secondary Lock (Ft), Secondary Lock Width (Ft)
+date  (5): Data Last Updated, Last Inspection Date, Condition Assessment Dat...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<p>Then, use the <code>RAQSAPI::aqs_credentials()</code> function to provide your username and key.</p>
-<p>The AQS service is rich with a variety of functions and arguments that help you pull exactly what you need. There is <strong>so</strong> much available through their API, and I won’t even begin to cover it here. For this demo, I’d like to look at ozone measurements over the last year in Colorado.</p>
-<p>Some common arguments that you’ll find in <code>RAQSAPI::</code> package:</p>
-<ul>
-<li><code>parameter=</code>:the specific pollutant that you’re interested in. You can feed this a vector of multiple pollutants.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
-<li><code>bdate=</code>: start date. If the grain of analysis is daily, the API limits each call to one year of data.</li>
-<li><code>edate=</code>: end date.</li>
-<li><code>stateFIPS</code> and <code>county</code>: FIPS codes for your states or counties (if that’s your grain of analysis)</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_ozone <span class="ot">&lt;-</span> RAQSAPI<span class="sc">::</span><span class="fu">aqs_dailysummary_by_county</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># '44201' is ozone</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># '43201' is methane</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">parameter =</span> <span class="st">'44201'</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">bdate =</span> <span class="fu">as.Date</span>(<span class="st">'20240101'</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"%Y%m%d"</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">edate =</span> <span class="fu">as.Date</span>(<span class="st">'20240810'</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">format =</span> <span class="st">"%Y%m%d"</span>),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># '08' is Colorado</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">stateFIPS =</span> <span class="st">'08'</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># '059' is Jefferson County</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> <span class="st">'059'</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now, I’ll <code>dplyr::glimpse()</code> to see the structure of the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_ozone <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_dam <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">state =</span> <span class="fu">as.factor</span>(state),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">state_regulated_dam =</span> <span class="fu">as.factor</span>(state_regulated_dam))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 1,440
-Columns: 32
-$ state_code           &lt;chr&gt; "08", "08", "08", "08", "08", "08", "08", "08", "…
-$ county_code          &lt;chr&gt; "059", "059", "059", "059", "059", "059", "059", …
-$ site_number          &lt;chr&gt; "0006", "0006", "0006", "0006", "0006", "0006", "…
-$ parameter_code       &lt;chr&gt; "44201", "44201", "44201", "44201", "44201", "442…
-$ poc                  &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-$ latitude             &lt;dbl&gt; 39.9128, 39.9128, 39.9128, 39.9128, 39.9128, 39.9…
-$ longitude            &lt;dbl&gt; -105.1886, -105.1886, -105.1886, -105.1886, -105.…
-$ datum                &lt;chr&gt; "WGS84", "WGS84", "WGS84", "WGS84", "WGS84", "WGS…
-$ parameter            &lt;chr&gt; "Ozone", "Ozone", "Ozone", "Ozone", "Ozone", "Ozo…
-$ sample_duration_code &lt;chr&gt; "1", "W", "W", "W", "1", "W", "W", "W", "1", "W",…
-$ sample_duration      &lt;chr&gt; "1 HOUR", "8-HR RUN AVG BEGIN HOUR", "8-HR RUN AV…
-$ pollutant_standard   &lt;chr&gt; "Ozone 1-hour 1979", "Ozone 8-Hour 1997", "Ozone …
-$ date_local           &lt;chr&gt; "2024-01-01", "2024-01-01", "2024-01-01", "2024-0…
-$ units_of_measure     &lt;chr&gt; "Parts per million", "Parts per million", "Parts …
-$ event_type           &lt;chr&gt; "No Events", "No Events", "No Events", "No Events…
-$ observation_count    &lt;int&gt; 24, 24, 24, 17, 23, 24, 24, 17, 24, 24, 24, 17, 2…
-$ observation_percent  &lt;dbl&gt; 100, 100, 100, 100, 96, 100, 100, 100, 100, 100, …
-$ validity_indicator   &lt;chr&gt; "Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y",…
-$ arithmetic_mean      &lt;dbl&gt; 0.041333, 0.041833, 0.041833, 0.042294, 0.033870,…
-$ first_max_value      &lt;dbl&gt; 0.048, 0.046, 0.046, 0.046, 0.046, 0.037, 0.037, …
-$ first_max_hour       &lt;int&gt; 14, 8, 8, 8, 23, 22, 22, 22, 15, 10, 10, 10, 23, …
-$ aqi                  &lt;int&gt; NA, 43, 43, 43, NA, 34, 34, 34, NA, 36, 36, 36, N…
-$ method_code          &lt;chr&gt; "087", "087", "087", "087", "087", "087", "087", …
-$ method               &lt;chr&gt; "INSTRUMENTAL - ULTRA VIOLET ABSORPTION", "INSTRU…
-$ local_site_name      &lt;chr&gt; "ROCKY FLATS-N", "ROCKY FLATS-N", "ROCKY FLATS-N"…
-$ site_address         &lt;chr&gt; "16600 W COLO #128", "16600 W COLO #128", "16600 …
-$ state                &lt;chr&gt; "Colorado", "Colorado", "Colorado", "Colorado", "…
-$ county               &lt;chr&gt; "Jefferson", "Jefferson", "Jefferson", "Jefferson…
-$ city                 &lt;chr&gt; "Not in a city", "Not in a city", "Not in a city"…
-$ cbsa_code            &lt;chr&gt; "19740", "19740", "19740", "19740", "19740", "197…
-$ cbsa                 &lt;chr&gt; "Denver-Aurora-Lakewood, CO", "Denver-Aurora-Lake…
-$ date_of_last_change  &lt;chr&gt; "2024-05-24", "2024-05-24", "2024-05-24", "2024-0…</code></pre>
+<pre><code># A tibble: 92,401 × 83
+   dam_name        other_names former_names nid_id other_structure_id federal_id
+   &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;              &lt;chr&gt;     
+ 1 Aichi Forge Us… Aichi Forg… &lt;NA&gt;         KY007… &lt;NA&gt;               KY00728   
+ 2 Oxy Usa Retent… &lt;NA&gt;        &lt;NA&gt;         ND011… &lt;NA&gt;               ND01160   
+ 3 Dod Usa 4       &lt;NA&gt;        Dod Usa      OK209… &lt;NA&gt;               OK20998   
+ 4 Dod Usa 2       &lt;NA&gt;        Dod Usa      OK209… &lt;NA&gt;               OK20994   
+ 5 Girl Scouts of… Lake Spart… &lt;NA&gt;         NC026… &lt;NA&gt;               NC02637   
+ 6 Rlf/Pawnee Min… Pawnee Cap… Usa Coal Sl… IL500… &lt;NA&gt;               IL50006   
+ 7 Exxonmobil Coa… Make-Up Wa… Monterey  C… IL505… &lt;NA&gt;               IL50526   
+ 8 Exxonmobil Coa… &lt;NA&gt;        Monterey Co… IL505… &lt;NA&gt;               IL50527   
+ 9 Rlf/Pawnee Min… Slurry Pon… Usa Coal Sl… IL504… &lt;NA&gt;               IL50416   
+10 Asso.Minerals … Associated… &lt;NA&gt;         FL001… &lt;NA&gt;               FL00155   
+# ℹ 92,391 more rows
+# ℹ 77 more variables: owner_names &lt;chr&gt;, owner_types &lt;chr&gt;,
+#   primary_owner_type &lt;chr&gt;, number_of_associated_structures &lt;dbl&gt;,
+#   is_associated_structure &lt;chr&gt;, designer_names &lt;chr&gt;,
+#   non_federal_dam_on_federal_property &lt;chr&gt;, primary_purpose &lt;chr&gt;,
+#   purposes &lt;chr&gt;, source_agency &lt;chr&gt;, state_or_federal_agency_id &lt;chr&gt;,
+#   latitude &lt;dbl&gt;, longitude &lt;dbl&gt;, state &lt;fct&gt;, county &lt;chr&gt;, city &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df_dam <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 92,401
+Columns: 83
+$ dam_name                                                  &lt;chr&gt; "Aichi Forge…
+$ other_names                                               &lt;chr&gt; "Aichi Forge…
+$ former_names                                              &lt;chr&gt; NA, NA, "Dod…
+$ nid_id                                                    &lt;chr&gt; "KY00728", "…
+$ other_structure_id                                        &lt;chr&gt; NA, NA, NA, …
+$ federal_id                                                &lt;chr&gt; "KY00728", "…
+$ owner_names                                               &lt;chr&gt; "AICHI", "OX…
+$ owner_types                                               &lt;chr&gt; "Private", "…
+$ primary_owner_type                                        &lt;chr&gt; "Private", "…
+$ number_of_associated_structures                           &lt;dbl&gt; 0, NA, 0, 0,…
+$ is_associated_structure                                   &lt;chr&gt; "No", "No", …
+$ designer_names                                            &lt;chr&gt; "AUSTIN ENGI…
+$ non_federal_dam_on_federal_property                       &lt;chr&gt; NA, NA, "No"…
+$ primary_purpose                                           &lt;chr&gt; "Other", "Ot…
+$ purposes                                                  &lt;chr&gt; "Other", "Ot…
+$ source_agency                                             &lt;chr&gt; "Kentucky", …
+$ state_or_federal_agency_id                                &lt;chr&gt; "KY00728", N…
+$ latitude                                                  &lt;dbl&gt; 38.28828, 47…
+$ longitude                                                 &lt;dbl&gt; -84.55619, -…
+$ state                                                     &lt;chr&gt; "Kentucky", …
+$ county                                                    &lt;chr&gt; "Scott", "Du…
+$ city                                                      &lt;chr&gt; "DELAPLAIN-A…
+$ distance_to_nearest_city_miles                            &lt;dbl&gt; 1.0, NA, 1.0…
+$ river_or_stream_name                                      &lt;chr&gt; "TR-DRY RUN"…
+$ congressional_district                                    &lt;chr&gt; "Kentucky, C…
+$ american_indian_alaska_native_native_hawaiian             &lt;chr&gt; NA, NA, "Che…
+$ state_regulated_dam                                       &lt;chr&gt; "Yes", "Yes"…
+$ state_jurisdictional_dam                                  &lt;chr&gt; "Yes", "Yes"…
+$ state_regulatory_agency                                   &lt;chr&gt; "KY Division…
+$ state_permitting_authority                                &lt;chr&gt; "Yes", "Yes"…
+$ state_inspection_authority                                &lt;chr&gt; "Yes", "Yes"…
+$ state_enforcement_authority                               &lt;chr&gt; "Yes", "Yes"…
+$ federally_regulated_dam                                   &lt;chr&gt; "No", "No", …
+$ federal_agency_owners                                     &lt;chr&gt; NA, NA, NA, …
+$ federal_agency_involvement_funding                        &lt;chr&gt; NA, NA, NA, …
+$ federal_agency_involvement_design                         &lt;chr&gt; NA, NA, NA, …
+$ federal_agency_involvement_construction                   &lt;chr&gt; NA, NA, NA, …
+$ federal_agency_involvement_regulatory                     &lt;chr&gt; NA, NA, NA, …
+$ federal_agency_involvement_inspection                     &lt;chr&gt; NA, NA, NA, …
+$ federal_agency_involvement_operation                      &lt;chr&gt; NA, NA, NA, …
+$ federal_agency_involvement_other                          &lt;chr&gt; NA, NA, NA, …
+$ built_under_the_authority_of_the_secretary_of_agriculture &lt;chr&gt; "No", "No", …
+$ nrcs_watershed_dam_authorization                          &lt;chr&gt; "N/A", "N/A"…
+$ primary_dam_type                                          &lt;chr&gt; "Earth", NA,…
+$ dam_types                                                 &lt;chr&gt; "Earth", NA,…
+$ core_types                                                &lt;chr&gt; NA, NA, "Ear…
+$ foundation                                                &lt;chr&gt; NA, NA, "Soi…
+$ dam_height_ft                                             &lt;dbl&gt; 15, 29, 15, …
+$ hydraulic_height_ft                                       &lt;dbl&gt; NA, NA, 12, …
+$ structural_height_ft                                      &lt;dbl&gt; NA, NA, 15, …
+$ nid_height_ft                                             &lt;dbl&gt; 15, 29, 15, …
+$ nid_height_category                                       &lt;chr&gt; "Less than 2…
+$ dam_length_ft                                             &lt;dbl&gt; 325, NA, 240…
+$ volume_cubic_yards                                        &lt;dbl&gt; NA, NA, 0, 0…
+$ year_completed                                            &lt;dbl&gt; 1974, NA, 19…
+$ year_completed_category                                   &lt;chr&gt; "1970-1979",…
+$ years_modified                                            &lt;chr&gt; NA, NA, NA, …
+$ nid_storage_acre_ft                                       &lt;dbl&gt; 86.80, 682.6…
+$ max_storage_acre_ft                                       &lt;dbl&gt; 86.80, 682.6…
+$ normal_storage_acre_ft                                    &lt;dbl&gt; 26.6, NA, 25…
+$ surface_area_acres                                        &lt;dbl&gt; 8.0, NA, NA,…
+$ drainage_area_sq_miles                                    &lt;dbl&gt; 1.35, NA, NA…
+$ max_discharge_cubic_ft_second                             &lt;dbl&gt; NA, NA, 20, …
+$ spillway_type                                             &lt;chr&gt; "Uncontrolle…
+$ spillway_width_ft                                         &lt;dbl&gt; NA, NA, 1, 1…
+$ number_of_locks                                           &lt;dbl&gt; NA, NA, 0, 0…
+$ length_of_locks_ft                                        &lt;dbl&gt; NA, NA, 0, 0…
+$ lock_width_ft                                             &lt;dbl&gt; NA, NA, 0, 0…
+$ length_of_secondary_lock_ft                               &lt;lgl&gt; NA, NA, NA, …
+$ secondary_lock_width_ft                                   &lt;lgl&gt; NA, NA, NA, …
+$ outlet_gate_type                                          &lt;chr&gt; NA, NA, "Val…
+$ data_last_updated                                         &lt;date&gt; 2021-04-09,…
+$ last_inspection_date                                      &lt;date&gt; 2013-04-30,…
+$ inspection_frequency                                      &lt;dbl&gt; 5, NA, 5, 5,…
+$ hazard_potential_classification                           &lt;chr&gt; "Low", "Low"…
+$ condition_assessment                                      &lt;chr&gt; "Not Rated",…
+$ condition_assessment_date                                 &lt;date&gt; NA, NA, NA,…
+$ operational_status                                        &lt;chr&gt; NA, NA, NA, …
+$ operational_status_date                                   &lt;date&gt; NA, NA, NA,…
+$ eap_prepared                                              &lt;chr&gt; "Not Require…
+$ eap_last_revision_date                                    &lt;date&gt; NA, NA, NA,…
+$ inundation_maps_added_to_nid                              &lt;chr&gt; "No", "No", …
+$ website_url                                               &lt;chr&gt; "https://dam…</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df_dam <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(owner_types) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>n) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> (n <span class="sc">/</span> <span class="fu">sum</span>(n)), <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 26 × 3
+   owner_types                  n percent
+   &lt;chr&gt;                    &lt;int&gt;   &lt;dbl&gt;
+ 1 Private                  60445    65.4
+ 2 Local Government         18390    19.9
+ 3 State                     6658     7.2
+ 4 Federal                   3436     3.7
+ 5 Public Utility            1669     1.8
+ 6 Not Listed                1380     1.5
+ 7 State;Local Government     148     0.2
+ 8 Local Government;Private   103     0.1
+ 9 Private;Local Government    90     0.1
+10 Private;State               22     0  
+# ℹ 16 more rows</code></pre>
 </div>
 </div>
 </section>
 <section id="setting-up-and-querying-duckdb-in-r" class="level2">
 <h2 class="anchored" data-anchor-id="setting-up-and-querying-duckdb-in-r">Setting up and querying DuckDB in R</h2>
-<p>(This section is not meant to be analysis! I’m just demonstrating the setup and querying of the database.)</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(<span class="fu">duckdb</span>(), <span class="at">path =</span> <span class="st">":memory:"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>ozone <span class="ot">&lt;-</span> <span class="fu">copy_to</span>(con, df_ozone <span class="sc">%&gt;%</span> <span class="fu">filter</span>(sample_duration_code <span class="sc">==</span> <span class="st">'1'</span>), <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># write our data to duckdb table</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>table_name <span class="ot">&lt;-</span> <span class="st">"ozone"</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>duckdb<span class="sc">::</span><span class="fu">dbWriteTable</span>(con, table_name, df_ozone)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"SELECT *</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM ozone</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">           limit 10"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   state_code county_code site_number parameter_code poc latitude longitude
-1          08         059        0006          44201   1  39.9128 -105.1886
-2          08         059        0006          44201   1  39.9128 -105.1886
-3          08         059        0006          44201   1  39.9128 -105.1886
-4          08         059        0006          44201   1  39.9128 -105.1886
-5          08         059        0006          44201   1  39.9128 -105.1886
-6          08         059        0006          44201   1  39.9128 -105.1886
-7          08         059        0006          44201   1  39.9128 -105.1886
-8          08         059        0006          44201   1  39.9128 -105.1886
-9          08         059        0006          44201   1  39.9128 -105.1886
-10         08         059        0006          44201   1  39.9128 -105.1886
-   datum parameter sample_duration_code         sample_duration
-1  WGS84     Ozone                    1                  1 HOUR
-2  WGS84     Ozone                    W 8-HR RUN AVG BEGIN HOUR
-3  WGS84     Ozone                    W 8-HR RUN AVG BEGIN HOUR
-4  WGS84     Ozone                    W 8-HR RUN AVG BEGIN HOUR
-5  WGS84     Ozone                    1                  1 HOUR
-6  WGS84     Ozone                    W 8-HR RUN AVG BEGIN HOUR
-7  WGS84     Ozone                    W 8-HR RUN AVG BEGIN HOUR
-8  WGS84     Ozone                    W 8-HR RUN AVG BEGIN HOUR
-9  WGS84     Ozone                    1                  1 HOUR
-10 WGS84     Ozone                    W 8-HR RUN AVG BEGIN HOUR
-   pollutant_standard date_local  units_of_measure event_type observation_count
-1   Ozone 1-hour 1979 2024-01-01 Parts per million  No Events                24
-2   Ozone 8-Hour 1997 2024-01-01 Parts per million  No Events                24
-3   Ozone 8-Hour 2008 2024-01-01 Parts per million  No Events                24
-4   Ozone 8-hour 2015 2024-01-01 Parts per million  No Events                17
-5   Ozone 1-hour 1979 2024-01-02 Parts per million  No Events                23
-6   Ozone 8-Hour 1997 2024-01-02 Parts per million  No Events                24
-7   Ozone 8-Hour 2008 2024-01-02 Parts per million  No Events                24
-8   Ozone 8-hour 2015 2024-01-02 Parts per million  No Events                17
-9   Ozone 1-hour 1979 2024-01-03 Parts per million  No Events                24
-10  Ozone 8-Hour 1997 2024-01-03 Parts per million  No Events                24
-   observation_percent validity_indicator arithmetic_mean first_max_value
-1                  100                  Y        0.041333           0.048
-2                  100                  Y        0.041833           0.046
-3                  100                  Y        0.041833           0.046
-4                  100                  Y        0.042294           0.046
-5                   96                  Y        0.033870           0.046
-6                  100                  Y        0.033500           0.037
-7                  100                  Y        0.033500           0.037
-8                  100                  Y        0.032471           0.037
-9                  100                  Y        0.037000           0.045
-10                 100                  Y        0.036083           0.039
-   first_max_hour aqi method_code                                 method
-1              14  NA         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-2               8  43         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-3               8  43         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-4               8  43         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-5              23  NA         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-6              22  34         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-7              22  34         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-8              22  34         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-9              15  NA         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-10             10  36         087 INSTRUMENTAL - ULTRA VIOLET ABSORPTION
-   local_site_name      site_address    state    county          city cbsa_code
-1    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-2    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-3    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-4    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-5    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-6    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-7    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-8    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-9    ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-10   ROCKY FLATS-N 16600 W COLO #128 Colorado Jefferson Not in a city     19740
-                         cbsa date_of_last_change
-1  Denver-Aurora-Lakewood, CO          2024-05-24
-2  Denver-Aurora-Lakewood, CO          2024-05-24
-3  Denver-Aurora-Lakewood, CO          2024-05-24
-4  Denver-Aurora-Lakewood, CO          2024-05-24
-5  Denver-Aurora-Lakewood, CO          2024-05-24
-6  Denver-Aurora-Lakewood, CO          2024-05-24
-7  Denver-Aurora-Lakewood, CO          2024-05-24
-8  Denver-Aurora-Lakewood, CO          2024-05-24
-9  Denver-Aurora-Lakewood, CO          2024-05-24
-10 Denver-Aurora-Lakewood, CO          2024-05-24</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con,</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>           <span class="st">"SELECT</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">                sample_duration, </span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">                local_site_name,</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="st">                AVG(aqi) as avg_aqi,</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="st">                AVG(arithmetic_mean) as avg_arithmetic_mean,</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="st">                AVG(first_max_value) as avg_first_max_value</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="st">           FROM ozone</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="st">           GROUP BY sample_duration, local_site_name"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>          sample_duration                       local_site_name  avg_aqi
-1                  1 HOUR                         ROCKY FLATS-N       NA
-2 8-HR RUN AVG BEGIN HOUR                         ROCKY FLATS-N 47.24793
-3                  1 HOUR NATIONAL RENEWABLE ENERGY LABS - NREL       NA
-4 8-HR RUN AVG BEGIN HOUR NATIONAL RENEWABLE ENERGY LABS - NREL 44.07649
-5                  1 HOUR                             Evergreen       NA
-6 8-HR RUN AVG BEGIN HOUR                             Evergreen 47.28375
-  avg_arithmetic_mean avg_first_max_value
-1          0.04345224          0.05146281
-2          0.04325047          0.04856749
-3          0.04052387          0.04900000
-4          0.04019869          0.04589235
-5          0.04131112          0.05216529
-6          0.04122206          0.04876309</code></pre>
-</div>
-</div>
 </section>
 </section>
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(<span class="at">conn =</span> con)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>This post shows how to use the <code>RAQSAPI::</code> package to access air quality data from the Environmental Protection Agency, and how to use the <code>duckdb::</code> package to set up an in-memory DuckDB database in R.</p>
-<p>In future posts, I’ll begin analyzing and visualizing Colorado’s air pollution data from the EPA’s Air Quality Service.</p>
 
 
 </section>
 
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>CRAN documentation can be found at: https://cran.r-project.org/web/packages/RAQSAPI/vignettes/RAQSAPIvignette.html#:~:text=RAQSAPI%20is%20a%20package%20for,of%20ambient%20air%20pollution%20data.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>See “parameter code” here: https://aqs.epa.gov/aqsweb/documents/codetables/methods_all.html<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
