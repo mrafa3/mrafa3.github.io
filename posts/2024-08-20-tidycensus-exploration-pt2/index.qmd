@@ -66,13 +66,13 @@ For this demo, I'll use the following series:
     poverty level:!!Female:!!Under 5 years
 
 
-```{r get_acs, include=FALSE}
-df <- get_acs(geography = 'county',
-              # for this demo, using the state argument to only fetch Colorado
-              state = "Colorado",
-              variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
-              year = 2022,
-              output = 'wide')
+```{r get_acs_colorado, include=FALSE}
+df_colorado <- get_acs(geography = 'county',
+                       # using the state argument to only fetch Colorado
+                       state = "Colorado",
+                       variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
+                       year = 2022,
+                       output = 'wide')
 ```
 
 To make the data more user-friendly, I'll update the column names of the

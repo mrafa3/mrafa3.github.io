@@ -201,8 +201,7 @@ southeastern states (as a percent of the child population).
 (perc_poverty_map <- plot_usmap(regions = 'states',
            data = df,
            values = 'u5_perc_in_poverty') + 
-  # scale_fill_viridis_c() + 
-  scale_fill_viridis_c(labels = scales::percent_format()) + 
+  scale_fill_viridis_c(option = 'inferno', labels = scales::percent_format()) + 
   labs(title = md("**Estimated child poverty in U.S. states in 2021**"),
        subtitle = "as a % of the total child population under 5 y.o.",
        caption = "Source: 2021 American Community Survey") %>%
@@ -258,7 +257,7 @@ df <- df %>%
             )) %>% 
   data_color(
     columns = u5_perc_in_poverty,
-    palette = viridis::viridis(100)
+    palette = viridis::inferno(100)
   ) %>% 
   opt_all_caps() %>% 
   opt_table_font(
@@ -291,6 +290,125 @@ df_county <- get_acs(geography = 'county',
     state_fips = str_sub(GEOID, 1, 2),
     county_fips = str_sub(GEOID, 3, 5)
   )
+```
+
+# Deep dive: Colorado results 
+
+```{r get_acs_colorado, include=TRUE}
+df_colorado <- get_acs(geography = 'county',
+                       # using the state argument to only fetch Colorado
+                       state = "Colorado",
+                       variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
+                       year = 2022,
+                       output = 'wide')
+```
+
+```{r update_colnames2, include=TRUE, echo=FALSE}
+name_cols2 <- c('geoid', 'county_state', 
+               'u5_male_estimate', 'u5_male_moe', 
+               'u5_female_estimate', 'u5_female_moe',
+               'u5_male_pov_estimate', 'u5_male_pov_moe',
+               'u5_female_pov_estimate', 'u5_female_pov_moe')
+
+colnames(df_colorado) <- name_cols2
+```
+
+```{r drop_cols2, include=TRUE, echo=FALSE}
+df_colorado <- df_colorado %>% 
+  select(-contains("moe"))
+```
+
+```{r df_mutate2, include=TRUE, echo=FALSE}
+(df_colorado <- df_colorado %>% 
+  mutate(u5_pop_total = u5_male_estimate + u5_female_estimate,
+         u5_pov_total = u5_male_pov_estimate + u5_female_pov_estimate,
+         u5_perc_in_poverty = u5_pov_total / u5_pop_total))
+```
+
+```{r plot_u5_poverty2, include=TRUE, echo=FALSE, fig.align='center'}
+(perc_poverty_map2 <- plot_usmap(regions = 'counties',
+                                include = "CO", 
+                                data = df_colorado %>% rename(fips = geoid),
+                                values = 'u5_perc_in_poverty') + 
+  scale_fill_viridis_c(option = 'inferno', labels = scales::percent_format()) + 
+  labs(title = md("**Estimated child poverty in U.S. states in 2021**"),
+       subtitle = "as a % of the total child population under 5 y.o.",
+       caption = "Source: 2021 American Community Survey") %>%
+  theme(legend.position = 'top',
+        legend.title = element_blank()))
+```
+
+```{r read_co_regions, include=TRUE, echo=FALSE, message=FALSE}
+co_regions <- read_csv('.//data/colorado_regions.csv') %>% 
+  mutate(region = as.factor(region))
+```
+
+```{r clean_df_colorado, include=TRUE, echo=FALSE}
+df_colorado <- df_colorado %>%
+  mutate(county = str_remove(county_state, " County.*")) %>% 
+  select(county, everything()) %>% 
+  left_join(x=.,
+            y=co_regions,
+            by='county') 
+
+# df <- df %>% 
+#   mutate(region = factor(region, levels = desired_order))
+```
+
+
+```{r create_df_tbl2, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
+(df_tbl2 <- df_colorado %>% 
+  select(county, region, u5_pov_total, u5_pop_total, u5_perc_in_poverty) %>% 
+  arrange(-u5_perc_in_poverty) %>% 
+  gt(groupname_col = "region") %>% 
+  cols_label(county = 'County',
+               u5_pop_total = 'Total children < 5 y.o.',
+               u5_pov_total = 'Total children < 5 y.o. living in poverty in last 12 mos.',
+               u5_perc_in_poverty = '% of children < 5 y.o. living in poverty in last 12 mos.') %>% 
+  # formatting numeric fields
+  fmt_number(columns = c(u5_pop_total, u5_pov_total), decimals = 0, use_seps = TRUE) %>% 
+  fmt_percent(columns = u5_perc_in_poverty, decimals = 1) %>%  
+  #add table title
+  tab_header(title = md("**Estimated child poverty in Colorado by county in 2022**")) %>% 
+  tab_source_note(source_note = "Data from 2022 American Community Survey from the U.S. Census Bureau") %>% 
+  #apply new style to all column headers
+  tab_style(
+    locations = cells_column_labels(columns = everything()),
+    style = list(
+      #thick border
+      cell_borders(sides = "bottom", weight = px(3)),
+      #make text bold
+      cell_text(weight = "bold")
+    )
+  ) %>% 
+  #apply different style to title
+  tab_style(locations = cells_title(groups = "title"),
+            style = list(
+              cell_text(weight = "bold", size = 24)
+            )) %>% 
+  data_color(
+    columns = u5_perc_in_poverty,
+    palette = viridis::inferno(100)
+  ) %>% 
+  opt_all_caps() %>% 
+  opt_table_font(
+    font = list(
+      google_font("Chivo"),
+      default_fonts()
+    )
+  ) %>% 
+  tab_options(
+    #remove border between column headers and title
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    #remove border around the table
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    #adjust font sizes and alignment
+    source_notes.font.size = 12,
+    heading.align = "left"
+  )
+)
 ```
 
 # Conclusion
