@@ -66,11 +66,13 @@ For this demo, I'll use the following series:
     poverty level:!!Female:!!Under 5 years
 
 
-```{r get_acs, include=TRUE}
+```{r get_acs, include=FALSE}
 df <- get_acs(geography = 'county',
-        variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
-        year = 2021,
-        output = 'wide')
+              # for this demo, using the state argument to only fetch Colorado
+              state = "Colorado",
+              variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
+              year = 2022,
+              output = 'wide')
 ```
 
 To make the data more user-friendly, I'll update the column names of the
@@ -93,6 +95,7 @@ I'm not doing a statistical analysis that would require it.
 df <- df %>% 
   select(-contains("moe"))
 ```
+
 
 Next, I'll create some fields to combine gender-based poverty estimates
 and calculate a percent of the child population measure.
@@ -148,7 +151,7 @@ southeastern states (as a percent of the child population).
                                 data = df %>% rename(fips = geoid),
                                 values = 'u5_perc_in_poverty') + 
   # scale_fill_viridis_c() + 
-  scale_fill_viridis_c(labels = scales::percent_format()) + 
+  scale_fill_viridis_c(option = 'inferno', labels = scales::percent_format()) + 
   labs(title = md("**Estimated child poverty in U.S. states in 2021**"),
        subtitle = "as a % of the total child population under 5 y.o.",
        caption = "Source: 2021 American Community Survey") %>%
@@ -159,30 +162,28 @@ southeastern states (as a percent of the child population).
 # Great tables with gt::
 
 ```{r read_regions, include=TRUE, echo=FALSE, message=FALSE}
-regions <- read_csv('.//data/census_regions.csv') %>% clean_names()
-
-df_2 <- df %>%
-  separate(county_state, into = c('county', 'state'), sep = ', ')
-
-# fips <- fips_codes %>% 
-#   mutate(fips = paste(state_code, county_code, sep = ''))
+co_regions <- read_csv('.//data/colorado_regions.csv') %>% 
+  mutate(region = as.factor(region))
 ```
 
-```{r add_regions, include=FALSE, echo=FALSE}
-df_2 <- df_2 %>% 
+```{r clean_df_colorado, include=TRUE, echo=FALSE}
+df <- df %>%
+  mutate(county = str_remove(county_state, " County.*")) %>% 
+  select(county, everything()) %>% 
   left_join(x=.,
-            y=regions %>% select(state, region, division),
-            by='state')
+            y=co_regions,
+            by='county') 
+
+# df <- df %>% 
+#   mutate(region = factor(region, levels = desired_order))
 ```
+
 
 ```{r create_df_tbl, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
-(df_tbl <- df_2 %>% 
-  filter(state == 'Colorado') %>% 
-  select(county, u5_pov_total, u5_pop_total, u5_perc_in_poverty) %>% 
+(df_tbl <- df %>% 
+  select(county, region, u5_pov_total, u5_pop_total, u5_perc_in_poverty) %>% 
   arrange(-u5_perc_in_poverty) %>% 
-  # mutate(u5_perc_in_poverty = u5_perc_in_poverty * 100) %>% 
-  # gt(groupname_col = "region") %>% 
-  gt() %>%
+  gt(groupname_col = "region") %>% 
   cols_label(county = 'County',
                u5_pop_total = 'Total children < 5 y.o.',
                u5_pov_total = 'Total children < 5 y.o. living in poverty in last 12 mos.',
@@ -191,8 +192,8 @@ df_2 <- df_2 %>%
   fmt_number(columns = c(u5_pop_total, u5_pov_total), decimals = 0, use_seps = TRUE) %>% 
   fmt_percent(columns = u5_perc_in_poverty, decimals = 1) %>%  
   #add table title
-  tab_header(title = md("**Estimated child poverty in Colorado by county in 2021**")) %>% 
-  tab_source_note(source_note = "Data from 2021 American Community Survey from the U.S. Census Bureau") %>% 
+  tab_header(title = md("**Estimated child poverty in Colorado by county in 2022**")) %>% 
+  tab_source_note(source_note = "Data from 2022 American Community Survey from the U.S. Census Bureau") %>% 
   #apply new style to all column headers
   tab_style(
     locations = cells_column_labels(columns = everything()),
@@ -210,7 +211,7 @@ df_2 <- df_2 %>%
             )) %>% 
   data_color(
     columns = u5_perc_in_poverty,
-    palette = viridis::viridis(100)
+    palette = viridis::inferno(100)
   ) %>% 
   opt_all_caps() %>% 
   opt_table_font(
@@ -232,6 +233,9 @@ df_2 <- df_2 %>%
   )
 )
 ```
+
+
+
 
 ```{r df_county, include=FALSE}
 # considering a map like this one: https://observablehq.com/@observablehq/plot-us-bubble-map?intent=fork
