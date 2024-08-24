@@ -10,17 +10,19 @@ categories: [R, tidyverse, tidycensus, api, javascript, purrr] # self-defined ca
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 image: facet_region.png
-draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
     wrap: 72
 ---
+
 
 # Introduction
 
 In [Part One](https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/), I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the `tidycensus::` package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling. In this post, I'll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I'll unpack some of the trends seen in child poverty in Colorado.
 
 ## Setup
+
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -52,6 +54,7 @@ my.theme <- theme(
   strip.text = element_text(color="black", size=14))
 ```
 
+
 # Data
 
 For this demo, I'll use the following series from the American Community Survey (ACS):
@@ -71,13 +74,16 @@ With the `tidycensus::` package, I can gather 5-year ACS data for these series f
 
 ## Fetching from the `tidycensus::` API
 
+
 ```{r year_acs, include=TRUE}
 years <- seq(2009, 2022) %>% 
   # no 2020 data from the ACS
   setdiff(2020)
 ```
 
+
 Next, I'll define a function to fetch the ACS data for each year in the vector.
+
 
 ```{r fetch_poverty_data, include=TRUE}
 # Define a function to fetch ACS data for a given year
@@ -90,22 +96,28 @@ fetch_acs_data <- function(year) {
 }
 ```
 
+
 Then, I'll map the years vector to the `fetch_acs_data()` function that I created.
+
 
 ```{r acs_data_list, include=TRUE}
 # Use map() to apply fetch_acs_data to each year
 acs_data_list <- map(years, fetch_acs_data)
 ```
 
+
 ## Data wrangling
 
 Then, I'll create a `year` field for each dataframe in the list, so that I can create one, multi-year dataframe.
+
 
 ```{r map2_acs_data_list, include=TRUE}
 acs_data_list <- map2(acs_data_list, years, ~ mutate(.x, year = .y))
 ```
 
+
 Now, I'll bind all of the ACS years together into a single dataframe for analysis.
+
 
 ```{r combined_acs_data, include=TRUE}
 combined_acs_data <- bind_rows(acs_data_list)
@@ -124,9 +136,11 @@ combined_acs_data <- bind_rows(acs_data_list)
 # extract_acs_data(acs_data_list)
 ```
 
+
 Then, I'll follow the same data wrangling steps from Part One:
 
 *  Updating the column names to be more user-friendly
+
 
 ```{r update_colnames, include=TRUE}
 name_cols <- c('geoid', 'county_state', 
@@ -139,14 +153,18 @@ name_cols <- c('geoid', 'county_state',
 colnames(combined_acs_data) <- name_cols
 ```
 
+
 *  Dropping the margin of error fields
+
 
 ```{r drop_cols, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
   select(-contains("moe"))
 ```
 
+
 *  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
+
 
 ```{r df_mutate, include=TRUE, results='hide'}
 combined_acs_data <- combined_acs_data %>% 
@@ -155,7 +173,9 @@ combined_acs_data <- combined_acs_data %>%
          u5_perc_in_poverty = u5_pov_total / u5_pop_total)
 ```
 
+
 *  Creating a `county` field that cleans the `county_state` field to only include the county name
+
 
 ```{r mutate_county_name, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
@@ -163,13 +183,17 @@ combined_acs_data <- combined_acs_data %>%
   select(county, everything())
 ```
 
+
 *  Reading in a table that maps Colorado's counties to a region of the state
+
 
 ```{r read_colorado_regions, include=TRUE}
 colorado_regions <- read_csv('.//data/colorado_regions.csv', show_col_types = FALSE) %>%
   mutate(region = as.factor(region))
 ```
+
 *  (Finally) creating the `combined_acs_data` dataframe for longitudinal analysis
+
 
 ```{r join_colorado_regions, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
@@ -178,7 +202,9 @@ combined_acs_data <- combined_acs_data %>%
             by='county')
 ```
 
+
 # Analysis 
+
 
 ```{r lineplot_gg, include=FALSE}
 combined_acs_data %>% 
@@ -189,6 +215,7 @@ combined_acs_data %>%
   geom_line()
 ```
 
+
 For the graphics, I'll use Observable Plot to build some interactive graphics (this can be done with R, but I want to experiment more with what Javascript can do).
 
 To use Observable Plot in Quarto, you need to first have your data object defined in an Observable JS object, which can be achieved by:
@@ -198,11 +225,14 @@ To use Observable Plot in Quarto, you need to first have your data object define
 
 Note that, if you choose the latter (which I'll do here), this object only operates when your site or knitr document is rendered (meaning, it won't execute as a code chunk like you can with R, Python, or SQL in Quarto).
 
+
 ```{r ojs_define_chunk, include=TRUE}
 ojs_define(ojsd = combined_acs_data)
 ```
 
+
 Then, I'll create a line plot of child poverty by county over time, faceting by region.
+
 
 ```{ojs plot_ojs_line, include=TRUE}
 Plot.plot({
@@ -246,10 +276,12 @@ Plot.plot({
 })
 ```
 
+
 Some comments on the above:
 
 *  There are discussions online that indicate that not all Javascript styling works in Quarto, and this supports that (some font size elements don't seem to work, faceting options, etc.). I'd like to test that in Observable directly, but for now, I'll just note that this is not my *favorite* styling.
 *  Aside from the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. I'll rebuild this chart, using a 3-year moving average with the `zoo::rollmean()` function.
+
 
 ```{r combined_acs_data2, include=TRUE}
 combined_acs_data2 <- combined_acs_data %>% 
@@ -358,6 +390,7 @@ Plot.plot({
 #   facet_wrap(~region) + 
 #   my.theme
 ```
+
 
 # Conclusion
 
