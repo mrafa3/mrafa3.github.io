@@ -1,6 +1,6 @@
 ---
-title: "Part Two: Exploring the tidycensus R package"
-description: "This post uses the tidycensus package to access the Census API and visualize data"
+title: "Part Two: Wrangling Census data for longitudinal analysis of child poverty"
+description: "This post shows how to fetch many years of data simply, unlocking longitudinal analysis of Census data"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
