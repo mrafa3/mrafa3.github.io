@@ -1,5 +1,5 @@
 ---
-title: "Exploring child poverty data with the tidycensus R package"
+title: "Part One: Exploring child poverty data with the tidycensus R package"
 description: "This post uses the tidycensus package to access the Census API and visualize data on child poverty in the U.S."
 author:
   - name: Mickey Rafa
