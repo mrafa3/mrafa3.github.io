@@ -18,7 +18,7 @@ editor:
 
 # Introduction
 
-In [Part One](https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/), I demonstrated how to fetch data and do some basic analysis of U.S. Census data. In this post, I want to pull data longitudinally from the `tidycensus::` API. To do so, I'll build a script that iterates through the available data years, and pulls the same child poverty data that I gathered in Part One.
+In [Part One](https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/), I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the `tidycensus::` package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling. In this post, I'll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. 
 
 Next, I'll unpack some of the trends seen in child poverty in Colorado.
 
@@ -55,6 +55,8 @@ my.theme <- theme(
   strip.text = element_text(color="black", size=14))
 ```
 
+# Data
+
 For this demo, I'll use the following series from the American Community Survey (ACS):
 
 -   *B01001_003*: Estimate!!Total:!!Male:!!Under 5 years (all racial
@@ -66,9 +68,11 @@ For this demo, I'll use the following series from the American Community Survey 
 -   *B17001_018*: Estimate!!Total:!!Income in the past 12 months below
     poverty level:!!Female:!!Under 5 years
 
-With the `tidycensus::` package, I can gather the data for these series from 2009 to 2022.[^1]
+With the `tidycensus::` package, I can gather 5-year ACS data for these series from 2009 to 2022.[^1]
 
-[^1]: According to the `tidycensus::` documentation, 1-year ACS data is available from 2005 through 2022, with the exception of 2020.
+[^1]: According to the `tidycensus::` documentation, 5-year ACS data is available from 2009 through 2022, with the exception of 2020.
+
+## Fetching from the `tidycensus::` API
 
 ```{r year_acs, include=TRUE}
 years <- seq(2009, 2022) %>% 
@@ -96,10 +100,12 @@ Then, I'll map the years vector to the `fetch_acs_data()` function that I create
 acs_data_list <- map(years, fetch_acs_data)
 ```
 
+## Data wrangling
+
 Then, I'll create a `year` field for each dataframe in the list, so that I can create one, multi-year dataframe.
 
 ```{r map2_acs_data_list, include=TRUE}
-acs_data_list <- map2(acs_data_list, years, ~ mutate(.x, year = as.character(.y)))
+acs_data_list <- map2(acs_data_list, years, ~ mutate(.x, year = .y))
 ```
 
 Now, I'll bind all of the ACS years together into a single dataframe for analysis.
@@ -136,14 +142,14 @@ name_cols <- c('geoid', 'county_state',
 colnames(combined_acs_data) <- name_cols
 ```
 
-*  Drop the margin of error fields
+*  Dropping the margin of error fields
 
 ```{r drop_cols, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
   select(-contains("moe"))
 ```
 
-*  Next, I'll create some fields to combine gender-based poverty estimates and calculate a percent of the child population measure.
+*  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
 
 ```{r df_mutate, include=TRUE, results='hide'}
 combined_acs_data <- combined_acs_data %>% 
@@ -152,24 +158,30 @@ combined_acs_data <- combined_acs_data %>%
          u5_perc_in_poverty = u5_pov_total / u5_pop_total)
 ```
 
-```{r mutate_county_name, include=TRUE, echo=FALSE}
+*  Creating a `county` field that cleans the `county_state` field to only include the county name
+
+```{r mutate_county_name, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
   mutate(county = str_remove(county_state, " County.*")) %>% 
   select(county, everything())
 ```
 
-```{r read_colorado_regions, include=TRUE, echo=FALSE}
-colorado_regions <- read_csv('.//data/colorado_regions.csv') %>%
+*  Reading in a table that maps Colorado's counties to a region of the state
+
+```{r read_colorado_regions, include=TRUE}
+colorado_regions <- read_csv('.//data/colorado_regions.csv', show_col_types = FALSE) %>%
   mutate(region = as.factor(region))
 ```
+*  (Finally) creating the `combined_acs_data` dataframe for longitudinal analysis
 
-```{r join_colorado_regions, include=TRUE, echo=FALSE}
+```{r join_colorado_regions, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
   left_join(x=.,
             y=colorado_regions,
             by='county')
 ```
 
+# Analysis 
 
 ```{r lineplot_gg, include=FALSE}
 combined_acs_data %>% 
@@ -180,32 +192,49 @@ combined_acs_data %>%
   geom_line()
 ```
 
-```{r viewing_data, include=FALSE}
-combined_acs_data %>% 
-  filter(county == 'Mineral')
-  # filter(year >= 2017 & year <= 2021) %>% 
-  # group_by(county) %>% 
-  # slice_min(u5_perc_in_poverty)
-```
+For the graphics, I'll use Observable Plot to build some interactive graphics (this can be done with R, but I want to experiment more with what Javascript can do).
 
+To use Observable Plot in Quarto, you need to first have your data object defined in an Observable JS object, which can be achieved by:
 
-```{r ojs_define_chunk, include=TRUE, echo=FALSE}
+*  Reading in the object directly as an Observable JS object (such as with the `FileAttachment()` function), or
+*  Converting your R or Python object using the `ojs_define()` function in an R or Python code chunk
+
+Note that, if you choose the latter (which I'll do here), this object only operates when your site or knitr document is rendered (meaning, it won't execute as a code chunk like you can with R, Python, or SQL in Quarto).
+
+```{r ojs_define_chunk, include=TRUE}
 ojs_define(ojsd = combined_acs_data)
 ```
 
-<!-- filteredData = transpose(ojsd).filter(d => d.region === 'Front Range'); -->
+Then, I'll create a line plot of child poverty by county over time, faceting by region.
 
 ```{ojs plot_ojs_line, include=TRUE}
 Plot.plot({
   <!-- using options from here to learn: https://observablehq.com/plot/features/facets -->
+  title: "Child poverty (%) in Colorado by county",
+  caption: "Source: American Community Survey",
   width: 1200,
-  x: {nice: true},
-  <!-- y: {inset: 5}, -->
+  heigh: 600,
+  x: {nice: true,
+      label: "Year",
+      ticks: 5,
+      tickFormat: d => d.toString(),
+      labelFontSize: 50,
+      tickSize: 5,
+      tickFontSize: 12
+  },
   color: {type: "categorical"},
   y: {
     grid: true,
     label: "Child poverty rate (%)",
     domain: [0, 100]
+    <!-- labelFontSize: 50, -->
+    <!-- tickFontSize: 50 -->
+  },
+  fx: {
+    label: "Region"
+    <!-- these are not working -->
+    <!-- tickFontSize: 32, -->
+    <!-- labelFontSize: 32 -->
   },
   marks: [
     Plot.ruleY([0]),
@@ -220,7 +249,10 @@ Plot.plot({
 })
 ```
 
-Aside from the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. I'll rebuild this chart, using a 3-year moving average with the `zoo::rollmean()` function.
+Some comments on the above:
+
+*  There are discussions online that indicate that not all Javascript styling works in Quarto, and this supports that (some font size elements don't seem to work, faceting options, etc.). I'd like to test that in Observable directly, but for now, I'll just note that this is not my *favorite* styling.
+*  Aside from the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. I'll rebuild this chart, using a 3-year moving average with the `zoo::rollmean()` function.
 
 ```{r combined_acs_data2, include=TRUE}
 combined_acs_data2 <- combined_acs_data %>% 
@@ -228,15 +260,20 @@ combined_acs_data2 <- combined_acs_data %>%
   mutate(u5_perc_poverty_3_yr_moving_avg = rollmean(u5_perc_in_poverty, k=3, fill=NA, align='right'))
 ```
 
-```{r define_ojsd2}
+```{r define_ojsd2, include=TRUE, echo=FALSE}
 ojs_define(ojsd2 = combined_acs_data2)
 ```
+
 
 ```{ojs plot_ojs_line2, include=TRUE, echo=FALSE}
 Plot.plot({
   <!-- using options from here to learn: https://observablehq.com/plot/features/facets -->
+  title: "Child poverty (%) in Colorado by county",
+  caption: "Source: American Community Survey. Generated 3-year moving average to smooth results.",
   width: 1200,
-  x: {nice: true},
+  x: {nice: true,
+      tickFormat: d => d.toString()
+      },
   <!-- y: {inset: 5}, -->
   color: {type: "categorical"},
   y: {
@@ -256,6 +293,8 @@ Plot.plot({
   ]
 })
 ```
+
+
 
 ```{r combined_acs_data3, include=FALSE}
 # If your goal is to communicate change over time, the variability year-over-year might not be necessary. That's where a slope chart comes in! With that chart time, you're summarizing the information by showing only your first and last values, and the linear change between those years.
