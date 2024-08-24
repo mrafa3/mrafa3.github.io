@@ -108,7 +108,7 @@ assist in fetching data. Some noteworthy ones include:
 ```{r get_acs, include=TRUE}
 df <- get_acs(geography = 'state',
         variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
-        year = 2021,
+        year = 2022,
         output = 'wide')
 ```
 
@@ -180,7 +180,7 @@ df %>%
   labs(y='',
        x='') + 
   ggtitle('Percent of children under five in poverty',
-          subtitle = 'from the American Community Survey 2021') + 
+          subtitle = 'from the American Community Survey 2022') + 
   scale_x_continuous(labels = percent,
                      position = 'top') + 
   my.theme
@@ -202,9 +202,9 @@ southeastern states (as a percent of the child population).
            data = df,
            values = 'u5_perc_in_poverty') + 
   scale_fill_viridis_c(option = 'inferno', labels = scales::percent_format()) + 
-  labs(title = md("**Estimated child poverty in U.S. states in 2021**"),
+  labs(title = md("**Estimated child poverty in U.S. states in 2022**"),
        subtitle = "as a % of the total child population under 5 y.o.",
-       caption = "Source: 2021 American Community Survey") %>%
+       caption = "Source: 2022 American Community Survey") %>%
   theme(legend.position = 'top',
         legend.title = element_blank()))
 ```
@@ -238,8 +238,8 @@ df <- df %>%
   fmt_number(columns = c(u5_pop_total, u5_pov_total), decimals = 0, use_seps = TRUE) %>% 
   fmt_percent(columns = u5_perc_in_poverty, decimals = 1) %>%  
   #add table title
-  tab_header(title = md("**Estimated child poverty in U.S. states in 2021**")) %>% 
-  tab_source_note(source_note = "Data from 2021 American Community Survey from the U.S. Census Bureau") %>% 
+  tab_header(title = md("**Estimated child poverty in U.S. states in 2022**")) %>% 
+  tab_source_note(source_note = "Data from 2022 American Community Survey from the U.S. Census Bureau") %>% 
   #apply new style to all column headers
   tab_style(
     locations = cells_column_labels(columns = everything()),
@@ -284,7 +284,7 @@ df <- df %>%
 # considering a map like this one: https://observablehq.com/@observablehq/plot-us-bubble-map?intent=fork
 df_county <- get_acs(geography = 'county',
         variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
-        year = 2021,
+        year = 2022,
         output = 'wide') %>% 
   mutate(
     state_fips = str_sub(GEOID, 1, 2),
@@ -331,9 +331,9 @@ df_colorado <- df_colorado %>%
                                 data = df_colorado %>% rename(fips = geoid),
                                 values = 'u5_perc_in_poverty') + 
   scale_fill_viridis_c(option = 'inferno', labels = scales::percent_format()) + 
-  labs(title = md("**Estimated child poverty in U.S. states in 2021**"),
+  labs(title = md("**Estimated child poverty in U.S. states in 2022**"),
        subtitle = "as a % of the total child population under 5 y.o.",
-       caption = "Source: 2021 American Community Survey") %>%
+       caption = "Source: 2022 American Community Survey") %>%
   theme(legend.position = 'top',
         legend.title = element_blank()))
 ```

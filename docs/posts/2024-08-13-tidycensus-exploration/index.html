@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2024-08-13">
 <meta name="description" content="This post uses the tidycensus package to access the Census API and visualize data on child poverty in the U.S.">
 
-<title>Exploring child poverty data with the tidycensus R package</title>
+<title>Part One: Exploring child poverty data with the tidycensus R package</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">Exploring child poverty data with the tidycensus R package</h1>
+      <h1 class="title">Part One: Exploring child poverty data with the tidycensus R package</h1>
                   <div>
         <div class="description">
           This post uses the tidycensus package to access the Census API and visualize data on child poverty in the U.S.
@@ -270,10 +270,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">'state'</span>,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">'B01001_003'</span>, <span class="st">'B01001_027'</span>, <span class="st">'B17001_004'</span>, <span class="st">'B17001_018'</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">year =</span> <span class="dv">2021</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">year =</span> <span class="dv">2022</span>,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">output =</span> <span class="st">'wide'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Getting data from the 2017-2021 5-year ACS</code></pre>
+<pre><code>Getting data from the 2018-2022 5-year ACS</code></pre>
 </div>
 </div>
 <p>To make the data more user-friendly, I’ll update the column names of the table.</p>
@@ -301,16 +301,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code># A tibble: 52 × 9
    geoid state          u5_male_estimate u5_female_estimate u5_male_pov_estimate
    &lt;chr&gt; &lt;chr&gt;                     &lt;dbl&gt;              &lt;dbl&gt;                &lt;dbl&gt;
- 1 01    Alabama                  151356             144276                38673
- 2 02    Alaska                    25965              24826                 3761
- 3 04    Arizona                  210607             201999                41934
- 4 05    Arkansas                  95410              89170                23947
- 5 06    California              1203859            1146476               190730
- 6 08    Colorado                 165967             158279                20739
- 7 09    Connecticut               93734              88388                13053
- 8 10    Delaware                  27567              26667                 5690
- 9 11    District of C…            21890              21068                 3962
-10 12    Florida                  571443             547351               110265
+ 1 01    Alabama                  149474             142382                37877
+ 2 02    Alaska                    25142              23849                 3842
+ 3 04    Arizona                  205506             197130                39209
+ 4 05    Arkansas                  93300              88024                23419
+ 5 06    California              1156233            1102075               174379
+ 6 08    Colorado                 162030             155159                19559
+ 7 09    Connecticut               93705              89063                12893
+ 8 10    Delaware                  27470              26520                 5396
+ 9 11    District of C…            21273              20249                 3602
+10 12    Florida                  563975             540590               105449
 # ℹ 42 more rows
 # ℹ 4 more variables: u5_female_pov_estimate &lt;dbl&gt;, u5_pop_total &lt;dbl&gt;,
 #   u5_pov_total &lt;dbl&gt;, u5_perc_in_poverty &lt;dbl&gt;</code></pre>
@@ -326,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>,</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>) <span class="sc">+</span> </span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">'Percent of children under five in poverty'</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">'from the American Community Survey 2021'</span>) <span class="sc">+</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">'from the American Community Survey 2022'</span>) <span class="sc">+</span> </span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> percent,</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">position =</span> <span class="st">'top'</span>) <span class="sc">+</span> </span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  my.theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -349,9 +349,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> df,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">values =</span> <span class="st">'u5_perc_in_poverty'</span>) <span class="sc">+</span> </span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">'inferno'</span>, <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>()) <span class="sc">+</span> </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Estimated child poverty in U.S. states in 2021**"</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Estimated child poverty in U.S. states in 2022**"</span>),</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"as a % of the total child population under 5 y.o."</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: 2021 American Community Survey"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: 2022 American Community Survey"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'top'</span>,</span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.title =</span> <span class="fu">element_blank</span>()))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -381,8 +381,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(u5_pop_total, u5_pov_total), <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(<span class="at">columns =</span> u5_perc_in_poverty, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span>  </span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#add table title</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Estimated child poverty in U.S. states in 2021**"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="st">"Data from 2021 American Community Survey from the U.S. Census Bureau"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Estimated child poverty in U.S. states in 2022**"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="st">"Data from 2022 American Community Survey from the U.S. Census Bureau"</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#apply new style to all column headers</span></span>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="at">columns =</span> <span class="fu">everything</span>()),</span>
@@ -422,24 +422,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="wjdbxzgqzg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ypgmyljynz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#wjdbxzgqzg table {
+#ypgmyljynz table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#wjdbxzgqzg thead, #wjdbxzgqzg tbody, #wjdbxzgqzg tfoot, #wjdbxzgqzg tr, #wjdbxzgqzg td, #wjdbxzgqzg th {
+#ypgmyljynz thead, #ypgmyljynz tbody, #ypgmyljynz tfoot, #ypgmyljynz tr, #ypgmyljynz td, #ypgmyljynz th {
   border-style: none;
 }
 
-#wjdbxzgqzg p {
+#ypgmyljynz p {
   margin: 0;
   padding: 0;
 }
 
-#wjdbxzgqzg .gt_table {
+#ypgmyljynz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -465,12 +465,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_caption {
+#ypgmyljynz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#wjdbxzgqzg .gt_title {
+#ypgmyljynz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -482,7 +482,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#wjdbxzgqzg .gt_subtitle {
+#ypgmyljynz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -494,7 +494,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#wjdbxzgqzg .gt_heading {
+#ypgmyljynz .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -506,13 +506,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_bottom_border {
+#ypgmyljynz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_col_headings {
+#ypgmyljynz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -527,7 +527,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_col_heading {
+#ypgmyljynz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -547,7 +547,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#wjdbxzgqzg .gt_column_spanner_outer {
+#ypgmyljynz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -559,15 +559,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#wjdbxzgqzg .gt_column_spanner_outer:first-child {
+#ypgmyljynz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wjdbxzgqzg .gt_column_spanner_outer:last-child {
+#ypgmyljynz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wjdbxzgqzg .gt_column_spanner {
+#ypgmyljynz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -579,11 +579,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#wjdbxzgqzg .gt_spanner_row {
+#ypgmyljynz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#wjdbxzgqzg .gt_group_heading {
+#ypgmyljynz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -609,7 +609,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#wjdbxzgqzg .gt_empty_group_heading {
+#ypgmyljynz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -624,15 +624,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#wjdbxzgqzg .gt_from_md > :first-child {
+#ypgmyljynz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wjdbxzgqzg .gt_from_md > :last-child {
+#ypgmyljynz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wjdbxzgqzg .gt_row {
+#ypgmyljynz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -651,7 +651,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#wjdbxzgqzg .gt_stub {
+#ypgmyljynz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -664,7 +664,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#wjdbxzgqzg .gt_stub_row_group {
+#ypgmyljynz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -678,15 +678,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#wjdbxzgqzg .gt_row_group_first td {
+#ypgmyljynz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#wjdbxzgqzg .gt_row_group_first th {
+#ypgmyljynz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#wjdbxzgqzg .gt_summary_row {
+#ypgmyljynz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -696,16 +696,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#wjdbxzgqzg .gt_first_summary_row {
+#ypgmyljynz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_first_summary_row.thick {
+#ypgmyljynz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#wjdbxzgqzg .gt_last_summary_row {
+#ypgmyljynz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -715,7 +715,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_grand_summary_row {
+#ypgmyljynz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -725,7 +725,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#wjdbxzgqzg .gt_first_grand_summary_row {
+#ypgmyljynz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -735,7 +735,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_last_grand_summary_row_top {
+#ypgmyljynz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -745,11 +745,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_striped {
+#ypgmyljynz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#wjdbxzgqzg .gt_table_body {
+#ypgmyljynz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -758,7 +758,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_footnotes {
+#ypgmyljynz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -772,7 +772,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_footnote {
+#ypgmyljynz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -781,7 +781,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#wjdbxzgqzg .gt_sourcenotes {
+#ypgmyljynz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -795,7 +795,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#wjdbxzgqzg .gt_sourcenote {
+#ypgmyljynz .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -803,72 +803,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#wjdbxzgqzg .gt_left {
+#ypgmyljynz .gt_left {
   text-align: left;
 }
 
-#wjdbxzgqzg .gt_center {
+#ypgmyljynz .gt_center {
   text-align: center;
 }
 
-#wjdbxzgqzg .gt_right {
+#ypgmyljynz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wjdbxzgqzg .gt_font_normal {
+#ypgmyljynz .gt_font_normal {
   font-weight: normal;
 }
 
-#wjdbxzgqzg .gt_font_bold {
+#ypgmyljynz .gt_font_bold {
   font-weight: bold;
 }
 
-#wjdbxzgqzg .gt_font_italic {
+#ypgmyljynz .gt_font_italic {
   font-style: italic;
 }
 
-#wjdbxzgqzg .gt_super {
+#ypgmyljynz .gt_super {
   font-size: 65%;
 }
 
-#wjdbxzgqzg .gt_footnote_marks {
+#ypgmyljynz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#wjdbxzgqzg .gt_asterisk {
+#ypgmyljynz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#wjdbxzgqzg .gt_indent_1 {
+#ypgmyljynz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#wjdbxzgqzg .gt_indent_2 {
+#ypgmyljynz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#wjdbxzgqzg .gt_indent_3 {
+#ypgmyljynz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#wjdbxzgqzg .gt_indent_4 {
+#ypgmyljynz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#wjdbxzgqzg .gt_indent_5 {
+#ypgmyljynz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#wjdbxzgqzg .katex-display {
+#ypgmyljynz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#wjdbxzgqzg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#ypgmyljynz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -882,7 +882,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </colgroup>
 <thead>
 <tr class="header gt_heading">
-<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-size: 24; font-weight: bold"><p><strong>Estimated child poverty in U.S. states in 2021</strong></p></th>
+<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-size: 24; font-weight: bold"><p><strong>Estimated child poverty in U.S. states in 2022</strong></p></th>
 </tr>
 <tr class="odd gt_col_headings">
 <th id="State" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-weight: bold" scope="col">State</th>
@@ -896,323 +896,323 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td colspan="4" id="South" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">South</td>
 </tr>
 <tr class="even gt_row_group_first">
-<td class="gt_row gt_left" headers="South  state">Louisiana</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">85,947</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">297,359</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #FCFFA4; color: #000000">28.9%</td>
+<td class="gt_row gt_left" headers="South  state">Mississippi</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">51,039</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">178,246</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #FCFFA4; color: #000000">28.6%</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="South  state">Mississippi</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">52,195</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">182,146</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #F8FA98; color: #000000">28.7%</td>
+<td class="gt_row gt_left" headers="South  state">Louisiana</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">81,083</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">289,842</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #F3F483; color: #000000">28.0%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="South  state">Arkansas</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">47,169</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">184,580</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #FCB216; color: #000000">25.6%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">47,419</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">181,324</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #F9C831; color: #000000">26.2%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="South  state">Alabama</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">73,634</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">295,632</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #FCA208; color: #000000">24.9%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">71,890</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">291,856</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #FCA208; color: #000000">24.6%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="South  state">West Virginia</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">23,094</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">93,223</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #FC9F07; color: #000000">24.8%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">22,238</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">90,380</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #FCA108; color: #000000">24.6%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="South  state">Oklahoma</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">58,856</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">252,929</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #F57A17; color: #FFFFFF">23.3%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">56,349</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">247,466</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #F3761B; color: #FFFFFF">22.8%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="South  state">Kentucky</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">62,091</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">270,859</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #F2731D; color: #FFFFFF">22.9%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">60,553</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">266,553</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #F3741C; color: #FFFFFF">22.7%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="South  state">South Carolina</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">64,251</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">285,472</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #EE6B24; color: #FFFFFF">22.5%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">62,215</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">283,281</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #EB6529; color: #FFFFFF">22.0%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="South  state">Tennessee</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">88,155</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">405,867</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #E55B31; color: #FFFFFF">21.7%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">84,127</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">402,591</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #DD5139; color: #FFFFFF">20.9%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="South  state">Texas</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">412,660</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">1,959,223</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #DB503B; color: #FFFFFF">21.1%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">399,635</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">1,923,422</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #DB503B; color: #FFFFFF">20.8%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="South  state">Georgia</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">135,022</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">643,718</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #DA4E3C; color: #FFFFFF">21.0%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">127,255</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">635,299</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #D04446; color: #FFFFFF">20.0%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="South  state">North Carolina</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">124,073</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">594,004</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #D84D3E; color: #FFFFFF">20.9%</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="South  state">Delaware</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">10,880</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">54,234</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #CB4149; color: #FFFFFF">20.1%</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="South  state">District of Columbia</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">8,478</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">42,958</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #C53D4D; color: #FFFFFF">19.7%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">117,418</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">589,767</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #CD4347; color: #FFFFFF">19.9%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="South  state">Florida</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">215,405</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">1,118,794</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #BC3754; color: #FFFFFF">19.3%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">208,659</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">1,104,565</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #BA3655; color: #FFFFFF">18.9%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="South  state">Delaware</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">10,040</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">53,990</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #B43458; color: #FFFFFF">18.6%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="South  state">District of Columbia</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">7,474</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">41,522</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #A82E5E; color: #FFFFFF">18.0%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="South  state">Virginia</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">69,273</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">501,494</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #4B0C6B; color: #FFFFFF">13.8%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">67,470</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">494,148</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #4E0D6C; color: #FFFFFF">13.7%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="South  state">Maryland</td>
-<td class="gt_row gt_right" headers="South  u5_pov_total">44,630</td>
-<td class="gt_row gt_right" headers="South  u5_pop_total">363,466</td>
-<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #290B54; color: #FFFFFF">12.3%</td>
+<td class="gt_row gt_right" headers="South  u5_pov_total">43,127</td>
+<td class="gt_row gt_right" headers="South  u5_pop_total">358,539</td>
+<td class="gt_row gt_right" headers="South  u5_perc_in_poverty" style="background-color: #2A0B55; color: #FFFFFF">12.0%</td>
 </tr>
 <tr class="odd gt_group_heading_row">
 <td colspan="4" id="West" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">West</td>
 </tr>
 <tr class="even gt_row_group_first">
 <td class="gt_row gt_left" headers="West  state">New Mexico</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">32,627</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">120,716</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #F6D847; color: #000000">27.0%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">31,164</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">115,927</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #F5DB4C; color: #000000">26.9%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="West  state">Arizona</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">82,353</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">412,606</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #C9404A; color: #FFFFFF">20.0%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">76,225</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">402,636</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #BB3754; color: #FFFFFF">18.9%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="West  state">Nevada</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">33,903</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">181,429</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #B1325A; color: #FFFFFF">18.7%</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="West  state">Montana</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">10,490</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">60,366</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #962667; color: #FFFFFF">17.4%</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="West  state">Idaho</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">18,940</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">114,969</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #83206B; color: #FFFFFF">16.5%</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="West  state">California</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">373,702</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">2,350,335</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #771B6D; color: #FFFFFF">15.9%</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="West  state">Wyoming</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">5,256</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">34,262</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #6C186E; color: #FFFFFF">15.3%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">31,756</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">178,103</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #A52C60; color: #FFFFFF">17.8%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="West  state">Alaska</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">7,657</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">50,791</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #67166E; color: #FFFFFF">15.1%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">8,109</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">48,991</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #8A226A; color: #FFFFFF">16.6%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="West  state">Montana</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">9,435</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">59,003</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #7F1F6C; color: #FFFFFF">16.0%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="West  state">Wyoming</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">5,165</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">32,789</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #7A1D6D; color: #FFFFFF">15.8%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="West  state">Idaho</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">17,521</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">112,576</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #761B6E; color: #FFFFFF">15.6%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="West  state">California</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">345,867</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">2,258,308</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #71196E; color: #FFFFFF">15.3%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="West  state">Oregon</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">33,364</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">223,615</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #63146E; color: #FFFFFF">14.9%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">30,617</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">215,756</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #5A116E; color: #FFFFFF">14.2%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="West  state">Washington</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">58,066</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">449,543</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #380962; color: #FFFFFF">12.9%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">54,426</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">440,172</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #320A5D; color: #FFFFFF">12.4%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="West  state">Hawaii</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">11,147</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">87,767</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #330A5E; color: #FFFFFF">12.7%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">10,391</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">84,552</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #300A5B; color: #FFFFFF">12.3%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="West  state">Colorado</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">39,234</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">324,246</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #250C4F; color: #FFFFFF">12.1%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">37,160</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">317,189</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #220C4C; color: #FFFFFF">11.7%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="West  state">Utah</td>
-<td class="gt_row gt_right" headers="West  u5_pov_total">25,377</td>
-<td class="gt_row gt_right" headers="West  u5_pop_total">245,639</td>
-<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #06041A; color: #FFFFFF">10.3%</td>
+<td class="gt_row gt_right" headers="West  u5_pov_total">23,672</td>
+<td class="gt_row gt_right" headers="West  u5_pop_total">239,517</td>
+<td class="gt_row gt_right" headers="West  u5_perc_in_poverty" style="background-color: #040315; color: #FFFFFF">9.9%</td>
 </tr>
 <tr class="odd gt_group_heading_row">
 <td colspan="4" id="Midwest" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">Midwest</td>
 </tr>
 <tr class="even gt_row_group_first">
 <td class="gt_row gt_left" headers="Midwest  state">Ohio</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">144,327</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">689,126</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #D94E3D; color: #FFFFFF">20.9%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">137,275</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">676,403</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #D44842; color: #FFFFFF">20.3%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Midwest  state">Michigan</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">116,005</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">564,817</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #D34743; color: #FFFFFF">20.5%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">109,522</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">552,803</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #CB4149; color: #FFFFFF">19.8%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Midwest  state">Indiana</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">77,763</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">415,542</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #B1325A; color: #FFFFFF">18.7%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">73,768</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">409,573</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #A92E5E; color: #FFFFFF">18.0%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Midwest  state">Missouri</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">66,082</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">367,132</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #A32B61; color: #FFFFFF">18.0%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">64,822</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">360,175</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #A82E5E; color: #FFFFFF">18.0%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Midwest  state">South Dakota</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">10,338</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">59,538</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #962667; color: #FFFFFF">17.4%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">9,944</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">58,085</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #962667; color: #FFFFFF">17.1%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Midwest  state">Illinois</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">127,437</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">745,681</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #902568; color: #FFFFFF">17.1%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">119,848</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">721,165</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #8C2369; color: #FFFFFF">16.6%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Midwest  state">Kansas</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">29,476</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">185,276</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #771C6D; color: #FFFFFF">15.9%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">28,269</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">180,483</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #781C6D; color: #FFFFFF">15.7%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Midwest  state">Wisconsin</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">49,639</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">329,324</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #67156E; color: #FFFFFF">15.1%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">47,055</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">321,594</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #63146E; color: #FFFFFF">14.6%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Midwest  state">Iowa</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">28,244</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">194,570</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #5B116E; color: #FFFFFF">14.5%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">26,764</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">189,797</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #58106E; color: #FFFFFF">14.1%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Midwest  state">Nebraska</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">17,851</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">130,400</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #490B6A; color: #FFFFFF">13.7%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">17,200</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">127,312</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #4B0C6B; color: #FFFFFF">13.5%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Midwest  state">North Dakota</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">6,687</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">53,417</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #2E0B5A; color: #FFFFFF">12.5%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">6,644</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">51,717</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #3C0965; color: #FFFFFF">12.8%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Midwest  state">Minnesota</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pov_total">40,086</td>
-<td class="gt_row gt_right" headers="Midwest  u5_pop_total">348,468</td>
-<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #190C3D; color: #FFFFFF">11.5%</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pov_total">37,973</td>
+<td class="gt_row gt_right" headers="Midwest  u5_pop_total">340,546</td>
+<td class="gt_row gt_right" headers="Midwest  u5_perc_in_poverty" style="background-color: #180C3B; color: #FFFFFF">11.2%</td>
 </tr>
 <tr class="even gt_group_heading_row">
 <td colspan="4" id="Northeast" class="gt_group_heading" data-quarto-table-cell-role="th" scope="colgroup">Northeast</td>
 </tr>
 <tr class="odd gt_row_group_first">
 <td class="gt_row gt_left" headers="Northeast  state">New York</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">215,759</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">1,154,376</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #B1325A; color: #FFFFFF">18.7%</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">205,516</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">1,121,872</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #AF315B; color: #FFFFFF">18.3%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Northeast  state">Pennsylvania</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">122,812</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">700,792</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #992766; color: #FFFFFF">17.5%</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">116,758</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">688,571</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #932667; color: #FFFFFF">17.0%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Northeast  state">Rhode Island</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">9,209</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">55,370</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #86216B; color: #FFFFFF">16.6%</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">8,292</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">54,172</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #71196E; color: #FFFFFF">15.3%</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left" headers="Northeast  state">Maine</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">9,245</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">63,932</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #5A116E; color: #FFFFFF">14.5%</td>
+<td class="gt_row gt_left" headers="Northeast  state">New Jersey</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">73,826</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">523,995</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #58106E; color: #FFFFFF">14.1%</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="Northeast  state">New Jersey</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">76,150</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">530,376</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #57106E; color: #FFFFFF">14.4%</td>
+<td class="gt_row gt_left" headers="Northeast  state">Maine</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">8,850</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">63,182</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #560F6D; color: #FFFFFF">14.0%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Northeast  state">Connecticut</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">25,424</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">182,122</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #4F0D6C; color: #FFFFFF">14.0%</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">25,315</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">182,768</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #530E6D; color: #FFFFFF">13.9%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Northeast  state">Massachusetts</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">45,689</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">357,943</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #350960; color: #FFFFFF">12.8%</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">43,417</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">351,208</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #320A5D; color: #FFFFFF">12.4%</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Northeast  state">Vermont</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">3,417</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">29,168</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #1D0C44; color: #FFFFFF">11.7%</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">3,184</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">28,275</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #190C3E; color: #FFFFFF">11.3%</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="Northeast  state">New Hampshire</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pov_total">6,022</td>
-<td class="gt_row gt_right" headers="Northeast  u5_pop_total">63,509</td>
-<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #000004; color: #FFFFFF">9.5%</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pov_total">5,788</td>
+<td class="gt_row gt_right" headers="Northeast  u5_pop_total">62,919</td>
+<td class="gt_row gt_right" headers="Northeast  u5_perc_in_poverty" style="background-color: #000004; color: #FFFFFF">9.2%</td>
 </tr>
 </tbody><tfoot class="gt_sourcenotes">
 <tr class="odd">
-<td colspan="4" class="gt_sourcenote">Data from 2021 American Community Survey from the U.S. Census Bureau</td>
+<td colspan="4" class="gt_sourcenote">Data from 2022 American Community Survey from the U.S. Census Bureau</td>
 </tr>
 </tfoot>
 
@@ -1318,24 +1318,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="dtebokdyoh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ujwpsyqipx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#dtebokdyoh table {
+#ujwpsyqipx table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dtebokdyoh thead, #dtebokdyoh tbody, #dtebokdyoh tfoot, #dtebokdyoh tr, #dtebokdyoh td, #dtebokdyoh th {
+#ujwpsyqipx thead, #ujwpsyqipx tbody, #ujwpsyqipx tfoot, #ujwpsyqipx tr, #ujwpsyqipx td, #ujwpsyqipx th {
   border-style: none;
 }
 
-#dtebokdyoh p {
+#ujwpsyqipx p {
   margin: 0;
   padding: 0;
 }
 
-#dtebokdyoh .gt_table {
+#ujwpsyqipx .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1361,12 +1361,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_caption {
+#ujwpsyqipx .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dtebokdyoh .gt_title {
+#ujwpsyqipx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1378,7 +1378,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#dtebokdyoh .gt_subtitle {
+#ujwpsyqipx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1390,7 +1390,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#dtebokdyoh .gt_heading {
+#ujwpsyqipx .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -1402,13 +1402,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_bottom_border {
+#ujwpsyqipx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_col_headings {
+#ujwpsyqipx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -1423,7 +1423,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_col_heading {
+#ujwpsyqipx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1443,7 +1443,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#dtebokdyoh .gt_column_spanner_outer {
+#ujwpsyqipx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1455,15 +1455,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#dtebokdyoh .gt_column_spanner_outer:first-child {
+#ujwpsyqipx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dtebokdyoh .gt_column_spanner_outer:last-child {
+#ujwpsyqipx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dtebokdyoh .gt_column_spanner {
+#ujwpsyqipx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1475,11 +1475,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#dtebokdyoh .gt_spanner_row {
+#ujwpsyqipx .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dtebokdyoh .gt_group_heading {
+#ujwpsyqipx .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1505,7 +1505,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#dtebokdyoh .gt_empty_group_heading {
+#ujwpsyqipx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1520,15 +1520,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#dtebokdyoh .gt_from_md > :first-child {
+#ujwpsyqipx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dtebokdyoh .gt_from_md > :last-child {
+#ujwpsyqipx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dtebokdyoh .gt_row {
+#ujwpsyqipx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1547,7 +1547,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#dtebokdyoh .gt_stub {
+#ujwpsyqipx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1560,7 +1560,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dtebokdyoh .gt_stub_row_group {
+#ujwpsyqipx .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1574,15 +1574,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#dtebokdyoh .gt_row_group_first td {
+#ujwpsyqipx .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dtebokdyoh .gt_row_group_first th {
+#ujwpsyqipx .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dtebokdyoh .gt_summary_row {
+#ujwpsyqipx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1592,16 +1592,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dtebokdyoh .gt_first_summary_row {
+#ujwpsyqipx .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_first_summary_row.thick {
+#ujwpsyqipx .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dtebokdyoh .gt_last_summary_row {
+#ujwpsyqipx .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1611,7 +1611,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_grand_summary_row {
+#ujwpsyqipx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1621,7 +1621,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dtebokdyoh .gt_first_grand_summary_row {
+#ujwpsyqipx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1631,7 +1631,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_last_grand_summary_row_top {
+#ujwpsyqipx .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1641,11 +1641,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_striped {
+#ujwpsyqipx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dtebokdyoh .gt_table_body {
+#ujwpsyqipx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1654,7 +1654,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_footnotes {
+#ujwpsyqipx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1668,7 +1668,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_footnote {
+#ujwpsyqipx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1677,7 +1677,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dtebokdyoh .gt_sourcenotes {
+#ujwpsyqipx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1691,7 +1691,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dtebokdyoh .gt_sourcenote {
+#ujwpsyqipx .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1699,72 +1699,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dtebokdyoh .gt_left {
+#ujwpsyqipx .gt_left {
   text-align: left;
 }
 
-#dtebokdyoh .gt_center {
+#ujwpsyqipx .gt_center {
   text-align: center;
 }
 
-#dtebokdyoh .gt_right {
+#ujwpsyqipx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dtebokdyoh .gt_font_normal {
+#ujwpsyqipx .gt_font_normal {
   font-weight: normal;
 }
 
-#dtebokdyoh .gt_font_bold {
+#ujwpsyqipx .gt_font_bold {
   font-weight: bold;
 }
 
-#dtebokdyoh .gt_font_italic {
+#ujwpsyqipx .gt_font_italic {
   font-style: italic;
 }
 
-#dtebokdyoh .gt_super {
+#ujwpsyqipx .gt_super {
   font-size: 65%;
 }
 
-#dtebokdyoh .gt_footnote_marks {
+#ujwpsyqipx .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dtebokdyoh .gt_asterisk {
+#ujwpsyqipx .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dtebokdyoh .gt_indent_1 {
+#ujwpsyqipx .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dtebokdyoh .gt_indent_2 {
+#ujwpsyqipx .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dtebokdyoh .gt_indent_3 {
+#ujwpsyqipx .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dtebokdyoh .gt_indent_4 {
+#ujwpsyqipx .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dtebokdyoh .gt_indent_5 {
+#ujwpsyqipx .gt_indent_5 {
   text-indent: 25px;
 }
 
-#dtebokdyoh .katex-display {
+#ujwpsyqipx .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#dtebokdyoh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#ujwpsyqipx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
