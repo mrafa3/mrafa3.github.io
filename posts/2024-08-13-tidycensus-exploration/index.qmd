@@ -83,7 +83,7 @@ query the available data within each survey. Combining this with
 thousands of data series that are available through the U.S. Census API.
 
 ```{r inspect_variables, include=TRUE}
-load_variables(2022, "acs1", cache = TRUE) %>% 
+load_variables(2022, "acs5", cache = TRUE) %>% 
   # used this to search for some Under 5 years variables of interest
   filter(str_detect(label, "Under 5 years"))
 ```
