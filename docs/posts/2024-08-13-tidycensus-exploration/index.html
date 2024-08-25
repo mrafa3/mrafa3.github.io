@@ -197,6 +197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
   <ul class="collapse">
   <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
   <li><a href="#initial-tour-of-key-tidycensusget_acs-function" id="toc-initial-tour-of-key-tidycensusget_acs-function" class="nav-link" data-scroll-target="#initial-tour-of-key-tidycensusget_acs-function">Initial tour of key tidycensus::get_acs() function</a></li>
   </ul></li>
   <li><a href="#quick-mapping-with-usmap" id="toc-quick-mapping-with-usmap" class="nav-link" data-scroll-target="#quick-mapping-with-usmap">Quick mapping with usmap::</a></li>
@@ -228,8 +229,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># census_api_key('INSERT KEY HERE')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>For this analysis, I’m interested in looking at the most recent state-level child poverty data available from the U.S. Census Bureau. The <code>tidycensus::</code> package allows API access to the decennial Census, as well as the more frequent American Community Survey (ACS).</p>
-<p>The <code>tidycensus::load_variables()</code> function provides a simple way to query the available data within each product. Combining this with <code>stringr::str_detect()</code> is a nice way to search through the tens of thousands of data series that are available through the U.S. Census API.</p>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>For this analysis, I’m interested in looking at the most recent state-level child poverty data available from the U.S. Census Bureau. The <code>tidycensus::</code> package allows API access to the decennial Census, as well as the more frequent American Community Survey (ACS), which I’ll use in this project.</p>
+<p>If you’ve worked with ACS data before, you may know that there are a few survey products offered in the ACS suite. Most commonly, the choice of data is between the 1-year estimates and the 5-year estimates.</p>
+<p><em>What’s the difference between these, and how do you choose which survey product to use for your purposes?</em></p>
+<ul>
+<li><strong>1-year estimates</strong>: Best used when the focus is on timeliness and the area in question has a sufficiently large population to support reliable estimates. Ideal for analyzing recent changes and trends in larger areas. <em>While these are more current estimates, these have wider margins of error and are not available for smaller geographic areas.</em></li>
+<li><strong>5-year estimates</strong>: Best used when you need detailed data for small areas or when you’re comparing data across different geographies, especially if those geographies vary in population size. They are ideal for studying small populations, rural areas, or conducting detailed spatial analysis. <em>While these are less current than the 1-year estimates, they are more reliable and available at smaller geographic scales.</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
+</ul>
+<p>To start, I am interested in reviewing the most stable, geographically-available data on child poverty. Given that I’m less concerned with recency and more interested in broad availability, the ACS 5-year estimates are what I’ll use here.</p>
+</section>
+<section id="initial-tour-of-key-tidycensusget_acs-function" class="level2">
+<h2 class="anchored" data-anchor-id="initial-tour-of-key-tidycensusget_acs-function">Initial tour of key tidycensus::get_acs() function</h2>
+<p>The <code>tidycensus::</code> package has so much to offer (and I still have plenty to learn!). The <code>tidycensus::load_variables()</code> function provides a simple way to query the available data within each survey. Combining this with <code>stringr::str_detect()</code> is a nice way to search through the tens of thousands of data series that are available through the U.S. Census API.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load_variables</span>(<span class="dv">2022</span>, <span class="st">"acs1"</span>, <span class="at">cache =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># used this to search for some Under 5 years variables of interest</span></span>
@@ -258,20 +272,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><em>B17001_004</em>: Estimate!!Total:!!Income in the past 12 months below poverty level:!!Male:!!Under 5 years</li>
 <li><em>B17001_018</em>: Estimate!!Total:!!Income in the past 12 months below poverty level:!!Female:!!Under 5 years</li>
 </ul>
-</section>
-<section id="initial-tour-of-key-tidycensusget_acs-function" class="level2">
-<h2 class="anchored" data-anchor-id="initial-tour-of-key-tidycensusget_acs-function">Initial tour of key tidycensus::get_acs() function</h2>
-<p>The <code>tidycensus::</code> package has so much to offer (and I still have plenty to learn!). There are a bunch of useful helper functions/arguments to assist in fetching data. Some noteworthy ones include:</p>
+<p>There are a bunch of useful helper functions/arguments to assist in fetching data from the Census API. Some noteworthy ones include:</p>
 <ul>
 <li>Each variable returns the geography, an estimate, and the margin of error (“moe”). Geographies can span from states, regions and the country as a whole, down to areas like school districts, voting districts, census block groups, and many others.</li>
+<li><code>survey=</code>: this defines the produce that you’re using of the American Community Survey. Responses can include “acs1”, “acs3”, or (the default) “acs5”.</li>
 <li><code>summary_var=</code>: often the variable that you want would be made more meaningful as a ratio or with a demonminator. For example, the number of children in poverty could be useful on its own, but you’re likely to want to see that series as a percent of the total children. With the summary_var argument, you can tell the function which secondary variable you want to grab in the same API call.</li>
 <li><code>ouput=wide</code>: related to the above, I wanted to look at child poverty in a way that would require multiple summary variables (e.g. the percent of girls <em>and</em> boys in poverty). Since you can only have one summary variable, <code>output='wide'</code> allows you to grab all of the series that you may need in the same call.</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">'state'</span>,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">'B01001_003'</span>, <span class="st">'B01001_027'</span>, <span class="st">'B17001_004'</span>, <span class="st">'B17001_018'</span>),</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">year =</span> <span class="dv">2022</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">output =</span> <span class="st">'wide'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">survey =</span> <span class="st">'acs5'</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">year =</span> <span class="dv">2022</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">output =</span> <span class="st">'wide'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Getting data from the 2018-2022 5-year ACS</code></pre>
 </div>
@@ -422,24 +435,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="ypgmyljynz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="wsbykbmnda" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#ypgmyljynz table {
+#wsbykbmnda table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ypgmyljynz thead, #ypgmyljynz tbody, #ypgmyljynz tfoot, #ypgmyljynz tr, #ypgmyljynz td, #ypgmyljynz th {
+#wsbykbmnda thead, #wsbykbmnda tbody, #wsbykbmnda tfoot, #wsbykbmnda tr, #wsbykbmnda td, #wsbykbmnda th {
   border-style: none;
 }
 
-#ypgmyljynz p {
+#wsbykbmnda p {
   margin: 0;
   padding: 0;
 }
 
-#ypgmyljynz .gt_table {
+#wsbykbmnda .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -465,12 +478,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_caption {
+#wsbykbmnda .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ypgmyljynz .gt_title {
+#wsbykbmnda .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -482,7 +495,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#ypgmyljynz .gt_subtitle {
+#wsbykbmnda .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -494,7 +507,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#ypgmyljynz .gt_heading {
+#wsbykbmnda .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -506,13 +519,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_bottom_border {
+#wsbykbmnda .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_col_headings {
+#wsbykbmnda .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -527,7 +540,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_col_heading {
+#wsbykbmnda .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -547,7 +560,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ypgmyljynz .gt_column_spanner_outer {
+#wsbykbmnda .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -559,15 +572,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#ypgmyljynz .gt_column_spanner_outer:first-child {
+#wsbykbmnda .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ypgmyljynz .gt_column_spanner_outer:last-child {
+#wsbykbmnda .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ypgmyljynz .gt_column_spanner {
+#wsbykbmnda .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -579,11 +592,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#ypgmyljynz .gt_spanner_row {
+#wsbykbmnda .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ypgmyljynz .gt_group_heading {
+#wsbykbmnda .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -609,7 +622,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#ypgmyljynz .gt_empty_group_heading {
+#wsbykbmnda .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -624,15 +637,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#ypgmyljynz .gt_from_md > :first-child {
+#wsbykbmnda .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ypgmyljynz .gt_from_md > :last-child {
+#wsbykbmnda .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ypgmyljynz .gt_row {
+#wsbykbmnda .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -651,7 +664,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ypgmyljynz .gt_stub {
+#wsbykbmnda .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -664,7 +677,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ypgmyljynz .gt_stub_row_group {
+#wsbykbmnda .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -678,15 +691,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#ypgmyljynz .gt_row_group_first td {
+#wsbykbmnda .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ypgmyljynz .gt_row_group_first th {
+#wsbykbmnda .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ypgmyljynz .gt_summary_row {
+#wsbykbmnda .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -696,16 +709,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ypgmyljynz .gt_first_summary_row {
+#wsbykbmnda .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_first_summary_row.thick {
+#wsbykbmnda .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ypgmyljynz .gt_last_summary_row {
+#wsbykbmnda .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -715,7 +728,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_grand_summary_row {
+#wsbykbmnda .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -725,7 +738,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ypgmyljynz .gt_first_grand_summary_row {
+#wsbykbmnda .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -735,7 +748,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_last_grand_summary_row_top {
+#wsbykbmnda .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -745,11 +758,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_striped {
+#wsbykbmnda .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ypgmyljynz .gt_table_body {
+#wsbykbmnda .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -758,7 +771,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_footnotes {
+#wsbykbmnda .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -772,7 +785,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_footnote {
+#wsbykbmnda .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -781,7 +794,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ypgmyljynz .gt_sourcenotes {
+#wsbykbmnda .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -795,7 +808,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ypgmyljynz .gt_sourcenote {
+#wsbykbmnda .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -803,72 +816,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ypgmyljynz .gt_left {
+#wsbykbmnda .gt_left {
   text-align: left;
 }
 
-#ypgmyljynz .gt_center {
+#wsbykbmnda .gt_center {
   text-align: center;
 }
 
-#ypgmyljynz .gt_right {
+#wsbykbmnda .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ypgmyljynz .gt_font_normal {
+#wsbykbmnda .gt_font_normal {
   font-weight: normal;
 }
 
-#ypgmyljynz .gt_font_bold {
+#wsbykbmnda .gt_font_bold {
   font-weight: bold;
 }
 
-#ypgmyljynz .gt_font_italic {
+#wsbykbmnda .gt_font_italic {
   font-style: italic;
 }
 
-#ypgmyljynz .gt_super {
+#wsbykbmnda .gt_super {
   font-size: 65%;
 }
 
-#ypgmyljynz .gt_footnote_marks {
+#wsbykbmnda .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ypgmyljynz .gt_asterisk {
+#wsbykbmnda .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ypgmyljynz .gt_indent_1 {
+#wsbykbmnda .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ypgmyljynz .gt_indent_2 {
+#wsbykbmnda .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ypgmyljynz .gt_indent_3 {
+#wsbykbmnda .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ypgmyljynz .gt_indent_4 {
+#wsbykbmnda .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ypgmyljynz .gt_indent_5 {
+#wsbykbmnda .gt_indent_5 {
   text-indent: 25px;
 }
 
-#ypgmyljynz .katex-display {
+#wsbykbmnda .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#ypgmyljynz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#wsbykbmnda div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1228,9 +1241,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df_colorado <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">'county'</span>,</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                       <span class="co"># using the state argument to only fetch Colorado</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">state =</span> <span class="st">"Colorado"</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">'B01001_003'</span>, <span class="st">'B01001_027'</span>, <span class="st">'B17001_004'</span>, <span class="st">'B17001_018'</span>),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">year =</span> <span class="dv">2022</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">output =</span> <span class="st">'wide'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">survey =</span> <span class="st">'acs5'</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">'B01001_003'</span>, <span class="st">'B01001_027'</span>, <span class="st">'B17001_004'</span>, <span class="st">'B17001_018'</span>),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">year =</span> <span class="dv">2022</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">output =</span> <span class="st">'wide'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Getting data from the 2018-2022 5-year ACS</code></pre>
 </div>
@@ -1278,7 +1292,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(<span class="at">columns =</span> u5_perc_in_poverty, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span>  </span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">#add table title</span></span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Estimated child poverty in Colorado by county in 2022**"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="st">"Data from 2022 American Community Survey from the U.S. Census Bureau"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="st">"Data from 2022 American Community Survey 5-year estimates from the U.S. Census Bureau"</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#apply new style to all column headers</span></span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="at">columns =</span> <span class="fu">everything</span>()),</span>
@@ -1318,24 +1332,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="ujwpsyqipx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="huuodbkqzz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#ujwpsyqipx table {
+#huuodbkqzz table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ujwpsyqipx thead, #ujwpsyqipx tbody, #ujwpsyqipx tfoot, #ujwpsyqipx tr, #ujwpsyqipx td, #ujwpsyqipx th {
+#huuodbkqzz thead, #huuodbkqzz tbody, #huuodbkqzz tfoot, #huuodbkqzz tr, #huuodbkqzz td, #huuodbkqzz th {
   border-style: none;
 }
 
-#ujwpsyqipx p {
+#huuodbkqzz p {
   margin: 0;
   padding: 0;
 }
 
-#ujwpsyqipx .gt_table {
+#huuodbkqzz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1361,12 +1375,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_caption {
+#huuodbkqzz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ujwpsyqipx .gt_title {
+#huuodbkqzz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1378,7 +1392,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#ujwpsyqipx .gt_subtitle {
+#huuodbkqzz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1390,7 +1404,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#ujwpsyqipx .gt_heading {
+#huuodbkqzz .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -1402,13 +1416,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_bottom_border {
+#huuodbkqzz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_col_headings {
+#huuodbkqzz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -1423,7 +1437,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_col_heading {
+#huuodbkqzz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1443,7 +1457,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ujwpsyqipx .gt_column_spanner_outer {
+#huuodbkqzz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1455,15 +1469,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#ujwpsyqipx .gt_column_spanner_outer:first-child {
+#huuodbkqzz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ujwpsyqipx .gt_column_spanner_outer:last-child {
+#huuodbkqzz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ujwpsyqipx .gt_column_spanner {
+#huuodbkqzz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1475,11 +1489,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#ujwpsyqipx .gt_spanner_row {
+#huuodbkqzz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ujwpsyqipx .gt_group_heading {
+#huuodbkqzz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1505,7 +1519,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#ujwpsyqipx .gt_empty_group_heading {
+#huuodbkqzz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1520,15 +1534,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#ujwpsyqipx .gt_from_md > :first-child {
+#huuodbkqzz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ujwpsyqipx .gt_from_md > :last-child {
+#huuodbkqzz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ujwpsyqipx .gt_row {
+#huuodbkqzz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1547,7 +1561,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ujwpsyqipx .gt_stub {
+#huuodbkqzz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1560,7 +1574,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ujwpsyqipx .gt_stub_row_group {
+#huuodbkqzz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1574,15 +1588,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#ujwpsyqipx .gt_row_group_first td {
+#huuodbkqzz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ujwpsyqipx .gt_row_group_first th {
+#huuodbkqzz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ujwpsyqipx .gt_summary_row {
+#huuodbkqzz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1592,16 +1606,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ujwpsyqipx .gt_first_summary_row {
+#huuodbkqzz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_first_summary_row.thick {
+#huuodbkqzz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ujwpsyqipx .gt_last_summary_row {
+#huuodbkqzz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1611,7 +1625,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_grand_summary_row {
+#huuodbkqzz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1621,7 +1635,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ujwpsyqipx .gt_first_grand_summary_row {
+#huuodbkqzz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1631,7 +1645,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_last_grand_summary_row_top {
+#huuodbkqzz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1641,11 +1655,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_striped {
+#huuodbkqzz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ujwpsyqipx .gt_table_body {
+#huuodbkqzz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1654,7 +1668,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_footnotes {
+#huuodbkqzz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1668,7 +1682,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_footnote {
+#huuodbkqzz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1677,7 +1691,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ujwpsyqipx .gt_sourcenotes {
+#huuodbkqzz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1691,7 +1705,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ujwpsyqipx .gt_sourcenote {
+#huuodbkqzz .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1699,72 +1713,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ujwpsyqipx .gt_left {
+#huuodbkqzz .gt_left {
   text-align: left;
 }
 
-#ujwpsyqipx .gt_center {
+#huuodbkqzz .gt_center {
   text-align: center;
 }
 
-#ujwpsyqipx .gt_right {
+#huuodbkqzz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ujwpsyqipx .gt_font_normal {
+#huuodbkqzz .gt_font_normal {
   font-weight: normal;
 }
 
-#ujwpsyqipx .gt_font_bold {
+#huuodbkqzz .gt_font_bold {
   font-weight: bold;
 }
 
-#ujwpsyqipx .gt_font_italic {
+#huuodbkqzz .gt_font_italic {
   font-style: italic;
 }
 
-#ujwpsyqipx .gt_super {
+#huuodbkqzz .gt_super {
   font-size: 65%;
 }
 
-#ujwpsyqipx .gt_footnote_marks {
+#huuodbkqzz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ujwpsyqipx .gt_asterisk {
+#huuodbkqzz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ujwpsyqipx .gt_indent_1 {
+#huuodbkqzz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ujwpsyqipx .gt_indent_2 {
+#huuodbkqzz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ujwpsyqipx .gt_indent_3 {
+#huuodbkqzz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ujwpsyqipx .gt_indent_4 {
+#huuodbkqzz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ujwpsyqipx .gt_indent_5 {
+#huuodbkqzz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#ujwpsyqipx .katex-display {
+#huuodbkqzz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#ujwpsyqipx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#huuodbkqzz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2189,7 +2203,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody><tfoot class="gt_sourcenotes">
 <tr class="odd">
-<td colspan="4" class="gt_sourcenote">Data from 2022 American Community Survey from the U.S. Census Bureau</td>
+<td colspan="4" class="gt_sourcenote">Data from 2022 American Community Survey 5-year estimates from the U.S. Census Bureau</td>
 </tr>
 </tfoot>
 
@@ -2209,11 +2223,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>How to make a simple map using the <code>usmap::</code> package</li>
 <li>How to make a clean and visually appealing table using the <code>gt::</code> package</li>
 </ul>
+<p>In <a href="https://mrafa3.github.io/posts/2024-08-20-tidycensus-exploration-pt2/">Part Two</a> of my <code>tidycensus::</code> work, I’ll walk through how to pull longitudinal data from Census products using the <code>tidycensus::</code> API.</p>
 
 
 </section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>See the Census handbook for great detail: https://www.census.gov/programs-surveys/acs/library/handbooks/general.html.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

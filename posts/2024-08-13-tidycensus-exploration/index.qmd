@@ -254,7 +254,7 @@ df <- df %>%
   fmt_percent(columns = u5_perc_in_poverty, decimals = 1) %>%  
   #add table title
   tab_header(title = md("**Estimated child poverty in U.S. states in 2022**")) %>% 
-  tab_source_note(source_note = "Data from 2022 American Community Survey from the U.S. Census Bureau") %>% 
+  tab_source_note(source_note = "Data from 2022 American Community Survey 5-year estimates from the U.S. Census Bureau") %>% 
   #apply new style to all column headers
   tab_style(
     locations = cells_column_labels(columns = everything()),
