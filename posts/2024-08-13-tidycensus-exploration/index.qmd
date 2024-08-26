@@ -41,7 +41,7 @@ library(usmap)
 my.theme <- theme(
   plot.title = ggtext::element_textbox_simple(face="bold", size=24, margin=margin(b=5)),
   plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14, margin=margin(b=10)),
-  plot.caption = ggtext::element_textbox_simple(color="#444444"),
+  plot.caption = element_text(color="#444444"),
   axis.title = element_text(color="black", face="bold", size=12), 
   axis.text = element_text(color="black", size=18), 
   axis.ticks = element_blank(), 
@@ -63,12 +63,23 @@ state-level child poverty data available from the U.S. Census Bureau.
 The `tidycensus::` package allows API access to the decennial Census, as
 well as the more frequent American Community Survey (ACS), which I'll use in this project.
 
-If you've worked with ACS data before, you may know that there are a few survey products offered in the ACS suite. Most commonly, the choice of data is between the 1-year estimates and the 5-year estimates.
+If you've worked with ACS data before, you may know that there are a few survey products offered in the ACS suite. Most commonly, the choice of data is between the **1-year estimates** and the **5-year estimates**.
 
-*What's the difference between these, and how do you choose which survey product to use for your purposes?*
+*What's the difference between these, and how do you choose which survey product to use for your purposes?*[^1]
 
-*  **1-year estimates**: Best used when the focus is on timeliness and the area in question has a sufficiently large population to support reliable estimates. Ideal for analyzing recent changes and trends in larger areas. *While these are more current estimates, these have wider margins of error and are not available for smaller geographic areas.*
-*  **5-year estimates**: Best used when you need detailed data for small areas or when you're comparing data across different geographies, especially if those geographies vary in population size. They are ideal for studying small populations, rural areas, or conducting detailed spatial analysis. *While these are less current than the 1-year estimates, they are more reliable and available at smaller geographic scales.*[^1]
+
+| Feature                    | ACS 1-Year Estimates                                 | ACS 5-Year Estimates                               |
+|----------------------------|-----------------------------------------------------|---------------------------------------------------|
+| Data Collection Period      | 12 months                                           | 60 months                                         |
+| Population Coverage         | Areas with 65,000 or more people                    | All geographic areas, including those with fewer than 65,000 people |
+| Sample Size                 | Smallest                                            | Largest                                           |
+| Reliability                 | Less reliable due to smaller sample size            | More reliable due to larger sample size            |
+| Currency                    | Most current data                                   | Less current, includes older data                 |
+| Release Frequency           | Annually                                            | Annually                                          |
+| Best Used For               | Analyzing large populations, when currency is more important than precision | Analyzing small populations, where precision is more important than currency |
+| Example Usage               | Examining recent economic changes                   | Examining trends in small geographic areas or small population subgroups |
+
+<br>
 
 To start, I am interested in reviewing the most stable, geographically-available data on child poverty. Given that I'm less concerned with recency and more interested in broad availability, the ACS 5-year estimates are what I'll use here.
 
@@ -193,7 +204,8 @@ df %>%
         y=reorder(state, u5_perc_in_poverty))) + 
   geom_point(size=3) +
   labs(y='',
-       x='') + 
+       x='',
+       caption='Source: American Community Survey 2022 5-year estimate\nExcluding the confidence interval from this graphic') + 
   ggtitle('Percent of children under five in poverty',
           subtitle = 'from the American Community Survey 2022') + 
   scale_x_continuous(labels = percent,

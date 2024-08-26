@@ -233,12 +233,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <p>For this analysis, I’m interested in looking at the most recent state-level child poverty data available from the U.S. Census Bureau. The <code>tidycensus::</code> package allows API access to the decennial Census, as well as the more frequent American Community Survey (ACS), which I’ll use in this project.</p>
-<p>If you’ve worked with ACS data before, you may know that there are a few survey products offered in the ACS suite. Most commonly, the choice of data is between the 1-year estimates and the 5-year estimates.</p>
-<p><em>What’s the difference between these, and how do you choose which survey product to use for your purposes?</em></p>
-<ul>
-<li><strong>1-year estimates</strong>: Best used when the focus is on timeliness and the area in question has a sufficiently large population to support reliable estimates. Ideal for analyzing recent changes and trends in larger areas. <em>While these are more current estimates, these have wider margins of error and are not available for smaller geographic areas.</em></li>
-<li><strong>5-year estimates</strong>: Best used when you need detailed data for small areas or when you’re comparing data across different geographies, especially if those geographies vary in population size. They are ideal for studying small populations, rural areas, or conducting detailed spatial analysis. <em>While these are less current than the 1-year estimates, they are more reliable and available at smaller geographic scales.</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
-</ul>
+<p>If you’ve worked with ACS data before, you may know that there are a few survey products offered in the ACS suite. Most commonly, the choice of data is between the <strong>1-year estimates</strong> and the <strong>5-year estimates</strong>.</p>
+<p><em>What’s the difference between these, and how do you choose which survey product to use for your purposes?</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 40%">
+<col style="width: 38%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>ACS 1-Year Estimates</th>
+<th>ACS 5-Year Estimates</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data Collection Period</td>
+<td>12 months</td>
+<td>60 months</td>
+</tr>
+<tr class="even">
+<td>Population Coverage</td>
+<td>Areas with 65,000 or more people</td>
+<td>All geographic areas, including those with fewer than 65,000 people</td>
+</tr>
+<tr class="odd">
+<td>Sample Size</td>
+<td>Smallest</td>
+<td>Largest</td>
+</tr>
+<tr class="even">
+<td>Reliability</td>
+<td>Less reliable due to smaller sample size</td>
+<td>More reliable due to larger sample size</td>
+</tr>
+<tr class="odd">
+<td>Currency</td>
+<td>Most current data</td>
+<td>Less current, includes older data</td>
+</tr>
+<tr class="even">
+<td>Release Frequency</td>
+<td>Annually</td>
+<td>Annually</td>
+</tr>
+<tr class="odd">
+<td>Best Used For</td>
+<td>Analyzing large populations, when currency is more important than precision</td>
+<td>Analyzing small populations, where precision is more important than currency</td>
+</tr>
+<tr class="even">
+<td>Example Usage</td>
+<td>Examining recent economic changes</td>
+<td>Examining trends in small geographic areas or small population subgroups</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
 <p>To start, I am interested in reviewing the most stable, geographically-available data on child poverty. Given that I’m less concerned with recency and more interested in broad availability, the ACS 5-year estimates are what I’ll use here.</p>
 </section>
 <section id="initial-tour-of-key-tidycensusget_acs-function" class="level2">
@@ -337,12 +390,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">y=</span><span class="fu">reorder</span>(state, u5_perc_in_poverty))) <span class="sc">+</span> </span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>) <span class="sc">+</span> </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">'Percent of children under five in poverty'</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">'from the American Community Survey 2022'</span>) <span class="sc">+</span> </span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> percent,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                     <span class="at">position =</span> <span class="st">'top'</span>) <span class="sc">+</span> </span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  my.theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'Source: American Community Survey 2022 5-year estimate</span><span class="sc">\n</span><span class="st">Excluding the confidence interval from this graphic'</span>) <span class="sc">+</span> </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">'Percent of children under five in poverty'</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">'from the American Community Survey 2022'</span>) <span class="sc">+</span> </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> percent,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                     <span class="at">position =</span> <span class="st">'top'</span>) <span class="sc">+</span> </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  my.theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -435,24 +489,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="crzckjkhyj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="outxwjduaq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#crzckjkhyj table {
+#outxwjduaq table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#crzckjkhyj thead, #crzckjkhyj tbody, #crzckjkhyj tfoot, #crzckjkhyj tr, #crzckjkhyj td, #crzckjkhyj th {
+#outxwjduaq thead, #outxwjduaq tbody, #outxwjduaq tfoot, #outxwjduaq tr, #outxwjduaq td, #outxwjduaq th {
   border-style: none;
 }
 
-#crzckjkhyj p {
+#outxwjduaq p {
   margin: 0;
   padding: 0;
 }
 
-#crzckjkhyj .gt_table {
+#outxwjduaq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -478,12 +532,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_caption {
+#outxwjduaq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#crzckjkhyj .gt_title {
+#outxwjduaq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -495,7 +549,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#crzckjkhyj .gt_subtitle {
+#outxwjduaq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -507,7 +561,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#crzckjkhyj .gt_heading {
+#outxwjduaq .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -519,13 +573,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_bottom_border {
+#outxwjduaq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_col_headings {
+#outxwjduaq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -540,7 +594,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_col_heading {
+#outxwjduaq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -560,7 +614,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#crzckjkhyj .gt_column_spanner_outer {
+#outxwjduaq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -572,15 +626,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#crzckjkhyj .gt_column_spanner_outer:first-child {
+#outxwjduaq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#crzckjkhyj .gt_column_spanner_outer:last-child {
+#outxwjduaq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#crzckjkhyj .gt_column_spanner {
+#outxwjduaq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -592,11 +646,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#crzckjkhyj .gt_spanner_row {
+#outxwjduaq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#crzckjkhyj .gt_group_heading {
+#outxwjduaq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -622,7 +676,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#crzckjkhyj .gt_empty_group_heading {
+#outxwjduaq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -637,15 +691,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#crzckjkhyj .gt_from_md > :first-child {
+#outxwjduaq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#crzckjkhyj .gt_from_md > :last-child {
+#outxwjduaq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#crzckjkhyj .gt_row {
+#outxwjduaq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -664,7 +718,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#crzckjkhyj .gt_stub {
+#outxwjduaq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -677,7 +731,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#crzckjkhyj .gt_stub_row_group {
+#outxwjduaq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -691,15 +745,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#crzckjkhyj .gt_row_group_first td {
+#outxwjduaq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#crzckjkhyj .gt_row_group_first th {
+#outxwjduaq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#crzckjkhyj .gt_summary_row {
+#outxwjduaq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -709,16 +763,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#crzckjkhyj .gt_first_summary_row {
+#outxwjduaq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_first_summary_row.thick {
+#outxwjduaq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#crzckjkhyj .gt_last_summary_row {
+#outxwjduaq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -728,7 +782,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_grand_summary_row {
+#outxwjduaq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -738,7 +792,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#crzckjkhyj .gt_first_grand_summary_row {
+#outxwjduaq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -748,7 +802,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_last_grand_summary_row_top {
+#outxwjduaq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -758,11 +812,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_striped {
+#outxwjduaq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#crzckjkhyj .gt_table_body {
+#outxwjduaq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -771,7 +825,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_footnotes {
+#outxwjduaq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -785,7 +839,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_footnote {
+#outxwjduaq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -794,7 +848,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#crzckjkhyj .gt_sourcenotes {
+#outxwjduaq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -808,7 +862,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#crzckjkhyj .gt_sourcenote {
+#outxwjduaq .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -816,72 +870,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#crzckjkhyj .gt_left {
+#outxwjduaq .gt_left {
   text-align: left;
 }
 
-#crzckjkhyj .gt_center {
+#outxwjduaq .gt_center {
   text-align: center;
 }
 
-#crzckjkhyj .gt_right {
+#outxwjduaq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#crzckjkhyj .gt_font_normal {
+#outxwjduaq .gt_font_normal {
   font-weight: normal;
 }
 
-#crzckjkhyj .gt_font_bold {
+#outxwjduaq .gt_font_bold {
   font-weight: bold;
 }
 
-#crzckjkhyj .gt_font_italic {
+#outxwjduaq .gt_font_italic {
   font-style: italic;
 }
 
-#crzckjkhyj .gt_super {
+#outxwjduaq .gt_super {
   font-size: 65%;
 }
 
-#crzckjkhyj .gt_footnote_marks {
+#outxwjduaq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#crzckjkhyj .gt_asterisk {
+#outxwjduaq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#crzckjkhyj .gt_indent_1 {
+#outxwjduaq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#crzckjkhyj .gt_indent_2 {
+#outxwjduaq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#crzckjkhyj .gt_indent_3 {
+#outxwjduaq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#crzckjkhyj .gt_indent_4 {
+#outxwjduaq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#crzckjkhyj .gt_indent_5 {
+#outxwjduaq .gt_indent_5 {
   text-indent: 25px;
 }
 
-#crzckjkhyj .katex-display {
+#outxwjduaq .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#crzckjkhyj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#outxwjduaq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1332,24 +1386,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="iliwrrtxdb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ziycwqgxsz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#iliwrrtxdb table {
+#ziycwqgxsz table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#iliwrrtxdb thead, #iliwrrtxdb tbody, #iliwrrtxdb tfoot, #iliwrrtxdb tr, #iliwrrtxdb td, #iliwrrtxdb th {
+#ziycwqgxsz thead, #ziycwqgxsz tbody, #ziycwqgxsz tfoot, #ziycwqgxsz tr, #ziycwqgxsz td, #ziycwqgxsz th {
   border-style: none;
 }
 
-#iliwrrtxdb p {
+#ziycwqgxsz p {
   margin: 0;
   padding: 0;
 }
 
-#iliwrrtxdb .gt_table {
+#ziycwqgxsz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1375,12 +1429,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_caption {
+#ziycwqgxsz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#iliwrrtxdb .gt_title {
+#ziycwqgxsz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1392,7 +1446,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#iliwrrtxdb .gt_subtitle {
+#ziycwqgxsz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1404,7 +1458,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#iliwrrtxdb .gt_heading {
+#ziycwqgxsz .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -1416,13 +1470,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_bottom_border {
+#ziycwqgxsz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_col_headings {
+#ziycwqgxsz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -1437,7 +1491,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_col_heading {
+#ziycwqgxsz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1457,7 +1511,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#iliwrrtxdb .gt_column_spanner_outer {
+#ziycwqgxsz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1469,15 +1523,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#iliwrrtxdb .gt_column_spanner_outer:first-child {
+#ziycwqgxsz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#iliwrrtxdb .gt_column_spanner_outer:last-child {
+#ziycwqgxsz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#iliwrrtxdb .gt_column_spanner {
+#ziycwqgxsz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1489,11 +1543,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#iliwrrtxdb .gt_spanner_row {
+#ziycwqgxsz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#iliwrrtxdb .gt_group_heading {
+#ziycwqgxsz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1519,7 +1573,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#iliwrrtxdb .gt_empty_group_heading {
+#ziycwqgxsz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1534,15 +1588,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#iliwrrtxdb .gt_from_md > :first-child {
+#ziycwqgxsz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#iliwrrtxdb .gt_from_md > :last-child {
+#ziycwqgxsz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#iliwrrtxdb .gt_row {
+#ziycwqgxsz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1561,7 +1615,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#iliwrrtxdb .gt_stub {
+#ziycwqgxsz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1574,7 +1628,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#iliwrrtxdb .gt_stub_row_group {
+#ziycwqgxsz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1588,15 +1642,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#iliwrrtxdb .gt_row_group_first td {
+#ziycwqgxsz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#iliwrrtxdb .gt_row_group_first th {
+#ziycwqgxsz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#iliwrrtxdb .gt_summary_row {
+#ziycwqgxsz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1606,16 +1660,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#iliwrrtxdb .gt_first_summary_row {
+#ziycwqgxsz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_first_summary_row.thick {
+#ziycwqgxsz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#iliwrrtxdb .gt_last_summary_row {
+#ziycwqgxsz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1625,7 +1679,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_grand_summary_row {
+#ziycwqgxsz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1635,7 +1689,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#iliwrrtxdb .gt_first_grand_summary_row {
+#ziycwqgxsz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1645,7 +1699,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_last_grand_summary_row_top {
+#ziycwqgxsz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1655,11 +1709,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_striped {
+#ziycwqgxsz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#iliwrrtxdb .gt_table_body {
+#ziycwqgxsz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1668,7 +1722,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_footnotes {
+#ziycwqgxsz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1682,7 +1736,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_footnote {
+#ziycwqgxsz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1691,7 +1745,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#iliwrrtxdb .gt_sourcenotes {
+#ziycwqgxsz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1705,7 +1759,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#iliwrrtxdb .gt_sourcenote {
+#ziycwqgxsz .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1713,72 +1767,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#iliwrrtxdb .gt_left {
+#ziycwqgxsz .gt_left {
   text-align: left;
 }
 
-#iliwrrtxdb .gt_center {
+#ziycwqgxsz .gt_center {
   text-align: center;
 }
 
-#iliwrrtxdb .gt_right {
+#ziycwqgxsz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#iliwrrtxdb .gt_font_normal {
+#ziycwqgxsz .gt_font_normal {
   font-weight: normal;
 }
 
-#iliwrrtxdb .gt_font_bold {
+#ziycwqgxsz .gt_font_bold {
   font-weight: bold;
 }
 
-#iliwrrtxdb .gt_font_italic {
+#ziycwqgxsz .gt_font_italic {
   font-style: italic;
 }
 
-#iliwrrtxdb .gt_super {
+#ziycwqgxsz .gt_super {
   font-size: 65%;
 }
 
-#iliwrrtxdb .gt_footnote_marks {
+#ziycwqgxsz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#iliwrrtxdb .gt_asterisk {
+#ziycwqgxsz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#iliwrrtxdb .gt_indent_1 {
+#ziycwqgxsz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#iliwrrtxdb .gt_indent_2 {
+#ziycwqgxsz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#iliwrrtxdb .gt_indent_3 {
+#ziycwqgxsz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#iliwrrtxdb .gt_indent_4 {
+#ziycwqgxsz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#iliwrrtxdb .gt_indent_5 {
+#ziycwqgxsz .gt_indent_5 {
   text-indent: 25px;
 }
 
-#iliwrrtxdb .katex-display {
+#ziycwqgxsz .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#iliwrrtxdb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#ziycwqgxsz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2223,7 +2277,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>How to make a simple map using the <code>usmap::</code> package</li>
 <li>How to make a clean and visually appealing table using the <code>gt::</code> package</li>
 </ul>
-<p>In <a href="https://mrafa3.github.io/posts/2024-08-20-tidycensus-exploration-pt2/">Part Two</a> of my <code>tidycensus::</code> work, I’ll walk through how to pull longitudinal data from Census products using the <code>tidycensus::</code> API.</p>
 
 
 </section>
