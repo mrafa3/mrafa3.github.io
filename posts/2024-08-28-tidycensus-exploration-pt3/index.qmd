@@ -1,6 +1,6 @@
 ---
-title: "Part Two: Wrangling Census data for longitudinal analysis of child poverty"
-description: "This post shows how to fetch many years of data simply, unlocking longitudinal analysis of Census data"
+title: "Part Three: Exploring even smaller geographies with tidycensus"
+description: "This post shows how to fetch data at smaller scales for analysis of Census data"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
@@ -9,7 +9,7 @@ date: 08-20-2024
 categories: [R, tidyverse, tidycensus, api, javascript, purrr] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-image: facet_region.png
+# image: facet_region.png
 draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
@@ -20,6 +20,10 @@ editor:
 
 In [Part One](https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/), I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the `tidycensus::` package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling. In this post, I'll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I'll unpack some of the trends seen in child poverty in Colorado.
 
+In [Part Two]()
+
+In this post, I'd like to drill down further -- to the Census block level -- to demonstrate how to fetch, wrangle, and visualize data using `tidycensus::`.
+
 ## Setup
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
@@ -28,7 +32,6 @@ library(tidycensus)
 library(scales)
 library(janitor)
 library(gt)
-library(zoo)
 
 # census_api_key('INSERT KEY HERE')
 ```
@@ -71,13 +74,22 @@ With the `tidycensus::` package, I can gather 5-year ACS data for these series f
 
 ## Fetching from the `tidycensus::` API
 
-```{r year_acs, include=TRUE}
+```{r year_acs, include=FALSE}
 years <- seq(2009, 2022) %>% 
   # no 2020 data from the ACS
   setdiff(2020)
 ```
 
-Next, I'll define a function to fetch the ACS data for each year in the vector.
+
+In Part One, I used the `usmap::` package to quickly map state and county-level data. This package is handy for a quick US map, but it does have limitations, including:
+
+*  It doesn't map using ggplot2, so it's less customizable than I like, and
+*  It's only built for US maps of states and counties (and in this post, I want to map smaller areas).
+
+Fortunately, `tidycensus::` is built for this, too! The `get_decennial()` and `get_acs()` functions have an argument for `geometry=`, which if set to TRUE, will return the polygons for your data along with the fields requested in the API call.
+
+
+
 
 ```{r fetch_poverty_data, include=TRUE}
 # Define a function to fetch ACS data for a given year
@@ -85,6 +97,7 @@ fetch_acs_data <- function(year) {
   get_acs(geography = "county", 
           state = "Colorado",
           variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
+          
           year = year,
           output = 'wide')
 }
