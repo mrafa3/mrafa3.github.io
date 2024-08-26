@@ -31,6 +31,7 @@ library(scales)
 library(janitor)
 library(gt)
 library(zoo)
+library(glue)
 
 # census_api_key('INSERT KEY HERE')
 ```
@@ -62,7 +63,7 @@ state-level child poverty data available from the U.S. Census Bureau, and I want
 
 First, let's revisit the different American Community Survey products -- **ACS-1** and **ACS-5**.
 
-*What's the difference between these, and how do you choose which survey product to use for your purposes?*[^1]
+*What's the difference between these, and how do you choose which survey product to use for your purposes?*
 
 
 | Feature                    | ACS 1-Year Estimates                                 | ACS 5-Year Estimates                               |
@@ -100,7 +101,7 @@ As I did in Part One, I'll use the following series from the American Community 
 
 
 ```{r year_acs, include=TRUE}
-years <- seq(2009, 2022) %>% 
+years <- seq(2005, 2022) %>% 
   # no 2020 data from the ACS
   setdiff(2020)
 ```
@@ -229,31 +230,58 @@ combined_acs_data <- combined_acs_data %>%
 # Analysis 
 
 
-```{r plot_margin_error, include=FALSE}
-combined_acs_data %>% 
-  filter(year == 2022) %>% 
-  # filter(year %in% c(2018, 2019, 2020, 2021, 2022)) %>% 
-  ggplot(.,
-         aes(x=u5_male_pov_estimate,
-             y=reorder(county, u5_male_pov_estimate))) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = u5_male_pov_estimate - u5_male_pov_moe,
-                     xmax = u5_male_pov_estimate + u5_male_pov_moe), height = 0.2) +
-  # ggplot(.,
-  #        aes(x=u5_female_pov_estimate,
-  #            y=reorder(county, u5_female_pov_estimate))) + 
-  # geom_point() + 
-  # geom_errorbarh(aes(xmin = u5_female_pov_estimate - u5_female_pov_moe, 
-  #                    xmax = u5_female_pov_estimate + u5_female_pov_moe), height = 0.2) + 
-  scale_x_continuous(labels = comma) + 
-  # facet_wrap(~year, ncol = 1) + 
-  my.theme
+```{r gender_colors, include=TRUE, echo=FALSE}
+gender_cols <- c(
+  "Female" = "#eb4729", 
+  "Male" = "#1b909a"
+)
 ```
 
-```{r plot_connected_scatter, include=FALSE, fig.height=10, fig.width=8}
+```{r viz_text, include=TRUE, echo=FALSE}
+title_text <- 'Child poverty estimates for Colorado counties'
+subtitle_text <- glue("<span style='color:#eb4729'>**Female**</span> and <span style='color:#1b909a'>**Male**</span> poverty, point estimates and margins of error")
+caption_text <- glue('Source: American Community Survey 2022 1-year estimate<br>ACS-1 estimates only available for counties with more than 65,000 people')
+```
+
+```{r plot_margin_error, include=TRUE, fig.width=10, fig.height=6.2, fig.align='center'}
+combined_acs_data %>%
+  select(county, year, 
+         u5_male_pov_estimate, u5_male_pov_moe, u5_female_pov_estimate, u5_female_pov_moe) %>% 
+  filter(year == 2022) %>%
+  pivot_longer(
+    cols = 3:6,
+    names_to = "variable",
+    values_to = "estimate"
+  ) %>%
+  mutate(gender = if_else(str_detect(variable, "female"), "Female", "Male"),
+         variable_type = if_else(str_detect(variable, "moe"), "moe", "estimate")) %>%
+  select(-variable) %>% 
+  spread(variable_type, estimate) %>% 
+  ggplot(.,
+         aes(x=estimate, 
+             y=reorder(county, estimate), 
+             color=gender)) +
+  # facet_wrap(~year) + 
+  geom_point(position = position_dodge(width = 1)) +
+  geom_errorbarh(aes(xmin=estimate - moe, 
+                     xmax=estimate + moe), 
+                 height = 0.4,
+                 position = position_dodge(width = 1)) +
+  labs(y='',
+       x='',
+       caption=caption_text) + 
+  ggtitle(title_text,
+          subtitle=subtitle_text) + 
+  scale_x_continuous(labels = comma) + 
+  scale_color_manual(values = gender_cols) + 
+  my.theme + 
+  theme(legend.position = 'none')
+```
+
+```{r plot_connected_scatter, include=TRUE}
 # connected scatter
 combined_acs_data %>% 
-  filter(county == 'Jefferson') %>% 
+  filter(county == 'Denver') %>% 
   ggplot(.,
          aes(x=u5_female_pov_estimate, 
              y=u5_male_pov_estimate)) +
@@ -267,7 +295,41 @@ combined_acs_data %>%
   my.theme
 ```
 
+```{r combined_acs_data3, include=FALSE}
+# If your goal is to communicate change over time, the variability year-over-year might not be necessary. That's where a slope chart comes in! With that chart time, you're summarizing the information by showing only your first and last values, and the linear change between those years.
 
+# combined_acs_data3 <- combined_acs_data %>% 
+#   group_by(county, region) %>% 
+#   filter(year %in% c('2009', '2022'))
+```
+
+```{r facet_slope_chart, include=FALSE}
+# combined_acs_data3 %>% 
+#   ggplot(.,
+#          aes(x=year,
+#              y=u5_perc_in_poverty,
+#              group=county)) + 
+#   geom_line() + 
+#   facet_wrap(~region) + 
+#   my.theme
+```
+
+
+
+
+
+# Conclusion
+
+In this `tidycensus::` post, I demonstrated:
+
+-   How to fetch data across multiple years from the U.S. Census Bureau and wrangle the data for longitudinal analysis
+-   How to move between R or Python objects and Observable JS objects in Quarto 
+-   How to make some simple interactive graphics with Observable Plot
+
+More to come on poverty analysis in future posts!
+
+
+# Boneyard: Observable Plot
 
 For the graphics, I'll use Observable Plot to build some interactive graphics (this can be done with R, but I want to experiment more with what Javascript can do).
 
@@ -279,7 +341,7 @@ To use Observable Plot in Quarto, you need to first have your data object define
 Note that, if you choose the latter (which I'll do here), this object only operates when your site or knitr document is rendered (meaning, it won't execute as a code chunk like you can with R, Python, or SQL in Quarto).
 
 
-```{r ojs_define_chunk, include=TRUE}
+```{r ojs_define_chunk, include=FALSE}
 ojs_define(ojsd = combined_acs_data)
 ```
 
@@ -287,7 +349,7 @@ ojs_define(ojsd = combined_acs_data)
 Then, I'll create a line plot of child poverty by county over time, faceting by region.
 
 
-```{ojs plot_ojs_line, include=TRUE}
+```{ojs plot_ojs_line, include=FALSE}
 Plot.plot({
   <!-- using options from here to learn: https://observablehq.com/plot/features/facets -->
   title: "Child poverty (%) in Colorado by county",
@@ -336,17 +398,17 @@ Some comments on the above:
 *  Aside from the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. I'll rebuild this chart, using a 3-year moving average with the `zoo::rollmean()` function.
 
 
-```{r combined_acs_data2, include=TRUE}
+```{r combined_acs_data2, include=FALSE}
 combined_acs_data2 <- combined_acs_data %>% 
   group_by(county) %>%
   mutate(u5_perc_poverty_3_yr_moving_avg = rollmean(u5_perc_in_poverty, k=3, fill=NA, align='right'))
 ```
 
-```{r define_ojsd2, include=TRUE, echo=FALSE}
+```{r define_ojsd2, include=FALSE, echo=FALSE}
 ojs_define(ojsd2 = combined_acs_data2)
 ```
 
-```{ojs plot_ojs_line2, include=TRUE, echo=FALSE}
+```{ojs plot_ojs_line2, include=FALSE, echo=FALSE}
 Plot.plot({
   <!-- using options from here to learn: https://observablehq.com/plot/features/facets -->
   title: "Child poverty (%) in Colorado by county",
@@ -425,32 +487,3 @@ Plot.plot({
 })
 ```
 
-```{r combined_acs_data3, include=FALSE}
-# If your goal is to communicate change over time, the variability year-over-year might not be necessary. That's where a slope chart comes in! With that chart time, you're summarizing the information by showing only your first and last values, and the linear change between those years.
-
-# combined_acs_data3 <- combined_acs_data %>% 
-#   group_by(county, region) %>% 
-#   filter(year %in% c('2009', '2022'))
-```
-
-```{r facet_slope_chart, include=FALSE}
-# combined_acs_data3 %>% 
-#   ggplot(.,
-#          aes(x=year,
-#              y=u5_perc_in_poverty,
-#              group=county)) + 
-#   geom_line() + 
-#   facet_wrap(~region) + 
-#   my.theme
-```
-
-
-# Conclusion
-
-In this `tidycensus::` post, I demonstrated:
-
--   How to fetch data across multiple years from the U.S. Census Bureau and wrangle the data for longitudinal analysis
--   How to move between R or Python objects and Observable JS objects in Quarto 
--   How to make some simple interactive graphics with Observable Plot
-
-More to come on poverty analysis in future posts!
