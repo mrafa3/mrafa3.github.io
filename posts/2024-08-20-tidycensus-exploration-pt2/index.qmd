@@ -54,7 +54,35 @@ my.theme <- theme(
 
 # Data
 
-For this demo, I'll use the following series from the American Community Survey (ACS):
+For this analysis, I'm interested in looking at the most recent
+state-level child poverty data available from the U.S. Census Bureau, and I want to construct a longitudinal sense of the change in child poverty. 
+
+First, let's revisit the different American Community Survey products -- **ACS-1** and **ACS-5**.
+
+*What's the difference between these, and how do you choose which survey product to use for your purposes?*[^1]
+
+
+| Feature                    | ACS 1-Year Estimates                                 | ACS 5-Year Estimates                               |
+|----------------------------|-----------------------------------------------------|---------------------------------------------------|
+| Data Collection Period      | 12 months                                           | 60 months                                         |
+| Population Coverage         | Areas with 65,000 or more people                    | All geographic areas, including those with fewer than 65,000 people |
+| Sample Size                 | Smallest                                            | Largest                                           |
+| Reliability                 | Less reliable due to smaller sample size            | More reliable due to larger sample size            |
+| Currency                    | Most current data                                   | Less current, includes older data                 |
+| Release Frequency           | Annually                                            | Annually                                          |
+| Best Used For               | Analyzing large populations, when currency is more important than precision | Analyzing small populations, where precision is more important than currency |
+| Example Usage               | Examining recent economic changes                   | Examining trends in small geographic areas or small population subgroups |
+
+
+In Part One, I wanted to fetch the most recent, reliable estimates for state-level and county-level poverty data, which led me to use the 5-year estimates. For this post, I am interested in constructing a longitudinal dataset of the most recent year-on-year estimates. If I again used the 5-year estimates, I would be comparing results across years that include much of the same sampling period (as shown in the graphic below).
+
+![The ACS-5 product has a 60-month sampling period for each annual release, meaning that 48 months of sampling overlap with each annual ACS-5 release[^1]](acs_sample_explained.png)
+
+[^1]: Screenshot taken from the ACS 2018 Handbook, found here: https://www.census.gov/content/dam/Census/library/publications/2018/acs/acs_general_handbook_2018_ch03.pdf.
+
+For this analysis, I'll use the 1-year estimates from the American Community Survey, which will limit my ability to analyze changes in geographic units with populations greater than 65,000.
+
+As I did in Part One, I'll use the following series from the American Community Survey:
 
 -   *B01001_003*: Estimate!!Total:!!Male:!!Under 5 years (all racial
     groups)
@@ -64,10 +92,6 @@ For this demo, I'll use the following series from the American Community Survey 
     poverty level:!!Male:!!Under 5 years
 -   *B17001_018*: Estimate!!Total:!!Income in the past 12 months below
     poverty level:!!Female:!!Under 5 years
-
-With the `tidycensus::` package, I can gather 5-year ACS data for these series from 2009 to 2022.[^1]
-
-[^1]: According to the `tidycensus::` documentation, 5-year ACS data is available from 2009 through 2022, with the exception of 2020.
 
 ## Fetching from the `tidycensus::` API
 
@@ -84,6 +108,7 @@ Next, I'll define a function to fetch the ACS data for each year in the vector.
 fetch_acs_data <- function(year) {
   get_acs(geography = "county", 
           state = "Colorado",
+          survey = 'acs1',
           variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
           year = year,
           output = 'wide')
@@ -139,11 +164,10 @@ name_cols <- c('geoid', 'county_state',
 colnames(combined_acs_data) <- name_cols
 ```
 
-*  Dropping the margin of error fields
-
-```{r drop_cols, include=TRUE}
-combined_acs_data <- combined_acs_data %>% 
-  select(-contains("moe"))
+```{r drop_cols, include=FALSE}
+# *  Dropping the margin of error fields
+# combined_acs_data <- combined_acs_data %>% 
+#   select(-contains("moe"))
 ```
 
 *  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
@@ -169,6 +193,7 @@ combined_acs_data <- combined_acs_data %>%
 colorado_regions <- read_csv('.//data/colorado_regions.csv', show_col_types = FALSE) %>%
   mutate(region = as.factor(region))
 ```
+
 *  (Finally) creating the `combined_acs_data` dataframe for longitudinal analysis
 
 ```{r join_colorado_regions, include=TRUE}
@@ -180,14 +205,44 @@ combined_acs_data <- combined_acs_data %>%
 
 # Analysis 
 
-```{r lineplot_gg, include=FALSE}
+```{r plot_margin_error, include=FALSE}
 combined_acs_data %>% 
+  filter(year == 2022) %>% 
+  # filter(year %in% c(2018, 2019, 2020, 2021, 2022)) %>% 
+  # ggplot(.,
+  #        aes(x=u5_male_pov_estimate,
+  #            y=reorder(county, u5_male_pov_estimate))) + 
+  # geom_point() + 
+  # geom_errorbarh(aes(xmin = u5_male_pov_estimate - u5_male_pov_moe, 
+  #                    xmax = u5_male_pov_estimate + u5_male_pov_moe), height = 0.2) + 
   ggplot(.,
-         aes(x=year,
-             y=u5_perc_in_poverty,
-             group=county)) + 
-  geom_line()
+         aes(x=u5_female_pov_estimate,
+             y=reorder(county, u5_female_pov_estimate))) + 
+  geom_point() + 
+  geom_errorbarh(aes(xmin = u5_female_pov_estimate - u5_female_pov_moe, 
+                     xmax = u5_female_pov_estimate + u5_female_pov_moe), height = 0.2) + 
+  scale_x_continuous(labels = comma) + 
+  # facet_wrap(~year, ncol = 1) + 
+  my.theme
 ```
+
+```{r plot_connected_scatter, include=FALSE, fig.height=10, fig.width=8}
+# connected scatter
+combined_acs_data %>% 
+  filter(county == 'Jefferson') %>% 
+  ggplot(.,
+         aes(x=u5_female_pov_estimate, 
+             y=u5_male_pov_estimate)) +
+  geom_point() +
+  geom_text(aes(label=year)) + 
+  geom_segment(aes(
+       xend=c(tail(u5_female_pov_estimate, n=-1), NA), 
+       yend=c(tail(u5_male_pov_estimate, n=-1), NA)),
+       color='gray90') + 
+  # facet_wrap(~county, ncol = 1) + 
+  my.theme
+```
+
 
 For the graphics, I'll use Observable Plot to build some interactive graphics (this can be done with R, but I want to experiment more with what Javascript can do).
 

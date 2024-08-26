@@ -40,7 +40,7 @@ library(gt)
 my.theme <- theme(
   plot.title = ggtext::element_textbox_simple(face="bold", size=24, margin=margin(b=5)),
   plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14, margin=margin(b=10)),
-  plot.caption = ggtext::element_textbox_simple(color="#444444"),
+  plot.caption = element_text(color="#444444"),
   axis.title = element_text(color="black", face="bold", size=12), 
   axis.text = element_text(color="black", size=18), 
   axis.ticks = element_blank(), 
@@ -57,7 +57,7 @@ my.theme <- theme(
 
 # Data
 
-For this demo, I'll use the following series from the American Community Survey (ACS):
+As I did in Part One, I'll use the following series from the American Community Survey (ACS):
 
 -   *B01001_003*: Estimate!!Total:!!Male:!!Under 5 years (all racial
     groups)
@@ -71,6 +71,10 @@ For this demo, I'll use the following series from the American Community Survey 
 With the `tidycensus::` package, I can gather 5-year ACS data for these series from 2009 to 2022.[^1]
 
 [^1]: According to the `tidycensus::` documentation, 5-year ACS data is available from 2009 through 2022, with the exception of 2020.
+
+
+
+
 
 ## Fetching from the `tidycensus::` API
 
@@ -87,6 +91,32 @@ In Part One, I used the `usmap::` package to quickly map state and county-level 
 *  It's only built for US maps of states and counties (and in this post, I want to map smaller areas).
 
 Fortunately, `tidycensus::` is built for this, too! The `get_decennial()` and `get_acs()` functions have an argument for `geometry=`, which if set to TRUE, will return the polygons for your data along with the fields requested in the API call.
+
+
+```{r}
+acs_data_block_group <- get_acs(
+  geography = "block group",
+  state = "CO",
+  county = "Denver",
+  variables = 'B19013_001',
+  year = 2022,
+  survey = "acs5",
+  geometry = TRUE
+)
+
+# Plot the data using ggplot2
+acs_data_block_group %>% 
+  data_frame() %>%
+  filter(variable == 'B19013_001') %>% 
+  # filter(county == 'Denver County') %>% 
+  ggplot(.) +
+  geom_sf(aes(fill = estimate), color = NA) +
+  scale_fill_viridis_c(option = "plasma", name = "Median Household Income") +
+  labs(title = "Median Household Income by Block Group in Denver County, CO (ACS 2022)",
+       caption = "Source: US Census Bureau, ACS 5-year estimates") +
+  theme_minimal()
+```
+
 
 
 # Conclusion
