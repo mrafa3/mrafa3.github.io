@@ -240,7 +240,7 @@ combined_acs_data %>%
              color=gender)) +
   # facet_wrap(~year) + 
   geom_point(position = position_dodge(width = 1)) +
-  geom_errorbarh(aes(xmin=estimate - moe, 
+  geom_errorbarh(aes(xmin=if_else(estimate - moe < 0, estimate - estimate, estimate - moe), 
                      xmax=estimate + moe), 
                  height = 0.4,
                  position = position_dodge(width = 1)) +
