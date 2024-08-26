@@ -440,5 +440,3 @@ In this first `tidycensus::` post, I demonstrated:
 -   How to make a simple map using the `usmap::` package
 -   How to make a clean and visually appealing table using the `gt::`
     package
-
-In [Part Two](https://mrafa3.github.io/posts/2024-08-20-tidycensus-exploration-pt2/) of my `tidycensus::` work, I'll walk through how to pull longitudinal data from Census products using the `tidycensus::` API.
