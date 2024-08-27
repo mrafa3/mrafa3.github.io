@@ -255,8 +255,10 @@ combined_acs_data %>%
   ggplot(.,
          aes(x=u5_female_pov_estimate, 
              y=u5_male_pov_estimate)) +
-  geom_point() +
-  geom_text(aes(label=as.factor(year)), nudge_y = 1) + 
+  geom_point(color='gray80') +
+  geom_text(aes(label=as.factor(year)), nudge_y = 1, size = 10) + 
+  scale_x_continuous(labels = comma) + 
+  scale_y_continuous(labels = comma) + 
   my.theme + 
   transition_states(
     year,
