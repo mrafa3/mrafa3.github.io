@@ -106,7 +106,6 @@ acs_data_block_group <- get_acs(
 
 # Plot the data using ggplot2
 acs_data_block_group %>% 
-  data_frame() %>%
   filter(variable == 'B19013_001') %>% 
   # filter(county == 'Denver County') %>% 
   ggplot(.) +

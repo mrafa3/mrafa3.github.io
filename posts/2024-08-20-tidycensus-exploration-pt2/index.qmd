@@ -27,6 +27,7 @@ library(tidyverse)
 library(tidycensus)
 library(scales)
 library(janitor)
+library(gganimate)
 library(gt)
 library(zoo)
 library(glue)
@@ -36,7 +37,7 @@ library(glue)
 
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
-  plot.title = ggtext::element_textbox_simple(face="bold", size=24, margin=margin(b=5)),
+  plot.title = ggtext::element_textbox_simple(face="bold", size=22, margin=margin(b=5)),
   plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14, margin=margin(b=10)),
   plot.caption = ggtext::element_textbox_simple(color="#444444"),
   axis.title = element_text(color="black", face="bold", size=12), 
@@ -81,7 +82,7 @@ In Part One, I wanted to fetch the most recent, reliable estimates for state-lev
 
 [^1]: Screenshot taken from the ACS 2018 Handbook, found here: https://www.census.gov/content/dam/Census/library/publications/2018/acs/acs_general_handbook_2018_ch03.pdf.
 
-For this analysis, I'll use the 1-year estimates from the American Community Survey, which will limit my ability to analyze changes in geographic units with populations greater than 65,000.
+For this analysis, I'll use the **1-year estimates** from the American Community Survey, which will limit my ability to analyze changes in geographic units with populations greater than 65,000.
 
 As I did in Part One, I'll use the following series from the American Community Survey:
 
@@ -105,7 +106,6 @@ years <- seq(2005, 2022) %>%
 Next, I'll define a function to fetch the ACS data for each year in the vector.
 
 ```{r fetch_poverty_data, include=TRUE}
-# Define a function to fetch ACS data for a given year
 fetch_acs_data <- function(year) {
   get_acs(geography = "county", 
           state = "Colorado",
@@ -165,12 +165,6 @@ name_cols <- c('geoid', 'county_state',
 colnames(combined_acs_data) <- name_cols
 ```
 
-```{r drop_cols, include=FALSE}
-# *  Dropping the margin of error fields
-# combined_acs_data <- combined_acs_data %>% 
-#   select(-contains("moe"))
-```
-
 *  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
 
 ```{r df_mutate, include=TRUE, results='hide'}
@@ -214,7 +208,7 @@ gender_cols <- c(
 ```
 
 ```{r viz_text, include=TRUE, echo=FALSE}
-title_text <- 'Child poverty estimates for Colorado counties'
+title_text <- 'Child poverty estimates for Colorado counties in 2022 (under 5 years old)'
 subtitle_text <- glue("<span style='color:#eb4729'>**Female**</span> and <span style='color:#1b909a'>**Male**</span> poverty, point estimates and margins of error")
 caption_text <- glue('Source: American Community Survey 2022 1-year estimate<br>ACS-1 estimates only available for counties with more than 65,000 people')
 ```
@@ -245,7 +239,7 @@ combined_acs_data %>%
                  height = 0.4,
                  position = position_dodge(width = 1)) +
   labs(y='',
-       x='',
+       x='\nNumber of children below the poverty line\n',
        caption=caption_text) + 
   ggtitle(title_text,
           subtitle=subtitle_text) + 
@@ -262,13 +256,18 @@ combined_acs_data %>%
          aes(x=u5_female_pov_estimate, 
              y=u5_male_pov_estimate)) +
   geom_point() +
-  geom_text(aes(label=year)) + 
-  geom_segment(aes(
-       xend=c(tail(u5_female_pov_estimate, n=-1), NA), 
-       yend=c(tail(u5_male_pov_estimate, n=-1), NA)),
-       color='gray90') + 
-  # facet_wrap(~county, ncol = 1) + 
-  my.theme
+  geom_text(aes(label=as.factor(year)), nudge_y = 1) + 
+  my.theme + 
+  transition_states(
+    year,
+    transition_length = 10,
+    state_length = 6,
+    wrap = TRUE) +  
+  shadow_wake(wake_length = 3,
+              exclude_layer = 2) + 
+  enter_fade() + 
+  exit_shrink() +
+  ease_aes()
 ```
 
 
