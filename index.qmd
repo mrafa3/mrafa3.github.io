@@ -42,3 +42,13 @@ Let's connect! Feel free to reach out to me on LinkedIn or send me an email.
 **Sr. Manager, Employer Analytics** \| Guild Education
 
 **Assistant Director of Research** \| Pardee Center for International Futures, University of Denver
+
+<br>
+
+**Peer-Reviewed Publications**
+
+------------------------------------------------------------------------
+
+Moyer, J., Matthews, A., **Rafa, M.**, Xiong, Y. “[Identifying Patterns in the Structural Drivers of Intrastate Conflict](https://www.cambridge.org/core/journals/british-journal-of-political-science/article/identifying-patterns-in-the-structural-drivers-of-intrastate-conflict/7A49F2D13F941D5671BF4DF143A54293).” British Journal of Political Science. (2022).
+
+Wang, X., **Rafa, M**., Moyer, J., Li, J., Scheer, J., Sutton, P. “[Estimation and Mapping of Sub-National GDP in Uganda Using NPP-VIIRS Imagery](https://www.mdpi.com/2072-4292/11/2/163).” Remote Sensing. (2019).

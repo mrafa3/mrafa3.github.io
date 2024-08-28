@@ -27,7 +27,7 @@ library(tidyverse)
 library(tidycensus)
 library(scales)
 library(janitor)
-library(gganimate)
+# library(gganimate)
 library(gt)
 library(zoo)
 library(glue)
@@ -105,80 +105,78 @@ years <- seq(2005, 2022) %>%
 
 Next, I'll define a function to fetch the ACS data for each year in the vector.
 
+```{r include=FALSE}
+# exploring whether this should be structured differently, perhaps with a table
+
+# var_table <- load_variables(2022, dataset = "acs1") %>% 
+#   filter(str_detect(name, "B01001*"))
+# 
+# var_table2 <- load_variables(2022, dataset = "acs1") %>% 
+#   filter(str_detect(name, "B17001*"))
+# 
+# acs_df <- get_acs(
+#   geography = "county",
+#   state = "CO",
+#   survey = "acs1",
+#   table = "B17001",
+#   # summary_var = "B01001",
+#   year = 2022
+# ) %>%
+#   left_join(x=.,
+#             y=var_table2,
+#             by=c("variable" = "name"))
+```
+
+
 ```{r fetch_poverty_data, include=TRUE}
 fetch_acs_data <- function(year) {
   get_acs(geography = "county", 
           state = "Colorado",
           survey = 'acs1',
-          variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
+          variables = c(male_u5_pop = 'B01001_003', 
+                        female_u5_pop = 'B01001_027', 
+                        male_u5_poverty = 'B17001_004', 
+                        female_u5_poverty = 'B17001_018'),
           year = year,
-          output = 'wide')
+          output = 'wide') %>% 
+    mutate(year = year)
 }
+
+# may not need the output = 'wide' -- can instead use a summary_var
+# purrr::map_df(year, function(year) {
+#   get_acs(
+#     geography = "county", 
+#           state = "Colorado",
+#           survey = 'acs1',
+#           variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
+#           year = year,
+#           output = 'wide'
+#   )
+# )
 ```
 
-Then, I'll map the years vector to the `fetch_acs_data()` function that I created.
+Then, I'll use `purrr::map_df()` to apply each year to the `fetch_acs_data()` function that I created, which will result in a single dataframe of all years.
 
-```{r acs_data_list, include=TRUE}
-# Use map() to apply fetch_acs_data to each year
-acs_data_list <- map(years, fetch_acs_data)
+```{r combined_acs_data, include=TRUE}
+combined_acs_data <- map_df(years, fetch_acs_data)
 ```
 
 ## Data wrangling
-
-Then, I'll create a `year` field for each dataframe in the list, so that I can create one, multi-year dataframe.
-
-```{r map2_acs_data_list, include=TRUE}
-acs_data_list <- map2(acs_data_list, years, ~ mutate(.x, year = .y))
-```
-
-Now, I'll bind all of the ACS years together into a single dataframe for analysis.
-
-```{r combined_acs_data, include=TRUE}
-combined_acs_data <- bind_rows(acs_data_list)
-```
-
-```{r extract_acs_data, include=FALSE}
-# If I wanted to write each year to the global environment, here's how
-# extract_acs_data <- function(data_list, prefix = "acs_") {
-#   walk2(
-#     names(data_list),
-#     data_list,
-#     ~ assign(paste0(prefix, .x), .y, envir = .GlobalEnv)
-#   )
-# }
-
-# extract_acs_data(acs_data_list)
-```
-
-Then, I'll follow the same data wrangling steps from Part One:
-
-*  Updating the column names to be more user-friendly
-
-```{r update_colnames, include=TRUE}
-name_cols <- c('geoid', 'county_state', 
-               'u5_male_estimate', 'u5_male_moe', 
-               'u5_female_estimate', 'u5_female_moe',
-               'u5_male_pov_estimate', 'u5_male_pov_moe',
-               'u5_female_pov_estimate', 'u5_female_pov_moe',
-               'year')
-
-colnames(combined_acs_data) <- name_cols
-```
 
 *  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
 
 ```{r df_mutate, include=TRUE, results='hide'}
 combined_acs_data <- combined_acs_data %>% 
-  mutate(u5_pop_total = u5_male_estimate + u5_female_estimate,
-         u5_pov_total = u5_male_pov_estimate + u5_female_pov_estimate,
-         u5_perc_in_poverty = u5_pov_total / u5_pop_total)
+  mutate(total_u5_popE = male_u5_popE + female_u5_popE,
+         total_u5_povertyE = male_u5_povertyE + female_u5_povertyE,
+         perc_u5_poverty = total_u5_povertyE / total_u5_popE)
 ```
 
 *  Creating a `county` field that cleans the `county_state` field to only include the county name
 
 ```{r mutate_county_name, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
-  mutate(county = str_remove(county_state, " County.*")) %>% 
+  mutate(county = str_remove(NAME, " County.*")) %>% 
   select(county, everything())
 ```
 
@@ -192,6 +190,7 @@ colorado_regions <- read_csv('.//data/colorado_regions.csv', show_col_types = FA
 *  (Finally) creating the `combined_acs_data` dataframe for longitudinal analysis
 
 ```{r join_colorado_regions, include=TRUE}
+# I may not use these regions
 combined_acs_data <- combined_acs_data %>% 
   left_join(x=.,
             y=colorado_regions,
@@ -200,6 +199,10 @@ combined_acs_data <- combined_acs_data %>%
 
 # Analysis 
 
+Data from the American Community Survey represents results from a sample (in this case, a 1-year sample -- "acs1") that come with a margin of error. Said another way, each data value is considered an estimate with a corresponding margin of error, which the Census Bureau calculates.[^2] Point estimates should be used with caution, and the provided margins of error are key to understanding the uncertainty from the sample around that estimate.
+
+[^2]: By default the `tidycensus::` API provides the margin of error at the 90% confidence interval, but you can change this with the `moe_level` argument within `get_acs()`.
+
 ```{r gender_colors, include=TRUE, echo=FALSE}
 gender_cols <- c(
   "Female" = "#eb4729", 
@@ -207,17 +210,21 @@ gender_cols <- c(
 )
 ```
 
+I'll illustrate this uncertainty in the 2022 ACS-1 poverty data, using the `geom_errorbar()` function from ggplot. 
+
 ```{r viz_text, include=TRUE, echo=FALSE}
 title_text <- 'Child poverty estimates for Colorado counties in 2022 (under 5 years old)'
 subtitle_text <- glue("<span style='color:#eb4729'>**Female**</span> and <span style='color:#1b909a'>**Male**</span> poverty, point estimates and margins of error")
-caption_text <- glue('Source: American Community Survey 2022 1-year estimate<br>ACS-1 estimates only available for counties with more than 65,000 people')
+caption_text <- glue('Source: American Community Survey 2022 1-year estimate<br>Margins of error represent the 90% Confidence Interval<br>ACS-1 estimates only available for counties with more than 65,000 people')
 ```
 
-
 ```{r plot_margin_error, include=TRUE, fig.width=10, fig.height=6.2, fig.align='center'}
+# note that this would be fewer steps if I did another 
+# API call to build the dataframe in tidy format
+
 combined_acs_data %>%
   select(county, year, 
-         u5_male_pov_estimate, u5_male_pov_moe, u5_female_pov_estimate, u5_female_pov_moe) %>% 
+         male_u5_povertyE, male_u5_povertyM, female_u5_povertyE, female_u5_povertyM) %>% 
   filter(year == 2022) %>%
   pivot_longer(
     cols = 3:6,
@@ -225,14 +232,13 @@ combined_acs_data %>%
     values_to = "estimate"
   ) %>%
   mutate(gender = if_else(str_detect(variable, "female"), "Female", "Male"),
-         variable_type = if_else(str_detect(variable, "moe"), "moe", "estimate")) %>%
+         variable_type = if_else(str_detect(variable, "E$"), "estimate", "moe")) %>%
   select(-variable) %>% 
   spread(variable_type, estimate) %>% 
   ggplot(.,
          aes(x=estimate, 
              y=reorder(county, estimate), 
              color=gender)) +
-  # facet_wrap(~year) + 
   geom_point(position = position_dodge(width = 1)) +
   geom_errorbarh(aes(xmin=if_else(estimate - moe < 0, estimate - estimate, estimate - moe), 
                      xmax=estimate + moe), 
@@ -248,48 +254,25 @@ combined_acs_data %>%
   my.theme + 
   theme(legend.position = 'none')
 ```
-```{r plot_connected_scatter, include=TRUE}
-# connected scatter
-# combined_acs_data %>% 
-#   filter(county == 'Denver') %>% 
-#   ggplot(.,
-#          aes(x=u5_female_pov_estimate, 
-#              y=u5_male_pov_estimate)) +
-#   geom_point(color='gray80') +
-#   geom_text(aes(label=as.factor(year)), nudge_y = 1, size = 10) + 
-#   scale_x_continuous(labels = comma) + 
-#   scale_y_continuous(labels = comma) + 
-#   my.theme + 
-#   transition_states(
-#     year,
-#     transition_length = 10,
-#     state_length = 6,
-#     wrap = TRUE) +  
-#   shadow_wake(wake_length = 3,
-#               exclude_layer = 2) + 
-#   enter_fade() + 
-#   exit_shrink() +
-#   ease_aes()
-```
 
+## Margin of Error summary calculations in tidycensus::
 
-```{r combined_acs_data3, include=FALSE}
-# If your goal is to communicate change over time, the variability year-over-year might not be necessary. That's where a slope chart comes in! With that chart time, you're summarizing the information by showing only your first and last values, and the linear change between those years.
-
-# combined_acs_data3 <- combined_acs_data %>% 
-#   group_by(county, region) %>% 
-#   filter(year %in% c('2009', '2022'))
-```
+Here, 
 
 ```{r facet_slope_chart, include=FALSE}
-# combined_acs_data3 %>% 
-#   ggplot(.,
-#          aes(x=year,
-#              y=u5_perc_in_poverty,
-#              group=county)) + 
-#   geom_line() + 
-#   facet_wrap(~region) + 
-#   my.theme
+combined_acs_data %>% 
+  group_by(county, region) %>%
+  # filter(year %in% c('2005', '2022')) %>%
+  ggplot(.,
+         aes(x=year,
+             y=perc_u5_poverty,
+             group=county,
+             alpha = if_else(county == 'Denver', 'Denver', 'Other'))) +
+  geom_line() +
+  scale_alpha_manual(values = c('Denver' = 1,
+                                'Other' = .2)) + 
+  scale_y_continuous(labels = percent) + 
+  my.theme
 ```
 
 
@@ -373,7 +356,7 @@ Some comments on the above:
 ```{r combined_acs_data2, include=FALSE}
 combined_acs_data2 <- combined_acs_data %>% 
   group_by(county) %>%
-  mutate(u5_perc_poverty_3_yr_moving_avg = rollmean(u5_perc_in_poverty, k=3, fill=NA, align='right'))
+  mutate(u5_perc_poverty_3_yr_moving_avg = rollmean(perc_u5_poverty, k=3, fill=NA, align='right'))
 ```
 
 ```{r define_ojsd2, include=FALSE, echo=FALSE}
