@@ -16,6 +16,7 @@ editor:
     wrap: 72
 ---
 
+
 # Introduction
 
 I've used data from the U.S. Census Bureau several times, and for this
@@ -25,6 +26,7 @@ to generate a simple U.S. map, and the `gt::` package to display the
 data in a nice table format.
 
 ## Setup
+
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -55,6 +57,7 @@ my.theme <- theme(
   legend.position = 'top',
   strip.text = element_text(color="black", size=14))
 ```
+
 
 ## Data
 
@@ -93,11 +96,13 @@ query the available data within each survey. Combining this with
 `stringr::str_detect()` is a nice way to search through the tens of
 thousands of data series that are available through the U.S. Census API.
 
+
 ```{r inspect_variables, include=TRUE}
 load_variables(2022, "acs5", cache = TRUE) %>% 
   # used this to search for some Under 5 years variables of interest
   filter(str_detect(label, "Under 5 years"))
 ```
+
 
 For this demo, I'll use the following series:
 
@@ -130,6 +135,7 @@ assist in fetching data from the Census API. Some noteworthy ones include:
     one summary variable, `output='wide'` allows you to grab all of the
     series that you may need in the same call.
 
+
 ```{r get_acs, include=TRUE}
 df <- get_acs(geography = 'state',
         variables = c(male_u5_pop = 'B01001_003', 
@@ -141,16 +147,20 @@ df <- get_acs(geography = 'state',
         output = 'wide')
 ```
 
+
 And for this exercise, I'll also drop the margin of error fields, since
 I'm not doing a statistical analysis that would require it.
+
 
 ```{r drop_cols, include=TRUE}
 # df <- df %>% 
 #   select(-contains("moe"))
 ```
 
+
 Next, I'll create some fields to combine gender-based poverty estimates
 and calculate a percent of the child population measure.
+
 
 ```{r df_mutate, include=TRUE}
 (df <- df %>% 
@@ -177,6 +187,7 @@ df %>%
   my.theme
 ```
 
+
 # Quick mapping with usmap::
 
 The `usmapp::` package makes rendering a map of the US quick and easy.
@@ -187,6 +198,7 @@ and manipulated in earlier steps.
 
 This shows that child poverty is concentrated in southern and
 southeastern states (as a percent of the child population).
+
 
 ```{r plot_u5_poverty, include=TRUE, fig.align='center'}
 (perc_poverty_map <- plot_usmap(regions = 'states',
@@ -200,7 +212,9 @@ southeastern states (as a percent of the child population).
         legend.title = element_blank()))
 ```
 
+
 # Great tables with gt::
+
 
 ```{r read_regions, include=TRUE, echo=FALSE, message=FALSE}
 regions <- read_csv('.//data/census_regions.csv') %>% clean_names()
@@ -284,7 +298,9 @@ df_county <- get_acs(geography = 'county',
   )
 ```
 
+
 # Deep dive: Colorado results 
+
 
 ```{r get_acs_colorado, include=TRUE}
 df_colorado <- get_acs(geography = 'county',
@@ -342,7 +358,6 @@ df_colorado <- df_colorado %>%
 #   mutate(region = factor(region, levels = desired_order))
 ```
 
-
 ```{r create_df_tbl2, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
 (df_tbl2 <- df_colorado %>% 
   select(county, region, total_u5_povertyE, total_u5_popE, perc_u5_in_poverty) %>% 
@@ -398,6 +413,7 @@ df_colorado <- df_colorado %>%
 )
 ```
 
+
 # Conclusion
 
 In this first `tidycensus::` post, I demonstrated:
@@ -410,3 +426,4 @@ In this first `tidycensus::` post, I demonstrated:
 -   How to make a simple map using the `usmap::` package
 -   How to make a clean and visually appealing table using the `gt::`
     package
+
