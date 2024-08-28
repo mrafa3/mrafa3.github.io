@@ -16,11 +16,13 @@ editor:
     wrap: 72
 ---
 
+
 # Introduction
 
 In [Part One](https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/), I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the `tidycensus::` package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling. In this post, I'll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I'll unpack some of the trends seen in child poverty in Colorado.
 
 ## Setup
+
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -53,6 +55,7 @@ my.theme <- theme(
   legend.position = 'top',
   strip.text = element_text(color="black", size=14))
 ```
+
 
 # Data
 
@@ -97,13 +100,16 @@ As I did in Part One, I'll use the following series from the American Community 
 
 ## Fetching from the `tidycensus::` API
 
+
 ```{r year_acs, include=TRUE}
 years <- seq(2005, 2022) %>% 
   # no 2020 data from the ACS
   setdiff(2020)
 ```
 
+
 Next, I'll define a function to fetch the ACS data for each year in the vector.
+
 
 ```{r include=FALSE}
 # exploring whether this should be structured differently, perhaps with a table
@@ -126,7 +132,6 @@ Next, I'll define a function to fetch the ACS data for each year in the vector.
 #             y=var_table2,
 #             by=c("variable" = "name"))
 ```
-
 
 ```{r fetch_poverty_data, include=TRUE}
 fetch_acs_data <- function(year) {
@@ -155,15 +160,19 @@ fetch_acs_data <- function(year) {
 # )
 ```
 
+
 Then, I'll use `purrr::map_df()` to apply each year to the `fetch_acs_data()` function that I created, which will result in a single dataframe of all years.
+
 
 ```{r combined_acs_data, include=TRUE}
 combined_acs_data <- map_df(years, fetch_acs_data)
 ```
 
+
 ## Data wrangling
 
 *  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
+
 
 ```{r df_mutate, include=TRUE, results='hide'}
 combined_acs_data <- combined_acs_data %>% 
@@ -172,7 +181,9 @@ combined_acs_data <- combined_acs_data %>%
          perc_u5_poverty = total_u5_povertyE / total_u5_popE)
 ```
 
+
 *  Creating a `county` field that cleans the `county_state` field to only include the county name
+
 
 ```{r mutate_county_name, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
@@ -180,14 +191,18 @@ combined_acs_data <- combined_acs_data %>%
   select(county, everything())
 ```
 
+
 *  Reading in a table that maps Colorado's counties to a region of the state
+
 
 ```{r read_colorado_regions, include=TRUE}
 colorado_regions <- read_csv('.//data/colorado_regions.csv', show_col_types = FALSE) %>%
   mutate(region = as.factor(region))
 ```
 
+
 *  (Finally) creating the `combined_acs_data` dataframe for longitudinal analysis
+
 
 ```{r join_colorado_regions, include=TRUE}
 # I may not use these regions
@@ -197,11 +212,13 @@ combined_acs_data <- combined_acs_data %>%
             by='county')
 ```
 
+
 # Analysis 
 
 Data from the American Community Survey represents results from a sample (in this case, a 1-year sample -- "acs1") that come with a margin of error. Said another way, each data value is considered an estimate with a corresponding margin of error, which the Census Bureau calculates.[^2] Point estimates should be used with caution, and the provided margins of error are key to understanding the uncertainty from the sample around that estimate.
 
 [^2]: By default the `tidycensus::` API provides the margin of error at the 90% confidence interval, but you can change this with the `moe_level` argument within `get_acs()`.
+
 
 ```{r gender_colors, include=TRUE, echo=FALSE}
 gender_cols <- c(
@@ -210,7 +227,9 @@ gender_cols <- c(
 )
 ```
 
+
 I'll illustrate this uncertainty in the 2022 ACS-1 poverty data, using the `geom_errorbar()` function from ggplot. 
+
 
 ```{r viz_text, include=TRUE, echo=FALSE}
 title_text <- 'Child poverty estimates for Colorado counties in 2022 (under 5 years old)'
@@ -255,9 +274,11 @@ combined_acs_data %>%
   theme(legend.position = 'none')
 ```
 
+
 ## Margin of Error summary calculations in tidycensus::
 
 Here, 
+
 
 ```{r facet_slope_chart, include=FALSE}
 combined_acs_data %>% 
@@ -274,6 +295,7 @@ combined_acs_data %>%
   scale_y_continuous(labels = percent) + 
   my.theme
 ```
+
 
 
 
@@ -300,11 +322,14 @@ To use Observable Plot in Quarto, you need to first have your data object define
 
 Note that, if you choose the latter (which I'll do here), this object only operates when your site or knitr document is rendered (meaning, it won't execute as a code chunk like you can with R, Python, or SQL in Quarto).
 
+
 ```{r ojs_define_chunk, include=FALSE}
 ojs_define(ojsd = combined_acs_data)
 ```
 
+
 Then, I'll create a line plot of child poverty by county over time, faceting by region.
+
 
 ```{ojs plot_ojs_line, include=FALSE}
 Plot.plot({
@@ -348,10 +373,12 @@ Plot.plot({
 })
 ```
 
+
 Some comments on the above:
 
 *  There are discussions online that indicate that not all Javascript styling works in Quarto, and this supports that (some font size elements don't seem to work, faceting options, etc.). I'd like to test that in Observable directly, but for now, I'll just note that this is not my *favorite* styling.
 *  Aside from the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. I'll rebuild this chart, using a 3-year moving average with the `zoo::rollmean()` function.
+
 
 ```{r combined_acs_data2, include=FALSE}
 combined_acs_data2 <- combined_acs_data %>% 
@@ -441,3 +468,4 @@ Plot.plot({
   ]
 })
 ```
+
