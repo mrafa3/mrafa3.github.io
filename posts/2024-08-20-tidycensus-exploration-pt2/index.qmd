@@ -38,8 +38,8 @@ library(glue)
 
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
-  plot.title = ggtext::element_textbox_simple(face="bold", size=22, margin=margin(b=5)),
-  plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14, margin=margin(b=10)),
+  plot.title = ggtext::element_textbox_simple(face="bold", size=22),
+  plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14),
   plot.caption = ggtext::element_textbox_simple(color="#444444"),
   axis.title = element_text(color="black", face="bold", size=12), 
   axis.text = element_text(color="black", size=18), 
@@ -99,7 +99,8 @@ As I did in Part One, I'll use the following series from the American Community 
 ## Fetching from the `tidycensus::` API
 
 ```{r year_acs, include=TRUE}
-years <- seq(2005, 2022) %>% 
+# data for ACS-1 begins in 2005, but will start in 2015
+years <- seq(2015, 2022) %>% 
   # no 2020 data from the ACS
   setdiff(2020)
 ```

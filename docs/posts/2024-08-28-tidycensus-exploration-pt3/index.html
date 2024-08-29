@@ -248,7 +248,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>It doesn’t map using ggplot2, so it’s less customizable than I like, and</li>
 <li>It’s only built for US maps of states and counties (and in this post, I want to map smaller areas).</li>
 </ul>
-<p>Fortunately, <code>tidycensus::</code> is built for this, too! The <code>get_decennial()</code> and <code>get_acs()</code> functions have an argument for <code>geometry=</code>, which if set to TRUE, will return the polygons for your data along with the fields requested in the API call.</p>
+<p>Fortunately, <code>tidycensus::</code> is built for this, too! The <code>get_decennial()</code> and <code>get_acs()</code> functions have an argument for <code>geometry=</code>, which if set to TRUE, will return the polygons for your data along with the fields requested in the API call. Geographic options include: “state”, “county”, “block group”, “tract”, “block”, and “zcta” (zip code tabulation area).<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>acs_data_block_group <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> <span class="st">"block group"</span>,</span>
@@ -480,10 +480,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(county == 'Denver County') %&gt;% </span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.) <span class="sc">+</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> estimate), <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"plasma"</span>, <span class="at">name =</span> <span class="st">"Median Household Income"</span>) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Median Household Income by Block Group in Denver County, CO (ACS 2022)"</span>,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: US Census Bureau, ACS 5-year estimates"</span>) <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># removes the grid from the viz</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">datum =</span> <span class="cn">NA</span>) <span class="sc">+</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"plasma"</span>, </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">name =</span> <span class="st">"Median Household Income"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> dollar) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Median Household Income by Block Group in Denver County, CO (ACS 2022)"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: US Census Bureau, ACS 5-year estimates"</span>) <span class="sc">+</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -512,6 +516,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <ol>
 <li id="fn1"><p>According to the <code>tidycensus::</code> documentation, 5-year ACS data is available from 2009 through 2022, with the exception of 2020.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Other geometries, such as school districts, can be accessed directly from the <code>tigris::</code> package.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

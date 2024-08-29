@@ -141,14 +141,6 @@ df <- get_acs(geography = 'state',
         output = 'wide')
 ```
 
-And for this exercise, I'll also drop the margin of error fields, since
-I'm not doing a statistical analysis that would require it.
-
-```{r drop_cols, include=TRUE}
-# df <- df %>% 
-#   select(-contains("moe"))
-```
-
 Next, I'll create some fields to combine gender-based poverty estimates
 and calculate a percent of the child population measure.
 
