@@ -31,6 +31,7 @@ library(tidyverse)
 library(tidycensus)
 library(scales)
 library(janitor)
+library(glue)
 library(gt)
 library(usmap)
 
@@ -41,14 +42,14 @@ library(usmap)
 my.theme <- theme(
   plot.title = ggtext::element_textbox_simple(face="bold", size=24),
   plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14),
-  plot.caption = element_text(color="#444444"),
+  plot.caption = ggtext::element_textbox_simple(color="#444444"),
   axis.title = element_text(color="black", face="bold", size=12), 
   axis.text = element_text(color="black", size=18), 
   axis.ticks = element_blank(), 
   plot.background = element_rect(fill = 'white'),
   panel.background = element_blank(),
-  # panel.grid.major = element_blank(),
-  panel.grid.minor = element_blank(),
+  panel.grid.major = element_line(color='gray90'),
+  # panel.grid.minor = element_blank(),
   panel.border = element_blank(), 
   legend.title=element_blank(), 
   legend.text = element_text(color="black", size=12, hjust=0),
@@ -152,23 +153,46 @@ and calculate a percent of the child population measure.
          perc_u5_in_poverty = total_u5_povertyE / total_u5_popE))
 ```
 
-```{r dot_plot, include=TRUE, fig.width=10, fig.height=18, fig.align='center'}
+You can combine point estimates for gender-based poverty by simply adding them, but you can't do the same for margins of error. The estimated margins of error for each estimate are based on their respective samples and the uncertainty in them. To re-weight the margins of error, you take the square root of the sum of squared margins of error:
+
+> new_MOE_calc = sqrt(`male_u5_povertyM`^2 + `female_u5_povertyM`^2)
+
+The `tidycensus::moe_sum()` function will calculate the new margin of error for you!
+
+```{r moe_recalc, include=TRUE}
+df <- df %>% 
+  group_by(state) %>% 
+  mutate(total_u5_poverty_MOEcalc = moe_sum(male_u5_povertyM, female_u5_povertyM),
+         perc_u5_in_poverty_MOEcalc = total_u5_poverty_MOEcalc / total_u5_popE)
+```
+
+```{r viz_text, include=TRUE, echo=FALSE}
+title_text <- 'Percent of children in poverty by U.S. state in 2022'
+subtitle_text <- glue('Children defined as those 5 years old and younger<br>Point estimates and margins of error')
+caption_text <- glue('Source: American Community Survey 2022 5-year estimate<br>Margins of error represent the 90% Confidence Interval')
+```
+
+Now, I can visualize the new point estimates and margins of error for child poverty (not specific to gender).
+
+```{r dot_plot, include=TRUE, fig.width=11, fig.height=18, fig.align='center'}
 df %>% 
   filter(state != 'Puerto Rico') %>% 
   ggplot(
     aes(x=perc_u5_in_poverty, 
         y=reorder(state, perc_u5_in_poverty))) + 
   geom_point(size=3) +
+  geom_errorbarh(aes(xmin=perc_u5_in_poverty - perc_u5_in_poverty_MOEcalc, 
+                     xmax=perc_u5_in_poverty + perc_u5_in_poverty_MOEcalc),
+                 height = 0.4) + 
   labs(y='',
        x='',
-       caption='Source: American Community Survey 2022 5-year estimate\nExcluding the confidence interval from this graphic') + 
-  ggtitle('Percent of children under five in poverty',
-          subtitle = 'from the American Community Survey 2022') + 
+       caption=caption_text) + 
+  ggtitle(title_text,
+          subtitle=subtitle_text) + 
   scale_x_continuous(labels = percent,
                      position = 'top') + 
   my.theme
 ```
-
 # Quick mapping with usmap::
 
 The `usmapp::` package makes rendering a map of the US quick and easy.
