@@ -2,6 +2,7 @@
   {
     "listing": "/posts.html",
     "items": [
+      "/posts/2024-08-20-tidycensus-exploration-pt2/index.html",
       "/posts/2024-08-18-duckdb-intro/index.html",
       "/posts/2024-08-13-tidycensus-exploration/index.html",
       "/posts/2024-08-02-mapboxgl-exploration/index.html",

@@ -6,11 +6,11 @@ author:
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
 date: 08-20-2024
-categories: [R, tidyverse, tidycensus, api, javascript, purrr] # self-defined categories
+categories: [R, data-viz, tidyverse, tidycensus, api, javascript, purrr] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 image: co_county_pov_2022.png
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
     wrap: 72
@@ -46,7 +46,8 @@ my.theme <- theme(
   axis.ticks = element_blank(), 
   plot.background = element_rect(fill = 'white'),
   panel.background = element_blank(),
-  panel.grid.major = element_blank(),
+  # panel.grid.major = element_blank(),
+  panel.grid.major.x = element_line(color = 'gray96'),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(), 
   legend.title=element_blank(), 
@@ -100,14 +101,14 @@ As I did in Part One, I'll use the following series from the American Community 
 
 ```{r year_acs, include=TRUE}
 # data for ACS-1 begins in 2005, but will start in 2015
-years <- seq(2015, 2022) %>% 
+years <- seq(2005, 2022) %>% 
   # no 2020 data from the ACS
   setdiff(2020)
 ```
 
 Next, I'll define a function to fetch the ACS data for each year in the vector.
 
-```{r include=FALSE}
+```{r experimental1, include=FALSE}
 # exploring whether this should be structured differently, perhaps with a table
 
 # var_table <- load_variables(2022, dataset = "acs1") %>% 
@@ -129,7 +130,6 @@ Next, I'll define a function to fetch the ACS data for each year in the vector.
 #             by=c("variable" = "name"))
 ```
 
-
 ```{r fetch_poverty_data, include=TRUE}
 fetch_acs_data <- function(year) {
   get_acs(geography = "county", 
@@ -143,23 +143,11 @@ fetch_acs_data <- function(year) {
           output = 'wide') %>% 
     mutate(year = year)
 }
-
-# may not need the output = 'wide' -- can instead use a summary_var
-# purrr::map_df(year, function(year) {
-#   get_acs(
-#     geography = "county", 
-#           state = "Colorado",
-#           survey = 'acs1',
-#           variables = c('B01001_003', 'B01001_027', 'B17001_004', 'B17001_018'),
-#           year = year,
-#           output = 'wide'
-#   )
-# )
 ```
 
 Then, I'll use `purrr::map_df()` to apply each year to the `fetch_acs_data()` function that I created, which will result in a single dataframe of all years.
 
-```{r combined_acs_data, include=TRUE}
+```{r combined_acs_data, include=TRUE, message=FALSE}
 combined_acs_data <- map_df(years, fetch_acs_data)
 ```
 
@@ -192,7 +180,6 @@ colorado_regions <- read_csv('.//data/colorado_regions.csv', show_col_types = FA
 *  (Finally) creating the `combined_acs_data` dataframe for longitudinal analysis
 
 ```{r join_colorado_regions, include=TRUE}
-# I may not use these regions
 combined_acs_data <- combined_acs_data %>% 
   left_join(x=.,
             y=colorado_regions,
@@ -210,17 +197,26 @@ gender_cols <- c(
   "Female" = "#eb4729", 
   "Male" = "#1b909a"
 )
+
+county_cols <- c(
+  'Jefferson' = "#984ea3",
+  'Other' = "lightgray"
+)
 ```
 
 I'll illustrate this uncertainty in the 2022 ACS-1 poverty data, using the `geom_errorbar()` function from ggplot. 
 
 ```{r viz_text, include=TRUE, echo=FALSE}
-title_text <- 'Child poverty estimates for Colorado counties in 2022 (under 5 years old)'
-subtitle_text <- glue("<span style='color:#eb4729'>**Female**</span> and <span style='color:#1b909a'>**Male**</span> poverty, point estimates and margins of error")
+title_text <- 'Child poverty estimates for Colorado counties in 2022'
+subtitle_text <- glue("<span style='color:#eb4729'>**Female**</span> and <span style='color:#1b909a'>**Male**</span> poverty, point estimates and margins of error<br>Children defined as those 5 years old and younger")
 caption_text <- glue('Source: American Community Survey 2022 1-year estimate<br>Margins of error represent the 90% Confidence Interval<br>ACS-1 estimates only available for counties with more than 65,000 people')
+
+title_text2 <- 'Child poverty estimates (% of total) for Colorado counties'
+subtitle_text2 <- glue("<span style='color:#984ea3'>**Jefferson County**</span> highlighted<br>Children defined as those 5 years old and younger")
+caption_text2 <- glue('Source: American Community Survey 1-year estimate<br>ACS-1 estimates only available for counties with more than 65,000 people')
 ```
 
-```{r plot_margin_error, include=TRUE, fig.width=10, fig.height=6.2, fig.align='center'}
+```{r plot_margin_error, include=TRUE, fig.width=10, fig.height=8, fig.align='center'}
 # note that this would be fewer steps if I did another 
 # API call to build the dataframe in tidy format
 
@@ -241,11 +237,11 @@ combined_acs_data %>%
          aes(x=estimate, 
              y=reorder(county, estimate), 
              color=gender)) +
-  geom_point(position = position_dodge(width = 1)) +
+  geom_point(position = position_dodge(width = .8)) +
   geom_errorbarh(aes(xmin=if_else(estimate - moe < 0, estimate - estimate, estimate - moe), 
                      xmax=estimate + moe), 
                  height = 0.4,
-                 position = position_dodge(width = 1)) +
+                 position = position_dodge(width = .8)) +
   labs(y='',
        x='\nNumber of children below the poverty line\n',
        caption=caption_text) + 
@@ -257,43 +253,32 @@ combined_acs_data %>%
   theme(legend.position = 'none')
 ```
 
-## Margin of Error summary calculations in tidycensus::
+And now I can visualize the child poverty estimates in my home county (Jefferson) over time, from 2005-2022.
 
-Here, 
-
-```{r facet_slope_chart, include=FALSE}
+```{r lineplot_co, include=TRUE, fig.width=10, fig.height=6.2, fig.align='center'}
 combined_acs_data %>% 
   group_by(county, region) %>%
-  # filter(year %in% c('2005', '2022')) %>%
   ggplot(.,
          aes(x=year,
              y=perc_u5_poverty,
              group=county,
-             alpha = if_else(county == 'Denver', 'Denver', 'Other'))) +
-  geom_line() +
-  scale_alpha_manual(values = c('Denver' = 1,
-                                'Other' = .2)) + 
+             color = if_else(county == 'Jefferson', 'Jefferson', 'Other'))) +
+  geom_line(data= . %>% filter(county != 'Jefferson')) +
+  geom_line(data= . %>% filter(county == 'Jefferson')) +
+  ggtitle(title_text2,
+          subtitle = subtitle_text2) + 
+  labs(y='',
+       x='',
+       caption=caption_text2) + 
+  scale_color_manual(values = county_cols) + 
   scale_y_continuous(labels = percent) + 
-  my.theme
+  my.theme + 
+  theme(legend.position = 'none')
 ```
-
-
-
-
-# Conclusion
-
-In this `tidycensus::` post, I demonstrated:
-
--   How to fetch data across multiple years from the U.S. Census Bureau and wrangle the data for longitudinal analysis
--   How to move between R or Python objects and Observable JS objects in Quarto 
--   How to make some simple interactive graphics with Observable Plot
-
-More to come on poverty analysis in future posts!
-
 
 # Bonus: Using Observable Plot
 
-For the graphics, I'll use Observable Plot to build some interactive graphics (this can be done with R, but I want to experiment more with what Javascript can do).
+I'll show how to use Observable Plot to build some interactive graphics (this can be done with R, but I want to experiment more with what Javascript can do).
 
 To use Observable Plot in Quarto, you need to first have your data object defined in an Observable JS object, which can be achieved by:
 
@@ -302,13 +287,13 @@ To use Observable Plot in Quarto, you need to first have your data object define
 
 Note that, if you choose the latter (which I'll do here), this object only operates when your site or knitr document is rendered (meaning, it won't execute as a code chunk like you can with R, Python, or SQL in Quarto).
 
-```{r ojs_define_chunk, include=FALSE}
+```{r ojs_define_chunk, include=TRUE}
 ojs_define(ojsd = combined_acs_data)
 ```
 
 Then, I'll create a line plot of child poverty by county over time, faceting by region.
 
-```{ojs plot_ojs_line, include=FALSE}
+```{ojs plot_ojs_line, include=TRUE}
 Plot.plot({
   <!-- using options from here to learn: https://observablehq.com/plot/features/facets -->
   title: "Child poverty (%) in Colorado by county",
@@ -342,7 +327,7 @@ Plot.plot({
     Plot.lineY(transpose(ojsd), {
     x: "year", 
     fx: "region",
-    y: d => d.u5_perc_in_poverty * 100, 
+    y: d => d.perc_u5_poverty * 100, 
     z: "county", 
     stroke: "region",
     tip: true})
@@ -353,93 +338,54 @@ Plot.plot({
 Some comments on the above:
 
 *  There are discussions online that indicate that not all Javascript styling works in Quarto, and this supports that (some font size elements don't seem to work, faceting options, etc.). I'd like to test that in Observable directly, but for now, I'll just note that this is not my *favorite* styling.
-*  Aside from the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. I'll rebuild this chart, using a 3-year moving average with the `zoo::rollmean()` function.
+*  Aside from the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. 
 
 ```{r combined_acs_data2, include=FALSE}
-combined_acs_data2 <- combined_acs_data %>% 
-  group_by(county) %>%
-  mutate(u5_perc_poverty_3_yr_moving_avg = rollmean(perc_u5_poverty, k=3, fill=NA, align='right'))
+# I'll rebuild this chart, using a 3-year moving average with the `zoo::rollmean()` function.
+# combined_acs_data2 <- combined_acs_data %>% 
+  # group_by(county) %>%
+  # mutate(u5_perc_poverty_3_yr_moving_avg = rollmean(perc_u5_poverty, k=3, fill=NA, align='right'))
 ```
 
-```{r define_ojsd2, include=FALSE, echo=FALSE}
-ojs_define(ojsd2 = combined_acs_data2)
+```{r define_ojsd2, include=FALSE}
+# ojs_define(ojsd2 = combined_acs_data2)
 ```
 
-```{ojs plot_ojs_line2, include=FALSE, echo=FALSE}
-Plot.plot({
-  <!-- using options from here to learn: https://observablehq.com/plot/features/facets -->
-  title: "Child poverty (%) in Colorado by county",
-  caption: "Source: American Community Survey. Generated 3-year moving average to smooth results.",
-  width: 1200,
-  x: {nice: true,
-      tickFormat: d => d.toString()
-      },
-  <!-- y: {inset: 5}, -->
-  color: {type: "categorical"},
-  y: {
-    grid: true,
-    label: "Child poverty rate (%)",
-    domain: [0, 100]
-  },
-  marks: [
-    Plot.ruleY([0]),
-    Plot.lineY(transpose(ojsd2), {
-    x: "year", 
-    fx: "region",
-    y: d => d.u5_perc_poverty_3_yr_moving_avg * 100, 
-    z: "county", 
-    stroke: "region",
-    tip: true})
-  ]
-})
+```{ojs plot_ojs_line2, include=FALSE}
+<!-- Plot.plot({ -->
+<!--   <!-- using options from here to learn: https://observablehq.com/plot/features/facets --> -->
+<!--   title: "Child poverty (%) in Colorado by county", -->
+<!--   caption: "Source: American Community Survey. Generated 3-year moving average to smooth results.", -->
+<!--   width: 1200, -->
+<!--   x: {nice: true, -->
+<!--       tickFormat: d => d.toString() -->
+<!--       }, -->
+<!--   <!-- y: {inset: 5}, --> -->
+<!--   color: {type: "categorical"}, -->
+<!--   y: { -->
+<!--     grid: true, -->
+<!--     label: "Child poverty rate (%)", -->
+<!--     domain: [0, 100] -->
+<!--   }, -->
+<!--   marks: [ -->
+<!--     Plot.ruleY([0]), -->
+<!--     Plot.lineY(transpose(ojsd2), { -->
+<!--     x: "year",  -->
+<!--     fx: "region", -->
+<!--     y: d => d.u5_perc_poverty_3_yr_moving_avg * 100,  -->
+<!--     z: "county",  -->
+<!--     stroke: "region", -->
+<!--     tip: true}) -->
+<!--   ] -->
+<!-- }) -->
 ```
 
-```{r define_ojsd3, include=FALSE, echo=FALSE}
-ojs_define(ojsd3 = combined_acs_data %>% filter(region == 'Front Range'))
-```
+# Conclusion
 
-```{ojs plot_ojs_line3, include=FALSE}
-Plot.plot({
-  <!-- using options from here to learn: https://observablehq.com/plot/features/facets -->
-  title: "Child poverty (%) in Colorado by county: Front Range",
-  caption: "Source: American Community Survey",
-  width: 1200,
-  heigh: 600,
-  x: {nice: true,
-      label: "Year",
-      ticks: 5,
-      tickFormat: d => d.toString(),
-      labelFontSize: 40,
-      tickSize: 5,
-      tickFontSize: 12
-  },
-  color: {type: "categorical"},
-  y: {
-    grid: true,
-    label: "Child poverty rate (%)",
-    domain: [0, 40]
-    <!-- labelFontSize: 50, -->
-    <!-- tickFontSize: 50 -->
-  },
-  marks: [
-    Plot.tip(
-      [`Starting in x, `],
-      {x: 2014, y: 30, dy: -3, anchor: "bottom"}),
-    Plot.text(ojsd3, {
-        x: "year",
-        y:  d => d.u5_perc_in_poverty * 100, 
-        z: "county",
-        text: "county",
-        textAnchor: "start",
-        dx: 3
-      }),
-    Plot.ruleY([0]),
-    Plot.lineY(transpose(ojsd3), {
-    x: "year", 
-    y: d => d.u5_perc_in_poverty * 100, 
-    z: "county", 
-    stroke: "county",
-    tip: true})
-  ]
-})
-```
+In this `tidycensus::` post, I demonstrated:
+
+-   How to fetch data across multiple years from the U.S. Census Bureau and wrangle the data for longitudinal analysis
+-   How to move between R or Python objects and Observable JS objects in Quarto 
+-   How to make some simple interactive graphics with Observable Plot
+
+More to come on poverty analysis in future posts!
