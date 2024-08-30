@@ -130,6 +130,7 @@ assist in fetching data from the Census API. Some noteworthy ones include:
     the percent of girls *and* boys in poverty). Since you can only have
     one summary variable, `output='wide'` allows you to grab all of the
     series that you may need in the same call.
+-   `geometry=TRUE`: this argument returns the geospatial data in tidy format to create quick ggplot-based maps using `geom_sf()`. 
 
 ```{r get_acs, include=TRUE}
 df <- get_acs(geography = 'state',
@@ -201,8 +202,7 @@ df %>%
   filter(state != 'Puerto Rico') %>% 
   ggplot(
     aes(x=perc_u5_in_poverty, 
-        y=reorder(state, perc_u5_in_poverty),
-        color=region)) + 
+        y=reorder(state, perc_u5_in_poverty))) + 
   geom_point(size=3) +
   geom_errorbarh(aes(xmin=perc_u5_in_poverty - perc_u5_in_poverty_MOEcalc, 
                      xmax=perc_u5_in_poverty + perc_u5_in_poverty_MOEcalc),
@@ -214,13 +214,11 @@ df %>%
           subtitle=subtitle_text) + 
   scale_x_continuous(labels = percent,
                      position = 'top') + 
-  scale_color_manual(values = region_color) +
   my.theme
-  # theme(axis.text.y = ggtext::element_markdown(color = region_color))
 ```
 # Quick mapping with usmap::
 
-The `usmapp::` package makes rendering a map of the US quick and easy.
+The `usmap::` package makes rendering a map of the US quick and easy.
 Though it's not meant to replace `sf::` or packages that allow for more
 sophisticated maps, it does allow for a quick way to make a U.S. map.
 For this demo, I'll plot the state-level poverty data that I collected
@@ -228,6 +226,18 @@ and manipulated in earlier steps.
 
 This shows that child poverty is concentrated in southern and
 southeastern states (as a percent of the child population).
+
+```{r ggplot_map, include=FALSE}
+# for this code to work, I'd need to use geometry=TRUE in get_acs()
+# df %>%
+#   ggplot(aes(fill=perc_u5_in_poverty,
+#              color=perc_u5_in_poverty)) +
+#   geom_sf() + 
+#   scale_fill_viridis_c(labels = percent) + 
+#   scale_color_viridis_c(guide = FALSE) + 
+#   coord_sf(datum = NA) + 
+#   theme_minimal()
+```
 
 ```{r plot_u5_poverty, include=TRUE, fig.align='center'}
 (perc_poverty_map <- plot_usmap(regions = 'states',
