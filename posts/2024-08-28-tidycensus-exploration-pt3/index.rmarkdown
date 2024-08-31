@@ -16,6 +16,7 @@ editor:
     wrap: 72
 ---
 
+
 # Introduction
 
 In [Part One](https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/), I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the `tidycensus::` package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling. In this post, I'll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I'll unpack some of the trends seen in child poverty in Colorado.
@@ -25,6 +26,7 @@ In [Part Two](https://mrafa3.github.io/posts/2024-08-20-tidycensus-exploration-p
 In this post, I'd like to drill down further -- to the Census tract level -- to demonstrate how to fetch, wrangle, and visualize data using `tidycensus::`. I'll also use some of the `tigris::` package to enhance my geospatial plots.
 
 ## Setup
+
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -56,9 +58,11 @@ my.theme <- theme(
   strip.text = element_text(color="black", size=14))
 ```
 
+
 # Data
 
 As I did in the prior demos, I'll use data from the American Community Survey (ACS). I'd like to analyze and map data related to children and health insurance coverage. Using the `tidycensus::load_variables()` function and searching on "health insurance" shows all variables that include that in the American Community Survey.
+
 
 ```{r inspect_variables, include=TRUE, output=FALSE}
 load_variables(2022, "acs5", cache = TRUE) %>% 
@@ -66,12 +70,15 @@ load_variables(2022, "acs5", cache = TRUE) %>%
          geography == 'tract')
 ```
 
+
 This search led me to table "B27001" (you can identify tables using the `name` column and all characters prior to the underscore). In the `get_acs()` function, I could use the `table=` argument instead of the `variables=` (but for this work, I've narrowed the data that I want to look at to variables for children with health insurance coverage).
+
 
 ```{r health_insurance_vars, include=FALSE, echo=FALSE}
 (health_insurance_vars <- load_variables(2022, "acs5", cache = TRUE) %>% 
   filter(str_detect(name, "B27001")))
 ```
+
 
 ## A note on mapping with `tidycensus::`
 
@@ -83,6 +90,7 @@ In Part One, I used the `usmap::` package to quickly map state and county-level 
 Fortunately, `tidycensus::` is built for this, too! The `get_decennial()` and `get_acs()` functions have an argument for `geometry=`, which if set to TRUE, will return the polygons for your data along with the fields requested in the API call. Geographic options include: "state", "county", "block group", "tract", "block", and "zcta" (zip code tabulation area).[^1]
 
 [^1]: Other geometries, such as school districts, can be accessed directly from the `tigris::` package.
+
 
 ```{r acs_data_block_group2, include=TRUE, output=FALSE}
 acs_data_tract <- get_acs(
@@ -100,7 +108,9 @@ acs_data_tract <- get_acs(
   geometry = TRUE
 )
 ```
+
 I'll now create some aggregate measures of insurance coverage estimates, along with the corresponding re-weighted margin of error values. 
+
 
 ```{r mutate_acs_data_tract, include=TRUE, results='hide'}
 acs_data_tract <- acs_data_tract %>% 
@@ -111,7 +121,9 @@ acs_data_tract <- acs_data_tract %>%
          perc_u6_insured_MOEcalc = total_u6_insured_MOEcalc / total_u6_popE)
 ```
 
+
 With the `tigris::` package, you can download major map features, including roads and water areas, which make maps more immediately relatable. In this post, I'm exploring Census tract data, which is not a well known unit, so adding 
+
 
 ```{r roads_water, include=TRUE, message=FALSE, output=FALSE}
 den_roads <- roads("CO", "Denver") %>% 
@@ -126,9 +138,11 @@ jeff_roads <- roads("CO", "Jefferson") %>%
 jeff_water <- area_water("CO", "Jefferson")
 ```
 
+
 # Mapping with ggplot and tigris::
 
 When setting `geometry=TRUE`, `tidycensus::` fetches the polygons for your set geography, along with the tables or variables requested. Then, using `geom_sf()` allows you to set the `fill=` argument within the aesthetic for whatever variable that you want to map. 
+
 
 ```{r map1_denver, fig.width=10, fig.height=10, include=TRUE}
 acs_data_tract %>% 
@@ -137,12 +151,14 @@ acs_data_tract %>%
   geom_sf(aes(fill = perc_u6_insured), color = NA)
 ```
 
+
 It's that simple to get your first map rendered with Census data. Still, there's plenty that we could do to make this map more effective:
 
 1. The coordinates along the axis (as well as the grid) aren't typically necessary for these kinds of maps.
 2. The color palette can be challenging for some with visual impairments.
 3. The map is lacking some features, such as major roads or water, that would make the map more relatable.
 3. We need a title, cleaned up legend, and general tidiness.
+
 
 ```{r map2_denver, fig.width=10, fig.height=10, include=TRUE}
 acs_data_tract %>% 
@@ -172,7 +188,9 @@ acs_data_tract %>%
         legend.text = element_text(size = 12))
 ```
 
+
 Here's another map of Jefferson County, CO! Knowing the county, it's clear that between I-70 and I-76 that there is a pocket of the county that is lacking in health insurance for children.
+
 
 ```{r fig.width=10, fig.height=25}
 acs_data_tract %>% 
@@ -200,6 +218,7 @@ acs_data_tract %>%
         legend.text = element_text(size = 12),
         plot.margin = margin(10, 10, 10, 10))
 ```
+
 
 # Conclusion
 
