@@ -1,0 +1,182 @@
+---
+title: "Part Four: Exploring housing market data from the American Community Survey"
+description: ""
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 08-28-2024
+categories: [R, tidyverse, tidycensus, mapping, api] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+image: plot_denver_child_insured_2022.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+In [Part One](https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/), I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the `tidycensus::` package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling. In this post, I'll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I'll unpack some of the trends seen in child poverty in Colorado.
+
+In [Part Two](https://mrafa3.github.io/posts/2024-08-20-tidycensus-exploration-pt2/), I showed how to fetch multiple years of data from the American Community Survey and create a single dataframe using `purrr::map_df()`. Then, I showed some different ways of visualizing the data, including margins of error, time series, and using Observable Plot.
+
+In this post, I'd like to drill down further -- to the Census tract level -- to demonstrate how to fetch, wrangle, and visualize data using `tidycensus::`. I'll also use some of the `tigris::` package to enhance my geospatial plots.
+
+## Setup
+
+```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidycensus)
+library(scales)
+library(janitor)
+library(gt)
+
+# census_api_key('INSERT KEY HERE')
+```
+
+```{r my.theme, include=TRUE, echo=FALSE}
+my.theme <- theme(
+  plot.title = ggtext::element_textbox_simple(face="bold", size=24),
+  plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14),
+  plot.caption = element_text(color="#444444"),
+  axis.title = element_text(color="black", face="bold", size=12), 
+  axis.text = element_text(color="black", size=18), 
+  axis.ticks = element_blank(), 
+  plot.background = element_rect(fill = 'white'),
+  panel.background = element_blank(),
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(), 
+  legend.title=element_blank(), 
+  legend.text = element_text(color="black", size=12, hjust=0),
+  legend.position = 'top',
+  strip.text = element_text(color="black", size=14))
+```
+
+# Data
+
+As I did in the prior demos, I'll use data from the American Community Survey (ACS). I'd like to analyze and map data related to children and health insurance coverage. Using the `tidycensus::load_variables()` function and searching on "health insurance" shows all variables that include that in the American Community Survey.
+
+```{r inspect_variables, include=TRUE, output=FALSE}
+load_variables(2022, "acs1", cache = TRUE) %>% 
+  filter(str_detect(label, "Worked from home"))
+```
+
+This search led me to table "B27001" (you can identify tables using the `name` column and all characters prior to the underscore). In the `get_acs()` function, I could use the `table=` argument instead of the `variables=` (but for this work, I've narrowed the data that I want to look at to variables for children with health insurance coverage).
+
+```{r health_insurance_vars, include=FALSE, echo=FALSE}
+(wfh_vars <- load_variables(2022, "acs1", cache = TRUE) %>% 
+  filter(str_detect(name, "B08137")))
+```
+
+```{r year_acs, include=TRUE}
+# data for ACS-1 begins in 2005, but will start in 2016
+years <- seq(2016, 2022) %>% 
+  # no 2020 data from the ACS
+  setdiff(2020)
+```
+
+
+*Is remote work re-shaping rural Colorado?*
+
+* B08137_019: Estimate!!Total:!!Worked from home:
+* B08137_020: Estimate!!Total:!!Worked from home:!!Householder lived in owner-occupied housing units
+* B08137_021: Estimate!!Total:!!Worked from home:!!Householder lived in renter-occupied housing units
+
+```{r fetch_acs_data, include=TRUE, output=FALSE}
+fetch_acs_data <- function(year) {
+  get_acs(geography = "county", 
+          state = "Colorado",
+          survey = 'acs5',
+          variables = c(ttl_worked_from_home = "B08137_019",
+                        ttl_worked_from_home_owner = "B08137_020",
+                        ttl_worked_from_home_renter = "B08137_021"),
+          year = year,
+          output = 'wide',
+          geometry = TRUE) %>% 
+    mutate(year = year)
+}
+```
+
+```{r tigris_use_cache, include=TRUE, echo=FALSE}
+options(tigris_use_cache = TRUE)
+```
+
+```{r combined_acs_data, include=TRUE, message=FALSE}
+combined_acs_data <- map_df(years, fetch_acs_data)
+```
+
+```{r mutate_county_name, include=TRUE}
+combined_acs_data <- combined_acs_data %>% 
+  mutate(county = str_remove(NAME, " County.*")) %>% 
+  select(county, everything())
+```
+
+
+
+*  Reading in a table that maps Colorado's counties to a region of the state
+
+```{r read_colorado_regions, include=TRUE}
+colorado_regions <- read_csv('.//data/colorado_regions.csv', show_col_types = FALSE) %>%
+  mutate(region = as.factor(region))
+```
+
+*  (Finally) creating the `combined_acs_data` dataframe for longitudinal analysis
+
+```{r join_colorado_regions, include=TRUE}
+combined_acs_data <- combined_acs_data %>% 
+  left_join(x=.,
+            y=colorado_regions,
+            by='county')
+```
+
+
+```{r}
+combined_acs_data %>% 
+  group_by(year) %>% 
+  summarise(ttl_worked_from_homeE = sum(ttl_worked_from_homeE),
+            ttl_worked_from_homeM = moe_sum(ttl_worked_from_homeM)) %>% 
+  ggplot(.,
+         aes(x=year,
+             y=ttl_worked_from_homeE)) + 
+  geom_line() + 
+  geom_ribbon(aes(ymax = ttl_worked_from_homeE + ttl_worked_from_homeM, 
+                  ymin = ttl_worked_from_homeE - ttl_worked_from_homeM),
+              fill='lightgreen', alpha=.5)
+```
+
+```{r}
+combined_acs_data %>% 
+  filter(year == 2022) %>% 
+  ggplot(.) + 
+  geom_sf(aes(fill = ttl_worked_from_homeE), color = NA)
+```
+
+
+```{r}
+combined_acs_data %>% 
+  # filter(county %in% )
+  ggplot(aes(x=year,
+             y=ttl_worked_from_homeE,
+             # color=region, 
+             group=county)) + 
+  geom_line() + 
+  labs(x='',
+       y='') + 
+  scale_y_continuous(labels = comma) + 
+  facet_wrap(~region, scales = "free")
+
+```
+
+
+
+
+# Conclusion
+
+In this `tidycensus::` post, I demonstrated:
+
+
+
+More to come on poverty analysis in future posts!
