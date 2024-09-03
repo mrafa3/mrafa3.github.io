@@ -1,15 +1,15 @@
 ---
 title: "Part Four: Exploring housing market data from the American Community Survey"
-description: ""
+description: "A look at what the American Community Survey tells us about trends in remote work"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
-date: 08-28-2024
+date: 09-15-2024
 categories: [R, tidyverse, tidycensus, mapping, api] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-image: plot_denver_child_insured_2022.png
+# image: plot_denver_child_insured_2022.png
 draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
   markdown: 
