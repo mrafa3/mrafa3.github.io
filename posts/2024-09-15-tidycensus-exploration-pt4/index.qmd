@@ -32,6 +32,7 @@ library(tidycensus)
 library(scales)
 library(janitor)
 library(gt)
+library(patchwork)
 
 # census_api_key('INSERT KEY HERE')
 ```
@@ -74,7 +75,7 @@ This search led me to table "B27001" (you can identify tables using the `name` c
 ```
 
 ```{r year_acs, include=TRUE}
-# data for ACS-1 begins in 2005, but will start in 2016
+# data for ACS-1 begins in 2005
 years <- seq(2016, 2022) %>% 
   # no 2020 data from the ACS
   setdiff(2020)
@@ -133,13 +134,24 @@ combined_acs_data <- combined_acs_data %>%
             by='county')
 ```
 
+# Analysis 
 
-```{r}
-?moe_sum()
-combined_acs_data %>% 
+First, I'm interested in looking at Colorado values in the aggregate.
+
+```{r agg_combined_acs_data, include=TRUE, echo=FALSE}
+(agg_combined_acs_data <- combined_acs_data %>% 
+  as.data.frame() %>% 
+  select(-geometry) %>% 
   group_by(year) %>% 
   summarise(ttl_worked_from_homeE = sum(ttl_worked_from_homeE),
             ttl_worked_from_homeM = moe_sum(ttl_worked_from_homeM, estimate = ttl_worked_from_homeE)) %>% 
+  mutate(annual_perc_wfh_change = (ttl_worked_from_homeE - lag(ttl_worked_from_homeE, 1)) / 
+                                     lag(ttl_worked_from_homeE, 1)))
+```
+
+
+```{r}
+(fig1 <- agg_combined_acs_data %>% 
   ggplot(.,
          aes(x=year,
              y=ttl_worked_from_homeE)) + 
@@ -147,8 +159,20 @@ combined_acs_data %>%
   geom_ribbon(aes(ymax = ttl_worked_from_homeE + ttl_worked_from_homeM, 
                   ymin = ttl_worked_from_homeE - ttl_worked_from_homeM),
               fill='lightgreen', alpha=.5) + 
-  scale_y_continuous(labels = comma)
+  scale_y_continuous(labels = comma))
 ```
+
+```{r}
+agg_combined_acs_data %>% 
+  select(-ttl_worked_from_homeM) %>% 
+  gt() %>% 
+  fmt_number(columns = ttl_worked_from_homeE, decimals = 0) %>% 
+  fmt_percent(columns = annual_perc_wfh_change, decimals = 1) %>% 
+  gt::data_color(
+    columns = annual_perc_wfh_change
+  )
+```
+
 
 ```{r}
 combined_acs_data %>% 
