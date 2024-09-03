@@ -90,13 +90,27 @@ years <- seq(2016, 2022) %>%
 
 
 ```{r fetch_acs_data, include=TRUE, output=FALSE}
+var_list <- c(
+  ttl_worked_from_home = "B08137_019",
+  ttl_worked_from_home_owner = "B08137_020",
+  ttl_worked_from_home_renter = "B08137_021"
+)
+
+agg_fetch_acs_data <- function(year) {
+  get_acs(geography = "state", 
+          survey = 'acs1',
+          variables = var_list,
+          year = year,
+          output = 'wide',
+          geometry = TRUE) %>% 
+    mutate(year = year)
+}
+
 fetch_acs_data <- function(year) {
   get_acs(geography = "county", 
           state = "Colorado",
-          survey = 'acs1',
-          variables = c(ttl_worked_from_home = "B08137_019",
-                        ttl_worked_from_home_owner = "B08137_020",
-                        ttl_worked_from_home_renter = "B08137_021"),
+          survey = 'acs5',
+          variables = var_list,
           year = year,
           output = 'wide',
           geometry = TRUE) %>% 
@@ -108,9 +122,14 @@ fetch_acs_data <- function(year) {
 options(tigris_use_cache = TRUE)
 ```
 
+```{r agg_combined_acs_data, include=TRUE, message=FALSE}
+agg_combined_acs_data <- map_df(c(2019, 2022), agg_fetch_acs_data)
+```
+
 ```{r combined_acs_data, include=TRUE, message=FALSE}
 combined_acs_data <- map_df(years, fetch_acs_data)
 ```
+
 
 ```{r mutate_county_name, include=TRUE}
 combined_acs_data <- combined_acs_data %>% 
@@ -134,27 +153,66 @@ combined_acs_data <- combined_acs_data %>%
             by='county')
 ```
 
+```{r}
+census_regions <- read_csv('.//data/census_regions.csv')
+```
+
+```{r}
+agg_combined_acs_data <- agg_combined_acs_data %>% 
+  left_join(x=.,
+            y=census_regions,
+            by=c('NAME' = 'State'))
+```
+
+
 # Analysis 
 
 First, I'm interested in looking at Colorado values in the aggregate.
 
-```{r agg_combined_acs_data, include=TRUE, echo=FALSE}
-(agg_combined_acs_data <- combined_acs_data %>% 
-  as.data.frame() %>% 
-  select(-geometry) %>% 
-  group_by(year) %>% 
-  summarise(ttl_worked_from_homeE = sum(ttl_worked_from_homeE),
-            ttl_worked_from_homeM = moe_sum(ttl_worked_from_homeM, estimate = ttl_worked_from_homeE)) %>% 
-  mutate(annual_perc_wfh_change = (ttl_worked_from_homeE - lag(ttl_worked_from_homeE, 1)) / 
-                                     lag(ttl_worked_from_homeE, 1)))
+```{r agg_combined_acs_data2, include=FALSE}
+# (agg_combined_acs_data <- combined_acs_data %>% 
+#   as.data.frame() %>% 
+#   select(-geometry) %>% 
+#   group_by(year) %>% 
+#   summarise(ttl_worked_from_homeE = sum(ttl_worked_from_homeE),
+#             ttl_worked_from_homeM = moe_sum(ttl_worked_from_homeM, estimate = ttl_worked_from_homeE)) %>% 
+#   mutate(annual_perc_wfh_change = (ttl_worked_from_homeE - lag(ttl_worked_from_homeE, 1)) / 
+#                                      lag(ttl_worked_from_homeE, 1)))
+```
+
+```{r}
+agg_combined_acs_data2 <- agg_combined_acs_data %>% 
+  filter(NAME != 'Puerto Rico') %>% 
+  arrange(NAME, year) %>% 
+  group_by(NAME) %>% 
+  mutate(perc_wfh_change = (ttl_worked_from_homeE - lag(ttl_worked_from_homeE, 1)) / 
+                                      lag(ttl_worked_from_homeE, 1)) %>% 
+  ungroup() %>% 
+  filter(year == 2022) %>% 
+  mutate(rank_wfh_population = rank(-ttl_worked_from_homeE),
+         rank_perc_wfh_change = rank(-perc_wfh_change))
+```
+
+
+```{r}
+agg_combined_acs_data2 %>% 
+  ggplot(.) + 
+  geom_sf(aes(fill = perc_wfh_change), color = NA) + 
+  coord_sf(crs = 5070, datum = NA) +  # Use Albers equal-area projection
+  scale_fill_viridis_c(option = "plasma", name = "% Change in WFH (2019 & 2021)") +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        legend.key.size = unit(1, "cm"))
 ```
 
 
 ```{r}
 (fig1 <- agg_combined_acs_data %>% 
+  filter()
   ggplot(.,
          aes(x=year,
-             y=ttl_worked_from_homeE)) + 
+             y=ttl_worked_from_homeE,
+             group=NAME)) + 
   geom_line() + 
   geom_ribbon(aes(ymax = ttl_worked_from_homeE + ttl_worked_from_homeM, 
                   ymin = ttl_worked_from_homeE - ttl_worked_from_homeM),
@@ -162,14 +220,39 @@ First, I'm interested in looking at Colorado values in the aggregate.
   scale_y_continuous(labels = comma))
 ```
 
+
+
+
+
 ```{r}
-agg_combined_acs_data %>% 
-  select(-ttl_worked_from_homeM) %>% 
-  gt() %>% 
+agg_combined_acs_data2 %>% 
+  as.data.frame() %>% 
+  select(NAME, Region, rank_wfh_population, ttl_worked_from_homeE, rank_perc_wfh_change, perc_wfh_change) %>% 
+  arrange(-perc_wfh_change) %>% 
+  gt(groupname_col = "Region") %>% 
   fmt_number(columns = ttl_worked_from_homeE, decimals = 0) %>% 
-  fmt_percent(columns = annual_perc_wfh_change, decimals = 1) %>% 
+  fmt_percent(columns = perc_wfh_change, decimals = 1) %>% 
   gt::data_color(
-    columns = annual_perc_wfh_change
+    columns = perc_wfh_change,
+    palette = viridis::inferno(100)
+  )  %>% 
+  opt_all_caps() %>% 
+  opt_table_font(
+    font = list(
+      google_font("Chivo"),
+      default_fonts()
+    )
+  ) %>% 
+  tab_options(
+    #remove border between column headers and title
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    #remove border around the table
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    #adjust font sizes and alignment
+    source_notes.font.size = 12,
+    heading.align = "left"
   )
 ```
 
@@ -178,7 +261,11 @@ agg_combined_acs_data %>%
 combined_acs_data %>% 
   filter(year == 2022) %>% 
   ggplot(.) + 
-  geom_sf(aes(fill = ttl_worked_from_homeE), color = NA)
+  geom_sf(aes(fill = ttl_worked_from_homeE), color = NA) + 
+  coord_sf(datum = NA) + 
+  theme_minimal() + 
+  scale_fill_continuous(labels = comma) + 
+  theme(legend.key.size = unit(1, "cm"))
 ```
 
 
