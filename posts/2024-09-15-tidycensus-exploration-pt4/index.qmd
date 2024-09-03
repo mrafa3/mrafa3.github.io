@@ -68,7 +68,9 @@ This search led me to table "B27001" (you can identify tables using the `name` c
 
 ```{r health_insurance_vars, include=FALSE, echo=FALSE}
 (wfh_vars <- load_variables(2022, "acs1", cache = TRUE) %>% 
-  filter(str_detect(name, "B08137")))
+  filter(str_detect(name, "B08105"))) 
+  # filter(str_detect(concept, "Means of Transportation")))
+  # filter(str_detect(name, "B08137")))
 ```
 
 ```{r year_acs, include=TRUE}
@@ -85,11 +87,12 @@ years <- seq(2016, 2022) %>%
 * B08137_020: Estimate!!Total:!!Worked from home:!!Householder lived in owner-occupied housing units
 * B08137_021: Estimate!!Total:!!Worked from home:!!Householder lived in renter-occupied housing units
 
+
 ```{r fetch_acs_data, include=TRUE, output=FALSE}
 fetch_acs_data <- function(year) {
   get_acs(geography = "county", 
           state = "Colorado",
-          survey = 'acs5',
+          survey = 'acs1',
           variables = c(ttl_worked_from_home = "B08137_019",
                         ttl_worked_from_home_owner = "B08137_020",
                         ttl_worked_from_home_renter = "B08137_021"),
