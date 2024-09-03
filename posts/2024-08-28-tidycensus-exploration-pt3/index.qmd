@@ -107,7 +107,8 @@ acs_data_tract <- acs_data_tract %>%
   mutate(total_u6_popE = male_u6_popE + female_u6_popE,
          total_u6_insuredE = male_u6_insuredE + female_u6_insuredE,
          perc_u6_insured = total_u6_insuredE / total_u6_popE,
-         total_u6_insured_MOEcalc = moe_sum(male_u6_insuredM, female_u6_insuredM),
+         total_u6_insured_MOEcalc = moe_sum(male_u6_insuredM, female_u6_insuredM, 
+                                            estimate = c(male_u6_insuredE, female_u6_insuredE)),
          perc_u6_insured_MOEcalc = total_u6_insured_MOEcalc / total_u6_popE)
 ```
 
