@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mickey Rafa">
+<meta name="dcterms.date" content="2024-08-20">
+<meta name="description" content="This post shows how to fetch many years of data simply, unlocking longitudinal analysis of Census data">
+
+<title>Part Two: Wrangling Census data for longitudinal analysis of child poverty</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script type="module" src="../../site_libs/quarto-ojs/quarto-ojs-runtime.js"></script>
+<link href="../../site_libs/quarto-ojs/quarto-ojs.css" rel="stylesheet">
+<script type="ojs-define">
+{"contents":[{"name":"ojsd","value":{"county":["Adams","Arapahoe","Boulder","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld","Adams","Arapahoe","Boulder","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld","Boulder","Adams","Arapahoe","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld","Adams","Arapahoe","Boulder","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld","Adams","Arapahoe","Boulder","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld","Adams","Arapahoe","Boulder","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld","Adams","Arapahoe","Boulder","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld","Denver","Jefferson","Weld","Douglas","Boulder","Adams","Larimer","Pueblo","Mesa","El Paso","Arapahoe","Denver","Jefferson","Weld","Boulder","Douglas","Pueblo","Mesa","El Paso","Arapahoe","Adams","Larimer","Adams","Larimer","Denver","Jefferson","Weld","Douglas","Boulder","Pueblo","Mesa","El Paso","Arapahoe","Pueblo","Mesa","El Paso","Arapahoe","Broomfield","Denver","Jefferson","Weld","Douglas","Boulder","Adams","Larimer","Denver","Jefferson","Weld","Douglas","Boulder","Pueblo","Mesa","El Paso","Arapahoe","Broomfield","Adams","Larimer","Denver","Jefferson","Weld","Adams","Douglas","Larimer","Boulder","Pueblo","Mesa","El Paso","Arapahoe","Broomfield","Denver","Weld","Douglas","Larimer","Broomfield","Jefferson","Adams","Boulder","Pueblo","Mesa","El Paso","Arapahoe","Jefferson","Adams","Boulder","Pueblo","Mesa","El Paso","Arapahoe","Denver","Weld","Douglas","Larimer","Broomfield","Adams","Mesa","Arapahoe","Boulder","Broomfield","Denver","Douglas","El Paso","Jefferson","Larimer","Pueblo","Weld","Adams","Arapahoe","Boulder","Broomfield","Denver","Douglas","El Paso","Jefferson","Larimer","Mesa","Pueblo","Weld"],"GEOID":["08001","08005","08013","08031","08035","08041","08059","08069","08077","08101","08123","08001","08005","08013","08031","08035","08041","08059","08069","08077","08101","08123","08013","08001","08005","08031","08035","08041","08059","08069","08077","08101","08123","08001","08005","08013","08031","08035","08041","08059","08069","08077","08101","08123","08001","08005","08013","08031","08035","08041","08059","08069","08077","08101","08123","08001","08005","08013","08031","08035","08041","08059","08069","08077","08101","08123","08001","08005","08013","08031","08035","08041","08059","08069","08077","08101","08123","08031","08059","08123","08035","08013","08001","08069","08101","08077","08041","08005","08031","08059","08123","08013","08035","08101","08077","08041","08005","08001","08069","08001","08069","08031","08059","08123","08035","08013","08101","08077","08041","08005","08101","08077","08041","08005","08014","08031","08059","08123","08035","08013","08001","08069","08031","08059","08123","08035","08013","08101","08077","08041","08005","08014","08001","08069","08031","08059","08123","08001","08035","08069","08013","08101","08077","08041","08005","08014","08031","08123","08035","08069","08014","08059","08001","08013","08101","08077","08041","08005","08059","08001","08013","08101","08077","08041","08005","08031","08123","08035","08069","08014","08001","08077","08005","08013","08014","08031","08035","08041","08059","08069","08101","08123","08001","08005","08013","08014","08031","08035","08041","08059","08069","08077","08101","08123"],"NAME":["Adams County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Adams County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Boulder County, Colorado","Adams County, Colorado","Arapahoe County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Adams County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Adams County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Adams County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Adams County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Denver County, Colorado","Jefferson County, Colorado","Weld County, Colorado","Douglas County, Colorado","Boulder County, Colorado","Adams County, Colorado","Larimer County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Denver County, Colorado","Jefferson County, Colorado","Weld County, Colorado","Boulder County, Colorado","Douglas County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Adams County, Colorado","Larimer County, Colorado","Adams County, Colorado","Larimer County, Colorado","Denver County, Colorado","Jefferson County, Colorado","Weld County, Colorado","Douglas County, Colorado","Boulder County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Broomfield County, Colorado","Denver County, Colorado","Jefferson County, Colorado","Weld County, Colorado","Douglas County, Colorado","Boulder County, Colorado","Adams County, Colorado","Larimer County, Colorado","Denver County, Colorado","Jefferson County, Colorado","Weld County, Colorado","Douglas County, Colorado","Boulder County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Broomfield County, Colorado","Adams County, Colorado","Larimer County, Colorado","Denver County, Colorado","Jefferson County, Colorado","Weld County, Colorado","Adams County, Colorado","Douglas County, Colorado","Larimer County, Colorado","Boulder County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Broomfield County, Colorado","Denver County, Colorado","Weld County, Colorado","Douglas County, Colorado","Larimer County, Colorado","Broomfield County, Colorado","Jefferson County, Colorado","Adams County, Colorado","Boulder County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Jefferson County, Colorado","Adams County, Colorado","Boulder County, Colorado","Pueblo County, Colorado","Mesa County, Colorado","El Paso County, Colorado","Arapahoe County, Colorado","Denver County, Colorado","Weld County, Colorado","Douglas County, Colorado","Larimer County, Colorado","Broomfield County, Colorado","Adams County, Colorado","Mesa County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Broomfield County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Pueblo County, Colorado","Weld County, Colorado","Adams County, Colorado","Arapahoe County, Colorado","Boulder County, Colorado","Broomfield County, Colorado","Denver County, Colorado","Douglas County, Colorado","El Paso County, Colorado","Jefferson County, Colorado","Larimer County, Colorado","Mesa County, Colorado","Pueblo County, Colorado","Weld County, Colorado"],"male_u5_popE":[17411,19953,8811,26008,10384,22338,15869,8752,4186,5089,9429,18840,20366,8920,26099,10943,21333,16277,8227,4387,4932,9628,8580,18769,20331,25912,11222,22038,15928,8768,5058,5074,10389,19852,21339,8929,26334,11543,22197,16356,8991,4905,5368,11155,20358,21865,8648,25992,11648,23062,16486,9310,5282,5526,11423,19383,20818,8926,22206,10790,23437,15642,9575,4518,5533,10055,19512,20868,8176,23435,11829,22657,14662,10616,5187,5343,10161,23871,14754,10627,10499,8590,19028,8671,5092,4776,23149,20517,23021,15320,10109,8196,10682,5008,4000,23444,20205,18971,9086,18528,8703,23147,14977,10593,10745,8320,4851,4538,24130,20637,4916,4029,24199,20671,1792,23259,14943,10727,10249,8138,19147,9073,22467,15266,11235,10477,7913,4906,4963,24375,20705,2047,18583,8854,21932,14942,11493,18386,10204,8792,7591,4893,4268,24061,20813,1839,22164,11917,10787,8977,1995,15462,18539,7205,4789,4353,24722,20390,15118,18524,6852,4837,3867,23922,19366,21439,11644,10533,9083,1656,17400,4122,18792,6757,1883,19914,9862,23205,14382,8239,4425,11671,16647,18915,6172,1161,19540,10406,23157,13446,7878,3861,4705,11652],"male_u5_popM":[359,71,306,207,470,169,418,325,120,129,164,478,335,261,394,571,7,525,212,131,77,171,350,265,461,510,124,307,416,386,347,170,254,103,123,200,162,402,48,386,204,61,228,686,479,158,292,364,595,288,721,457,220,273,695,389,4,344,96,733,291,430,628,593,282,151,557,200,348,577,898,505,497,627,661,227,325,66,511,643,378,265,386,263,117,828,250,182,146,399,248,375,347,148,392,477,83,258,382,268,212,335,309,286,404,314,147,252,446,180,140,396,335,108,316,263,223,301,316,219,544,468,154,545,359,430,456,164,597,368,325,411,2,220,152,369,471,167,248,378,182,166,477,335,208,266,427,470,378,376,736,418,428,274,123,602,783,2,405,318,222,248,667,128,501,109,449,459,1083,281,472,688,133,290,305,195,619,126,265,470,61,321,586,289,315,130,135,514,150,253,262,688,331,402],"female_u5_popE":[17346,19332,8761,25152,10298,21069,16330,8219,3958,4811,9067,17486,19217,8590,24826,9935,20345,15020,8025,4061,4748,9471,8382,19058,20505,25148,10470,21164,14718,8596,4278,5132,10110,19178,20188,8989,25649,10810,21302,15483,8668,4710,4908,10152,19329,20350,8735,25420,11137,22134,15390,9105,5321,5224,10261,18351,19604,7646,21232,11275,21937,14837,7956,5119,4900,9733,18193,19649,8153,22193,9376,22334,14451,6740,4714,4860,9398,22923,14030,9675,9329,7334,18148,8063,5136,4512,21994,19625,22334,14004,9875,7812,9328,4904,5202,22293,19383,17744,8208,17983,8775,21894,14309,9711,8947,7286,4455,4394,22400,19553,4720,4951,22133,19677,2056,22242,14697,9573,9317,7323,17324,8839,21604,14893,10340,8989,7638,4897,4464,23105,20210,1745,17981,8902,21390,14348,10742,17752,9412,9346,7326,4997,4252,23107,19670,1556,20591,10912,9406,9328,1766,14651,17567,7273,4814,4126,23519,19612,14175,17066,7202,4411,4595,22920,20846,20772,11010,9501,8364,1930,15422,2927,18246,6552,1749,19247,9487,22085,13225,7756,4450,11021,15991,17961,6376,1235,18883,9490,21745,13118,7774,3852,4144,11188],"female_u5_popM":[416,120,401,224,309,226,382,356,271,89,247,541,4,128,410,414,291,362,278,208,225,258,170,303,511,429,166,351,173,472,461,295,467,256,174,444,328,409,205,433,427,75,164,342,491,126,436,352,615,247,625,427,310,255,162,351,80,318,77,959,195,435,594,565,2,284,522,213,385,636,583,460,496,484,656,35,329,150,425,524,354,289,936,224,268,806,347,276,500,443,260,335,347,279,402,561,81,131,256,304,361,4,227,367,321,311,120,331,367,122,192,513,315,186,336,206,540,315,201,168,441,597,120,473,360,374,270,323,742,133,404,308,2,240,321,352,266,2,146,621,179,306,469,368,4,194,382,311,506,674,462,289,401,252,333,606,560,2,423,309,264,85,695,127,491,259,273,437,1033,347,485,218,201,253,249,206,728,152,298,403,229,352,586,117,353,351,190,224,150,352,370,773,79,533],"male_u5_povertyE":[2679,4545,1017,3816,322,4883,1574,1334,813,1993,1424,3842,3016,1299,8978,331,2438,2491,616,1042,1334,1566,821,3035,3993,7628,189,3196,3336,2000,1183,1168,1414,3013,3846,1761,6003,581,4839,1232,993,977,2006,1647,4526,5447,2413,9422,220,5163,2621,1866,1110,2556,3121,3497,4140,1630,8834,90,5952,1612,2277,1339,1366,2656,5614,5172,1199,7017,463,5417,2339,1955,842,1771,2468,6495,2274,1597,417,1344,4249,954,1984,1523,3945,3874,7025,1945,2340,1733,215,1831,682,3541,3742,2973,1028,3691,854,4413,1741,1027,400,1205,1232,1397,4122,2833,1004,429,4206,3446,0,5170,1874,1429,380,1269,3490,1158,3041,1198,1318,249,293,1442,1085,4349,2359,286,2872,835,3726,1745,1169,3366,403,536,1108,918,1190,2922,2477,124,2857,2060,42,379,0,767,2368,408,1751,864,4130,2262,1694,2104,885,1328,933,2543,1931,2660,871,96,54,222,1938,453,2325,771,0,3260,454,3042,1333,1043,1284,961,3371,1778,446,0,3762,30,1978,637,811,522,887,744],"male_u5_povertyM":[804,1215,502,1407,311,1188,774,668,606,654,951,1157,854,509,1797,465,847,1109,460,771,687,533,472,960,1130,1671,167,856,1017,741,750,638,879,818,1245,695,1777,371,1228,660,591,498,958,810,1119,1118,816,1798,262,1282,1057,886,474,677,1530,1150,939,676,1343,149,1246,689,972,779,611,757,1234,1185,563,1184,385,1431,693,1122,543,552,923,1456,929,585,328,796,1162,477,646,610,1080,986,1400,852,1060,456,206,664,519,1080,1029,1006,510,1193,472,1294,796,828,302,602,484,668,1123,992,499,306,1124,953,193,1372,647,614,389,527,1236,686,970,570,768,218,257,717,720,1262,1085,370,1116,409,1243,740,578,1031,401,601,572,435,620,1013,1073,150,1236,884,70,361,204,616,921,246,623,640,1548,834,944,964,651,711,538,910,865,1309,499,161,93,218,1038,389,1256,575,211,1236,548,1146,832,562,623,630,1478,785,369,218,1386,54,1157,603,603,420,413,599],"female_u5_povertyE":[3080,3246,1567,6714,252,4016,1439,603,982,940,1466,3407,3561,1416,7618,55,2981,839,1049,864,1412,1768,1468,4295,4716,6279,173,3120,1438,1058,852,2042,1372,4688,3898,1095,7179,563,4895,2817,1004,510,1607,1428,3964,5191,1644,7634,141,3608,1498,827,1319,1062,2849,4265,3316,1312,8009,489,4909,2478,1715,1026,1436,2205,4680,3369,874,5546,480,4659,1309,866,981,1771,2719,6285,1797,3178,168,1667,3256,1728,1460,1564,2671,3357,5829,1403,2115,753,270,1543,638,3865,4448,3682,847,3015,416,4269,1951,1011,351,1502,1165,1185,4050,2911,1686,1505,4024,2950,129,4392,1779,1464,252,1121,4007,1165,4112,752,1654,347,302,1358,1048,2831,2642,0,2831,536,3701,1010,423,2588,442,756,1246,1409,965,2737,1117,43,3970,1475,336,535,0,994,1364,434,1227,1101,2691,2697,973,2679,339,791,1078,1543,898,3278,711,96,82,112,2181,639,1419,629,185,2616,431,3034,1158,1583,834,1541,1421,1579,542,0,3460,259,2492,678,659,1035,666,532],"female_u5_povertyM":[1102,883,566,1889,234,1479,657,455,538,480,707,951,1159,632,1648,96,981,463,540,445,571,734,572,976,1068,1697,215,1199,683,810,495,542,748,1199,1117,744,1525,391,1487,1004,543,349,698,592,1261,1308,742,1827,216,778,802,435,574,594,1044,1214,940,609,1072,427,1368,938,700,657,633,708,1294,1031,518,1380,386,1127,721,708,739,456,825,1524,802,929,206,602,934,546,558,771,693,879,1446,659,595,522,312,591,454,1266,916,986,474,881,343,1320,784,563,394,507,525,566,1232,848,531,784,1189,956,203,1228,949,621,221,561,1460,522,1001,410,747,332,212,636,810,1045,971,195,1103,343,1287,768,342,1006,328,552,478,726,540,1013,748,72,1411,691,341,437,204,662,726,308,542,779,1302,904,633,1312,360,379,750,880,560,1283,468,163,138,131,984,599,710,362,162,1249,499,1538,632,663,550,686,881,912,356,218,1269,304,938,582,368,859,579,374],"year":[2005,2005,2005,2005,2005,2005,2005,2005,2005,2005,2005,2006,2006,2006,2006,2006,2006,2006,2006,2006,2006,2006,2007,2007,2007,2007,2007,2007,2007,2007,2007,2007,2007,2008,2008,2008,2008,2008,2008,2008,2008,2008,2008,2008,2009,2009,2009,2009,2009,2009,2009,2009,2009,2009,2009,2010,2010,2010,2010,2010,2010,2010,2010,2010,2010,2010,2011,2011,2011,2011,2011,2011,2011,2011,2011,2011,2011,2012,2012,2012,2012,2012,2012,2012,2012,2012,2012,2012,2013,2013,2013,2013,2013,2013,2013,2013,2013,2013,2013,2014,2014,2014,2014,2014,2014,2014,2014,2014,2014,2014,2015,2015,2015,2015,2015,2015,2015,2015,2015,2015,2015,2015,2016,2016,2016,2016,2016,2016,2016,2016,2016,2016,2016,2016,2017,2017,2017,2017,2017,2017,2017,2017,2017,2017,2017,2017,2018,2018,2018,2018,2018,2018,2018,2018,2018,2018,2018,2018,2019,2019,2019,2019,2019,2019,2019,2019,2019,2019,2019,2019,2021,2021,2021,2021,2021,2021,2021,2021,2021,2021,2021,2021,2022,2022,2022,2022,2022,2022,2022,2022,2022,2022,2022,2022],"total_u5_popE":[34757,39285,17572,51160,20682,43407,32199,16971,8144,9900,18496,36326,39583,17510,50925,20878,41678,31297,16252,8448,9680,19099,16962,37827,40836,51060,21692,43202,30646,17364,9336,10206,20499,39030,41527,17918,51983,22353,43499,31839,17659,9615,10276,21307,39687,42215,17383,51412,22785,45196,31876,18415,10603,10750,21684,37734,40422,16572,43438,22065,45374,30479,17531,9637,10433,19788,37705,40517,16329,45628,21205,44991,29113,17356,9901,10203,19559,46794,28784,20302,19828,15924,37176,16734,10228,9288,45143,40142,45355,29324,19984,16008,20010,9912,9202,45737,39588,36715,17294,36511,17478,45041,29286,20304,19692,15606,9306,8932,46530,40190,9636,8980,46332,40348,3848,45501,29640,20300,19566,15461,36471,17912,44071,30159,21575,19466,15551,9803,9427,47480,40915,3792,36564,17756,43322,29290,22235,36138,19616,18138,14917,9890,8520,47168,40483,3395,42755,22829,20193,18305,3761,30113,36106,14478,9603,8479,48241,40002,29293,35590,14054,9248,8462,46842,40212,42211,22654,20034,17447,3586,32822,7049,37038,13309,3632,39161,19349,45290,27607,15995,8875,22692,32638,36876,12548,2396,38423,19896,44902,26564,15652,7713,8849,22840],"total_u5_povertyE":[5759,7791,2584,10530,574,8899,3013,1937,1795,2933,2890,7249,6577,2715,16596,386,5419,3330,1665,1906,2746,3334,2289,7330,8709,13907,362,6316,4774,3058,2035,3210,2786,7701,7744,2856,13182,1144,9734,4049,1997,1487,3613,3075,8490,10638,4057,17056,361,8771,4119,2693,2429,3618,5970,7762,7456,2942,16843,579,10861,4090,3992,2365,2802,4861,10294,8541,2073,12563,943,10076,3648,2821,1823,3542,5187,12780,4071,4775,585,3011,7505,2682,3444,3087,6616,7231,12854,3348,4455,2486,485,3374,1320,7406,8190,6655,1875,6706,1270,8682,3692,2038,751,2707,2397,2582,8172,5744,2690,1934,8230,6396,129,9562,3653,2893,632,2390,7497,2323,7153,1950,2972,596,595,2800,2133,7180,5001,286,5703,1371,7427,2755,1592,5954,845,1292,2354,2327,2155,5659,3594,167,6827,3535,378,914,0,1761,3732,842,2978,1965,6821,4959,2667,4783,1224,2119,2011,4086,2829,5938,1582,192,136,334,4119,1092,3744,1400,185,5876,885,6076,2491,2626,2118,2502,4792,3357,988,0,7222,289,4470,1315,1470,1557,1553,1276],"perc_u5_poverty":[0.1657,0.1983,0.1471,0.2058,0.0278,0.205,0.0936,0.1141,0.2204,0.2963,0.1562,0.1996,0.1662,0.1551,0.3259,0.0185,0.13,0.1064,0.1024,0.2256,0.2837,0.1746,0.1349,0.1938,0.2133,0.2724,0.0167,0.1462,0.1558,0.1761,0.218,0.3145,0.1359,0.1973,0.1865,0.1594,0.2536,0.0512,0.2238,0.1272,0.1131,0.1547,0.3516,0.1443,0.2139,0.252,0.2334,0.3318,0.0158,0.1941,0.1292,0.1462,0.2291,0.3366,0.2753,0.2057,0.1845,0.1775,0.3877,0.0262,0.2394,0.1342,0.2277,0.2454,0.2686,0.2457,0.273,0.2108,0.127,0.2753,0.0445,0.224,0.1253,0.1625,0.1841,0.3472,0.2652,0.2731,0.1414,0.2352,0.0295,0.1891,0.2019,0.1603,0.3367,0.3324,0.1466,0.1801,0.2834,0.1142,0.2229,0.1553,0.0242,0.3404,0.1434,0.1619,0.2069,0.1813,0.1084,0.1837,0.0727,0.1928,0.1261,0.1004,0.0381,0.1735,0.2576,0.2891,0.1756,0.1429,0.2792,0.2154,0.1776,0.1585,0.0335,0.2101,0.1232,0.1425,0.0323,0.1546,0.2056,0.1297,0.1623,0.0647,0.1378,0.0306,0.0383,0.2856,0.2263,0.1512,0.1222,0.0754,0.156,0.0772,0.1714,0.0941,0.0716,0.1648,0.0431,0.0712,0.1578,0.2353,0.2529,0.12,0.0888,0.0492,0.1597,0.1548,0.0187,0.0499,0,0.0585,0.1034,0.0582,0.3101,0.2317,0.1414,0.124,0.091,0.1344,0.0871,0.2291,0.2377,0.0872,0.0704,0.1407,0.0698,0.0096,0.0078,0.0931,0.1255,0.1549,0.1011,0.1052,0.0509,0.15,0.0457,0.1342,0.0902,0.1642,0.2386,0.1103,0.1468,0.091,0.0787,0,0.188,0.0145,0.0996,0.0495,0.0939,0.2019,0.1755,0.0559],"region":["Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Western","Front Range","Front Range","Southern","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Southern","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Front Range","Western","Southern","Front Range"]}}]}
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Mickey Rafa</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts.html"> 
+<span class="menu-text">Portfolio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../workshops.html"> 
+<span class="menu-text">Workshops</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-page-left">
+      <h1 class="title">Part Two: Wrangling Census data for longitudinal analysis of child poverty</h1>
+                  <div>
+        <div class="description">
+          This post shows how to fetch many years of data simply, unlocking longitudinal analysis of Census data
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">data-viz</div>
+                <div class="quarto-category">tidyverse</div>
+                <div class="quarto-category">tidycensus</div>
+                <div class="quarto-category">api</div>
+                <div class="quarto-category">javascript</div>
+                <div class="quarto-category">purrr</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta column-page-left">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p><a href="https://mrafa3.github.io/">Mickey Rafa</a> </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 20, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
+  <ul class="collapse">
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  </ul></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul class="collapse">
+  <li><a href="#fetching-from-the-tidycensus-api" id="toc-fetching-from-the-tidycensus-api" class="nav-link" data-scroll-target="#fetching-from-the-tidycensus-api">Fetching from the <code>tidycensus::</code> API</a></li>
+  <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data wrangling</a></li>
+  </ul></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  <li><a href="#bonus-using-observable-plot" id="toc-bonus-using-observable-plot" class="nav-link" data-scroll-target="#bonus-using-observable-plot">Bonus: Using Observable Plot</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+
+
+
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>In <a href="https://mrafa3.github.io/posts/2024-08-13-tidycensus-exploration/">Part One</a>, I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the <code>tidycensus::</code> package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling.</p>
+<p>In this post, I’ll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I’ll unpack some of the trends seen in child poverty in Colorado.</p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># census_api_key('INSERT KEY HERE')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="data" class="level1">
+<h1>Data</h1>
+<p>For this analysis, I’m interested in looking at the most recent state-level child poverty data available from the U.S. Census Bureau, and I want to construct a longitudinal sense of the change in child poverty.</p>
+<p>First, let’s revisit the different American Community Survey products – <strong>ACS-1</strong> and <strong>ACS-5</strong>.</p>
+<p><em>What’s the difference between these, and how do you choose which survey product to use for your purposes?</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 40%">
+<col style="width: 38%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>ACS 1-Year Estimates</th>
+<th>ACS 5-Year Estimates</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data Collection Period</td>
+<td>12 months</td>
+<td>60 months</td>
+</tr>
+<tr class="even">
+<td>Population Coverage</td>
+<td>Areas with 65,000 or more people</td>
+<td>All geographic areas, including those with fewer than 65,000 people</td>
+</tr>
+<tr class="odd">
+<td>Sample Size</td>
+<td>Smallest</td>
+<td>Largest</td>
+</tr>
+<tr class="even">
+<td>Reliability</td>
+<td>Less reliable due to smaller sample size</td>
+<td>More reliable due to larger sample size</td>
+</tr>
+<tr class="odd">
+<td>Currency</td>
+<td>Most current data</td>
+<td>Less current, includes older data</td>
+</tr>
+<tr class="even">
+<td>Release Frequency</td>
+<td>Annually</td>
+<td>Annually</td>
+</tr>
+<tr class="odd">
+<td>Best Used For</td>
+<td>Analyzing large populations, when currency is more important than precision</td>
+<td>Analyzing small populations, where precision is more important than currency</td>
+</tr>
+<tr class="even">
+<td>Example Usage</td>
+<td>Examining recent economic changes</td>
+<td>Examining trends in small geographic areas or small population subgroups</td>
+</tr>
+</tbody>
+</table>
+<p>In Part One, I wanted to fetch the most recent, reliable estimates for state-level and county-level poverty data, which led me to use the 5-year estimates. For this post, I am interested in constructing a longitudinal dataset of the most recent year-on-year estimates. If I again used the 5-year estimates, I would be comparing results across years that include much of the same sampling period (as shown in the graphic below).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="acs_sample_explained.png" class="img-fluid figure-img"></p>
+<figcaption>The ACS-5 product has a 60-month sampling period for each annual release, meaning that 48 months of sampling overlap with each annual ACS-5 release<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></figcaption>
+</figure>
+</div>
+<p>For this analysis, I’ll use the <strong>1-year estimates</strong> from the American Community Survey, which will limit my ability to analyze changes in geographic units with populations greater than 65,000.</p>
+<p>As I did in Part One, I’ll use the following series from the American Community Survey:</p>
+<ul>
+<li><em>B01001_003</em>: Estimate!!Total:!!Male:!!Under 5 years (all racial groups)</li>
+<li><em>B01001_027</em>: Estimate!!Total:!!Female:!!Under 5 years (all racial groups)</li>
+<li><em>B17001_004</em>: Estimate!!Total:!!Income in the past 12 months below poverty level:!!Male:!!Under 5 years</li>
+<li><em>B17001_018</em>: Estimate!!Total:!!Income in the past 12 months below poverty level:!!Female:!!Under 5 years</li>
+</ul>
+<section id="fetching-from-the-tidycensus-api" class="level2">
+<h2 class="anchored" data-anchor-id="fetching-from-the-tidycensus-api">Fetching from the <code>tidycensus::</code> API</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># data for ACS-1 begins in 2005</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>years <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">2005</span>, <span class="dv">2022</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># no 2020 data from the ACS</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setdiff</span>(<span class="dv">2020</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, I’ll define a function to fetch the ACS data for each year in the vector.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fetch_acs_data <span class="ot">&lt;-</span> <span class="cf">function</span>(year) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">"county"</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">state =</span> <span class="st">"Colorado"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">survey =</span> <span class="st">'acs1'</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">variables =</span> <span class="fu">c</span>(<span class="at">male_u5_pop =</span> <span class="st">'B01001_003'</span>, </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">female_u5_pop =</span> <span class="st">'B01001_027'</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">male_u5_poverty =</span> <span class="st">'B17001_004'</span>, </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">female_u5_poverty =</span> <span class="st">'B17001_018'</span>),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">year =</span> year,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">output =</span> <span class="st">'wide'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">year =</span> year)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, I’ll use <code>purrr::map_df()</code> to apply each year to the <code>fetch_acs_data()</code> function that I created, which will result in a single dataframe of all years.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>combined_acs_data <span class="ot">&lt;-</span> <span class="fu">map_df</span>(years, fetch_acs_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="data-wrangling">Data wrangling</h2>
+<ul>
+<li>Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>combined_acs_data <span class="ot">&lt;-</span> combined_acs_data <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total_u5_popE =</span> male_u5_popE <span class="sc">+</span> female_u5_popE,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">total_u5_povertyE =</span> male_u5_povertyE <span class="sc">+</span> female_u5_povertyE,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">perc_u5_poverty =</span> total_u5_povertyE <span class="sc">/</span> total_u5_popE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Creating a <code>county</code> field that cleans the <code>county_state</code> field to only include the county name</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>combined_acs_data <span class="ot">&lt;-</span> combined_acs_data <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">county =</span> <span class="fu">str_remove</span>(NAME, <span class="st">" County.*"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(county, <span class="fu">everything</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Reading in a table that maps Colorado’s counties to a region of the state</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>colorado_regions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'.//data/colorado_regions.csv'</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">region =</span> <span class="fu">as.factor</span>(region))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>(Finally) creating the <code>combined_acs_data</code> dataframe for longitudinal analysis</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>combined_acs_data <span class="ot">&lt;-</span> combined_acs_data <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>colorado_regions,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="st">'county'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="analysis" class="level1">
+<h1>Analysis</h1>
+<p>Data from the American Community Survey represents results from a sample (in this case, a 1-year sample – “acs1”) that come with a margin of error. Said another way, each data value is considered an estimate with a corresponding margin of error, which the Census Bureau calculates.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> Point estimates should be used with caution, and the provided margins of error are key to understanding the uncertainty from the sample around that estimate.</p>
+<p>I’ll illustrate this uncertainty in the 2022 ACS-1 poverty data, using the <code>geom_errorbar()</code> function from ggplot.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># note that this would be fewer steps if I did another </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># API call to build the dataframe in tidy format</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>combined_acs_data <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(county, year, </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>         male_u5_povertyE, male_u5_povertyM, female_u5_povertyE, female_u5_povertyM) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2022</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">6</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"variable"</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"estimate"</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gender =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable, <span class="st">"female"</span>), <span class="st">"Female"</span>, <span class="st">"Male"</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">variable_type =</span> <span class="fu">if_else</span>(<span class="fu">str_detect</span>(variable, <span class="st">"E$"</span>), <span class="st">"estimate"</span>, <span class="st">"moe"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>variable) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">spread</span>(variable_type, estimate) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>estimate, </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span><span class="fu">reorder</span>(county, estimate), </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span>gender)) <span class="sc">+</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> .<span class="dv">8</span>)) <span class="sc">+</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="fu">aes</span>(<span class="at">xmin=</span><span class="fu">if_else</span>(estimate <span class="sc">-</span> moe <span class="sc">&lt;</span> <span class="dv">0</span>, estimate <span class="sc">-</span> estimate, estimate <span class="sc">-</span> moe), </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">xmax=</span>estimate <span class="sc">+</span> moe), </span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>                 <span class="at">height =</span> <span class="fl">0.4</span>,</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> .<span class="dv">8</span>)) <span class="sc">+</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>,</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'</span><span class="sc">\n</span><span class="st">Number of children below the poverty line</span><span class="sc">\n</span><span class="st">'</span>,</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span>caption_text) <span class="sc">+</span> </span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(title_text,</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle=</span>subtitle_text) <span class="sc">+</span> </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> comma) <span class="sc">+</span> </span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> gender_cols) <span class="sc">+</span> </span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  my.theme <span class="sc">+</span> </span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/plot_margin_error-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>And now I can visualize the child poverty estimates in my home county (Jefferson) over time, from 2005-2022.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>combined_acs_data <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county, region) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>year,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>perc_u5_poverty,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">group=</span>county,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="fu">if_else</span>(county <span class="sc">==</span> <span class="st">'Jefferson'</span>, <span class="st">'Jefferson'</span>, <span class="st">'Other'</span>))) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data=</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(county <span class="sc">!=</span> <span class="st">'Jefferson'</span>)) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data=</span> . <span class="sc">%&gt;%</span> <span class="fu">filter</span>(county <span class="sc">==</span> <span class="st">'Jefferson'</span>)) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(title_text2,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> subtitle_text2) <span class="sc">+</span> </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span>caption_text2) <span class="sc">+</span> </span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> county_cols) <span class="sc">+</span> </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> percent) <span class="sc">+</span> </span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  my.theme <span class="sc">+</span> </span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/lineplot_co-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="bonus-using-observable-plot" class="level1">
+<h1>Bonus: Using Observable Plot</h1>
+<p>I’ll show how to use Observable Plot to build some interactive graphics (this can be done with R, but I want to experiment more with what Javascript can do).</p>
+<p>To use Observable Plot in Quarto, you need to first have your data object defined in an Observable JS object, which can be achieved by:</p>
+<ul>
+<li>Reading in the object directly as an Observable JS object (such as with the <code>FileAttachment()</code> function), or</li>
+<li>Converting your R or Python object using the <code>ojs_define()</code> function in an R or Python code chunk</li>
+</ul>
+<p>Note that, if you choose the latter (which I’ll do here), this object only operates when your site or knitr document is rendered (meaning, it won’t execute as a code chunk like you can with R, Python, or SQL in Quarto).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ojs_define</span>(<span class="at">ojsd =</span> combined_acs_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, I’ll create a line plot of child poverty by county over time, faceting by region.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" data-startfrom="296" data-source-offset="0"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript" style="counter-reset: source-line 295;"><span id="cb12-296"><a href="#cb12-296" aria-hidden="true" tabindex="-1"></a>Plot<span class="op">.</span><span class="fu">plot</span>({</span>
+<span id="cb12-297"><a href="#cb12-297" aria-hidden="true" tabindex="-1"></a>  <span class="op">&lt;!--</span> using options <span class="im">from</span> here to <span class="dt">learn</span><span class="op">:</span> <span class="dt">https</span><span class="op">:</span><span class="co">//observablehq.com/plot/features/facets --&gt;</span></span>
+<span id="cb12-298"><a href="#cb12-298" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span><span class="op">:</span> <span class="st">"Child poverty (%) in Colorado by county"</span><span class="op">,</span></span>
+<span id="cb12-299"><a href="#cb12-299" aria-hidden="true" tabindex="-1"></a>  <span class="dt">caption</span><span class="op">:</span> <span class="st">"Source: American Community Survey"</span><span class="op">,</span></span>
+<span id="cb12-300"><a href="#cb12-300" aria-hidden="true" tabindex="-1"></a>  <span class="dt">width</span><span class="op">:</span> <span class="dv">1200</span><span class="op">,</span></span>
+<span id="cb12-301"><a href="#cb12-301" aria-hidden="true" tabindex="-1"></a>  <span class="dt">heigh</span><span class="op">:</span> <span class="dv">600</span><span class="op">,</span></span>
+<span id="cb12-302"><a href="#cb12-302" aria-hidden="true" tabindex="-1"></a>  <span class="dt">x</span><span class="op">:</span> {<span class="dt">nice</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb12-303"><a href="#cb12-303" aria-hidden="true" tabindex="-1"></a>      <span class="dt">label</span><span class="op">:</span> <span class="st">"Year"</span><span class="op">,</span></span>
+<span id="cb12-304"><a href="#cb12-304" aria-hidden="true" tabindex="-1"></a>      <span class="dt">ticks</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb12-305"><a href="#cb12-305" aria-hidden="true" tabindex="-1"></a>      <span class="dt">tickFormat</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="fu">toString</span>()<span class="op">,</span></span>
+<span id="cb12-306"><a href="#cb12-306" aria-hidden="true" tabindex="-1"></a>      <span class="dt">labelFontSize</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span></span>
+<span id="cb12-307"><a href="#cb12-307" aria-hidden="true" tabindex="-1"></a>      <span class="dt">tickSize</span><span class="op">:</span> <span class="dv">5</span><span class="op">,</span></span>
+<span id="cb12-308"><a href="#cb12-308" aria-hidden="true" tabindex="-1"></a>      <span class="dt">tickFontSize</span><span class="op">:</span> <span class="dv">12</span></span>
+<span id="cb12-309"><a href="#cb12-309" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb12-310"><a href="#cb12-310" aria-hidden="true" tabindex="-1"></a>  <span class="dt">color</span><span class="op">:</span> {<span class="dt">type</span><span class="op">:</span> <span class="st">"categorical"</span>}<span class="op">,</span></span>
+<span id="cb12-311"><a href="#cb12-311" aria-hidden="true" tabindex="-1"></a>  <span class="dt">y</span><span class="op">:</span> {</span>
+<span id="cb12-312"><a href="#cb12-312" aria-hidden="true" tabindex="-1"></a>    <span class="dt">grid</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb12-313"><a href="#cb12-313" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Child poverty rate (%)"</span><span class="op">,</span></span>
+<span id="cb12-314"><a href="#cb12-314" aria-hidden="true" tabindex="-1"></a>    <span class="dt">domain</span><span class="op">:</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">100</span>]</span>
+<span id="cb12-315"><a href="#cb12-315" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;!--</span> <span class="dt">labelFontSize</span><span class="op">:</span> <span class="dv">50</span><span class="op">,</span> <span class="op">--&gt;</span></span>
+<span id="cb12-316"><a href="#cb12-316" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;!--</span> <span class="dt">tickFontSize</span><span class="op">:</span> <span class="dv">50</span> <span class="op">--&gt;</span></span>
+<span id="cb12-317"><a href="#cb12-317" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb12-318"><a href="#cb12-318" aria-hidden="true" tabindex="-1"></a>  <span class="dt">fx</span><span class="op">:</span> {</span>
+<span id="cb12-319"><a href="#cb12-319" aria-hidden="true" tabindex="-1"></a>    <span class="dt">label</span><span class="op">:</span> <span class="st">"Region"</span></span>
+<span id="cb12-320"><a href="#cb12-320" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;!--</span> these are not working <span class="op">--&gt;</span></span>
+<span id="cb12-321"><a href="#cb12-321" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;!--</span> <span class="dt">tickFontSize</span><span class="op">:</span> <span class="dv">32</span><span class="op">,</span> <span class="op">--&gt;</span></span>
+<span id="cb12-322"><a href="#cb12-322" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;!--</span> <span class="dt">labelFontSize</span><span class="op">:</span> <span class="dv">32</span> <span class="op">--&gt;</span></span>
+<span id="cb12-323"><a href="#cb12-323" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb12-324"><a href="#cb12-324" aria-hidden="true" tabindex="-1"></a>  <span class="dt">marks</span><span class="op">:</span> [</span>
+<span id="cb12-325"><a href="#cb12-325" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">ruleY</span>([<span class="dv">0</span>])<span class="op">,</span></span>
+<span id="cb12-326"><a href="#cb12-326" aria-hidden="true" tabindex="-1"></a>    Plot<span class="op">.</span><span class="fu">lineY</span>(<span class="fu">transpose</span>(ojsd)<span class="op">,</span> {</span>
+<span id="cb12-327"><a href="#cb12-327" aria-hidden="true" tabindex="-1"></a>    <span class="dt">x</span><span class="op">:</span> <span class="st">"year"</span><span class="op">,</span> </span>
+<span id="cb12-328"><a href="#cb12-328" aria-hidden="true" tabindex="-1"></a>    <span class="dt">fx</span><span class="op">:</span> <span class="st">"region"</span><span class="op">,</span></span>
+<span id="cb12-329"><a href="#cb12-329" aria-hidden="true" tabindex="-1"></a>    <span class="dt">y</span><span class="op">:</span> d <span class="kw">=&gt;</span> d<span class="op">.</span><span class="at">perc_u5_poverty</span> <span class="op">*</span> <span class="dv">100</span><span class="op">,</span> </span>
+<span id="cb12-330"><a href="#cb12-330" aria-hidden="true" tabindex="-1"></a>    <span class="dt">z</span><span class="op">:</span> <span class="st">"county"</span><span class="op">,</span> </span>
+<span id="cb12-331"><a href="#cb12-331" aria-hidden="true" tabindex="-1"></a>    <span class="dt">stroke</span><span class="op">:</span> <span class="st">"region"</span><span class="op">,</span></span>
+<span id="cb12-332"><a href="#cb12-332" aria-hidden="true" tabindex="-1"></a>    <span class="dt">tip</span><span class="op">:</span> <span class="kw">true</span>})</span>
+<span id="cb12-333"><a href="#cb12-333" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb12-334"><a href="#cb12-334" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div id="ojs-cell-1" data-nodetype="expression">
+
+</div>
+</div>
+</div>
+<p>Some comments on the above:</p>
+<ul>
+<li>There are discussions online that indicate that not all Javascript styling works in Quarto, and this supports that (some font size elements don’t seem to work, faceting options, etc.). I’d like to test that in Observable directly, but for now, I’ll just note that this is not my <em>favorite</em> styling.</li>
+<li>Aside from the Front Range, which is showing some smooth patterns, there’s pretty significant volatility in these child poverty estimates.</li>
+</ul>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>In this <code>tidycensus::</code> post, I demonstrated:</p>
+<ul>
+<li>How to fetch data across multiple years from the U.S. Census Bureau and wrangle the data for longitudinal analysis</li>
+<li>How to move between R or Python objects and Observable JS objects in Quarto</li>
+<li>How to make some simple interactive graphics with Observable Plot</li>
+</ul>
+<p>More to come on poverty analysis in future posts!</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Screenshot taken from the ACS 2018 Handbook, found here: https://www.census.gov/content/dam/Census/library/publications/2018/acs/acs_general_handbook_2018_ch03.pdf.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>By default the <code>tidycensus::</code> API provides the margin of error at the 90% confidence interval, but you can change this with the <code>moe_level</code> argument within <code>get_acs()</code>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script type="ojs-module-contents">
+eyJjb250ZW50cyI6W3sibWV0aG9kTmFtZSI6ImludGVycHJldCIsImNlbGxOYW1lIjoib2pzLWNlbGwtMSIsImlubGluZSI6ZmFsc2UsInNvdXJjZSI6IlBsb3QucGxvdCh7XG4gIDwhLS0gdXNpbmcgb3B0aW9ucyBmcm9tIGhlcmUgdG8gbGVhcm46IGh0dHBzOi8vb2JzZXJ2YWJsZWhxLmNvbS9wbG90L2ZlYXR1cmVzL2ZhY2V0cyAtLT5cbiAgdGl0bGU6IFwiQ2hpbGQgcG92ZXJ0eSAoJSkgaW4gQ29sb3JhZG8gYnkgY291bnR5XCIsXG4gIGNhcHRpb246IFwiU291cmNlOiBBbWVyaWNhbiBDb21tdW5pdHkgU3VydmV5XCIsXG4gIHdpZHRoOiAxMjAwLFxuICBoZWlnaDogNjAwLFxuICB4OiB7bmljZTogdHJ1ZSxcbiAgICAgIGxhYmVsOiBcIlllYXJcIixcbiAgICAgIHRpY2tzOiA1LFxuICAgICAgdGlja0Zvcm1hdDogZCA9PiBkLnRvU3RyaW5nKCksXG4gICAgICBsYWJlbEZvbnRTaXplOiA1MCxcbiAgICAgIHRpY2tTaXplOiA1LFxuICAgICAgdGlja0ZvbnRTaXplOiAxMlxuICB9LFxuICBjb2xvcjoge3R5cGU6IFwiY2F0ZWdvcmljYWxcIn0sXG4gIHk6IHtcbiAgICBncmlkOiB0cnVlLFxuICAgIGxhYmVsOiBcIkNoaWxkIHBvdmVydHkgcmF0ZSAoJSlcIixcbiAgICBkb21haW46IFswLCAxMDBdXG4gICAgPCEtLSBsYWJlbEZvbnRTaXplOiA1MCwgLS0+XG4gICAgPCEtLSB0aWNrRm9udFNpemU6IDUwIC0tPlxuICB9LFxuICBmeDoge1xuICAgIGxhYmVsOiBcIlJlZ2lvblwiXG4gICAgPCEtLSB0aGVzZSBhcmUgbm90IHdvcmtpbmcgLS0+XG4gICAgPCEtLSB0aWNrRm9udFNpemU6IDMyLCAtLT5cbiAgICA8IS0tIGxhYmVsRm9udFNpemU6IDMyIC0tPlxuICB9LFxuICBtYXJrczogW1xuICAgIFBsb3QucnVsZVkoWzBdKSxcbiAgICBQbG90LmxpbmVZKHRyYW5zcG9zZShvanNkKSwge1xuICAgIHg6IFwieWVhclwiLCBcbiAgICBmeDogXCJyZWdpb25cIixcbiAgICB5OiBkID0+IGQucGVyY191NV9wb3ZlcnR5ICogMTAwLCBcbiAgICB6OiBcImNvdW50eVwiLCBcbiAgICBzdHJva2U6IFwicmVnaW9uXCIsXG4gICAgdGlwOiB0cnVlfSlcbiAgXVxufSlcbiJ9XX0=
+</script>
+<script type="module">
+if (window.location.protocol === "file:") { alert("The OJS runtime does not work with file:// URLs. Please use a web server to view this document."); }
+window._ojs.paths.runtimeToDoc = "../../posts/2024-08-20-tidycensus-exploration-pt2";
+window._ojs.paths.runtimeToRoot = "../..";
+window._ojs.paths.docToRoot = "../..";
+window._ojs.selfContained = false;
+window._ojs.runtime.interpretFromScriptTags();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

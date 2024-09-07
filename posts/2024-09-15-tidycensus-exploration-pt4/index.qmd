@@ -209,10 +209,7 @@ agg_combined_acs_data %>%
 ```
 
 
-
-
-
-```{r}
+```{r gt_state, include=TRUE}
 agg_combined_acs_data2 %>% 
   as.data.frame() %>% 
   select(NAME, Region, rank_wfh_population, ttl_worked_from_homeE, rank_perc_wfh_change, perc_wfh_change) %>% 
