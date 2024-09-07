@@ -153,11 +153,11 @@ combined_acs_data <- combined_acs_data %>%
             by='county')
 ```
 
-```{r}
+```{r read_census_regions, include=TRUE, echo=FALSE}
 census_regions <- read_csv('.//data/census_regions.csv')
 ```
 
-```{r}
+```{r join_agg_regions, include=TRUE, echo=FALSE}
 agg_combined_acs_data <- agg_combined_acs_data %>% 
   left_join(x=.,
             y=census_regions,
@@ -169,18 +169,7 @@ agg_combined_acs_data <- agg_combined_acs_data %>%
 
 First, I'm interested in looking at Colorado values in the aggregate.
 
-```{r agg_combined_acs_data2, include=FALSE}
-# (agg_combined_acs_data <- combined_acs_data %>% 
-#   as.data.frame() %>% 
-#   select(-geometry) %>% 
-#   group_by(year) %>% 
-#   summarise(ttl_worked_from_homeE = sum(ttl_worked_from_homeE),
-#             ttl_worked_from_homeM = moe_sum(ttl_worked_from_homeM, estimate = ttl_worked_from_homeE)) %>% 
-#   mutate(annual_perc_wfh_change = (ttl_worked_from_homeE - lag(ttl_worked_from_homeE, 1)) / 
-#                                      lag(ttl_worked_from_homeE, 1)))
-```
-
-```{r}
+```{r agg_combined_acs_data2, include=TRUE}
 agg_combined_acs_data2 <- agg_combined_acs_data %>% 
   filter(NAME != 'Puerto Rico') %>% 
   arrange(NAME, year) %>% 
@@ -194,7 +183,7 @@ agg_combined_acs_data2 <- agg_combined_acs_data %>%
 ```
 
 
-```{r}
+```{r state_plot, include=TRUE}
 agg_combined_acs_data2 %>% 
   ggplot(.) + 
   geom_sf(aes(fill = perc_wfh_change), color = NA) + 
@@ -206,9 +195,8 @@ agg_combined_acs_data2 %>%
 ```
 
 
-```{r}
-(fig1 <- agg_combined_acs_data %>% 
-  filter()
+```{r plot1, include=TRUE}
+agg_combined_acs_data %>% 
   ggplot(.,
          aes(x=year,
              y=ttl_worked_from_homeE,
@@ -217,7 +205,7 @@ agg_combined_acs_data2 %>%
   geom_ribbon(aes(ymax = ttl_worked_from_homeE + ttl_worked_from_homeM, 
                   ymin = ttl_worked_from_homeE - ttl_worked_from_homeM),
               fill='lightgreen', alpha=.5) + 
-  scale_y_continuous(labels = comma))
+  scale_y_continuous(labels = comma)
 ```
 
 
@@ -257,7 +245,7 @@ agg_combined_acs_data2 %>%
 ```
 
 
-```{r}
+```{r colorado_map, include=TRUE}
 combined_acs_data %>% 
   filter(year == 2022) %>% 
   ggplot(.) + 
@@ -269,7 +257,7 @@ combined_acs_data %>%
 ```
 
 
-```{r}
+```{r small_mult_plot, include=TRUE}
 combined_acs_data %>% 
   # filter(county %in% )
   ggplot(aes(x=year,
