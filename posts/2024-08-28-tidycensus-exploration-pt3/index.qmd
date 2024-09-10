@@ -118,7 +118,7 @@ acs_data_tract <- acs_data_tract %>%
          perc_u6_insured_MOEcalc = total_u6_insured_MOEcalc / total_u6_popE)
 ```
 
-With the `tigris::` package, you can download major map features, including roads and water areas, which make maps more immediately relatable. In this post, I'm exploring Census tract data, which is not a well known unit, so adding 
+With the `tigris::` package, you can download major map features, including roads and water areas, which make maps more immediately relatable. In this post, I'm exploring Census tract data, which is not a well known unit, so adding roads and water area helps orient readers to the map.
 
 ```{r roads_water, include=TRUE, message=FALSE, output=FALSE}
 den_roads <- roads("CO", "Denver") %>% 
