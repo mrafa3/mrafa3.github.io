@@ -9,6 +9,7 @@ date: 09-15-2024
 categories: [R, tidyverse, tidycensus, mapping, api] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+code-annotations: hover
 # image: plot_denver_child_insured_2022.png
 draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 editor: 
@@ -29,13 +30,19 @@ In this post, I'd like to drill down further -- to the Census tract level -- to 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(tidycensus)
-library(scales)
-library(janitor)
-library(gt)
-library(patchwork)
+library(scales) # <1>
+library(janitor) # <2> 
+library(gt) # <3>
+library(patchwork) # <4>
 
-# census_api_key('INSERT KEY HERE')
+# census_api_key('INSERT KEY HERE', install=TRUE) # <5>
 ```
+
+1. Loading the `scales::` package to transform ggplot scales simply (some people choose to explicitly define `scales::` in their code rather than loading the library).
+2. The `janitor::clean_names()` function tidies the column names of your dataset to use the snake case convention. Very handy!
+3. The `gt::` library provides functionality for creating ggplot-esque tables.
+4. The `patchwork::` package allows you to build ggplots that contain multiple ggplot objects in an easy to use syntax.
+5. The first time that you're working with the `tidycensus::` package, you need to request an API key at https://api.census.gov/data/key_signup.html. The `install=` argument will install your personal key to the .Renviron file, and you won't need to use the `census_api_key()` function again.  
 
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
