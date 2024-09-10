@@ -346,11 +346,11 @@ df_colorado <- get_acs(geography = 'county',
 ```
 
 ```{r df_mutate2, include=TRUE, echo=FALSE}
-(df_colorado <- df_colorado %>% 
+df_colorado <- df_colorado %>% 
   rename(county_state = NAME) %>%
   mutate(total_u5_popE = male_u5_popE + female_u5_popE,
          total_u5_povertyE = male_u5_povertyE + male_u5_povertyE,
-         perc_u5_in_poverty = total_u5_povertyE / total_u5_popE))
+         perc_u5_in_poverty = total_u5_povertyE / total_u5_popE)
 ```
 
 ```{r plot_u5_poverty2, include=TRUE, echo=FALSE, fig.align='center'}
