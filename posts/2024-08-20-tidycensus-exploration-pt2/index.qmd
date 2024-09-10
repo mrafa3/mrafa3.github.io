@@ -28,15 +28,17 @@ In this post, I'll build a script that iterates through the available years, fet
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(tidycensus)
-library(scales)
-library(janitor)
-library(gt)
-library(glue) # <1>
+library(scales) # <1>
+library(gt) # <2>
+library(glue) # <3>
 
-# census_api_key('INSERT KEY HERE')
+# census_api_key('INSERT KEY HERE', install = TRUE) # <4>
 ```
 
-1. The `glue::` package allows for simple addition of HTML to ggplot graphics.
+1. Loading the `scales::` package to transform ggplot scales simply (some people choose to explicitly define `scales::` in their code rather than loading the library).
+2. The `gt()::` library provides functionality for creating ggplot-esque tables.
+3. The `glue::` package allows for simple addition of HTML to ggplot graphics.
+4. The first time that you're working with the `tidycensus::` package, you need to request an API key at https://api.census.gov/data/key_signup.html. The `install=` argument will install your personal key to the .Renviron file, and you won't need to use the `census_api_key()` function again.  
 
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
@@ -102,11 +104,12 @@ As I did in Part One, I'll use the following series from the American Community 
 ## Fetching from the `tidycensus::` API
 
 ```{r year_acs, include=TRUE}
-# data for ACS-1 begins in 2005
-years <- seq(2005, 2022) %>% 
-  # no 2020 data from the ACS
-  setdiff(2020)
+years <- seq(2005, 2022) %>% # <5>
+  setdiff(2020) # <6>
 ```
+
+5. Data for the ACS-1 product begins in 2005.
+6. Due to the COVID-19 pandemic, the U.S. Census Bureau does not have standard ACS products available for 2020. The `setdiff()` function removes 2020 from the vector.
 
 Next, I'll define a function to fetch the ACS data for each year in the vector.
 
