@@ -425,7 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="quick-mapping-with-usmap" class="level1">
 <h1>Quick mapping with usmap::</h1>
 <p>The <code>usmap::</code> package makes rendering a map of the US quick and easy. Though it’s not meant to replace <code>sf::</code> or packages that allow for more sophisticated maps, it does allow for a quick way to make a U.S. map. For this demo, I’ll plot the state-level poverty data that I collected and manipulated in earlier steps.</p>
-<p>This shows that child poverty is concentrated in southern and southeastern states (as a percent of the child population).</p>
+<p>This shows that child poverty – those living below the Federal Poverty Line – is concentrated in southern and southeastern states (as a percent of the child population).</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>(perc_poverty_map <span class="ot">&lt;-</span> <span class="fu">plot_usmap</span>(<span class="at">regions =</span> <span class="st">'states'</span>,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">data =</span> df,</span>
@@ -463,65 +463,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="fu">c</span>(total_u5_popE, total_u5_povertyE), <span class="at">decimals =</span> <span class="dv">0</span>, <span class="at">use_seps =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fmt_percent</span>(<span class="at">columns =</span> perc_u5_in_poverty, <span class="at">decimals =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span>  </span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#add table title</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Estimated child poverty in U.S. states in 2022**"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="st">"Data from 2022 American Community Survey 5-year estimates from the U.S. Census Bureau"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#apply new style to all column headers</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="at">columns =</span> <span class="fu">everything</span>()),</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>      <span class="co">#thick border</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_borders</span>(<span class="at">sides =</span> <span class="st">"bottom"</span>, <span class="at">weight =</span> <span class="fu">px</span>(<span class="dv">3</span>)),</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>      <span class="co">#make text bold</span></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>)</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  <span class="co">#apply different style to title</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(<span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="at">groups =</span> <span class="st">"title"</span>),</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>            <span class="at">style =</span> <span class="fu">list</span>(</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>              <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">24</span>)</span>
-<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>            )) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_color</span>(</span>
-<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> perc_u5_in_poverty,</span>
-<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette =</span> viridis<span class="sc">::</span><span class="fu">inferno</span>(<span class="dv">100</span>)</span>
-<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">opt_all_caps</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">opt_table_font</span>(</span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">font =</span> <span class="fu">list</span>(</span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">google_font</span>(<span class="st">"Chivo"</span>),</span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">default_fonts</span>()</span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_options</span>(</span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">#remove border between column headers and title</span></span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_labels.border.top.width =</span> <span class="fu">px</span>(<span class="dv">3</span>),</span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_labels.border.top.color =</span> <span class="st">"transparent"</span>,</span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    <span class="co">#remove border around the table</span></span>
-<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.border.top.color =</span> <span class="st">"transparent"</span>,</span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.border.bottom.color =</span> <span class="st">"transparent"</span>,</span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>    <span class="co">#adjust font sizes and alignment</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_notes.font.size =</span> <span class="dv">12</span>,</span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">heading.align =</span> <span class="st">"left"</span></span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Estimated child poverty in U.S. states in 2022**"</span>),</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">subtitle =</span> <span class="st">"Total and Percent estimates of those living below the Federal Poverty Line"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="st">"Data from 2022 American Community Survey 5-year estimates from the U.S. Census Bureau"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#apply new style to all column headers</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="at">columns =</span> <span class="fu">everything</span>()),</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>      <span class="co">#thick border</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_borders</span>(<span class="at">sides =</span> <span class="st">"bottom"</span>, <span class="at">weight =</span> <span class="fu">px</span>(<span class="dv">3</span>)),</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>      <span class="co">#make text bold</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>)</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="co">#apply different style to title</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(<span class="at">locations =</span> <span class="fu">cells_title</span>(<span class="at">groups =</span> <span class="st">"title"</span>),</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>              <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">24</span>)</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>            )) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_color</span>(</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> perc_u5_in_poverty,</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">palette =</span> viridis<span class="sc">::</span><span class="fu">inferno</span>(<span class="dv">100</span>)</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">opt_all_caps</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">opt_table_font</span>(</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">font =</span> <span class="fu">list</span>(</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">google_font</span>(<span class="st">"Chivo"</span>),</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">default_fonts</span>()</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_options</span>(</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    <span class="co">#remove border between column headers and title</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_labels.border.top.width =</span> <span class="fu">px</span>(<span class="dv">3</span>),</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">column_labels.border.top.color =</span> <span class="st">"transparent"</span>,</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>    <span class="co">#remove border around the table</span></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.border.top.color =</span> <span class="st">"transparent"</span>,</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.border.bottom.color =</span> <span class="st">"transparent"</span>,</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>    <span class="co">#adjust font sizes and alignment</span></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">source_notes.font.size =</span> <span class="dv">12</span>,</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">heading.align =</span> <span class="st">"left"</span></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="ixqtediekr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="uqpeipeijm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#ixqtediekr table {
+#uqpeipeijm table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ixqtediekr thead, #ixqtediekr tbody, #ixqtediekr tfoot, #ixqtediekr tr, #ixqtediekr td, #ixqtediekr th {
+#uqpeipeijm thead, #uqpeipeijm tbody, #uqpeipeijm tfoot, #uqpeipeijm tr, #uqpeipeijm td, #uqpeipeijm th {
   border-style: none;
 }
 
-#ixqtediekr p {
+#uqpeipeijm p {
   margin: 0;
   padding: 0;
 }
 
-#ixqtediekr .gt_table {
+#uqpeipeijm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -547,12 +548,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_caption {
+#uqpeipeijm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ixqtediekr .gt_title {
+#uqpeipeijm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -564,7 +565,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#ixqtediekr .gt_subtitle {
+#uqpeipeijm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -576,7 +577,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#ixqtediekr .gt_heading {
+#uqpeipeijm .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -588,13 +589,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_bottom_border {
+#uqpeipeijm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_col_headings {
+#uqpeipeijm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -609,7 +610,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_col_heading {
+#uqpeipeijm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -629,7 +630,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ixqtediekr .gt_column_spanner_outer {
+#uqpeipeijm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -641,15 +642,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#ixqtediekr .gt_column_spanner_outer:first-child {
+#uqpeipeijm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ixqtediekr .gt_column_spanner_outer:last-child {
+#uqpeipeijm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ixqtediekr .gt_column_spanner {
+#uqpeipeijm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -661,11 +662,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#ixqtediekr .gt_spanner_row {
+#uqpeipeijm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ixqtediekr .gt_group_heading {
+#uqpeipeijm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -691,7 +692,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#ixqtediekr .gt_empty_group_heading {
+#uqpeipeijm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -706,15 +707,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#ixqtediekr .gt_from_md > :first-child {
+#uqpeipeijm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ixqtediekr .gt_from_md > :last-child {
+#uqpeipeijm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ixqtediekr .gt_row {
+#uqpeipeijm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -733,7 +734,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#ixqtediekr .gt_stub {
+#uqpeipeijm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -746,7 +747,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ixqtediekr .gt_stub_row_group {
+#uqpeipeijm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -760,15 +761,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#ixqtediekr .gt_row_group_first td {
+#uqpeipeijm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ixqtediekr .gt_row_group_first th {
+#uqpeipeijm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ixqtediekr .gt_summary_row {
+#uqpeipeijm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -778,16 +779,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ixqtediekr .gt_first_summary_row {
+#uqpeipeijm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_first_summary_row.thick {
+#uqpeipeijm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ixqtediekr .gt_last_summary_row {
+#uqpeipeijm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -797,7 +798,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_grand_summary_row {
+#uqpeipeijm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -807,7 +808,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ixqtediekr .gt_first_grand_summary_row {
+#uqpeipeijm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -817,7 +818,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_last_grand_summary_row_top {
+#uqpeipeijm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -827,11 +828,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_striped {
+#uqpeipeijm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ixqtediekr .gt_table_body {
+#uqpeipeijm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -840,7 +841,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_footnotes {
+#uqpeipeijm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -854,7 +855,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_footnote {
+#uqpeipeijm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -863,7 +864,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ixqtediekr .gt_sourcenotes {
+#uqpeipeijm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -877,7 +878,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#ixqtediekr .gt_sourcenote {
+#uqpeipeijm .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -885,72 +886,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#ixqtediekr .gt_left {
+#uqpeipeijm .gt_left {
   text-align: left;
 }
 
-#ixqtediekr .gt_center {
+#uqpeipeijm .gt_center {
   text-align: center;
 }
 
-#ixqtediekr .gt_right {
+#uqpeipeijm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ixqtediekr .gt_font_normal {
+#uqpeipeijm .gt_font_normal {
   font-weight: normal;
 }
 
-#ixqtediekr .gt_font_bold {
+#uqpeipeijm .gt_font_bold {
   font-weight: bold;
 }
 
-#ixqtediekr .gt_font_italic {
+#uqpeipeijm .gt_font_italic {
   font-style: italic;
 }
 
-#ixqtediekr .gt_super {
+#uqpeipeijm .gt_super {
   font-size: 65%;
 }
 
-#ixqtediekr .gt_footnote_marks {
+#uqpeipeijm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ixqtediekr .gt_asterisk {
+#uqpeipeijm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ixqtediekr .gt_indent_1 {
+#uqpeipeijm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ixqtediekr .gt_indent_2 {
+#uqpeipeijm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ixqtediekr .gt_indent_3 {
+#uqpeipeijm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ixqtediekr .gt_indent_4 {
+#uqpeipeijm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ixqtediekr .gt_indent_5 {
+#uqpeipeijm .gt_indent_5 {
   text-indent: 25px;
 }
 
-#ixqtediekr .katex-display {
+#uqpeipeijm .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#ixqtediekr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#uqpeipeijm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -964,9 +965,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </colgroup>
 <thead>
 <tr class="header gt_heading">
-<th colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="font-size: 24; font-weight: bold"><p><strong>Estimated child poverty in U.S. states in 2022</strong></p></th>
+<th colspan="4" class="gt_heading gt_title gt_font_normal" style="font-size: 24; font-weight: bold"><p><strong>Estimated child poverty in U.S. states in 2022</strong></p></th>
 </tr>
-<tr class="odd gt_col_headings">
+<tr class="odd gt_heading">
+<th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Total and Percent estimates of those living below the Federal Poverty Line</th>
+</tr>
+<tr class="header gt_col_headings">
 <th id="State" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-weight: bold" scope="col">State</th>
 <th id="Total children &amp;lt; 5 y.o. living in poverty in last 12 mos." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-weight: bold" scope="col">Total children &lt; 5 y.o. living in poverty in last 12 mos.</th>
 <th id="Total children &amp;lt; 5 y.o." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="border-bottom-width: 3px; border-bottom-style: solid; border-bottom-color: #000000; font-weight: bold" scope="col">Total children &lt; 5 y.o.</th>
@@ -1293,7 +1297,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td class="gt_row gt_right" headers="Northeast  perc_u5_in_poverty" style="background-color: #000004; color: #FFFFFF">10.0%</td>
 </tr>
 </tbody><tfoot class="gt_sourcenotes">
-<tr class="odd">
+<tr class="even">
 <td colspan="4" class="gt_sourcenote">Data from 2022 American Community Survey 5-year estimates from the U.S. Census Bureau</td>
 </tr>
 </tfoot>
@@ -1405,24 +1409,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="dumqeiwibk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="rsmrqnbpoh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#dumqeiwibk table {
+#rsmrqnbpoh table {
   font-family: Chivo, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dumqeiwibk thead, #dumqeiwibk tbody, #dumqeiwibk tfoot, #dumqeiwibk tr, #dumqeiwibk td, #dumqeiwibk th {
+#rsmrqnbpoh thead, #rsmrqnbpoh tbody, #rsmrqnbpoh tfoot, #rsmrqnbpoh tr, #rsmrqnbpoh td, #rsmrqnbpoh th {
   border-style: none;
 }
 
-#dumqeiwibk p {
+#rsmrqnbpoh p {
   margin: 0;
   padding: 0;
 }
 
-#dumqeiwibk .gt_table {
+#rsmrqnbpoh .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1448,12 +1452,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_caption {
+#rsmrqnbpoh .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dumqeiwibk .gt_title {
+#rsmrqnbpoh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1465,7 +1469,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#dumqeiwibk .gt_subtitle {
+#rsmrqnbpoh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1477,7 +1481,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#dumqeiwibk .gt_heading {
+#rsmrqnbpoh .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -1489,13 +1493,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_bottom_border {
+#rsmrqnbpoh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_col_headings {
+#rsmrqnbpoh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 3px;
   border-top-color: rgba(255, 255, 255, 0);
@@ -1510,7 +1514,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_col_heading {
+#rsmrqnbpoh .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1530,7 +1534,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#dumqeiwibk .gt_column_spanner_outer {
+#rsmrqnbpoh .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1542,15 +1546,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#dumqeiwibk .gt_column_spanner_outer:first-child {
+#rsmrqnbpoh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dumqeiwibk .gt_column_spanner_outer:last-child {
+#rsmrqnbpoh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dumqeiwibk .gt_column_spanner {
+#rsmrqnbpoh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1562,11 +1566,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#dumqeiwibk .gt_spanner_row {
+#rsmrqnbpoh .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dumqeiwibk .gt_group_heading {
+#rsmrqnbpoh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1592,7 +1596,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#dumqeiwibk .gt_empty_group_heading {
+#rsmrqnbpoh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1607,15 +1611,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#dumqeiwibk .gt_from_md > :first-child {
+#rsmrqnbpoh .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dumqeiwibk .gt_from_md > :last-child {
+#rsmrqnbpoh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dumqeiwibk .gt_row {
+#rsmrqnbpoh .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1634,7 +1638,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#dumqeiwibk .gt_stub {
+#rsmrqnbpoh .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 80%;
@@ -1647,7 +1651,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dumqeiwibk .gt_stub_row_group {
+#rsmrqnbpoh .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1661,15 +1665,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#dumqeiwibk .gt_row_group_first td {
+#rsmrqnbpoh .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dumqeiwibk .gt_row_group_first th {
+#rsmrqnbpoh .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dumqeiwibk .gt_summary_row {
+#rsmrqnbpoh .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1679,16 +1683,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dumqeiwibk .gt_first_summary_row {
+#rsmrqnbpoh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_first_summary_row.thick {
+#rsmrqnbpoh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dumqeiwibk .gt_last_summary_row {
+#rsmrqnbpoh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1698,7 +1702,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_grand_summary_row {
+#rsmrqnbpoh .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1708,7 +1712,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dumqeiwibk .gt_first_grand_summary_row {
+#rsmrqnbpoh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1718,7 +1722,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_last_grand_summary_row_top {
+#rsmrqnbpoh .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1728,11 +1732,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_striped {
+#rsmrqnbpoh .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dumqeiwibk .gt_table_body {
+#rsmrqnbpoh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1741,7 +1745,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_footnotes {
+#rsmrqnbpoh .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1755,7 +1759,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_footnote {
+#rsmrqnbpoh .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1764,7 +1768,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dumqeiwibk .gt_sourcenotes {
+#rsmrqnbpoh .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1778,7 +1782,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#dumqeiwibk .gt_sourcenote {
+#rsmrqnbpoh .gt_sourcenote {
   font-size: 12px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1786,72 +1790,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#dumqeiwibk .gt_left {
+#rsmrqnbpoh .gt_left {
   text-align: left;
 }
 
-#dumqeiwibk .gt_center {
+#rsmrqnbpoh .gt_center {
   text-align: center;
 }
 
-#dumqeiwibk .gt_right {
+#rsmrqnbpoh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dumqeiwibk .gt_font_normal {
+#rsmrqnbpoh .gt_font_normal {
   font-weight: normal;
 }
 
-#dumqeiwibk .gt_font_bold {
+#rsmrqnbpoh .gt_font_bold {
   font-weight: bold;
 }
 
-#dumqeiwibk .gt_font_italic {
+#rsmrqnbpoh .gt_font_italic {
   font-style: italic;
 }
 
-#dumqeiwibk .gt_super {
+#rsmrqnbpoh .gt_super {
   font-size: 65%;
 }
 
-#dumqeiwibk .gt_footnote_marks {
+#rsmrqnbpoh .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dumqeiwibk .gt_asterisk {
+#rsmrqnbpoh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dumqeiwibk .gt_indent_1 {
+#rsmrqnbpoh .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dumqeiwibk .gt_indent_2 {
+#rsmrqnbpoh .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dumqeiwibk .gt_indent_3 {
+#rsmrqnbpoh .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dumqeiwibk .gt_indent_4 {
+#rsmrqnbpoh .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dumqeiwibk .gt_indent_5 {
+#rsmrqnbpoh .gt_indent_5 {
   text-indent: 25px;
 }
 
-#dumqeiwibk .katex-display {
+#rsmrqnbpoh .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#dumqeiwibk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#rsmrqnbpoh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>

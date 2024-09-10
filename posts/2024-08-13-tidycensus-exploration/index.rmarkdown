@@ -16,6 +16,7 @@ editor:
     wrap: 72
 ---
 
+
 # Introduction
 
 I've used data from the U.S. Census Bureau several times, and for this
@@ -25,6 +26,7 @@ to generate a simple U.S. map, and the `gt::` package to display the
 data in a nice table format.
 
 ## Setup
+
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -56,6 +58,7 @@ my.theme <- theme(
   legend.position = 'top',
   strip.text = element_text(color="black", size=14))
 ```
+
 
 ## Data
 
@@ -94,11 +97,13 @@ query the available data within each survey. Combining this with
 `stringr::str_detect()` is a nice way to search through the tens of
 thousands of data series that are available through the U.S. Census API.
 
+
 ```{r inspect_variables, include=TRUE}
 load_variables(2022, "acs5", cache = TRUE) %>% 
   # used this to search for some Under 5 years variables of interest
   filter(str_detect(label, "Under 5 years"))
 ```
+
 
 For this demo, I'll use the following series:
 
@@ -132,6 +137,7 @@ assist in fetching data from the Census API. Some noteworthy ones include:
     series that you may need in the same call.
 -   `geometry=TRUE`: this argument returns the geospatial data in tidy format to create quick ggplot-based maps using `geom_sf()`. 
 
+
 ```{r get_acs, include=TRUE}
 df <- get_acs(geography = 'state',
         variables = c(male_u5_pop = 'B01001_003', 
@@ -143,8 +149,10 @@ df <- get_acs(geography = 'state',
         output = 'wide')
 ```
 
+
 Next, I'll create some fields to combine gender-based poverty estimates
 and calculate a percent of the child population measure.
+
 
 ```{r df_mutate, include=TRUE}
 (df <- df %>% 
@@ -154,11 +162,13 @@ and calculate a percent of the child population measure.
          perc_u5_in_poverty = total_u5_povertyE / total_u5_popE))
 ```
 
+
 You can combine point estimates for gender-based poverty by simply adding them, but you can't do the same for margins of error. The estimated margins of error for each estimate are based on their respective samples and the uncertainty in them. To re-weight the margins of error, you take the square root of the sum of squared margins of error:
 
 > new_MOE_calc = sqrt(`male_u5_povertyM`^2 + `female_u5_povertyM`^2)
 
 The `tidycensus::moe_sum()` function will calculate the new margin of error for you!
+
 
 ```{r moe_recalc, include=TRUE}
 df <- df %>% 
@@ -173,7 +183,9 @@ subtitle_text <- glue('Children defined as those 5 years old and younger<br>Poin
 caption_text <- glue('Source: American Community Survey 2022 5-year estimate<br>Margins of error represent the 90% Confidence Interval<br>Poverty level defined by the Federal Poverty Line')
 ```
 
+
 Now, I can visualize the new point estimates and margins of error for child poverty (not specific to gender).
+
 
 ```{r read_regions, include=TRUE, echo=FALSE, message=FALSE}
 regions <- read_csv('.//data/census_regions.csv') %>% clean_names()
@@ -196,7 +208,6 @@ region_color <- c(
 
 ```
 
-
 ```{r dot_plot, include=TRUE, fig.width=11, fig.height=18, fig.align='center'}
 df %>% 
   filter(state != 'Puerto Rico') %>% 
@@ -216,6 +227,7 @@ df %>%
                      position = 'top') + 
   my.theme
 ```
+
 # Quick mapping with usmap::
 
 The `usmap::` package makes rendering a map of the US quick and easy.
@@ -225,6 +237,7 @@ For this demo, I'll plot the state-level poverty data that I collected
 and manipulated in earlier steps.
 
 This shows that child poverty -- those living below the Federal Poverty Line -- is concentrated in southern and southeastern states (as a percent of the child population).
+
 
 ```{r ggplot_map, include=FALSE}
 # for this code to work, I'd need to use geometry=TRUE in get_acs()
@@ -250,7 +263,9 @@ This shows that child poverty -- those living below the Federal Poverty Line -- 
         legend.title = element_blank()))
 ```
 
+
 # Great tables with gt::
+
 
 ```{r create_df_tbl, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
 (df_tbl <- df %>% 
@@ -324,7 +339,9 @@ df_county <- get_acs(geography = 'county',
   )
 ```
 
+
 # Deep dive: Colorado results 
+
 
 ```{r get_acs_colorado, include=TRUE}
 df_colorado <- get_acs(geography = 'county',
@@ -376,7 +393,6 @@ df_colorado <- df_colorado %>%
 # df <- df %>% 
 #   mutate(region = factor(region, levels = desired_order))
 ```
-
 
 ```{r create_df_tbl2, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
 (df_tbl2 <- df_colorado %>% 
@@ -434,6 +450,7 @@ df_colorado <- df_colorado %>%
 )
 ```
 
+
 # Conclusion
 
 In this first `tidycensus::` post, I demonstrated:
@@ -446,3 +463,4 @@ In this first `tidycensus::` post, I demonstrated:
 -   How to make a simple map using the `usmap::` package
 -   How to make a clean and visually appealing table using the `gt::`
     package
+
