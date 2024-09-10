@@ -36,7 +36,7 @@ library(glue) # <3>
 library(gt) # <4>
 library(usmap)
 
-# census_api_key('INSERT KEY HERE') # <5>
+# census_api_key('INSERT KEY HERE', install = TRUE) # <5>
 ```
 
 1. Loading the `scales::` package to transform ggplot scales simply (some people choose to explicitly define `scales::` in their code rather than loading the library).
