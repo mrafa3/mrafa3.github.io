@@ -18,14 +18,14 @@
     "href": "posts/2024-08-20-tidycensus-exploration-pt2/index.html",
     "title": "Part Two: Wrangling Census data for longitudinal analysis of child poverty",
     "section": "",
-    "text": "In Part One, I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the tidycensus:: package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling.\nIn this post, I’ll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I’ll unpack some of the trends seen in child poverty in Colorado.\n\n\n\nlibrary(tidyverse)\nlibrary(tidycensus)\nlibrary(scales)\nlibrary(janitor)\nlibrary(gt)\nlibrary(zoo)\nlibrary(glue)\n\n# census_api_key('INSERT KEY HERE')"
+    "text": "In Part One, I demonstrated how to fetch data and do some basic analysis of U.S. Census data. Each API call with the tidycensus:: package can only be for one year of data, so to do longitudinal analysis requires some additional wrangling.\nIn this post, I’ll build a script that iterates through the available years, fetches the data, then combines the data into a single dataframe. Then, I’ll unpack some of the trends seen in child poverty in Colorado.\n\n\n\nlibrary(tidyverse)\nlibrary(tidycensus)\nlibrary(scales)\nlibrary(janitor)\nlibrary(gt)\n1library(glue)\n\n# census_api_key('INSERT KEY HERE')\n\n\n1\n\nThe glue:: package allows for simple addition of HTML to ggplot graphics."
   },
   {
     "objectID": "posts/2024-08-20-tidycensus-exploration-pt2/index.html#setup",
     "href": "posts/2024-08-20-tidycensus-exploration-pt2/index.html#setup",
     "title": "Part Two: Wrangling Census data for longitudinal analysis of child poverty",
     "section": "",
-    "text": "library(tidyverse)\nlibrary(tidycensus)\nlibrary(scales)\nlibrary(janitor)\nlibrary(gt)\nlibrary(zoo)\nlibrary(glue)\n\n# census_api_key('INSERT KEY HERE')"
+    "text": "library(tidyverse)\nlibrary(tidycensus)\nlibrary(scales)\nlibrary(janitor)\nlibrary(gt)\n1library(glue)\n\n# census_api_key('INSERT KEY HERE')\n\n\n1\n\nThe glue:: package allows for simple addition of HTML to ggplot graphics."
   },
   {
     "objectID": "posts/2024-08-20-tidycensus-exploration-pt2/index.html#fetching-from-the-tidycensus-api",

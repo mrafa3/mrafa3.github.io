@@ -11,6 +11,7 @@ categories: [R, data-viz, tidyverse, tidycensus, api, javascript, purrr] # self-
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 image: co_county_pov_2022.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+code-annotations: hover
 editor: 
   markdown: 
     wrap: 72
@@ -30,10 +31,12 @@ library(tidycensus)
 library(scales)
 library(janitor)
 library(gt)
-library(glue)
+library(glue) # <1>
 
 # census_api_key('INSERT KEY HERE')
 ```
+
+1. The `glue::` package allows for simple addition of HTML to ggplot graphics.
 
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
