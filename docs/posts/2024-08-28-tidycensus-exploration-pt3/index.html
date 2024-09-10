@@ -295,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">estimate =</span> <span class="fu">c</span>(male_u6_insuredE, female_u6_insuredE)),</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">perc_u6_insured_MOEcalc =</span> total_u6_insured_MOEcalc <span class="sc">/</span> total_u6_popE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>With the <code>tigris::</code> package, you can download major map features, including roads and water areas, which make maps more immediately relatable. In this post, I’m exploring Census tract data, which is not a well known unit, so adding</p>
+<p>With the <code>tigris::</code> package, you can download major map features, including roads and water areas, which make maps more immediately relatable. In this post, I’m exploring Census tract data, which is not a well known unit, so adding roads and water area helps orient readers to the map.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>den_roads <span class="ot">&lt;-</span> <span class="fu">roads</span>(<span class="st">"CO"</span>, <span class="st">"Denver"</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># this filter limits the roads to major streets only</span></span>

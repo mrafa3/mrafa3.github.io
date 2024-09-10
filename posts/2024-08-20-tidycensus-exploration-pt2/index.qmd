@@ -218,7 +218,7 @@ caption_text <- glue('Source: American Community Survey 2022 1-year estimate<br>
 
 title_text2 <- 'Child poverty estimates (% of total) for Colorado counties'
 subtitle_text2 <- glue("<span style='color:#984ea3'>**Jefferson County**</span> highlighted<br>Children defined as those 5 years old and younger")
-caption_text2 <- glue('Source: American Community Survey 1-year estimate<br>ACS-1 estimates only available for counties with more than 65,000 people')
+caption_text2 <- glue('Source: American Community Survey 1-year estimate<br>ACS-1 estimates only available for counties with more than 65,000 people<br>Estimates not available for 2020 due to the COVID-19 pandemic')
 ```
 
 ```{r plot_margin_error, include=TRUE, fig.width=10, fig.height=8, fig.align='center'}
@@ -260,6 +260,19 @@ combined_acs_data %>%
 
 And now I can visualize the child poverty estimates in my home county (Jefferson) over time, from 2005-2022.
 
+
+
+```{r add_missing_2020, include=TRUE, echo=FALSE}
+add_missing_2020 <- function(df) {
+  df %>%
+    group_by(county, region) %>%
+    complete(year = min(year):max(year)) %>%
+    ungroup()
+}
+
+combined_acs_data <- add_missing_2020(combined_acs_data)
+```
+
 ```{r lineplot_co, include=TRUE, fig.width=10, fig.height=6.2, fig.align='center'}
 combined_acs_data %>% 
   group_by(county, region) %>%
@@ -268,8 +281,10 @@ combined_acs_data %>%
              y=perc_u5_poverty,
              group=county,
              color = if_else(county == 'Jefferson', 'Jefferson', 'Other'))) +
-  geom_line(data= . %>% filter(county != 'Jefferson')) +
-  geom_line(data= . %>% filter(county == 'Jefferson')) + # <7>
+  geom_rect(aes(xmin = 2019.1, xmax = 2020.9, ymin = -Inf, ymax = Inf), 
+            fill = "gray90", alpha = 0.5) +
+  geom_line(data= . %>% filter(county != 'Jefferson'), na.rm = TRUE) +
+  geom_line(data= . %>% filter(county == 'Jefferson'), na.rm = TRUE) + # <7>
   ggtitle(title_text2,
           subtitle = subtitle_text2) + 
   labs(y='',
