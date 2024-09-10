@@ -186,16 +186,14 @@ df <- df %>%
             by='state')
 ```
 
-```{r}
+```{r region_color, include=FALSE}
 region_color <- c(
   'South' = "#66c2a5", 
   'West' = "#fc8d62", 
   'Northeast' = "#8da0cb", 
   'Midwest' = "#e78ac3"
 )
-
 ```
-
 
 ```{r dot_plot, include=TRUE, fig.width=11, fig.height=18, fig.align='center'}
 df %>% 
