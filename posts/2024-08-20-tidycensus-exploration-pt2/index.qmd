@@ -269,7 +269,7 @@ combined_acs_data %>%
              group=county,
              color = if_else(county == 'Jefferson', 'Jefferson', 'Other'))) +
   geom_line(data= . %>% filter(county != 'Jefferson')) +
-  geom_line(data= . %>% filter(county == 'Jefferson')) +
+  geom_line(data= . %>% filter(county == 'Jefferson')) + # <7>
   ggtitle(title_text2,
           subtitle = subtitle_text2) + 
   labs(y='',
@@ -280,6 +280,9 @@ combined_acs_data %>%
   my.theme + 
   theme(legend.position = 'none')
 ```
+
+7. Calling these two `geom_line()` functions separately, so that Jefferson County is rendered on top of all other counties.
+
 
 # Bonus: Using Observable Plot
 
