@@ -375,7 +375,7 @@ Plot.plot({
 Some comments on the above:
 
 *  There are discussions online that indicate that not all Javascript styling works in Quarto, and this supports that (some font size elements don't seem to work, faceting options, etc.). I'd like to test that in Observable directly, but for now, I'll just note that this is not my *favorite* styling.
-*  Aside from some counties in the Front Range, which is showing some smooth patterns, there's pretty significant volatility in these child poverty estimates. 
+*  Aside from some counties in the Front Range, there's pretty significant volatility in these child poverty estimates from one year to the next. 
 
 
 ```{r combined_acs_data2, include=FALSE}
