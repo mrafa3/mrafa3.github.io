@@ -17,6 +17,7 @@ editor:
     wrap: 72
 ---
 
+
 # Introduction
 
 The `pandas-datareader` package is a powerful tool for easily accessing financial and economic data through various APIs. In this post, we'll explore how to use it to fetch data from FRED (Federal Reserve Economic Data). Then, I'll show some visualization techniques using `matplotlib`, `plotnine`, and `ggplot2`.
@@ -25,6 +26,7 @@ The `pandas-datareader` package is a powerful tool for easily accessing financia
 
 First, import the packages:
 
+
 ```{python packages, include=TRUE}
 import pandas as pd # <1>
 from matplotlib import pyplot as plt # <1>
@@ -32,18 +34,22 @@ import pandas_datareader as pdr # <1>
 from datetime import datetime # <1>
 ```
 
+
 1. If it's your first time running code with these libraries, you'll need to first use the pip install command. Since these are already installed for me locally, I can just import.
 
 Next, I'll set a variable for the time frame that I'd like to use for this demonstration.
+
 
 ```{python set_times, include=TRUE}
 start = datetime(2016, 1, 1)
 end = datetime.now()
 ```
 
+
 # Fetching Data from the Federal Reserve
 
 Let's fetch the US GDP data from Federal Reserve Economic Data (FRED) API:
+
 
 ```{python gdp_data, include=TRUE}
 gdp_data = pdr.get_data_fred('GDP', start=start, end=end)
@@ -53,7 +59,9 @@ gdp_data.reset_index(inplace=True)
 print(gdp_data.head())
 ```
 
+
 And I'll show a quick plot with `matplotlib`. It's that fast to go from gathering data to creating a viz!
+
 
 ```{python gdp_plot, include=TRUE, message=FALSE}
 plt.plot(gdp_data['DATE'], gdp_data['GDP'], color='green')
@@ -61,11 +69,14 @@ plt.suptitle('Monthly Gross Domestic Product for the United States')
 plt.title('2016-2024')
 plt.show()
 ```
+
 ```{python close1, include=TRUE, echo=FALSE}
 plt.close('all')
 ```
 
+
 You can grab stock market capitalization data by changing the first argument of the `pdr.get_data_fred()` function.
+
 
 ```{python market_cap_data, include=TRUE}
 nasdaq_data = pdr.get_data_fred('NASDAQ100', start, end).reset_index()
@@ -73,7 +84,9 @@ nasdaq_data = pdr.get_data_fred('NASDAQ100', start, end).reset_index()
 sap_data = pdr.get_data_fred('SP500', start, end).reset_index()
 ```
 
+
 And plot those together!
+
 
 ```{python plt_nasdaq_sp, include=TRUE}
 plt.plot(nasdaq_data['DATE'], nasdaq_data['NASDAQ100'])
@@ -86,23 +99,29 @@ plt.show()
 plt.close('all')
 ```
 
+
 With just a few lines of code, we've accessed data from the U.S. Federal Reserve. The pandas-datareader package simplifies the process of fetching data, which makes it a great package to get familiar with.
 
 # Plotting with plotnine
 
 Because I'm quite comfortable with R's ggplot syntax, I'll demonstrate how the plotnine package can visualize your Python data.
 
+
 ```{python import_plotnine, include=TRUE}
 from plotnine import ggplot, aes, geom_line, theme_minimal, labs
 ```
 
+
 I'll fetch Colorado's unemployment rate during this time period (January 2016 to August 2024).
+
 
 ```{python colorado_unemployment, include=TRUE}
 colorado_unemployment = pdr.get_data_fred('COUR', start=start, end=end).reset_index()
 ```
 
+
 Now, I'll visualize the monthly unemployment data using `plotnine`, the package to use ggplot in Python.
+
 
 ```{python plot_co_unemployment, message=FALSE, warning=FALSE, include=TRUE, fig.align='center'}
 (
@@ -116,6 +135,7 @@ ggplot(colorado_unemployment, aes(x='DATE', y='COUR')) +
 )
 ```
 
+
 This code does the following:
 
 *  Fetches the Colorado unemployment rate data using the FRED series ID 'COUR'.
@@ -127,6 +147,7 @@ This code does the following:
 
 While this works, it is somewhat clunky. The x-axis is only showing one value, and the figure size can't be controlled with the code chunk options. I'll switch over to `ggplot2` and make a more polished graphic.
 
+
 ```{r load_r_packages, include=TRUE, echo=FALSE, output=FALSE}
 library(tidyverse)
 library(reticulate)
@@ -137,7 +158,9 @@ library(tidymodels)
 colorado_unemployment <- reticulate::py$colorado_unemployment
 ```
 
+
 Then, I'll produce the graphic in `ggplot2::` (notice that the x-axis renders better this way).
+
 
 ```{r ggplot_co_unemployment, include=TRUE, echo=FALSE, fig.width=10, fig.height=6.2, fig.align='center'}
 colorado_unemployment %>% 
@@ -152,6 +175,7 @@ colorado_unemployment %>%
   theme_minimal()
 ```
 
+
 # Analysis of the Consumer Price Index 
 
 The Federal Reserve is the resource for gathering all data related to the Consumer Price Index. There are many ways to look at this, including decomposing by the type of good, looking at it over different horizons or localities, and more. 
@@ -159,16 +183,21 @@ For this demo, I'll just look at the U.S. city average for all urban consumers.[
 
 [^1]: The Federal Reserve website is a great place to comb through to see all the available data (https://fred.stlouisfed.org/). 
 
+
 ```{python get_cpi_data, include=TRUE}
 cpi = pdr.get_data_fred('CPIAUCSL', start=start, end=end).reset_index()
 ```
+
 For this section, I'd like to work in R, so I'll use `reticulate::` to make it an R object.
+
 
 ```{r retculate_cpi, include=TRUE, echo=FALSE}
 cpi <- reticulate::py$cpi
 ```
 
+
 When you're working with CPI data, it is common to index the data, or compare recent values to a historical value. I'll create an `indexed_cpi_2016` field, along with a `date_seq` field to allow some simple linear models.
+
 
 ```{r filter_2016, include=TRUE, echo=FALSE}
 cpi <- cpi %>% 
@@ -189,7 +218,9 @@ cpi %>%
   theme_minimal()
 ```
 
+
 This plot shows a clear rise in the indexed CPI from 2016 to present day. What stands out, too, is that there appear to be some distinct trends (possibly three) -- pre-pandemic, pandemic, and post-pandemic. I'd like to extend this mini-analysis to find the slopes of these periods and plot them on the above graphic.
+
 
 ```{r cpi_add_date_seq, include=TRUE, echo=FALSE}
 cpi <- cpi %>% 
@@ -197,7 +228,9 @@ cpi <- cpi %>%
   mutate(date_seq = row_number())
 ```
 
+
 To do so, I'll create a function and use `tidymodels::` to build linear models that I can easily create and compare with one another.
+
 
 ```{r fit_cpi_model, include-TRUE}
 fit_cpi_model <- function(df) {
@@ -208,10 +241,12 @@ fit_cpi_model <- function(df) {
 }
 ```
 
+
 2. This sets up the model type as a simple linear model.
 3. This is the function that will take in the `df` parameter and run the model
 
 These create a `parsnip::` model object, which we can then explore the model results in tidy dataframes.
+
 
 ```{r run_cpi_models, include=TRUE}
 lm_1 <- fit_cpi_model(cpi %>% filter(DATE <= '2020-03-01'))
@@ -219,7 +254,9 @@ lm_2 <- fit_cpi_model(cpi %>% filter(DATE > '2020-03-01' & DATE <= '2022-06-01')
 lm_3 <- fit_cpi_model(cpi %>% filter(DATE > '2022-06-01'))
 ```
 
+
 The `broom::tidy()` function returns a row for each coefficient your model, which I'll use to compare the slopes of the different periods.
+
 
 ```{r tidy_lms, include=TRUE, echo=FALSE}
 tidy_lm_1 <- tidy(lm_1) %>% as.data.frame() %>% mutate(model = 'Period 1') %>% select(model, everything())
@@ -237,6 +274,7 @@ slope_2 <- tidy_lm_1 %>% filter(model == 'Period 2', term == 'date_seq') %>% pul
 slope_3 <- tidy_lm_1 %>% filter(model == 'Period 3', term == 'date_seq') %>% pull(estimate)
 ```
 
+
 Here's what this tells us:
 
 *  Pre-pandemic slope of .002
@@ -244,6 +282,7 @@ Here's what this tells us:
 *  Post-pandemic slope of .003
 
 This is also apparent visually, as seen below.
+
 
 ```{r ggplot_cpi_polished, include=TRUE, fig.width=10, fig.height=6.2, fig.align='center'}
 cpi %>% 
@@ -275,6 +314,7 @@ cpi %>%
         plot.subtitle = element_text(family = 'Palatino', size=13),
         axis.text = element_text(family = 'Palatino', size=10))
 ```
+
 Indexing off of January 2016, the Consumer Price Index is 32% higher in August 2024. What is interesting in this plot is the distinct trajectories seen pre-pandemic, from roughly 2020-2022, and from 2022 since. This shows that the CPI seems to be returning to its pre-pandemic trajectory.
 
 # Conclusion
