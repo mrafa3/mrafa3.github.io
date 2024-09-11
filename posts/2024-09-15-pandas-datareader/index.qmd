@@ -275,7 +275,7 @@ cpi %>%
         plot.subtitle = element_text(family = 'Palatino', size=13),
         axis.text = element_text(family = 'Palatino', size=10))
 ```
-Indexing off of January 2016, the Consumer Price Index is 32% higher in August 2024. What is interesting in this plot is the distinct trajectories seen pre-pandemic, from roughly 2020-2022, and from 2022 since. This shows that the CPI is returning to its pre-pandemic trajectory.
+Indexing off of January 2016, the Consumer Price Index is 32% higher in August 2024. What is interesting in this plot is the distinct trajectories seen pre-pandemic, from roughly 2020-2022, and from 2022 since. This shows that the CPI seems to be returning to its pre-pandemic trajectory.
 
 # Conclusion
 
