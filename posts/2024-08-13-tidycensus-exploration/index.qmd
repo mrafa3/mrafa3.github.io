@@ -155,11 +155,11 @@ Next, I'll create some fields to combine gender-based poverty estimates
 and calculate a percent of the child population measure.
 
 ```{r df_mutate, include=TRUE}
-(df <- df %>% 
+df <- df %>% 
   rename(state = NAME) %>% 
   mutate(total_u5_popE = male_u5_popE + female_u5_popE,
          total_u5_povertyE = male_u5_povertyE + male_u5_povertyE,
-         perc_u5_in_poverty = total_u5_povertyE / total_u5_popE))
+         perc_u5_in_poverty = total_u5_povertyE / total_u5_popE)
 ```
 
 You can combine point estimates for gender-based poverty by simply adding them, but you can't do the same for margins of error. The estimated margins of error for each estimate are based on their respective samples and the uncertainty in them. To re-weight the margins of error, you take the square root of the sum of squared margins of error:
@@ -205,7 +205,7 @@ region_color <- c(
 
 ```{r dot_plot, include=TRUE, fig.width=11, fig.height=18, fig.align='center'}
 df %>% 
-  filter(state != 'Puerto Rico') %>% 
+  filter(state != 'Puerto Rico') %>% # <7>
   ggplot(
     aes(x=perc_u5_in_poverty, 
         y=reorder(state, perc_u5_in_poverty))) + 
@@ -222,6 +222,8 @@ df %>%
                      position = 'top') + 
   my.theme
 ```
+7. Removing Puerto Rico because it's not within a U.S. Census region.
+
 # Quick mapping with usmap::
 
 The `usmap::` package makes rendering a map of the US quick and easy.
@@ -261,8 +263,7 @@ This shows that child poverty -- those living below the Federal Poverty Line -- 
 ```{r create_df_tbl, include=TRUE, fig.width=6.2, fig.height=20, fig.align='center'}
 (df_tbl <- df %>% 
   select(state, region, total_u5_povertyE, total_u5_popE, perc_u5_in_poverty) %>% 
-  # removing P.R. because it's not within a U.S. Census region
-  filter(state != 'Puerto Rico') %>% 
+  filter(state != 'Puerto Rico') %>% # <7>
   arrange(-perc_u5_in_poverty) %>% 
   # mutate(u5_perc_in_poverty = u5_perc_in_poverty * 100) %>% 
   gt(groupname_col = "region") %>% 
@@ -316,6 +317,8 @@ This shows that child poverty -- those living below the Federal Poverty Line -- 
   )
 )
 ```
+
+7. Removing Puerto Rico because it's not within a U.S. Census region.
 
 ```{r df_county, include=FALSE}
 # considering a map like this one: https://observablehq.com/@observablehq/plot-us-bubble-map?intent=fork
