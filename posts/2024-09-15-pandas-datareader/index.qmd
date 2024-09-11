@@ -1,6 +1,6 @@
 ---
-title: "Using Python to fetch data from the Federal Reserve"
-description: "Accessing, manipulating, and visualizing data from key public resources"
+title: "Analyzing CPI with Python and R"
+description: "Accessing, analyzing, and visualizing data from the Federal Reserve"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
