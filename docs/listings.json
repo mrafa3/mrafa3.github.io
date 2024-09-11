@@ -2,6 +2,7 @@
   {
     "listing": "/posts.html",
     "items": [
+      "/posts/2024-09-15-pandas-datareader/index.html",
       "/posts/2024-08-28-tidycensus-exploration-pt3/index.html",
       "/posts/2024-08-20-tidycensus-exploration-pt2/index.html",
       "/posts/2024-08-18-duckdb-intro/index.html",

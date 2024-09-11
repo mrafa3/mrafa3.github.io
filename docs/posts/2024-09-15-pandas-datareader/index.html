@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Mickey Rafa">
-<meta name="dcterms.date" content="2024-09-15">
+<meta name="dcterms.date" content="2024-09-11">
 <meta name="description" content="Accessing, manipulating, and visualizing data from key public resources">
 
 <title>Using Python to fetch data from the Federal Reserve</title>
@@ -181,7 +181,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">September 15, 2024</p>
+        <p class="date">September 11, 2024</p>
       </div>
     </div>
     
@@ -201,7 +201,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
   </ul></li>
-  <li><a href="#fetching-data-from-fred" id="toc-fetching-data-from-fred" class="nav-link" data-scroll-target="#fetching-data-from-fred">Fetching Data from FRED</a></li>
+  <li><a href="#fetching-data-from-the-federal-reserve" id="toc-fetching-data-from-the-federal-reserve" class="nav-link" data-scroll-target="#fetching-data-from-the-federal-reserve">Fetching Data from the Federal Reserve</a></li>
   <li><a href="#plotting-with-plotnine" id="toc-plotting-with-plotnine" class="nav-link" data-scroll-target="#plotting-with-plotnine">Plotting with plotnine</a></li>
   <li><a href="#analysis-of-the-consumer-price-index" id="toc-analysis-of-the-consumer-price-index" class="nav-link" data-scroll-target="#analysis-of-the-consumer-price-index">Analysis of the Consumer Price Index</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
@@ -242,9 +242,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </section>
 </section>
-<section id="fetching-data-from-fred" class="level1">
-<h1>Fetching Data from FRED</h1>
-<p>Let’s fetch the US GDP data from FRED:</p>
+<section id="fetching-data-from-the-federal-reserve" class="level1">
+<h1>Fetching Data from the Federal Reserve</h1>
+<p>Let’s fetch the US GDP data from Federal Reserve Economic Data (FRED) API:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gdp_data <span class="op">=</span> pdr.get_data_fred(<span class="st">'GDP'</span>, start<span class="op">=</span>start, end<span class="op">=</span>end)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -260,25 +260,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 4 2017-01-01  19280.084</code></pre>
 </div>
 </div>
+<p>And I’ll show a quick plot with <code>matplotlib</code>. It’s that fast to go from gathering data to creating a viz!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gdp_data.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
-RangeIndex: 34 entries, 0 to 33
-Data columns (total 2 columns):
- #   Column  Non-Null Count  Dtype         
----  ------  --------------  -----         
- 0   DATE    34 non-null     datetime64[ns]
- 1   GDP     34 non-null     float64       
-dtypes: datetime64[ns](1), float64(1)
-memory usage: 676.0 bytes</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>plt.plot(gdp_data[<span class="st">'DATE'</span>], gdp_data[<span class="st">'GDP'</span>], color<span class="op">=</span><span class="st">'green'</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Monthly Gross Domestic Product for the United States'</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'2016-2024'</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.plot(gdp_data[<span class="st">'DATE'</span>], gdp_data[<span class="st">'GDP'</span>], color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Monthly Gross Domestic Product for the United States'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'2016-2024'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -287,30 +274,18 @@ memory usage: 676.0 bytes</code></pre>
 </div>
 </div>
 </div>
+<p>You can grab stock market capitalization data by changing the first argument of the <code>pdr.get_data_fred()</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nasdaq_data <span class="op">=</span> pdr.get_data_fred(<span class="st">'NASDAQ100'</span>, start, end).reset_index()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>sap_data <span class="op">=</span> pdr.get_data_fred(<span class="st">'SP500'</span>, start, end).reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nasdaq_data <span class="op">=</span> pdr.get_data_fred(<span class="st">'NASDAQ100'</span>, start, end).reset_index()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sap_data <span class="op">=</span> pdr.get_data_fred(<span class="st">'SP500'</span>, start, end).reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>And plot those together!</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sap_data.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
-RangeIndex: 2268 entries, 0 to 2267
-Data columns (total 2 columns):
- #   Column  Non-Null Count  Dtype         
----  ------  --------------  -----         
- 0   DATE    2268 non-null   datetime64[ns]
- 1   SP500   2186 non-null   float64       
-dtypes: datetime64[ns](1), float64(1)
-memory usage: 35.6 KB</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt.plot(nasdaq_data[<span class="st">'DATE'</span>], nasdaq_data[<span class="st">'NASDAQ100'</span>])</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.plot(sap_data[<span class="st">'DATE'</span>], sap_data[<span class="st">'SP500'</span>])</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>plt.legend([<span class="st">'NASDAQ 100'</span>, <span class="st">'S&amp;P 500'</span>])</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>plt.plot(nasdaq_data[<span class="st">'DATE'</span>], nasdaq_data[<span class="st">'NASDAQ100'</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.plot(sap_data[<span class="st">'DATE'</span>], sap_data[<span class="st">'SP500'</span>])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.legend([<span class="st">'NASDAQ 100'</span>, <span class="st">'S&amp;P 500'</span>])</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -325,65 +300,45 @@ memory usage: 35.6 KB</code></pre>
 <h1>Plotting with plotnine</h1>
 <p>Because I’m quite comfortable with R’s ggplot syntax, I’ll demonstrate how the plotnine package can visualize your Python data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> ggplot, aes, geom_line, theme_minimal, labs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> ggplot, aes, geom_line, theme_minimal, labs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>I’ll fetch Colorado’s unemployment rate during this time period (January 2016 to August 2024).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch Colorado unemployment rate data</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>colorado_unemployment <span class="op">=</span> pdr.get_data_fred(<span class="st">'COUR'</span>, start<span class="op">=</span>start, end<span class="op">=</span>end).reset_index()</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(colorado_unemployment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>          DATE  COUR
-0   2016-01-01   3.3
-1   2016-02-01   3.3
-2   2016-03-01   3.3
-3   2016-04-01   3.3
-4   2016-05-01   3.3
-..         ...   ...
-98  2024-03-01   3.7
-99  2024-04-01   3.7
-100 2024-05-01   3.8
-101 2024-06-01   3.8
-102 2024-07-01   3.9
-
-[103 rows x 2 columns]</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>colorado_unemployment <span class="op">=</span> pdr.get_data_fred(<span class="st">'COUR'</span>, start<span class="op">=</span>start, end<span class="op">=</span>end).reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, I’ll visualize the monthly unemployment data using <code>plotnine</code>, the package to use ggplot in Python.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the plot</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>ggplot(colorado_unemployment, aes(x<span class="op">=</span><span class="st">'DATE'</span>, y<span class="op">=</span><span class="st">'COUR'</span>)) <span class="op">+</span> </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  geom_line() <span class="op">+</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  labs(title<span class="op">=</span><span class="st">'Colorado Unemployment Rate'</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        subtitle<span class="op">=</span><span class="st">'2016-2024'</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">'Date'</span>,</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">'Unemployment Rate (%)'</span>)<span class="op">+</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  theme_minimal()</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ggplot(colorado_unemployment, aes(x<span class="op">=</span><span class="st">'DATE'</span>, y<span class="op">=</span><span class="st">'COUR'</span>)) <span class="op">+</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  geom_line() <span class="op">+</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  labs(title<span class="op">=</span><span class="st">'Colorado Unemployment Rate'</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        subtitle<span class="op">=</span><span class="st">'2016-2024'</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        x<span class="op">=</span><span class="st">'Date'</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        y<span class="op">=</span><span class="st">'Unemployment Rate (%)'</span>)<span class="op">+</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  theme_minimal()</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;string&gt;:2: FutureWarning: Using repr(plot) to draw and show the plot figure is deprecated and will be removed in a future version. Use plot.show().
-&lt;Figure Size: (640 x 480)&gt;</code></pre>
+<pre><code>&lt;Figure Size: (640 x 480)&gt;</code></pre>
 </div>
 <div class="cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/plot_co_unemployment-5.png" class="img-fluid figure-img" width="614"></p>
+<p><img src="index_files/figure-html/plot_co_unemployment-5.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="614"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>This code snippet does the following:</p>
+<p>This code does the following:</p>
 <ul>
 <li>Fetches the Colorado unemployment rate data using the FRED series ID ‘COUR’.</li>
 <li>Resets the index to make the date a regular column for plotting.</li>
 <li>Uses <code>plotnine</code> (Python’s implementation of ggplot2), we create a line plot of the unemployment rate over time.</li>
 <li>Makes cosmetic adjustments, including adding the minimal theme and appropriate labels.</li>
 </ul>
-<p>Plotnine’s syntax, similar to R’s ggplot2, allows for easy customization and layering of plot elements. You can further enhance this plot by adding vertical lines for recession periods, changing color schemes, or adding annotations for significant events.</p>
-<p>While this works, it is somewhat clunky – especially if you’re using Quarto and can render in R anyway. I’ll switch over to <code>ggplot2</code> and make a more polished graphic.</p>
+<p><code>plotnine</code>’s syntax, similar to R’s <code>ggplot2::</code>, allows for easy customization and layering of plot elements. You can further enhance this plot by adding vertical lines for recession periods, changing color schemes, or adding annotations for significant events.</p>
+<p>While this works, it is somewhat clunky. The x-axis is only showing one value, and the figure size can’t be controlled with the code chunk options. I’ll switch over to <code>ggplot2</code> and make a more polished graphic.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>colorado_unemployment <span class="ot">&lt;-</span> reticulate<span class="sc">::</span>py<span class="sc">$</span>colorado_unemployment</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>colorado_unemployment <span class="ot">&lt;-</span> reticulate<span class="sc">::</span>py<span class="sc">$</span>colorado_unemployment</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then, I’ll produce the graphic in <code>ggplot2::</code> (notice that the x-axis renders better this way).</p>
 <div class="cell" data-layout-align="center">
@@ -400,21 +355,21 @@ memory usage: 35.6 KB</code></pre>
 <h1>Analysis of the Consumer Price Index</h1>
 <p>The Federal Reserve is the resource for gathering all data related to the Consumer Price Index. There are many ways to look at this, including decomposing by the type of good, looking at it over different horizons or localities, and more. For this demo, I’ll just look at the U.S. city average for all urban consumers.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Again, I’ll use <code>pandas_datareader</code> and pass through some simple arguments to fetch the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>cpi <span class="op">=</span> pdr.get_data_fred(<span class="st">'CPIAUCSL'</span>, start<span class="op">=</span>start, end<span class="op">=</span>end).reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cpi <span class="op">=</span> pdr.get_data_fred(<span class="st">'CPIAUCSL'</span>, start<span class="op">=</span>start, end<span class="op">=</span>end).reset_index()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>For this section, I’d like to work in R, so I’ll use <code>reticulate::</code> to make it an R object.</p>
 <p>When you’re working with CPI data, it is common to index the data, or compare recent values to a historical value. I’ll create an <code>indexed_cpi_2016</code> field, along with a <code>date_seq</code> field to allow some simple linear models.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>cpi <span class="sc">%&gt;%</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>DATE,</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>indexed_cpi_2016)) <span class="sc">+</span> </span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Consumer Price Index in the United States'</span>,</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">'January 2016 to August 2024, Index = January 2016'</span>,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'Source: U.S. Federal Reserve</span><span class="sc">\n</span><span class="st">Indicator = CPIAUCSL'</span>,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>,</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">''</span>) <span class="sc">+</span> </span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cpi <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>DATE,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>indexed_cpi_2016)) <span class="sc">+</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Consumer Price Index in the United States'</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">'January 2016 to August 2024, Index = January 2016'</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'Source: U.S. Federal Reserve</span><span class="sc">\n</span><span class="st">Indicator = CPIAUCSL'</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">''</span>) <span class="sc">+</span> </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -426,30 +381,30 @@ memory usage: 35.6 KB</code></pre>
 <p>This plot shows a clear rise in the indexed CPI from 2016 to present day. What stands out, too, is that there appear to be some distinct trends (possibly three) – pre-pandemic, pandemic, and post-pandemic. I’d like to extend this mini-analysis to find the slopes of these periods and plot them on the above graphic.</p>
 <p>To do so, I’ll create a function and use <code>tidymodels::</code> to build linear models that I can easily create and compare with one another.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="annotated-cell-15"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-15-1"><a href="#annotated-cell-15-1" aria-hidden="true" tabindex="-1"></a>fit_cpi_model <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="2">2</button><span id="annotated-cell-15-2" class="code-annotation-target"><a href="#annotated-cell-15-2" aria-hidden="true" tabindex="-1"></a>  lm_model <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span> <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span>
-<button class="code-annotation-anchor" data-target-cell="annotated-cell-15" data-target-annotation="3">3</button><span id="annotated-cell-15-3" class="code-annotation-target"><a href="#annotated-cell-15-3" aria-hidden="true" tabindex="-1"></a>  lm_fit <span class="ot">&lt;-</span> lm_model <span class="sc">%&gt;%</span></span>
-<span id="annotated-cell-15-4"><a href="#annotated-cell-15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(indexed_cpi_2016 <span class="sc">~</span> date_seq, <span class="at">data =</span> df)</span>
-<span id="annotated-cell-15-5"><a href="#annotated-cell-15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(lm_fit)</span>
-<span id="annotated-cell-15-6"><a href="#annotated-cell-15-6" aria-hidden="true" tabindex="-1"></a>}</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="annotated-cell-13"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-13-1"><a href="#annotated-cell-13-1" aria-hidden="true" tabindex="-1"></a>fit_cpi_model <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="2">2</button><span id="annotated-cell-13-2" class="code-annotation-target"><a href="#annotated-cell-13-2" aria-hidden="true" tabindex="-1"></a>  lm_model <span class="ot">&lt;-</span> <span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span> <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-13" data-target-annotation="3">3</button><span id="annotated-cell-13-3" class="code-annotation-target"><a href="#annotated-cell-13-3" aria-hidden="true" tabindex="-1"></a>  lm_fit <span class="ot">&lt;-</span> lm_model <span class="sc">%&gt;%</span></span>
+<span id="annotated-cell-13-4"><a href="#annotated-cell-13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fit</span>(indexed_cpi_2016 <span class="sc">~</span> date_seq, <span class="at">data =</span> df)</span>
+<span id="annotated-cell-13-5"><a href="#annotated-cell-13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(lm_fit)</span>
+<span id="annotated-cell-13-6"><a href="#annotated-cell-13-6" aria-hidden="true" tabindex="-1"></a>}</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-annotation">
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
-<dt data-target-cell="annotated-cell-15" data-target-annotation="2">2</dt>
+<dt data-target-cell="annotated-cell-13" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-15" data-code-lines="2" data-code-annotation="2">This sets up the model type as a simple linear model.</span>
+<span data-code-cell="annotated-cell-13" data-code-lines="2" data-code-annotation="2">This sets up the model type as a simple linear model.</span>
 </dd>
-<dt data-target-cell="annotated-cell-15" data-target-annotation="3">3</dt>
+<dt data-target-cell="annotated-cell-13" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-15" data-code-lines="3,4" data-code-annotation="3">This is the function that will take in the <code>df</code> parameter and run the model</span>
+<span data-code-cell="annotated-cell-13" data-code-lines="3,4" data-code-annotation="3">This is the function that will take in the <code>df</code> parameter and run the model</span>
 </dd>
 </dl>
 </div>
 </div>
 <p>These create a <code>parsnip::</code> model object, which we can then explore the model results in tidy dataframes.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>lm_1 <span class="ot">&lt;-</span> <span class="fu">fit_cpi_model</span>(cpi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&lt;=</span> <span class="st">'2020-03-01'</span>))</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>lm_2 <span class="ot">&lt;-</span> <span class="fu">fit_cpi_model</span>(cpi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2020-03-01'</span> <span class="sc">&amp;</span> DATE <span class="sc">&lt;=</span> <span class="st">'2022-06-01'</span>))</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>lm_3 <span class="ot">&lt;-</span> <span class="fu">fit_cpi_model</span>(cpi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2022-06-01'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>lm_1 <span class="ot">&lt;-</span> <span class="fu">fit_cpi_model</span>(cpi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&lt;=</span> <span class="st">'2020-03-01'</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>lm_2 <span class="ot">&lt;-</span> <span class="fu">fit_cpi_model</span>(cpi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2020-03-01'</span> <span class="sc">&amp;</span> DATE <span class="sc">&lt;=</span> <span class="st">'2022-06-01'</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>lm_3 <span class="ot">&lt;-</span> <span class="fu">fit_cpi_model</span>(cpi <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2022-06-01'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>broom::tidy()</code> function returns a row for each coefficient your model, which I’ll use to compare the slopes of the different periods.</p>
 <div class="cell">
@@ -468,34 +423,34 @@ memory usage: 35.6 KB</code></pre>
 </ul>
 <p>This is also apparent visually, as seen below.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>cpi <span class="sc">%&gt;%</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>DATE,</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>indexed_cpi_2016)) <span class="sc">+</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&lt;=</span> <span class="st">'2020-03-01'</span>),</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula=</span>y<span class="sc">~</span> x,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">se=</span><span class="cn">FALSE</span>,</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'blue'</span>,</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2020-03-01'</span> <span class="sc">&amp;</span> DATE <span class="sc">&lt;=</span> <span class="st">'2022-06-01'</span>),</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula=</span>y<span class="sc">~</span> x,</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">se=</span><span class="cn">FALSE</span>,</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'orange'</span>,</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2022-06-01'</span>),</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula=</span>y<span class="sc">~</span> x,</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">se=</span><span class="cn">FALSE</span>,</span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'blue'</span>,</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Consumer Price Index up 32% since January 2016...</span><span class="sc">\n</span><span class="st">but month over month growth is returning to pre-pandemic levels'</span>,</span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">'Consumer Price Index in the United States</span><span class="sc">\n</span><span class="st">January 2016 to August 2024, Index = January 2016'</span>,</span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'Source: U.S. Federal Reserve</span><span class="sc">\n</span><span class="st">Indicator = CPIAUCSL'</span>,</span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>,</span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">''</span>) <span class="sc">+</span> </span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">'Palatino'</span>, <span class="at">size=</span><span class="dv">20</span>),</span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">'Palatino'</span>, <span class="at">size=</span><span class="dv">13</span>),</span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">'Palatino'</span>, <span class="at">size=</span><span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cpi <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>DATE,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>indexed_cpi_2016)) <span class="sc">+</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&lt;=</span> <span class="st">'2020-03-01'</span>),</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula=</span>y<span class="sc">~</span> x,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">se=</span><span class="cn">FALSE</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'blue'</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2020-03-01'</span> <span class="sc">&amp;</span> DATE <span class="sc">&lt;=</span> <span class="st">'2022-06-01'</span>),</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula=</span>y<span class="sc">~</span> x,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">se=</span><span class="cn">FALSE</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'orange'</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">data=</span>. <span class="sc">%&gt;%</span> <span class="fu">filter</span>(DATE <span class="sc">&gt;</span> <span class="st">'2022-06-01'</span>),</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">formula=</span>y<span class="sc">~</span> x,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>              <span class="at">se=</span><span class="cn">FALSE</span>,</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">'blue'</span>,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>              <span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Consumer Price Index up 32% since January 2016...</span><span class="sc">\n</span><span class="st">but month over month growth is returning to pre-pandemic levels'</span>,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">'Consumer Price Index in the United States</span><span class="sc">\n</span><span class="st">January 2016 to August 2024, Index = January 2016'</span>,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'Source: U.S. Federal Reserve</span><span class="sc">\n</span><span class="st">Indicator = CPIAUCSL'</span>,</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">''</span>,</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">''</span>) <span class="sc">+</span> </span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">'Palatino'</span>, <span class="at">size=</span><span class="dv">20</span>),</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">'Palatino'</span>, <span class="at">size=</span><span class="dv">13</span>),</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">'Palatino'</span>, <span class="at">size=</span><span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">

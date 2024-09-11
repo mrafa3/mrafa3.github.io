@@ -41,9 +41,9 @@ start = datetime(2016, 1, 1)
 end = datetime.now()
 ```
 
-# Fetching Data from FRED
+# Fetching Data from the Federal Reserve
 
-Let's fetch the US GDP data from FRED:
+Let's fetch the US GDP data from Federal Reserve Economic Data (FRED) API:
 
 ```{python gdp_data, include=TRUE}
 gdp_data = pdr.get_data_fred('GDP', start=start, end=end)
@@ -53,10 +53,7 @@ gdp_data.reset_index(inplace=True)
 print(gdp_data.head())
 ```
 
-```{python}
-gdp_data.info()
-```
-
+And I'll show a quick plot with `matplotlib`. It's that fast to go from gathering data to creating a viz!
 
 ```{python gdp_plot, include=TRUE, message=FALSE}
 plt.plot(gdp_data['DATE'], gdp_data['GDP'], color='green')
@@ -68,15 +65,15 @@ plt.show()
 plt.close('all')
 ```
 
-```{python}
+You can grab stock market capitalization data by changing the first argument of the `pdr.get_data_fred()` function.
+
+```{python market_cap_data, include=TRUE}
 nasdaq_data = pdr.get_data_fred('NASDAQ100', start, end).reset_index()
 
 sap_data = pdr.get_data_fred('SP500', start, end).reset_index()
 ```
 
-```{python}
-sap_data.info()
-```
+And plot those together!
 
 ```{python plt_nasdaq_sp, include=TRUE}
 plt.plot(nasdaq_data['DATE'], nasdaq_data['NASDAQ100'])
@@ -99,17 +96,15 @@ Because I'm quite comfortable with R's ggplot syntax, I'll demonstrate how the p
 from plotnine import ggplot, aes, geom_line, theme_minimal, labs
 ```
 
-```{python colorado_unemployment, include=TRUE}
-# Fetch Colorado unemployment rate data
-colorado_unemployment = pdr.get_data_fred('COUR', start=start, end=end).reset_index()
+I'll fetch Colorado's unemployment rate during this time period (January 2016 to August 2024).
 
-print(colorado_unemployment)
+```{python colorado_unemployment, include=TRUE}
+colorado_unemployment = pdr.get_data_fred('COUR', start=start, end=end).reset_index()
 ```
 
 Now, I'll visualize the monthly unemployment data using `plotnine`, the package to use ggplot in Python.
 
-```{python plot_co_unemployment, include=TRUE}
-# Create the plot
+```{python plot_co_unemployment, message=FALSE, warning=FALSE, include=TRUE, fig.align='center'}
 (
 ggplot(colorado_unemployment, aes(x='DATE', y='COUR')) + 
   geom_line() + 
@@ -121,16 +116,16 @@ ggplot(colorado_unemployment, aes(x='DATE', y='COUR')) +
 )
 ```
 
-This code snippet does the following:
+This code does the following:
 
 *  Fetches the Colorado unemployment rate data using the FRED series ID 'COUR'.
 *  Resets the index to make the date a regular column for plotting.
 *  Uses `plotnine` (Python's implementation of ggplot2), we create a line plot of the unemployment rate over time.
 *  Makes cosmetic adjustments, including adding the minimal theme and appropriate labels.
 
-Plotnine's syntax, similar to R's ggplot2, allows for easy customization and layering of plot elements. You can further enhance this plot by adding vertical lines for recession periods, changing color schemes, or adding annotations for significant events.
+`plotnine`'s syntax, similar to R's `ggplot2::`, allows for easy customization and layering of plot elements. You can further enhance this plot by adding vertical lines for recession periods, changing color schemes, or adding annotations for significant events.
 
-While this works, it is somewhat clunky -- especially if you're using Quarto and can render in R anyway. I'll switch over to `ggplot2` and make a more polished graphic.
+While this works, it is somewhat clunky. The x-axis is only showing one value, and the figure size can't be controlled with the code chunk options. I'll switch over to `ggplot2` and make a more polished graphic.
 
 ```{r load_r_packages, include=TRUE, echo=FALSE, output=FALSE}
 library(tidyverse)
