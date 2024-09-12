@@ -42,22 +42,20 @@ library(glue) # <3>
 
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
-  plot.title = ggtext::element_textbox_simple(face="bold", size=22),
-  plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14),
-  plot.caption = ggtext::element_textbox_simple(color="#444444"),
-  axis.title = element_text(color="black", face="bold", size=12), 
-  axis.text = element_text(color="black", size=18), 
+  plot.title = ggtext::element_textbox_simple(family="Palatino", face="bold", size=15),
+  plot.subtitle = ggtext::element_textbox_simple(family="Palatino", size=12),
+  plot.caption = element_text(family="Palatino"),
+  axis.title = element_text(family="Palatino", face="bold", size=10), 
+  axis.text = element_text(family="Palatino", size=10), 
   axis.ticks = element_blank(), 
-  plot.background = element_rect(fill = 'white'),
   panel.background = element_blank(),
-  # panel.grid.major = element_blank(),
-  panel.grid.major.x = element_line(color = 'gray96'),
+  panel.grid = element_line(color="#444444", linewidth = .01),
+  # panel.grid.major.x = element_line(color = 'gray96'),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(), 
   legend.title=element_blank(), 
-  legend.text = element_text(color="black", size=12, hjust=0),
   legend.position = 'top',
-  strip.text = element_text(color="black", size=14))
+  plot.background = element_rect(fill = 'floralwhite', color = "floralwhite"))
 ```
 
 # Data
@@ -161,11 +159,20 @@ combined_acs_data <- combined_acs_data %>%
   group_by(NAME) %>% 
   # group_by(NAME, county) %>% 
   mutate(perc_u5_poverty_tminus_1 = lag(perc_u5_poverty),
+         perc_u5_poverty_tminus_3 = lag(perc_u5_poverty, 3),
          perc_u5_poverty_tminus_5 = lag(perc_u5_poverty, 5),
+         perc_u5_poverty_tminus_10 = lag(perc_u5_poverty, 10),
          perc_diff_YoY = perc_u5_poverty - perc_u5_poverty_tminus_1,
-         perc_diff_tminus_5 = perc_u5_poverty - perc_u5_poverty_tminus_5) %>% 
+         perc_diff_tminus_3 = perc_u5_poverty - perc_u5_poverty_tminus_3,
+         perc_diff_tminus_5 = perc_u5_poverty - perc_u5_poverty_tminus_5,
+         perc_diff_tminus_10 = perc_u5_poverty - perc_u5_poverty_tminus_10) %>% 
   arrange(NAME)
 ```
+
+```{r}
+combined_acs_data_2023 <- combined_acs_data %>% filter(year == 2023)
+```
+
 
 ```{r}
 combined_acs_data %>% 
@@ -183,6 +190,61 @@ combined_acs_data %>%
   theme_minimal() + 
   theme(legend.position = 'none')
 ```
+
+```{r}
+library(ggforce)
+```
+
+
+```{r fig.width=8, fig.height=14}
+combined_acs_data %>% 
+  filter(year == 2023,
+         NAME != 'Puerto Rico') %>% 
+  arrange(-perc_diff_YoY) %>% 
+  mutate(state = factor(NAME, levels = NAME),
+         direction = case_when(
+           perc_diff_YoY > .005 ~ "Increase",
+           perc_diff_YoY < -.005 ~ "Decrease",
+           TRUE ~ "No Change")) %>% 
+         # direction = ifelse(perc_diff_YoY >= 0, "Increase", "Decrease")) %>% 
+  ggplot(aes(y = reorder(NAME, -perc_diff_YoY),
+             color=direction)) +
+  geom_link(aes(x = perc_u5_poverty_tminus_1, y = fct_reorder(NAME, perc_diff_YoY), 
+              xend = perc_u5_poverty, yend = fct_reorder(NAME, perc_diff_YoY), 
+              size = stat(index))) + 
+  geom_point(data = . %>% filter(perc_diff_YoY > 0),
+             aes(perc_u5_poverty, y = fct_reorder(NAME, perc_diff_YoY)),
+             shape = 21, fill = "white", size = 4)  +
+  geom_point(data = . %>% filter(perc_diff_YoY < 0),
+             aes(perc_u5_poverty, y = fct_reorder(NAME, perc_diff_YoY)),
+             shape = 21, fill = "white", size = 4) +
+  annotate(geom = 'label', x = .27, y = 49, label = "Poverty rate increased\n in 2023", 
+         family = "Palatino", color = "#E64B35FF", fontface = 'bold', 
+         fill = "floralwhite",
+         label.size = 0, size = 4) + 
+  annotate(geom = 'label', x = .27, y = 36.5, label = "Poverty rate unchanged\n in 2023", 
+         family = "Palatino", color = "#444444", fontface = 'bold', 
+         fill = "floralwhite",
+         label.size = 0, size = 4) + 
+  annotate(geom = 'label', x = .27, y = 24.5, label = "Poverty rate decreased\nin 2023", 
+         family = "Palatino", color = "#00A087FF", fontface = 'bold', 
+         fill = "floralwhite",
+         label.size = 0, size = 4) + 
+  scale_color_manual(values = c("Decrease" = "#00A087FF", "Increase" = "#E64B35FF", "No Change" = "#444444")) +
+  scale_size(range = c(.01, 4)) +
+  labs(title='Change in State-level Child Poverty from 2022 to 2023',
+       subtitle = 'Size of the color band corresponds to the magnitude of change\n', 
+       caption="Source: U.S. Census Bureau's American Community Survey 1-year Estimates\nACS-1 has wider undercertainty bands due to smaller sampling",
+       x='\n% of children (under 5 y.o.) living\nunder the Federal Poverty Line in 2023\n',
+       y='') + 
+  scale_x_continuous(labels = percent, position='top') + 
+  my.theme + 
+  theme(legend.position = 'none')
+```
+
+
+Thinking about a comet plot. Use this as a guide: https://thef5.substack.com/p/how-to-comet-plot
+
 
 
 # Conclusion
