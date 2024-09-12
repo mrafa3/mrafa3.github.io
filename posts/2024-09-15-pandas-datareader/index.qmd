@@ -281,7 +281,7 @@ Indexing off of January 2016, the Consumer Price Index is 32% higher in August 2
 
 In this post on Pandas DataReader, I demonstrated:
 
-*  How to fetch data from the U.S. Federal Reserve and World Bank using `pandas_datareader`
+*  How to fetch data from the U.S. Federal Reserve using `pandas_datareader`
 *  How to build basic plots using `matplotlib` and `plotnine`
 *  How to convert Python to R objects using `reticulate::`
 *  How to use `tidymodels::` to build some quick regression models and compare results
