@@ -1,0 +1,196 @@
+---
+title: "Part Two: Wrangling Census data for longitudinal analysis of child poverty"
+description: "This post shows how to fetch many years of data simply, unlocking longitudinal analysis of Census data"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 09-12-2024
+categories: [R, data-viz, tidyverse, tidycensus, api, purrr] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: co_county_pov_2022.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+code-annotations: hover
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+In a [previous tidycensus post](), I showed how to fetch data and do some basic, longitudinal analysis of U.S. Census data. 
+
+
+
+## Setup
+
+```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(tidycensus)
+library(scales) # <1>
+library(gt) # <2>
+library(glue) # <3>
+
+# census_api_key('INSERT KEY HERE', install = TRUE) # <4>
+```
+
+1. Loading the `scales::` package to transform ggplot scales simply (some people choose to explicitly define `scales::` in their code rather than loading the library).
+2. The `gt::` library provides functionality for creating ggplot-esque tables.
+3. The `glue::` package allows for simple addition of HTML to ggplot graphics.
+4. The first time that you're working with the `tidycensus::` package, you need to request an API key at https://api.census.gov/data/key_signup.html. The `install=` argument will install your personal key to the .Renviron file, and you won't need to use the `census_api_key()` function again.  
+
+```{r my.theme, include=TRUE, echo=FALSE}
+my.theme <- theme(
+  plot.title = ggtext::element_textbox_simple(face="bold", size=22),
+  plot.subtitle = ggtext::element_textbox_simple(color="#444444", size=14),
+  plot.caption = ggtext::element_textbox_simple(color="#444444"),
+  axis.title = element_text(color="black", face="bold", size=12), 
+  axis.text = element_text(color="black", size=18), 
+  axis.ticks = element_blank(), 
+  plot.background = element_rect(fill = 'white'),
+  panel.background = element_blank(),
+  # panel.grid.major = element_blank(),
+  panel.grid.major.x = element_line(color = 'gray96'),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(), 
+  legend.title=element_blank(), 
+  legend.text = element_text(color="black", size=12, hjust=0),
+  legend.position = 'top',
+  strip.text = element_text(color="black", size=14))
+```
+
+# Data
+
+For this analysis, I'm interested in looking at the most recent
+state-level child poverty data available from the U.S. Census Bureau, and I want to construct a longitudinal sense of the change in child poverty. 
+
+First, let's revisit the different American Community Survey products -- **ACS-1** and **ACS-5**.
+
+*What's the difference between these, and how do you choose which survey product to use for your purposes?*
+
+
+| Feature                    | ACS 1-Year Estimates                                 | ACS 5-Year Estimates                               |
+|----------------------------|-----------------------------------------------------|---------------------------------------------------|
+| Data Collection Period      | 12 months                                           | 60 months                                         |
+| Population Coverage         | Areas with 65,000 or more people                    | All geographic areas, including those with fewer than 65,000 people |
+| Sample Size                 | Smallest                                            | Largest                                           |
+| Reliability                 | Less reliable due to smaller sample size            | More reliable due to larger sample size            |
+| Currency                    | Most current data                                   | Less current, includes older data                 |
+| Release Frequency           | Annually                                            | Annually                                          |
+| Best Used For               | Analyzing large populations, when currency is more important than precision | Analyzing small populations, where precision is more important than currency |
+| Example Usage               | Examining recent economic changes                   | Examining trends in small geographic areas or small population subgroups |
+
+
+In Part One, I wanted to fetch the most recent, reliable estimates for state-level and county-level poverty data, which led me to use the 5-year estimates. For this post, I am interested in constructing a longitudinal dataset of the most recent year-on-year estimates. If I again used the 5-year estimates, I would be comparing results across years that include much of the same sampling period (as shown in the graphic below).
+
+![The ACS-5 product has a 60-month sampling period for each annual release, meaning that 48 months of sampling overlap with each annual ACS-5 release[^1]](acs_sample_explained.png)
+
+[^1]: Screenshot taken from the ACS 2018 Handbook, found here: https://www.census.gov/content/dam/Census/library/publications/2018/acs/acs_general_handbook_2018_ch03.pdf.
+
+For this analysis, I'll use the **1-year estimates** from the American Community Survey, which will limit my ability to analyze changes in geographic units with populations greater than 65,000.
+
+As I did in Part One, I'll use the following series from the American Community Survey:
+
+-   *B01001_003*: Estimate!!Total:!!Male:!!Under 5 years (all racial
+    groups)
+-   *B01001_027*: Estimate!!Total:!!Female:!!Under 5 years (all racial
+    groups)
+-   *B17001_004*: Estimate!!Total:!!Income in the past 12 months below
+    poverty level:!!Male:!!Under 5 years
+-   *B17001_018*: Estimate!!Total:!!Income in the past 12 months below
+    poverty level:!!Female:!!Under 5 years
+
+## Fetching from the `tidycensus::` API
+
+```{r year_acs, include=TRUE}
+years <- seq(2005, 2023) %>% # <5>
+  setdiff(2020) # <6>
+```
+
+5. Data for the ACS-1 product begins in 2005, and the 2023 ACS-1 estimates were released in September 2024.
+6. Due to the COVID-19 pandemic, the U.S. Census Bureau does not have standard ACS products available for 2020. The `setdiff()` function removes 2020 from the vector.
+
+Next, I'll define a function to fetch the ACS data for each year in the vector.
+
+```{r fetch_poverty_data, include=TRUE}
+fetch_acs_data <- function(year) {
+  get_acs(geography = "state", 
+          survey = 'acs1',
+          variables = c(male_u5_pop = 'B01001_003', 
+                        female_u5_pop = 'B01001_027', 
+                        male_u5_poverty = 'B17001_004', 
+                        female_u5_poverty = 'B17001_018'),
+          year = year,
+          output = 'wide') %>% 
+    mutate(year = year)
+}
+```
+
+Then, I'll use `purrr::map_df()` to apply each year to the `fetch_acs_data()` function that I created, which will result in a single dataframe of all years.
+
+```{r combined_acs_data, include=TRUE, message=FALSE}
+combined_acs_data <- map_df(years, fetch_acs_data)
+```
+
+## Data wrangling
+
+*  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
+
+```{r df_mutate, include=TRUE, results='hide'}
+combined_acs_data <- combined_acs_data %>% 
+  mutate(total_u5_popE = male_u5_popE + female_u5_popE,
+         total_u5_povertyE = male_u5_povertyE + female_u5_povertyE,
+         perc_u5_poverty = total_u5_povertyE / total_u5_popE)
+```
+
+*  Creating a `county` field that cleans the `county_state` field to only include the county name
+
+```{r mutate_county_name, include=TRUE}
+# combined_acs_data <- combined_acs_data %>% 
+#   mutate(county = str_remove(NAME, " County.*")) %>% 
+#   select(county, everything())
+```
+
+
+
+# Analysis 
+
+```{r create_tminus1, include=TRUE}
+combined_acs_data <- combined_acs_data %>% 
+  group_by(NAME) %>% 
+  # group_by(NAME, county) %>% 
+  mutate(perc_u5_poverty_tminus_1 = lag(perc_u5_poverty),
+         perc_u5_poverty_tminus_5 = lag(perc_u5_poverty, 5),
+         perc_diff_YoY = perc_u5_poverty - perc_u5_poverty_tminus_1,
+         perc_diff_tminus_5 = perc_u5_poverty - perc_u5_poverty_tminus_5) %>% 
+  arrange(NAME)
+```
+
+```{r}
+combined_acs_data %>% 
+  filter(year >= 2022) %>% 
+  ggplot(aes(x=perc_u5_poverty_tminus_5,
+             y=perc_u5_poverty)) +   
+  geom_point(aes(color = if_else(year == 2023, '2023', 'Other year'),
+                 alpha = if_else(year == 2023, '2023', 'Other year'))) +
+  scale_color_manual(values = c('2023' = 'steelblue1',
+                               'Other year' = 'gray10')) + 
+  scale_alpha_manual(values = c('2023' = 1,
+                               'Other year' = .2)) + 
+  scale_y_continuous(limits = c(0, .7)) + 
+  scale_x_continuous(limits = c(0, .7)) + 
+  theme_minimal() + 
+  theme(legend.position = 'none')
+```
+
+
+# Conclusion
+
+In this `tidycensus::` post, I demonstrated:
+
+-   How to fetch data across multiple years from the U.S. Census Bureau and wrangle the data for longitudinal analysis
+-   How to move between R or Python objects and Observable JS objects in Quarto 
+-   How to make some simple interactive graphics with Observable Plot
+
+More to come on poverty analysis in future posts!
