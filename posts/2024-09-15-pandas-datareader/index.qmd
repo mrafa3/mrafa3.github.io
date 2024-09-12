@@ -286,4 +286,4 @@ In this post on Pandas DataReader, I demonstrated:
 *  How to convert Python to R objects using `reticulate::`
 *  How to use `tidymodels::` to build some quick regression models and compare results
 
-I'll be digging into some decomposed CPI analysis in future posts!
+I'll be digging into some decomposed CPI data in future posts!
