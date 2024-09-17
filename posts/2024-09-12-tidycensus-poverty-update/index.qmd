@@ -31,6 +31,7 @@ library(tidycensus)
 library(scales) # <1>
 library(gt) # <2>
 library(glue) # <3>
+library(ggforce) # Using this package to create the comet effect in the comet plots with the geom_link() function
 
 # census_api_key('INSERT KEY HERE', install = TRUE) # <4>
 ```
@@ -44,7 +45,7 @@ library(glue) # <3>
 my.theme <- theme(
   plot.title = ggtext::element_textbox_simple(family="Palatino", face="bold", size=15),
   plot.subtitle = ggtext::element_textbox_simple(family="Palatino", size=12),
-  plot.caption = element_text(family="Palatino"),
+  plot.caption = ggtext::element_textbox_simple(family="Palatino"),
   axis.title = element_text(family="Palatino", face="bold", size=10), 
   axis.text = element_text(family="Palatino", size=10), 
   axis.ticks = element_blank(), 
@@ -102,7 +103,7 @@ As I did in Part One, I'll use the following series from the American Community 
 ## Fetching from the `tidycensus::` API
 
 ```{r year_acs, include=TRUE}
-years <- seq(2005, 2023) %>% # <5>
+years <- seq(2015, 2023) %>% # <5>
   setdiff(2020) # <6>
 ```
 
@@ -121,9 +122,33 @@ fetch_acs_data <- function(year) {
                         female_u5_poverty = 'B17001_018'),
           year = year,
           output = 'wide') %>% 
-    mutate(year = year)
+    mutate(year = year,
+           total_u5_popE = male_u5_popE + female_u5_popE, # <7>
+           total_u5_povertyE = male_u5_povertyE + female_u5_povertyE, # <7>
+           perc_u5_poverty = total_u5_povertyE / total_u5_popE) # <7>
+}
+
+fetch_acs_data_county <- function(year) {
+  get_acs(geography = "county", 
+          survey = 'acs1',
+          variables = c(male_u5_pop = 'B01001_003', 
+                        female_u5_pop = 'B01001_027', 
+                        male_u5_poverty = 'B17001_004', 
+                        female_u5_poverty = 'B17001_018'),
+          year = year,
+          output = 'wide') %>% 
+    mutate(year = year,
+           total_u5_popE = male_u5_popE + female_u5_popE,
+           total_u5_povertyE = male_u5_povertyE + female_u5_povertyE,
+           perc_u5_poverty = total_u5_povertyE / total_u5_popE,
+           county = str_remove(NAME, " County.*"), # <8>
+           state = str_extract(NAME, "[\\w\\s]+$") %>% str_trim()) %>% # <8>
+    select(county, state, everything())
 }
 ```
+
+7. Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
+8. Creating a `state` and `county` fields to manipulate the dataframe and visualize with more simplicity
 
 Then, I'll use `purrr::map_df()` to apply each year to the `fetch_acs_data()` function that I created, which will result in a single dataframe of all years.
 
@@ -131,26 +156,9 @@ Then, I'll use `purrr::map_df()` to apply each year to the `fetch_acs_data()` fu
 combined_acs_data <- map_df(years, fetch_acs_data)
 ```
 
-## Data wrangling
-
-*  Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
-
-```{r df_mutate, include=TRUE, results='hide'}
-combined_acs_data <- combined_acs_data %>% 
-  mutate(total_u5_popE = male_u5_popE + female_u5_popE,
-         total_u5_povertyE = male_u5_povertyE + female_u5_povertyE,
-         perc_u5_poverty = total_u5_povertyE / total_u5_popE)
+```{r}
+combined_acs_data_county <- map_df(years, fetch_acs_data_county)
 ```
-
-*  Creating a `county` field that cleans the `county_state` field to only include the county name
-
-```{r mutate_county_name, include=TRUE}
-# combined_acs_data <- combined_acs_data %>% 
-#   mutate(county = str_remove(NAME, " County.*")) %>% 
-#   select(county, everything())
-```
-
-
 
 # Analysis 
 
@@ -191,10 +199,6 @@ combined_acs_data %>%
   theme(legend.position = 'none')
 ```
 
-```{r}
-library(ggforce)
-```
-
 
 ```{r fig.width=8, fig.height=14}
 combined_acs_data %>% 
@@ -233,8 +237,8 @@ combined_acs_data %>%
   scale_color_manual(values = c("Decrease" = "#00A087FF", "Increase" = "#E64B35FF", "No Change" = "#444444")) +
   scale_size(range = c(.01, 4)) +
   labs(title='Change in State-level Child Poverty from 2022 to 2023',
-       subtitle = 'Size of the color band corresponds to the magnitude of change\n', 
-       caption="Source: U.S. Census Bureau's American Community Survey 1-year Estimates\nACS-1 has wider undercertainty bands due to smaller sampling",
+       subtitle = 'Size of the color band corresponds to the magnitude of change<br>', 
+       caption="<br>Source: U.S. Census Bureau's American Community Survey 1-year Estimates<br>ACS-1 has wider undercertainty bands due to smaller sampling",
        x='\n% of children (under 5 y.o.) living\nunder the Federal Poverty Line in 2023\n',
        y='') + 
   scale_x_continuous(labels = percent, position='top') + 
@@ -245,6 +249,119 @@ combined_acs_data %>%
 
 Thinking about a comet plot. Use this as a guide: https://thef5.substack.com/p/how-to-comet-plot
 
+```{r viz_text, include=TRUE, echo=FALSE}
+title_text <- 'Percent of children in poverty by U.S. state in 2023'
+subtitle_text <- glue('Children defined as those 5 years old and younger<br>Point estimates and margins of error')
+caption_text <- glue('Source: American Community Survey 2023 1-year estimate<br>Margins of error represent the 90% Confidence Interval<br>Poverty level defined by the Federal Poverty Line')
+```
+
+It's important to remember that all ACS estimates have a margin of error (which by default is a 90% confidence interval), so point estimates should be complemented with their respective error bands. ACS-1 is a smaller sampling than the ACS-5 product, so these margins of error can be more significant. This shows that one of *New Mexico*, *Louisiana*, or *West Virginia* could have the highest under-five poverty rate as of the 2023 survey.
+
+```{r dot_plot, include=TRUE, fig.width=11, fig.height=18, fig.align='center'}
+combined_acs_data %>% 
+  filter(year == 2023,
+         NAME != 'Puerto Rico') %>%
+  group_by(NAME) %>% 
+  mutate(total_u5_poverty_MOEcalc = moe_sum(male_u5_povertyM, female_u5_povertyM),
+         perc_u5_poverty_MOEcalc = total_u5_poverty_MOEcalc / total_u5_popE) %>% 
+  ggplot(
+    aes(x=perc_u5_poverty, 
+        y=reorder(NAME, perc_u5_poverty))) + 
+  geom_point(size=3) +
+  geom_errorbarh(aes(xmin=perc_u5_poverty - perc_u5_poverty_MOEcalc, 
+                     xmax=perc_u5_poverty + perc_u5_poverty_MOEcalc),
+                 height = 0.4) + 
+  labs(y='',
+       x='',
+       caption=caption_text) + 
+  ggtitle(title_text,
+          subtitle=subtitle_text) +
+  scale_x_continuous(labels = percent,
+                     position = 'top') + 
+  my.theme
+```
+
+1. Using the `tidycensus::` margin of error aggregation functions to create confidence bands around the point estimate.
+
+
+```{r}
+combined_acs_data_county <- combined_acs_data_county %>% 
+  group_by(state, county) %>% 
+  mutate(perc_u5_poverty_tminus_1 = lag(perc_u5_poverty),
+           perc_diff_YoY = perc_u5_poverty - perc_u5_poverty_tminus_1) %>% 
+  arrange(NAME)
+```
+
+
+```{r colorado_comet, include=TRUE, fig.width=8, fig.height=8}
+combined_acs_data_county %>% 
+  filter(year == 2023,
+         state == 'Colorado') %>% 
+  arrange(-perc_diff_YoY) %>% 
+  mutate(county = factor(county, levels = county),
+         direction = case_when(
+           perc_diff_YoY > .005 ~ "Increase",
+           perc_diff_YoY < -.005 ~ "Decrease",
+           TRUE ~ "No Change")) %>% 
+         # direction = ifelse(perc_diff_YoY >= 0, "Increase", "Decrease")) %>% 
+  ggplot(aes(y = reorder(county, -perc_diff_YoY),
+             color=direction)) +
+  geom_link(aes(x = perc_u5_poverty_tminus_1, y = fct_reorder(county, perc_diff_YoY), 
+              xend = perc_u5_poverty, yend = fct_reorder(county, perc_diff_YoY), 
+              size = stat(index))) + 
+  geom_point(data = . %>% filter(perc_diff_YoY > 0),
+             aes(perc_u5_poverty, y = fct_reorder(county, perc_diff_YoY)),
+             shape = 21, fill = "white", size = 4)  +
+  geom_point(data = . %>% filter(perc_diff_YoY < 0),
+             aes(perc_u5_poverty, y = fct_reorder(county, perc_diff_YoY)),
+             shape = 21, fill = "white", size = 4) +
+  # annotate(geom = 'label', x = .27, y = 49, label = "Poverty rate increased\n in 2023", 
+  #        family = "Palatino", color = "#E64B35FF", fontface = 'bold', 
+  #        fill = "floralwhite",
+  #        label.size = 0, size = 4) + 
+  # annotate(geom = 'label', x = .27, y = 36.5, label = "Poverty rate unchanged\n in 2023", 
+  #        family = "Palatino", color = "#444444", fontface = 'bold', 
+  #        fill = "floralwhite",
+  #        label.size = 0, size = 4) + 
+  # annotate(geom = 'label', x = .27, y = 24.5, label = "Poverty rate decreased\nin 2023", 
+  #        family = "Palatino", color = "#00A087FF", fontface = 'bold', 
+  #        fill = "floralwhite",
+  #        label.size = 0, size = 4) + 
+  scale_color_manual(values = c("Decrease" = "#00A087FF", "Increase" = "#E64B35FF", "No Change" = "#444444")) +
+  scale_size(range = c(.01, 4)) +
+  labs(title='Change in County-level Child Poverty in Colorado from 2022 to 2023',
+       subtitle = 'Size of the color band corresponds to the magnitude of change<br>', 
+       caption="<br>Source: U.S. Census Bureau's American Community Survey 1-year Estimates<br>ACS-1 has wider undercertainty bands due to smaller sampling",
+       x='\n% of children (under 5 y.o.) living\nunder the Federal Poverty Line in 2023\n',
+       y='') + 
+  scale_x_continuous(labels = percent, position='top') + 
+  my.theme + 
+  theme(legend.position = 'none')
+```
+
+```{r dot_plot2, include=TRUE, fig.width=8, fig.height=9, fig.align='center'}
+combined_acs_data_county %>% 
+  filter(year == 2023,
+         state == 'Colorado') %>%
+  group_by(county) %>% 
+  mutate(total_u5_poverty_MOEcalc = moe_sum(male_u5_povertyM, female_u5_povertyM),
+         perc_u5_poverty_MOEcalc = total_u5_poverty_MOEcalc / total_u5_popE) %>% 
+  ggplot(
+    aes(x=perc_u5_poverty, 
+        y=reorder(county, perc_u5_poverty))) + 
+  geom_point(size=3) +
+  geom_errorbarh(aes(xmin=perc_u5_poverty - perc_u5_poverty_MOEcalc, 
+                     xmax=perc_u5_poverty + perc_u5_poverty_MOEcalc),
+                 height = 0.4) + 
+  labs(y='',
+       x='',
+       caption=caption_text) + 
+  ggtitle('Percent of children in poverty in Colorado in 2023',
+          subtitle=subtitle_text) +
+  scale_x_continuous(labels = percent,
+                     position = 'top') + 
+  my.theme
+```
 
 
 # Conclusion
