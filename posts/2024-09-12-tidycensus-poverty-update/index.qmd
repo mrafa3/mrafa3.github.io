@@ -23,6 +23,7 @@ In a [previous tidycensus post](), I showed how to fetch data and do some basic,
 
 
 
+
 ## Setup
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
@@ -43,7 +44,7 @@ library(ggforce) # Using this package to create the comet effect in the comet pl
 
 ```{r my.theme, include=TRUE, echo=FALSE}
 my.theme <- theme(
-  plot.title = ggtext::element_textbox_simple(family="Palatino", face="bold", size=15),
+  plot.title = ggtext::element_textbox_simple(family="Palatino", face="bold", size=15, hjust = .5),
   plot.subtitle = ggtext::element_textbox_simple(family="Palatino", size=12),
   plot.caption = ggtext::element_textbox_simple(family="Palatino"),
   axis.title = element_text(family="Palatino", face="bold", size=10), 
@@ -136,6 +137,7 @@ fetch_acs_data_county <- function(year) {
                         male_u5_poverty = 'B17001_004', 
                         female_u5_poverty = 'B17001_018'),
           year = year,
+          geometry = TRUE,
           output = 'wide') %>% 
     mutate(year = year,
            total_u5_popE = male_u5_popE + female_u5_popE,
@@ -198,7 +200,6 @@ combined_acs_data %>%
   theme_minimal() + 
   theme(legend.position = 'none')
 ```
-
 
 ```{r fig.width=8, fig.height=14}
 combined_acs_data %>% 
@@ -292,6 +293,90 @@ combined_acs_data_county <- combined_acs_data_county %>%
   arrange(NAME)
 ```
 
+# Colorado 
+
+
+```{r}
+# library(tigris)
+# library(patchwork)
+# 
+# # Load state boundaries from tigris
+# states_sf <- states(cb = TRUE) %>% 
+#   filter(!STUSPS %in% c('GU', 'AS', 'MP', 'VI', 'PR'))
+```
+
+```{r}
+# Create the main map
+# main_map <- combined_acs_data_county %>%
+#   filter(year == 2023) %>%
+#   filter(!state %in% c('Alaska', 'Hawaii')) %>%
+#   ggplot() +
+#   geom_sf(aes(fill = perc_diff_YoY), color = NA) +
+#   geom_sf(data = states_sf, fill = NA, color = "black", size = 0.2) +  # Add state outlines
+#   coord_sf(datum = NA) +
+#   scale_fill_gradient2(low = muted("blue"), mid = "white", high = muted("red"),
+#                        labels = percent) +
+#   ggtitle('Percentage point change in child poverty (2022 to 2023)') +
+#   labs(caption = 'Source: U.S. Census Bureau, ACS 1-year estimates') +
+#   theme_minimal() +
+#   theme(plot.title = element_textbox_simple(face = "bold", size = 14),
+#         legend.title = element_blank(),
+#         legend.key.size = unit(1.25, "cm"),
+#         legend.text = element_text(size = 12))
+# 
+# # Create inset maps for Alaska and Hawaii
+# alaska_map <- combined_acs_data_county %>%
+#   filter(year == 2023, state == 'Alaska') %>%
+#   ggplot() +
+#   geom_sf(aes(fill = perc_diff_YoY), color = NA) +
+#   coord_sf(datum = NA) +
+#   scale_fill_gradient2(low = muted("blue"), mid = "white", high = muted("red"),
+#                        labels = percent) +
+#   theme_void() +
+#   theme(legend.position = "none") +
+#   labs(title = "Alaska")
+# 
+# hawaii_map <- combined_acs_data_county %>%
+#   filter(year == 2023, state == 'Hawaii') %>%
+#   ggplot() +
+#   geom_sf(aes(fill = perc_diff_YoY), color = NA) +
+#   coord_sf(datum = NA) +
+#   scale_fill_gradient2(low = muted("blue"), mid = "white", high = muted("red"),
+#                        labels = percent) +
+#   theme_void() +
+#   theme(legend.position = "none") +
+#   labs(title = "Hawaii")
+# 
+# # Combine the main map with insets using patchwork
+# final_map <- main_map +
+#   inset_element(alaska_map, left = 0.15, bottom = 0.1, right = 0.35, top = 0.3) +
+#   inset_element(hawaii_map, left = 0.4, bottom = 0.1, right = 0.5, top = 0.2) +
+#   plot_layout(guides = "collect")
+```
+
+
+```{r fig.width=8, fig.height=7}
+combined_acs_data_county %>% 
+  filter(year == 2023) %>%
+  filter(!state %in% c('Alaska', 'Hawaii')) %>% 
+         # state == 'Colorado') %>% 
+  ggplot() + 
+  geom_sf(aes(fill=perc_diff_YoY), color=NA) + 
+  # geom_sf(data = states_sf, fill = NA, color = "black", size = 0.2) +
+  coord_sf(datum = NA) + 
+  scale_fill_gradient2(low = muted("blue"), mid = "white", high = muted("red"),
+                       labels = percent) + 
+  # scale_fill_viridis_b(labels = percent,
+  #                      n.breaks = 5) + 
+  ggtitle('Percentage point change in child poverty (2022 to 2023)') + 
+  labs(caption = 'Source: U.S. Census Bureau, ACS 1-year estimates') + 
+  theme_minimal() + 
+  theme(plot.title = ggtext::element_textbox_simple(face="bold", size=14),
+        legend.title = element_blank(),
+        legend.key.size = unit(1.25, "cm"),
+        legend.text = element_text(size = 12))
+```
+
 
 ```{r colorado_comet, include=TRUE, fig.width=8, fig.height=8}
 combined_acs_data_county %>% 
@@ -339,7 +424,7 @@ combined_acs_data_county %>%
   theme(legend.position = 'none')
 ```
 
-```{r dot_plot2, include=TRUE, fig.width=8, fig.height=9, fig.align='center'}
+```{r dot_plot2, include=TRUE, fig.width=6, fig.height=7, fig.align='center'}
 combined_acs_data_county %>% 
   filter(year == 2023,
          state == 'Colorado') %>%
@@ -350,7 +435,7 @@ combined_acs_data_county %>%
     aes(x=perc_u5_poverty, 
         y=reorder(county, perc_u5_poverty))) + 
   geom_point(size=3) +
-  geom_errorbarh(aes(xmin=perc_u5_poverty - perc_u5_poverty_MOEcalc, 
+  geom_errorbarh(aes(xmin=if_else(perc_u5_poverty - perc_u5_poverty_MOEcalc < 0, 0, perc_u5_poverty - perc_u5_poverty_MOEcalc), 
                      xmax=perc_u5_poverty + perc_u5_poverty_MOEcalc),
                  height = 0.4) + 
   labs(y='',

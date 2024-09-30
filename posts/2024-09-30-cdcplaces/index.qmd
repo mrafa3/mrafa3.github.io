@@ -1,0 +1,129 @@
+---
+title: "Exploring the CDC PLACES project"
+description: "This post shows how to fetch data from the CDC and analyze and map it simply"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 09-30-2024
+categories: [R, data-viz, tidyverse, tidycensus, api, purrr] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: co_county_pov_2022.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+code-annotations: hover
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+>> PLACES is a collaboration between CDC, the Robert Wood Johnson Foundation, and the CDC Foundation. PLACES provides health data for small areas across the country. This allows local health departments and jurisdictions, regardless of population size and rurality, to better understand the burden and geographic distribution of health measures in their areas and assist them in planning public health interventions.
+
+https://www.cdc.gov/places/index.html 
+
+## Purpose 
+
+
+
+## Setup
+
+```{r libraries, include=TRUE, message=FALSE}
+library(tidyverse)
+library(CDCPLACES)
+library(gt)
+library(ggtext)
+library(maps)
+library(sf)
+library(patchwork)
+```
+
+The `CDCPLACES::` package includes only two functions:
+
+*  `get_dictionary()`: shows indicators and some metadata for each indicator (measure name, release year, etc.)
+*  `get_places()`: fetches the data from the CDC PLACES API
+
+```{r get_dictionary, include=TRUE}
+get_dictionary()
+```
+
+From the `get_dictionary()` function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs. It's a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).
+
+Within the `get_places()` function, there are the following arguments:
+
+*  **`geography=`**: argument that takes *county*, *census*, or *zcta*
+*  **`state=`**: takes in single state abbreviations (two-letter abbreviations), as well as vectors of multiple states
+*  **`measure=`**: code for the field(s) that you want to fetch (use `get_dictionary()`) for a complete list of measures)
+*  **`release=`**: takes in string for year of data that you want (available for years 2020-2023)
+*  **`geometry=`**: returns an `sf::` field that facilitates easy mapping (FALSE by default)
+*  **`cat=`**: instead of using the `measure=` argument, you can fetch entire categories of measures. 
+*  **`age_adjust=`**: age adjustment is typically important for cross-regional/country comparisons. Age is a key determinant for risk of health conditions (e.g. older populations are more likely to experience dimentia). Adjusting for age differences across geographies can make for a more accurate comparison of prevalence.
+
+# Mapping data on depression in the U.S. among adults
+
+For my initial exploration, I'd like to visualize depression among adults in the United States.  
+
+```{r df_state, include=TRUE}
+df_state <- get_places(geography = 'county',
+                       measure = 'DEPRESSION',
+                       release = '2024',
+                       geometry = TRUE)
+```
+
+By setting `geometry=TRUE`, you can then readily map the data using `geom_sf()`. 
+
+```{r map1, include=TRUE}
+df_state %>% 
+  filter(data_value_type == 'Crude prevalence',
+         !stateabbr %in% c('AK', 'HI')) %>% 
+  ggplot(.) + 
+  geom_sf(aes(fill=data_value/100)) + 
+  coord_sf(datum = NA) +
+  ggtitle('Depression among adults aged >= 18 years') + 
+  scale_fill_viridis_c(option = 'magma',
+                       labels=scales::percent,
+                       name='') +
+  theme_minimal()
+```
+
+This map still has lots of work to do, but it's exciting to be able to access and visualize data from the CDC so easily. In my next `CDCPLACES::` post, I'll focus on improved styling of maps like this.
+
+
+
+
+```{r}
+df %>% 
+  # filter(measureid == 'EMOTIONSPT') %>% 
+  # filter(measureid == 'FOODSTAMP') %>%
+  # filter(measureid == 'HOUSINSECU') %>%
+  filter(measureid == 'FOODINSECU',
+         statedesc == 'West Virginia') %>%
+  # filter(measureid == 'LACKTRPT') %>%
+  # filter(measureid == 'ISOLATION') %>%
+  # filter(measureid == 'SHUTUTILITY') %>%
+  ggplot(.) + 
+  geom_sf(aes(fill=data_value/100), color='white') + 
+  coord_sf(datum = NA) + 
+  scale_fill_gradient2(
+    low = "#2469b3",
+    mid = "#f0eee5",
+    high = "#b6202c",
+    midpoint = median(df$data_value/100, na.rm = TRUE),
+    labels = scales::percent,
+    name = ''
+  ) + 
+  # ggtitle('% of adults experiencing food insecurity in the last 12 months') + 
+  guides(color='none') + 
+  theme_minimal()
+```
+
+# Conclusion
+
+In this `tidycensus::` post, I demonstrated:
+
+-   How to fetch data across multiple years from the U.S. Census Bureau and wrangle the data for longitudinal analysis
+-   How to move between R or Python objects and Observable JS objects in Quarto 
+-   How to make some simple interactive graphics with Observable Plot
+
+More to come on poverty analysis in future posts!
