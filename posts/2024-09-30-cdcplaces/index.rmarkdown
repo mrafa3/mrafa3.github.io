@@ -17,6 +17,8 @@ editor:
     wrap: 72
 ---
 
+
+
 # Introduction
 
 > PLACES is a collaboration between CDC, the Robert Wood Johnson Foundation, and the CDC Foundation. PLACES provides health data for small areas across the country. This allows local health departments and jurisdictions, regardless of population size and rurality, to better understand the burden and geographic distribution of health measures in their areas and assist them in planning public health interventions.
@@ -29,20 +31,28 @@ https://www.cdc.gov/places/index.html
 
 ## Setup
 
+
+
 ```{r libraries, include=TRUE, message=FALSE}
 library(tidyverse)
 library(CDCPLACES)
 library(ggtext)
 ```
 
+
+
 The `CDCPLACES::` package includes only two functions:
 
 *  `get_dictionary()`: shows indicators and some metadata for each indicator (measure name, release year, etc.)
 *  `get_places()`: fetches the data from the CDC PLACES API
 
+
+
 ```{r get_dictionary, include=TRUE}
 get_dictionary() %>% head()
 ```
+
+
 
 From the `get_dictionary()` function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs. It's a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).
 
@@ -60,6 +70,8 @@ Within the `get_places()` function, there are the following arguments:
 
 For my initial exploration, I'd like to visualize depression among adults in the United States.  
 
+
+
 ```{r df_state, include=TRUE, output=FALSE}
 df_state <- get_places(geography = 'county',
                        measure = 'DEPRESSION',
@@ -67,7 +79,11 @@ df_state <- get_places(geography = 'county',
                        geometry = TRUE)
 ```
 
+
+
 By setting `geometry=TRUE`, you can then readily map the data using `geom_sf()`. 
+
+
 
 ```{r map1, include=TRUE}
 df_state %>% 
@@ -83,6 +99,8 @@ df_state %>%
   theme_minimal()
 ```
 
+
+
 This map still has lots of work to do, but it's exciting to be able to access and visualize data from the CDC so easily. In my next `CDCPLACES::` post, I'll focus on improved styling of maps like this.
 
 ## Social Needs -- a new category of data from the CDC PLACES project
@@ -97,6 +115,8 @@ The September 2024 release from CDC PLACES includes a new category of **social n
 *  Transportation barriers
 *  Lack of social/emotional support 
 
+
+
 ```{r get_places2, include=TRUE}
 df <- get_places(geography = 'county',
                  cat = 'SOCLNEED',
@@ -104,9 +124,13 @@ df <- get_places(geography = 'county',
                  geometry = TRUE)
 ```
 
+
+
 For this first release of **social needs** indicators, there are only `r n_distinct(df$stateabbr)` states included.[^1]
 
 [^1]: At the time of this review, Arkansas, Colorado, Connecticut, Illinois, Louisiana, New York, North Dakota, Oregon, Pennsylvania, South Dakota, and Virginia are not included in the social needs indicators in CDCPLACES.
+
+
 
 ```{r map2, include=TRUE}
 df %>% 
@@ -123,7 +147,11 @@ df %>%
   theme_minimal()
 ```
 
+
+
 I also like to visualize the error bands associated with point estimates. The `geom_errorborh()` function comes in handy for that. I'll visualize the top 25 food insecure counties, along with their confidence intervals.
+
+
 
 ```{r fig.height=10, fig.width=8}
 df %>% 
@@ -151,8 +179,6 @@ df %>%
         legend.position = 'none')
 ```
 
-
-
 ```{r}
 df %>% 
   filter(measureid == 'FOODINSECU',
@@ -170,6 +196,9 @@ df %>%
 
 
 
+
+
 # Conclusion
 
 In this post, I demonstrated how to fetch data from the `CDCPLACES::` package and visualize and map the results, using the `measure=` or `cat=` arguments. In future posts, I'll dig into more of the `CDCPLACES::` package.
+
