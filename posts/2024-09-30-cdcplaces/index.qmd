@@ -67,7 +67,7 @@ Within the `get_places()` function, there are the following arguments:
 
 For my initial exploration, I'd like to visualize depression among adults in the United States.  
 
-```{r df_social_needs_depression, include=TRUE, output=FALSE}
+```{r df_depression, include=TRUE, output=FALSE}
 df_depression <- get_places(geography = 'county',
                        measure = 'DEPRESSION',
                        release = '2024', # <2>
