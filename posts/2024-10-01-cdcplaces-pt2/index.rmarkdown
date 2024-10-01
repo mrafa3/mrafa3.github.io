@@ -31,7 +31,6 @@ editor:
 ```{r libraries, include=TRUE, message=FALSE}
 library(tidyverse)
 library(CDCPLACES)
-library(gt)
 library(ggtext)
 library(maps)
 library(sf)
@@ -102,7 +101,7 @@ df_depression <- get_places(geography = 'county',
 
 
 
-```{r lower48_map2, include=TRUE}
+```{r lower48_map2, include=TRUE, fig.width=10, fig.height=6.2}
 (lower48_map <- df_depression %>% 
   filter(data_value_type == 'Crude prevalence',
          !stateabbr %in% c('AK', 'HI')) %>% 
@@ -117,8 +116,8 @@ df_depression <- get_places(geography = 'county',
     labels = scales::percent,
     name = ''
   ) + 
-  ggtitle('Depression among adults aged >= 18 years',
-          subtitle = 'by U.S. county in 2022') + 
+  ggtitle('Rates of depression among adults are highest in\nCentral Appalachia and the Bible Belt',
+          subtitle = '% of adults over 18 years old by U.S. county in 2022') + 
   labs(x='',
        y='') + 
   labs(caption='Source: U.S. Centers for Disease Control (PLACES product)') + 
@@ -126,7 +125,8 @@ df_depression <- get_places(geography = 'county',
   theme_minimal() + 
   theme(
     text = element_text(family = 'Roboto Condensed'),
-    plot.title = element_text(face = 'bold'),
+    plot.title = element_text(face = 'bold', size=20),
+    plot.subtitle = element_text(size=14),
     legend.position = "top",
     legend.direction = "horizontal",
     legend.key.height = unit(0.5, "cm"),
@@ -150,7 +150,7 @@ I want to the map to have thicker state boundaries than county boundaries -- I t
 states <- map_data("state")
 ```
 
-```{r lower48_map3, include=TRUE}
+```{r lower48_map3, include=TRUE, fig.width=10, fig.height=6.2}
 (lower48_map <- df_depression %>% 
   filter(data_value_type == 'Crude prevalence',
          !stateabbr %in% c('AK', 'HI')) %>% 
@@ -166,9 +166,6 @@ states <- map_data("state")
     mid = "#f0eee5",
     high = "#b6202c",
     midpoint = median(df_depression$data_value/100, na.rm = TRUE),
-    # na.value = "grey50",
-    # breaks = c(8, 25),
-    # labels = c("8 days", "25 days")
     labels = scales::percent,
     name = ''
   ) + 
@@ -181,7 +178,8 @@ states <- map_data("state")
   theme_minimal() +
   theme(
     text = element_text(family = 'Roboto Condensed'),
-    plot.title = element_text(face = 'bold'), 
+    plot.title = element_text(face = 'bold', size=20), 
+    plot.subtitle = element_text(size=14),
     legend.position = "top",
     legend.direction = "horizontal",
     legend.key.height = unit(0.5, "cm"),
@@ -255,7 +253,7 @@ Then, with the `patchwork::inset_element()` function, I overlayed the Alaska and
 
 
 
-```{r combined_map, include=TRUE}
+```{r combined_map, include=TRUE, fig.width=10, fig.height=6.2}
 (combined_map <- lower48_map +
   inset_element(ak_map, left = -.1, bottom = -.1, right = .3, top = .3) +
   inset_element(hi_map, left = .1, bottom = -.1, right = 0.5, top = 0.2))
