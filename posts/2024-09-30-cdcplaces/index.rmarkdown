@@ -6,11 +6,11 @@ author:
     url: https://mrafa3.github.io/
     #orcid: 0000-0002-5300-3075
 date: 09-30-2024
-categories: [R, data-viz, tidyverse, tidycensus, api, purrr] # self-defined categories
+categories: [R, data-viz, mapping, tidyverse, cdcplaces, api] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-# image: co_county_pov_2022.png
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+image: food_insecurity_wv.png
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 code-annotations: hover
 editor: 
   markdown: 
@@ -21,25 +21,32 @@ editor:
 
 # Introduction
 
+I saw a post recently about the Centers for Disease Control's Population Level Analysis and Community Estimates (or "CDC PLACES") project and its latest data release. The details of this project caught my attention, because it's a nation-wide project that measures and estimates key population health indicators, including metrics around prevention and the social determinants of health.[^1] Here is how the CDC describes it on their project website:
+
 > PLACES is a collaboration between CDC, the Robert Wood Johnson Foundation, and the CDC Foundation. PLACES provides health data for small areas across the country. This allows local health departments and jurisdictions, regardless of population size and rurality, to better understand the burden and geographic distribution of health measures in their areas and assist them in planning public health interventions.
 
-https://www.cdc.gov/places/index.html 
+[^1]: Go to the CDC PLACES website for more details on the project and their methodology: https://www.cdc.gov/places/index.html 
 
 ## Purpose 
 
+I found that there is a `CDCPLACES::` R package that facilitates API access to the project's data, so I wanted to explore what's available, and what it's like to fetch, analyze, and visualize data from the PLACES project.
 
+In future posts, I plan to do a more formal analysis, but for now -- I wanted to get to know this package and the available data.
 
-## Setup
+## Setup and the `CDCPLACES::` package
 
 
 
 ```{r libraries, include=TRUE, message=FALSE}
 library(tidyverse)
 library(CDCPLACES)
-library(ggtext)
+library(ggtext) # <1>
+library(glue)
 ```
 
 
+
+1. I use the `ggtext::element_textbox_simple()` function to bold some (but not all) text in a plot title. The `ggtext::` package has lots of neat functionality for ggplot graphics.
 
 The `CDCPLACES::` package includes only two functions:
 
@@ -54,7 +61,7 @@ get_dictionary() %>% head()
 
 
 
-From the `get_dictionary()` function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs. It's a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).
+From the `get_dictionary()` function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs (to preserve space, I'm only showing the top 6 records). It's a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).
 
 Within the `get_places()` function, there are the following arguments:
 
@@ -72,21 +79,24 @@ For my initial exploration, I'd like to visualize depression among adults in the
 
 
 
-```{r df_state, include=TRUE, output=FALSE}
-df_state <- get_places(geography = 'county',
+```{r df_social_needs_depression, include=TRUE, output=FALSE}
+df_depression <- get_places(geography = 'county',
                        measure = 'DEPRESSION',
-                       release = '2024',
-                       geometry = TRUE)
+                       release = '2024', # <2>
+                       geometry = TRUE) # <3>
 ```
 
 
 
-By setting `geometry=TRUE`, you can then readily map the data using `geom_sf()`. 
+2. Noting that the `release=` argument takes in a string for the year.
+3. By setting `geometry=TRUE`, you can then readily map the data using `geom_sf()`.
+
+Then, similar to the functionality of the `tidycensus::` package, you can quickly visualize the data with a `geom_sf()` call. When I'm mapping, I usually like to start with a color palette from the `viridis::` package, because they are generally good diverging palettes.
 
 
 
 ```{r map1, include=TRUE}
-df_state %>% 
+df_depression %>% 
   filter(data_value_type == 'Crude prevalence',
          !stateabbr %in% c('AK', 'HI')) %>% 
   ggplot(.) + 
@@ -115,10 +125,12 @@ The September 2024 release from CDC PLACES includes a new category of **social n
 *  Transportation barriers
 *  Lack of social/emotional support 
 
+Instead of using the `measure=` argument (as I did above), I'll use the `cat=` argument to pull in all social needs indicators from the PLACES project.
+
 
 
 ```{r get_places2, include=TRUE}
-df <- get_places(geography = 'county',
+df_social_needs <- get_places(geography = 'county',
                  cat = 'SOCLNEED',
                  release = '2024',
                  geometry = TRUE)
@@ -126,14 +138,14 @@ df <- get_places(geography = 'county',
 
 
 
-For this first release of **social needs** indicators, there are only `r n_distinct(df$stateabbr)` states included.[^1]
+For this first release of **social needs** indicators, there are only `r n_distinct(df_social_needs$stateabbr)` states included.[^1]
 
 [^1]: At the time of this review, Arkansas, Colorado, Connecticut, Illinois, Louisiana, New York, North Dakota, Oregon, Pennsylvania, South Dakota, and Virginia are not included in the social needs indicators in CDCPLACES.
 
 
 
 ```{r map2, include=TRUE}
-df %>% 
+df_social_needs %>% 
   filter(data_value_type == 'Crude prevalence',
          measureid == 'FOODINSECU',
          !stateabbr %in% c('AK', 'HI')) %>%
@@ -154,7 +166,7 @@ I also like to visualize the error bands associated with point estimates. The `g
 
 
 ```{r fig.height=10, fig.width=8}
-df %>% 
+df_social_needs %>% 
   filter(data_value_type == 'Crude prevalence',
          measureid == 'FOODINSECU') %>% 
   top_n(25, data_value) %>% 
@@ -166,7 +178,8 @@ df %>%
                      xmax=high_confidence_limit/100), 
                  height = 0.4) +
   ggtitle('% of adults experiencing **food insecurity** in the past 12 months',
-          subtitle = '\n25 counties with the highest rates in 2024\n<span></span>') + 
+          subtitle = glue("<br>25 counties with the highest rates in 2024<br><span style='color:#cd2626'>**Texas**</span> has nine counties in the top 25")) + 
+  
   labs(x='',
        y='',
        caption='Source: Centers for Disease Control PLACES project\nPoint estimates and confidence intervals shown') + 
@@ -176,11 +189,18 @@ df %>%
                                 'Other' = 'black')) + 
   theme_minimal() + 
   theme(plot.title = element_textbox_simple(size=16),
+        plot.subtitle = element_textbox_simple(),
         legend.position = 'none')
 ```
 
+
+
+And I'll visualize the food insecurity data from my home state, West Viriginia, where parts of central and southern West Virginia experience the highest rates of food insecurity in the state.
+
+
+
 ```{r}
-df %>% 
+df_social_needs %>% 
   filter(measureid == 'FOODINSECU',
          statedesc == 'West Virginia') %>%
   ggplot(.) + 
@@ -196,9 +216,7 @@ df %>%
 
 
 
-
-
 # Conclusion
 
-In this post, I demonstrated how to fetch data from the `CDCPLACES::` package and visualize and map the results, using the `measure=` or `cat=` arguments. In future posts, I'll dig into more of the `CDCPLACES::` package.
+In this post, I demonstrated how to fetch data from the `CDCPLACES::` package and visualize and map the results, using the `measure=` or `cat=` arguments. In future posts, I'll dig into more of the `CDCPLACES::` package. There's lots of interesting data available from this project. More soon!
 
