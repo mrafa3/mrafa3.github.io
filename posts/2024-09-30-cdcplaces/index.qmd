@@ -1,5 +1,5 @@
 ---
-title: "Exploring the CDC PLACES project"
+title: "Mapping depression and food insecurity in the U.S. with the CDC PLACES project"
 description: "This post shows how to fetch data from the CDC and analyze and map it simply"
 author:
   - name: Mickey Rafa
@@ -48,10 +48,10 @@ The `CDCPLACES::` package includes only two functions:
 *  `get_places()`: fetches the data from the CDC PLACES API
 
 ```{r get_dictionary, include=TRUE}
-get_dictionary() %>% head()
+get_dictionary() %>% select(1:2) %>% head(10)
 ```
 
-From the `get_dictionary()` function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs (to preserve space, I'm only showing the top 6 records). It's a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).
+From the `get_dictionary()` function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs (to preserve space, I'm only showing the top 10 records). It's a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).
 
 Within the `get_places()` function, there are the following arguments:
 

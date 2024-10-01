@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2024-09-30">
 <meta name="description" content="This post shows how to fetch data from the CDC and analyze and map it simply">
 
-<title>Exploring the CDC PLACES project</title>
+<title>Mapping depression and food insecurity in the U.S. with the CDC PLACES project</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -148,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-page-left">
-      <h1 class="title">Exploring the CDC PLACES project</h1>
+      <h1 class="title">Mapping depression and food insecurity in the U.S. with the CDC PLACES project</h1>
                   <div>
         <div class="description">
           This post shows how to fetch data from the CDC and analyze and map it simply
@@ -247,60 +247,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>get_places()</code>: fetches the data from the CDC PLACES API</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_dictionary</span>() <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_dictionary</span>() <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  measureid                                  measure_full_name
-1 ARTHRITIS                             Arthritis among adults
-2    BPHIGH                   High blood pressure among adults
-3    CANCER         Cancer (non-skin) or melanoma among adults
-4   CASTHMA                        Current asthma among adults
-5       CHD                Coronary heart disease among adults
-6      COPD Chronic obstructive pulmonary disease among adults
-             measure_short_name categoryid   category_name places_release_2024
-1                     Arthritis    HLTHOUT Health Outcomes                2022
-2           High Blood Pressure    HLTHOUT Health Outcomes                2021
-3 Cancer (non-skin) or melanoma    HLTHOUT Health Outcomes                2022
-4                Current Asthma    HLTHOUT Health Outcomes                2022
-5        Coronary Heart Disease    HLTHOUT Health Outcomes                2022
-6                          COPD    HLTHOUT Health Outcomes                2022
-                                                    measurename16_23
-1                             Arthritis among adults aged &gt;=18 years
-2                   High blood pressure among adults aged &gt;=18 years
-3        Cancer (excluding skin cancer) among adults aged &gt;=18 years
-4                        Current asthma among adults aged &gt;=18 years
-5                Coronary heart disease among adults aged &gt;=18 years
-6 Chronic obstructive pulmonary disease among adults aged &gt;=18 years
-  places_release_2023 places_release_2022 places_release_2021
-1                2021                2020                2019
-2                2021                2019                2019
-3                2021                2020                2019
-4                2021                2020                2019
-5                2021                2020                2019
-6                2021                2020                2019
-  places_release_2020 _500_cities_release_2019 _500_cities_release_2018
-1                2018                     2017                     2016
-2                2017                     2017                     2015
-3                2018                     2017                     2016
-4                2018                     2017                     2016
-5                2018                     2017                     2016
-6                2018                     2017                     2016
-  _500_cities_release_2017 _500_cities_release_2016 frequency_brfss_year
-1                     2015                     2014                Every
-2                     2015                     2013                  Odd
-3                     2015                     2014                Every
-4                     2015                     2014                Every
-5                     2015                     2014                Every
-6                     2015                     2014                Every
-        shortname16_23
-1                 &lt;NA&gt;
-2                 &lt;NA&gt;
-3 Cancer (except skin)
-4                 &lt;NA&gt;
-5                 &lt;NA&gt;
-6                 &lt;NA&gt;</code></pre>
+<pre><code>    measureid                                         measure_full_name
+1   ARTHRITIS                                    Arthritis among adults
+2      BPHIGH                          High blood pressure among adults
+3      CANCER                Cancer (non-skin) or melanoma among adults
+4     CASTHMA                               Current asthma among adults
+5         CHD                       Coronary heart disease among adults
+6        COPD        Chronic obstructive pulmonary disease among adults
+7  DEPRESSION                                   Depression among adults
+8    DIABETES                           Diagnosed diabetes among adults
+9    HIGHCHOL High cholesterol among adults who have ever been screened
+10     KIDNEY       Chronic kidney disease among adults aged &gt;=18 years</code></pre>
 </div>
 </div>
-<p>From the <code>get_dictionary()</code> function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs (to preserve space, I’m only showing the top 6 records). It’s a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).</p>
+<p>From the <code>get_dictionary()</code> function, you can see that there are 44 records (representing 44 different measures) from health outcomes, risk behaviors, status, prevention, disability, and health-related social needs (to preserve space, I’m only showing the top 10 records). It’s a really exciting set of metrics for evaluating patterns of morbidity and health-related metrics (such as preventative metrics or the social determinants of health).</p>
 <p>Within the <code>get_places()</code> function, there are the following arguments:</p>
 <ul>
 <li><strong><code>geography=</code></strong>: argument that takes <em>county</em>, <em>census</em>, or <em>zcta</em></li>
