@@ -1,6 +1,6 @@
 ---
-title: "Part Two: Wrangling Census data for longitudinal analysis of child poverty"
-description: "This post shows how to fetch many years of data simply, unlocking longitudinal analysis of Census data"
+title: "Reviewing the ACS-1 2023 child poverty estimates"
+description: "This post looks at how child poverty estimates have changed in the latest U.S. Census data"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
@@ -31,7 +31,7 @@ library(gt) # <2>
 library(glue) # <3>
 library(ggforce) # <4>
 
-# census_api_key('INSERT KEY HERE', install = TRUE) # <4>
+# census_api_key('INSERT KEY HERE', install = TRUE) # <5>
 ```
 
 1. Loading the `scales::` package to transform ggplot scales simply (some people choose to explicitly define `scales::` in their code rather than loading the library).
@@ -50,7 +50,6 @@ my_theme <- theme(
   axis.ticks = element_blank(), 
   panel.background = element_blank(),
   panel.grid = element_line(color="#444444", linewidth = .01),
-  # panel.grid.major.x = element_line(color = 'gray96'),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(), 
   legend.title=element_blank(), 
@@ -60,8 +59,7 @@ my_theme <- theme(
 
 # Data
 
-For this analysis, I'm interested in looking at the most recent
-state-level child poverty data available from the U.S. Census Bureau, and I want to construct a longitudinal sense of the change in child poverty. 
+For this analysis, I'm interested in looking at the most recent state-level child poverty data available from the U.S. Census Bureau, and I want to construct a longitudinal sense of the change in child poverty. 
 
 First, let's revisit the different American Community Survey products -- **ACS-1** and **ACS-5**.
 
@@ -80,15 +78,9 @@ First, let's revisit the different American Community Survey products -- **ACS-1
 | Example Usage               | Examining recent economic changes                   | Examining trends in small geographic areas or small population subgroups |
 
 
-In Part One, I wanted to fetch the most recent, reliable estimates for state-level and county-level poverty data, which led me to use the 5-year estimates. For this post, I am interested in constructing a longitudinal dataset of the most recent year-on-year estimates. If I again used the 5-year estimates, I would be comparing results across years that include much of the same sampling period (as shown in the graphic below).
+For this post, I am interested in constructing a longitudinal dataset of the most recent year-on-year estimates, including the 2023 1-year estimates that were released today. Note that for the ACS-1 products, estimates are only available for geographic units with populations greater than 65,000.
 
-![The ACS-5 product has a 60-month sampling period for each annual release, meaning that 48 months of sampling overlap with each annual ACS-5 release[^1]](acs_sample_explained.png)
-
-[^1]: Screenshot taken from the ACS 2018 Handbook, found here: https://www.census.gov/content/dam/Census/library/publications/2018/acs/acs_general_handbook_2018_ch03.pdf.
-
-For this analysis, I'll use the **1-year estimates** from the American Community Survey, which will limit my ability to analyze changes in geographic units with populations greater than 65,000.
-
-As I did in Part One, I'll use the following series from the American Community Survey:
+As I did in prior posts, I'll use the following series from the American Community Survey:
 
 -   *B01001_003*: Estimate!!Total:!!Male:!!Under 5 years (all racial
     groups)
@@ -102,12 +94,8 @@ As I did in Part One, I'll use the following series from the American Community 
 ## Fetching from the `tidycensus::` API
 
 ```{r year_acs, include=TRUE}
-years <- seq(2015, 2023) %>% # <5>
-  setdiff(2020) # <6>
+years <- c(2022, 2023)
 ```
-
-5. Data for the ACS-1 product begins in 2005, and the 2023 ACS-1 estimates were released in September 2024.
-6. Due to the COVID-19 pandemic, the U.S. Census Bureau does not have standard ACS products available for 2020. The `setdiff()` function removes 2020 from the vector.
 
 Next, I'll define a function to fetch the ACS data for each year in the vector.
 
@@ -122,9 +110,9 @@ fetch_acs_data <- function(year) {
           year = year,
           output = 'wide') %>% 
     mutate(year = year,
-           total_u5_popE = male_u5_popE + female_u5_popE, # <7>
-           total_u5_povertyE = male_u5_povertyE + female_u5_povertyE, # <7>
-           perc_u5_poverty = total_u5_povertyE / total_u5_popE) # <7>
+           total_u5_popE = male_u5_popE + female_u5_popE, # <6>
+           total_u5_povertyE = male_u5_povertyE + female_u5_povertyE, # <6>
+           perc_u5_poverty = total_u5_povertyE / total_u5_popE) # <6>
 }
 
 fetch_acs_data_county <- function(year) {
@@ -141,14 +129,14 @@ fetch_acs_data_county <- function(year) {
            total_u5_popE = male_u5_popE + female_u5_popE,
            total_u5_povertyE = male_u5_povertyE + female_u5_povertyE,
            perc_u5_poverty = total_u5_povertyE / total_u5_popE,
-           county = str_remove(NAME, " County.*"), # <8>
-           state = str_extract(NAME, "[\\w\\s]+$") %>% str_trim()) %>% # <8>
+           county = str_remove(NAME, " County.*"), # <7>
+           state = str_extract(NAME, "[\\w\\s]+$") %>% str_trim()) %>% # <7>
     select(county, state, everything())
 }
 ```
 
-7. Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
-8. Creating a `state` and `county` fields to manipulate the dataframe and visualize with more simplicity
+6. Creating some fields to combine gender-based poverty estimates and calculate a percent of the child population measure
+7. Creating a `state` and `county` fields to manipulate the dataframe and visualize with more simplicity
 
 Then, I'll use `purrr::map_df()` to apply each year to the `fetch_acs_data()` function that I created, which will result in a single dataframe of all years.
 
