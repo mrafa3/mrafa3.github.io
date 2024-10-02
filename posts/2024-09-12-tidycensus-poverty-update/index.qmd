@@ -165,12 +165,12 @@ combined_acs_data <- combined_acs_data %>%
   arrange(NAME)
 ```
 
-```{r}
+```{r include=FALSE}
 combined_acs_data_2023 <- combined_acs_data %>% filter(year == 2023)
 ```
 
 
-```{r}
+```{r include=FALSE}
 combined_acs_data %>% 
   filter(year >= 2022) %>% 
   ggplot(aes(x=perc_u5_poverty_tminus_5,
