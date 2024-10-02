@@ -100,7 +100,7 @@ df_depression <- get_places(geography = 'county',
     labels = scales::percent,
     name = ''
   ) + 
-  ggtitle('Rates of depression among adults is highest in\nCentral Appalachia and the Bible Belt',
+  ggtitle('Rates of depression among adults are highest in\nCentral Appalachia and the Bible Belt',
           subtitle = '% of adults over 18 years old by U.S. county in 2022') + 
   labs(x='',
        y='') + 
@@ -149,7 +149,7 @@ states <- map_data("state")
     labels = scales::percent,
     name = ''
   ) + 
-  ggtitle('Rates of depression among adults is highest in\nCentral Appalachia and the Bible Belt',
+  ggtitle('Rates of depression among adults are highest in\nCentral Appalachia and the Bible Belt',
           subtitle = '% of adults over 18 years old by U.S. county in 2022') + 
   labs(x='',
        y='') + 
