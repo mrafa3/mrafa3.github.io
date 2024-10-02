@@ -1,0 +1,417 @@
+---
+title: "Analyzing Health Professional Shortage Areas in the U.S."
+description: "This post shows how to make a beautiful U.S. map and create your own ggplot theme"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+    #orcid: 0000-0002-5300-3075
+date: 10-02-2024
+categories: [R, data-viz, mapping, tidyverse, mental-health, web-scraping] # self-defined categories
+#citation: 
+ # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+# image: theme_map.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+code-annotations: hover
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+# Introduction
+
+I'm a big fan of the [*American Inequality*](https://americaninequality.substack.com/) project. *American Inequality* uses data storytelling and mapping to tell important stories about patterns of social and economic inequality across the U.S., including topics like food deserts, public school funding, and climate change vulnerability. In a recent post on mental health, *American Inequality* used a data on [Mental Healthcare Professional Shortage Areas](https://data.hrsa.gov/topics/health-workforce/shortage-areas), as measured by the U.S. Health Resources and Services Administration. After reading this analysis, I wanted to explore this dataset myself.
+
+## Purpose 
+
+To review and understand what is measured and available in the Healthcare Professional Shortage Areas data.
+
+## Setup
+
+```{r libraries, include=TRUE, message=FALSE}
+library(tidyverse)
+library(ggtext)
+library(rvest)
+library(dlookr)
+library(glue)
+library(maps)
+library(sf)
+library(patchwork)
+```
+
+```{r theme_american_inequality_map, include=FALSE}
+theme_american_inequality_map <- function() {
+  theme_minimal() %+replace%
+    theme(
+      text = element_text(family = 'Roboto Condensed'),
+      plot.title = element_textbox_simple(face = 'bold', hjust=0, size = 20), 
+      plot.title.position = 'plot',
+      plot.subtitle = element_text(hjust=0, size=14), 
+      legend.position = "top",
+      legend.direction = "horizontal",
+      legend.key.height = unit(0.5, "cm"),
+      legend.key.width = unit(2, "cm"),
+      legend.title.position = "top",
+      legend.title = element_blank(),
+      legend.background = element_rect(fill = "white", color = NA),
+      legend.spacing.x = unit(0.2, 'cm')
+    )
+}
+```
+
+# Data 
+
+```{r col_types, include=TRUE, echo=FALSE}
+col_types <- cols(
+  Discipline = col_factor(),
+  `HHS Region` = col_factor(),
+  State = col_factor(),
+  `HPSA Type (Category)` = col_factor(),
+  `HPSA Type Code` = col_factor(),
+  `HPSA Sub -Type` = col_factor(),
+  `HPSA Status` = col_factor(),
+  `Rural Status` = col_factor(),
+  `HPSA Status Code` = col_factor(),
+  `HPSA Component Type` = col_factor(),
+  `Designation Date` = col_date(format="%m/%d/%Y"),
+  `Last Update Date` = col_date(format="%m/%d/%Y"),
+  `As of Date (Close of Business Date)` = col_date(format="%Y-%m-%d"),
+  `HRSA Data Warehouse Processing Date` = col_date(format="%m/%d/%Y"),
+  .default = col_guess() # ... specify types for other columns as needed
+)
+```
+
+```{r df_hpsa, include=TRUE}
+df_hpsa <- read_csv('https://data.hrsa.gov/DataDownload/DD_Files/HPSA_DASHBOARD.csv',
+                    col_types = col_types) %>% 
+  janitor::clean_names() %>%
+  select(-x26)
+
+# write_csv(df_hpsa, './/data/hpsa_download.csv')
+```
+
+## Prison populations data 
+
+```{r}
+df_prison_pop <- read_html('https://www.prisonpolicy.org/data/prison_pops_2019_2023_sources.html') %>% 
+  html_node("table") %>%  # This selects the first table on the page
+  html_table() %>% 
+  head(n = -2)
+
+names(df_prison_pop) <- c("state", "prisonpop_2019", "prisonpop_2020", "prisonpop_2021", "prisonpop_2022",
+                         "prisonpop_2023", "source_2023", "source_url_2023")
+```
+
+```{r mutate_df_prison_pop, include=TRUE}
+df_prison_pop <- df_prison_pop %>% 
+  mutate(prisonpop_2023_derived = case_when(
+                                    str_starts(prisonpop_2023, "No") ~ prisonpop_2022,
+                                    TRUE ~ prisonpop_2023)
+         ) %>% 
+  mutate(across(c('prisonpop_2019', 'prisonpop_2020', 'prisonpop_2021', 'prisonpop_2022', 'prisonpop_2023_derived'),
+                                 ~as.numeric(gsub("[^0-9.-]", "", .))))
+```
+
+```{r bop_cols, include=TRUE, echo=FALSE}
+bop_cols <- c('Federal BOP' = '#228B22',
+              'Other' = 'gray85')
+```
+
+```{r prisonpop_2023_top10 fig.width=10, fig.height=6.2}
+df_prison_pop %>% 
+  top_n(10, prisonpop_2023_derived) %>% 
+  ggplot(.) + 
+  geom_col(aes(x=prisonpop_2023_derived,
+               y=reorder(state, prisonpop_2023_derived),
+               fill=if_else(state == 'Federal BOP', 'Federal BOP', 'Other'))) + 
+  scale_x_continuous(labels = scales::comma) + 
+  scale_fill_manual(values = bop_cols) + 
+  ggtitle(glue("The <span style='color:#228B22'>**Federal Bureau of Prisons**</span> has a larger inmate<br>population than any state in 2023"),
+          subtitle = '\n') + 
+  labs(x='',
+       y='',
+       caption='Source: Prison Policy Initiative\nData for Texas from 2022') + 
+  theme_american_inequality_map() + 
+  theme(legend.position = 'none')
+```
+
+The Federal Bureau of Prisons has the largest population in this dataset, so I'll need to find a way to assign this population to individual states. I found the BOP inmate population by facility on the [bop.gov/ website](https://www.bop.gov/about/statistics/population_statistics.jsp#old_pops), so I've brought that in and summed the population numbers by state. I'll apply the percent from each state to the Federal BOP population and add that to the state.
+
+```{r df_bop, include=TRUE, echo=FALSE}
+string_bop_population <- "
+ALDERSON FPC	WV	752
+ALICEVILLE FCI	AL	1428
+ALICEVILLE-CAMP	AL	189
+ALLENWOOD LOW FCI	PA	1037
+ALLENWOOD MED FCI	PA	1252
+ALLENWOOD USP	PA	264
+ASHLAND FCI	KY	1160
+ASHLAND-CAMP	KY	183
+ATLANTA FCI	GA	1838
+ATWATER USP	CA	1074
+ATWATER-CAMP	CA	136
+BASTROP FCI	TX	1013
+BASTROP-CAMP	TX	101
+BEAUMONT LOW FCI-CAMP	TX	470
+BEAUMONT LOW FCI	TX	1656
+BEAUMONT MED FCI	TX	1618
+BEAUMONT USP	TX	1334
+BECKLEY FCI	WV	1555
+BECKLEY-CAMP	WV	111
+BENNETTSVILLE FCI	SC	1520
+BENNETTSVILLE-CAMP	SC	90
+BERLIN FCI	NH	894
+BERLIN-CAMP	NH	78
+BIG SANDY USP	KY	1220
+BIG SANDY-CAMP	KY	56
+BIG SPRING FCI	TX	702
+BIG SPRING-CAMP	TX	109
+BROOKLYN MDC	NY	1218
+BRYAN FPC	TX	636
+BUTNER FMC	NC	849
+BUTNER LOW FCI	NC	981
+BUTNER MED I FCI	NC	577
+BUTNER MED II FCI	NC	1576
+BUTNER-CAMP	NC	263
+CANAAN USP	PA	1192
+CANAAN-CAMP	PA	91
+CARSWELL FMC	TX	1034
+CARSWELL-CAMP	TX	138
+CHICAGO MCC	IL	526
+COLEMAN I USP	FL	1327
+COLEMAN II USP	FL	1116
+COLEMAN LOW FCI-CAMP	FL	456
+COLEMAN LOW FCI	FL	1592
+COLEMAN MED FCI	FL	1527
+CUMBERLAND FCI	MD	774
+CUMBERLAND-CAMP	MD	227
+DANBURY FCI	CT	1099
+DANBURY-CAMP	CT	103
+DEVENS FMC	MA	975
+DEVENS-CAMP	MA	68
+DULUTH FPC	MN	698
+EDGEFIELD FCI	SC	1550
+EDGEFIELD-CAMP	SC	404
+EL RENO FCI	OK	1039
+EL RENO-CAMP	OK	139
+ELKTON FCI	OH	1587
+ELKTON-FSL	OH	384
+ENGLEWOOD FCI	CO	892
+ENGLEWOOD-CAMP	CO	71
+ESTILL-CAMP	SC	42
+FAIRTON FCI	NJ	751
+FAIRTON-CAMP	NJ	58
+FLORENCE ADMAX USP	CO	344
+FLORENCE FCI-CAMP	CO	326
+FLORENCE FCI	CO	1136
+FLORENCE HIGH USP	CO	803
+FORREST CITY FCI-CAMP	AR	247
+FORREST CITY FCI	AR	1603
+FORREST CITY MED FCI	AR	1620
+FORT DIX FCI	NJ	3779
+FORT DIX-CAMP	NJ	263
+FORT WORTH ADMINISTRATIVE	TX	1544
+GILMER FCI	WV	1143
+GILMER-CAMP	WV	54
+GREENVILLE FCI	IL	1164
+GREENVILLE-CAMP	IL	143
+GUAYNABO MDC	PR	1113
+HAZELTON FCI-FEMALE	WV	522
+HAZELTON FCI	WV	1579
+HAZELTON USP	WV	1274
+HAZELTON-CAMP	WV	159
+HERLONG FCI	CA	1414
+HERLONG-CAMP	CA	82
+HONOLULU FDC	HI	223
+HOUSTON FDC	TX	908
+JESUP FCI	GA	1033
+JESUP-CAMP	GA	126
+JESUP-FSL	GA	504
+LA TUNA FCI	TX	572
+LA TUNA-CAMP	TX	120
+LEAVENWORTH FCI	KS	1579
+LEAVENWORTH-CAMP	KS	127
+LEE USP-CAMP	VA	65
+LEE USP	VA	1273
+LEWISBURG FCI	PA	669
+LEWISBURG-CAMP	PA	459
+LEXINGTON FMC	KY	1107
+LEXINGTON-CAMP	KY	235
+LOMPOC FCI	CA	885
+LOMPOC II FCI-CAMP N	CA	104
+LOMPOC II FCI-CAMP	CA	190
+LOMPOC II FCI	CA	1758
+LORETTO FCI	PA	774
+LORETTO-CAMP	PA	65
+LOS ANGELES MDC	CA	705
+MANCHESTER FCI	KY	980
+MANCHESTER-CAMP	KY	87
+MARIANNA FCI	FL	983
+MARIANNA-CAMP	FL	257
+MARION FCI	IL	1045
+MARION-CAMP	IL	191
+MCCREARY USP	KY	1393
+MCCREARY-CAMP	KY	101
+MCDOWELL FCI	WV	1544
+MCDOWELL-CAMP	WV	37
+MCKEAN FCI	PA	962
+MCKEAN-CAMP	PA	165
+MEMPHIS FCI	TN	1102
+MEMPHIS-CAMP	TN	73
+MENDOTA FCI	CA	700
+MENDOTA-CAMP	CA	111
+MIAMI FCI-CAMP	FL	194
+MIAMI FCI	FL	840
+MIAMI FDC	FL	973
+MILAN FCI	MI	1610
+MONTGOMERY FPC	AL	767
+MORGANTOWN FPC	WV	402
+OAKDALE I FCI	LA	980
+OAKDALE II FCI-CAMP	LA	121
+OAKDALE II FCI	LA	1060
+OKLAHOMA CITY FTC	OK	1452
+OTISVILLE FCI	NY	813
+OTISVILLE-CAMP	NY	95
+OXFORD FCI	WI	1116
+PEKIN FCI	IL	1045
+PEKIN-CAMP F	IL	245
+PENSACOLA FPC	FL	492
+PETERSBURG FCI-CAMP	VA	159
+PETERSBURG FCI	VA	439
+PETERSBURG MED FCI	VA	1588
+PHILADELPHIA FDC	PA	920
+PHOENIX FCI	AZ	916
+PHOENIX-CAMP	AZ	236
+POLLOCK MED FCI-CAMP	LA	171
+POLLOCK MED FCI	LA	1526
+POLLOCK USP	LA	1106
+RAY BROOK FCI	NY	883
+ROCHESTER FMC	MN	796
+SAFFORD FCI	AZ	651
+SAN DIEGO MCC	CA	766
+SANDSTONE FCI	MN	1180
+SCHUYLKILL FCI	PA	1028
+SCHUYLKILL-CAMP	PA	149
+SEAGOVILLE FCI	TX	1653
+SEAGOVILLE-CAMP	TX	97
+SEATAC FDC	WA	625
+SHERIDAN FCI	OR	1255
+SHERIDAN-CAMP	OR	257
+SPRINGFIELD USMCFP	MO	1090
+TALLADEGA FCI	AL	980
+TALLADEGA-CAMP	AL	212
+TALLAHASSEE FCI	FL	1169
+TERMINAL ISLAND FCI	CA	939
+TERRE HAUTE FCI-CAMP	IN	267
+TERRE HAUTE FCI	IN	1054
+TERRE HAUTE USP	IN	1322
+TEXARKANA FCI	TX	1154
+TEXARKANA-CAMP	TX	176
+THOMSON FCI-CAMP	IL	133
+THOMSON FCI	IL	1901
+THREE RIVERS FCI	TX	1079
+THREE RIVERS-CAMP	TX	165
+TUCSON FCI	AZ	476
+TUCSON USP	AZ	1027
+TUCSON-CAMP	AZ	107
+VICTORVILLE MED I FCI	CA	1423
+VICTORVILLE MED I-CAMP	CA	226
+VICTORVILLE MED II FCI	CA	1475
+VICTORVILLE USP	CA	1176
+WASECA FCI	MN	884
+WILLIAMSBURG FCI	SC	1227
+WILLIAMSBURG-CAMP	SC	85
+YANKTON FPC	SD	483
+YAZOO CITY LOW FCI-CAMP	MS	101
+YAZOO CITY LOW FCI	MS	1365
+YAZOO CITY LOW II FCI	MS	1421
+YAZOO CITY MED FCI	MS	1412
+"
+
+df_bop <- read_delim(string_bop_population, delim = "\t", col_names = FALSE)
+
+colnames(df_bop) <- c("facility_name", "state", "prisonpop_bop")
+
+df_bop_grp <- df_bop %>%
+  group_by(state) %>% 
+  summarise(prisonpop_bop = sum(prisonpop_bop)) %>% 
+  ungroup() %>% 
+  mutate(perc_total_bop = prisonpop_bop / sum(prisonpop_bop))
+```
+
+```{r}
+states <- data.frame(
+  abbreviation = state.abb,
+  state_name = state.name,
+  stringsAsFactors = FALSE
+)
+
+df_bop_grp <- df_bop_grp %>%
+  left_join(x=.,
+            y=states,
+            by=c('state' = 'abbreviation')) %>% 
+  mutate(state_name = if_else(state == 'PR', 'Puerto Rico', state_name))
+```
+
+```{r}
+states_map <- map_data("state")
+```
+
+```{r}
+states_map %>% 
+  leftj
+```
+
+
+
+```{r df_prisonpop2, include=TRUE, echo=FALSE}
+df_prison_pop %>% 
+  left_join(x=.,
+            y=df_bop_grp %>% select(state_name, prisonpop_bop, perc_total_bop),
+            by=c('state' = 'state_name'))
+```
+
+
+```{r}
+
+
+df_hpsa %>% 
+  glimpse()
+```
+
+```{r diagnose_hpsa, include=TRUE}
+df_hpsa %>% 
+  diagnose()
+```
+
+## Exploratory Data Analysis
+
+```{r}
+df_hpsa %>% 
+  dlookr::diagnose_category()
+```
+
+```{r}
+df_hpsa %>% 
+  filter(discipline == 'Mental Health',
+         hpsa_sub_type == 'Correctional Facility')
+```
+
+
+```{r}
+df_hpsa %>% 
+  ggplot(.) + 
+  geom_histogram(aes(last_update_date))
+```
+
+
+
+
+
+# Conclusion 
+
+
+This post demonstrates how to:
+
+*  Take control of `ggplot2` and its aesthetic elements
+*  Use the `sf::` package to pull in state boundaries and apply them as a layer to a map
+*  Use `patchwork::inset_element()` to overlay plots with full control
