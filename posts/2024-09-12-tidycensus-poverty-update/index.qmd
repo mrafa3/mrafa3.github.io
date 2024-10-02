@@ -19,10 +19,7 @@ editor:
 
 # Introduction
 
-In a [previous tidycensus post](), I showed how to fetch data and do some basic, longitudinal analysis of U.S. Census data. 
-
-
-
+In a [previous tidycensus:: post](), I showed how to fetch data and do some basic, longitudinal analysis of U.S. Census data. Today, the Census Bureau released the 1-year estimates from the American Community Survey (ACS), so I'd like to see how child poverty seems to be changing from the 2022 to 2023 releases.
 
 ## Setup
 
@@ -32,7 +29,7 @@ library(tidycensus)
 library(scales) # <1>
 library(gt) # <2>
 library(glue) # <3>
-library(ggforce) # Using this package to create the comet effect in the comet plots with the geom_link() function
+library(ggforce) # <4>
 
 # census_api_key('INSERT KEY HERE', install = TRUE) # <4>
 ```
@@ -40,10 +37,11 @@ library(ggforce) # Using this package to create the comet effect in the comet pl
 1. Loading the `scales::` package to transform ggplot scales simply (some people choose to explicitly define `scales::` in their code rather than loading the library).
 2. The `gt::` library provides functionality for creating ggplot-esque tables.
 3. The `glue::` package allows for simple addition of HTML to ggplot graphics.
-4. The first time that you're working with the `tidycensus::` package, you need to request an API key at https://api.census.gov/data/key_signup.html. The `install=` argument will install your personal key to the .Renviron file, and you won't need to use the `census_api_key()` function again.  
+4. The `ggforce::` package includes a `geom_link()` function, which I'll use to create the comet effect in the comet plots that I use.
+5. The first time that you're working with the `tidycensus::` package, you need to request an API key at https://api.census.gov/data/key_signup.html. The `install=` argument will install your personal key to the .Renviron file, and you won't need to use the `census_api_key()` function again.  
 
-```{r my.theme, include=TRUE, echo=FALSE}
-my.theme <- theme(
+```{r my_theme, include=TRUE, echo=FALSE}
+my_theme <- theme(
   plot.title = ggtext::element_textbox_simple(family="Palatino", face="bold", size=15, hjust = .5),
   plot.subtitle = ggtext::element_textbox_simple(family="Palatino", size=12),
   plot.caption = ggtext::element_textbox_simple(family="Palatino"),
@@ -243,7 +241,7 @@ combined_acs_data %>%
        x='\n% of children (under 5 y.o.) living\nunder the Federal Poverty Line in 2023\n',
        y='') + 
   scale_x_continuous(labels = percent, position='top') + 
-  my.theme + 
+  my_theme + 
   theme(legend.position = 'none')
 ```
 
@@ -279,7 +277,7 @@ combined_acs_data %>%
           subtitle=subtitle_text) +
   scale_x_continuous(labels = percent,
                      position = 'top') + 
-  my.theme
+  my_theme
 ```
 
 1. Using the `tidycensus::` margin of error aggregation functions to create confidence bands around the point estimate.
@@ -420,7 +418,7 @@ combined_acs_data_county %>%
        x='\n% of children (under 5 y.o.) living\nunder the Federal Poverty Line in 2023\n',
        y='') + 
   scale_x_continuous(labels = percent, position='top') + 
-  my.theme + 
+  my_theme + 
   theme(legend.position = 'none')
 ```
 
@@ -445,7 +443,7 @@ combined_acs_data_county %>%
           subtitle=subtitle_text) +
   scale_x_continuous(labels = percent,
                      position = 'top') + 
-  my.theme
+  my_theme
 ```
 
 
