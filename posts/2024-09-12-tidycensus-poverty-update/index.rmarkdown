@@ -17,6 +17,8 @@ editor:
     wrap: 72
 ---
 
+
+
 # Introduction
 
 In a previous `tidycensus::`
@@ -27,6 +29,8 @@ from the American Community Survey (ACS), so I'd like to see how child
 poverty seems to be changing from the 2022 to 2023 releases.
 
 ## Setup
+
+
 
 ```{r libraries, include=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -39,6 +43,8 @@ library(ggforce) # <4>
 
 # census_api_key('INSERT KEY HERE', install = TRUE) # <5>
 ```
+
+
 
 1.  Loading the `scales::` package to transform ggplot scales simply
     (some people choose to explicitly define `scales::` in their code
@@ -54,6 +60,8 @@ library(ggforce) # <4>
     https://api.census.gov/data/key_signup.html. The `install=` argument
     will install your personal key to the .Renviron file, and you won't
     need to use the `census_api_key()` function again.
+
+
 
 ```{r my_theme, include=TRUE, echo=FALSE}
 my_theme <- theme(
@@ -71,6 +79,8 @@ my_theme <- theme(
   legend.position = 'top',
   plot.background = element_rect(fill = 'floralwhite', color = "floralwhite"))
 ```
+
+
 
 # Data
 
@@ -116,12 +126,18 @@ Community Survey:
 
 ## Fetching from the `tidycensus::` API
 
+
+
 ```{r year_acs, include=TRUE}
 years <- c(2022, 2023)
 ```
 
+
+
 Next, I'll define a function to fetch the ACS-1 data for 2022 and the
 new 2023 estimates.
+
+
 
 ```{r fetch_poverty_data, include=TRUE}
 fetch_acs_data <- function(year) {
@@ -162,6 +178,8 @@ fetch_acs_data_county <- function(year) {
 }
 ```
 
+
+
 6.  Creating some fields to combine gender-based poverty estimates and
     calculate a percent of the child population measure
 7.  Creating `state` and `county` fields to manipulate the dataframe and
@@ -171,6 +189,8 @@ Then, I'll use `purrr::map_df()` to apply each year to the
 `fetch_acs_data()` function that I created, which will result in a
 single dataframe of all years.
 
+
+
 ```{r combined_acs_data, include=TRUE, message=FALSE, output=FALSE}
 combined_acs_data <- map_df(years, fetch_acs_data)
 ```
@@ -179,7 +199,11 @@ combined_acs_data <- map_df(years, fetch_acs_data)
 combined_acs_data_county <- map_df(years, fetch_acs_data_county)
 ```
 
+
+
 # Analysis
+
+
 
 ```{r create_tminus1, include=TRUE, echo=FALSE}
 combined_acs_data <- combined_acs_data %>% 
@@ -189,8 +213,12 @@ combined_acs_data <- combined_acs_data %>%
   arrange(NAME)
 ```
 
+
+
 According to the 2023 ACS-1, roughly 113,000 fewer children were below
 the Federal Poverty Line.
+
+
 
 ```{r gt_agg_poverty, include=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 combined_acs_data %>%
@@ -317,6 +345,8 @@ combined_acs_data %>%
   )
 ```
 
+
+
 To further visualize the state-level changes in estimates, I wanted to
 try out a **comet plot**. Comet plots are stylized connected dot plots,
 which show the "before and after" at both ends of the plot. The comet's
@@ -329,6 +359,8 @@ I was inspired by [this
 plot](https://thef5.substack.com/p/how-to-comet-plot), which evaluates
 NBA player performance using a comet plot. I borrowed heavily from this
 code and aesthetic.
+
+
 
 ```{r comet_state_level_plot, include=TRUE, fig.width=8, fig.height=14, message=FALSE, warning=FALSE}
 combined_acs_data %>% 
@@ -376,6 +408,8 @@ combined_acs_data %>%
         plot.title = element_textbox_simple(size=22))
 ```
 
+
+
 I chose to sort states based on the percentage point change in child
 poverty, year-over-year. This results in the states with the largest
 **increase** in the child poverty rate on top, and states with the
@@ -387,11 +421,15 @@ Virginia saw the second largest decrease in child poverty in these
 estimates, still about 1 out of every four children in the state are
 below the poverty line, according to the American Community Survey.
 
+
+
 ```{r viz_text, include=TRUE, echo=FALSE}
 title_text <- 'Percent of children in poverty by U.S. state in 2023'
 subtitle_text <- glue('Children defined as those 5 years old and younger<br>Point estimates and margins of error')
 caption_text <- glue('Source: American Community Survey 2023 1-year estimate<br>Margins of error represent the 90% Confidence Interval<br>Poverty level defined by the Federal Poverty Line')
 ```
+
+
 
 It's important to remember that all ACS estimates have a margin of error
 (which by default is a 90% confidence interval), so point estimates
@@ -400,6 +438,8 @@ smaller sampling than the ACS-5 product, so these margins of error can
 be more significant. This shows that one of *New Mexico*, *Louisiana*,
 or *West Virginia* could all have the highest under-five poverty rate as
 of the 2023 survey.
+
+
 
 ```{r dot_plot, include=TRUE, echo=FALSE, fig.width=11, fig.height=18, fig.align='center'}
 combined_acs_data %>% 
@@ -425,10 +465,14 @@ combined_acs_data %>%
   my_theme
 ```
 
+
+
 8.  Using the `tidycensus::` margin of error aggregation functions to
     create confidence bands around the point estimate.
 
 # A spotlight on Colorado and county-level poverty estimates
+
+
 
 ```{r combined_acs_data_county_lag, include=TRUE, echo=FALSE}
 combined_acs_data_county <- combined_acs_data_county %>% 
@@ -477,6 +521,8 @@ combined_acs_data_county %>%
         legend.text = element_text(size = 12))
 ```
 
+
+
 Now I want to look into the movement in child poverty in Colorado
 counties with the ACS-1 2023 estimates. It's important to remember that
 ACS-1 estimates are limited to only geographies that exceed 65,000
@@ -486,6 +532,8 @@ state.[^1]
 
 [^1]: This calculation is done using the 2022 ACS-5 estimates to include
     all 64 counties in Colorado.
+
+
 
 ```{r check_acs5_pop, include=FALSE}
 df_acs5 <- get_acs(geography = "county", 
@@ -555,10 +603,14 @@ combined_acs_data_county %>%
         plot.title = element_textbox_simple(size=22))
 ```
 
+
+
 These changes should also be taken in the context of the margins of
 error around point estimates. As shown below, the margins of error for
 some counties' estimates is quite large. In **Mesa County**, the margin
 of error is +/- 10% around the point estimate (of 17.8%).
+
+
 
 ```{r dot_plot2, include=TRUE, echo=FALSE, fig.width=6, fig.height=6, fig.align='center'}
 combined_acs_data_county %>% 
@@ -584,6 +636,8 @@ combined_acs_data_county %>%
   my_theme
 ```
 
+
+
 # Conclusion
 
 In this `tidycensus::` post, I demonstrated:
@@ -597,3 +651,4 @@ In this `tidycensus::` post, I demonstrated:
     margins of error
 
 More to come on poverty analysis in future posts!
+
