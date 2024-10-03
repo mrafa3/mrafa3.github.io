@@ -116,7 +116,7 @@ bop_cols <- c('Federal BOP' = '#228B22',
               'Other' = 'gray85')
 ```
 
-```{r prisonpop_2023_top10 fig.width=10, fig.height=6.2}
+```{r prisonpop_2023_top10, fig.width=10, fig.height=6.2}
 df_prison_pop %>% 
   top_n(10, prisonpop_2023_derived) %>% 
   ggplot(.) + 
@@ -356,12 +356,6 @@ df_bop_grp <- df_bop_grp %>%
 states_map <- map_data("state")
 ```
 
-```{r}
-states_map %>% 
-  leftj
-```
-
-
 
 ```{r df_prisonpop2, include=TRUE, echo=FALSE}
 df_prison_pop %>% 
@@ -372,8 +366,6 @@ df_prison_pop %>%
 
 
 ```{r}
-
-
 df_hpsa %>% 
   glimpse()
 ```
