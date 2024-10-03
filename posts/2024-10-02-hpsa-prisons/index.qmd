@@ -33,6 +33,7 @@ library(ggtext)
 library(rvest)
 library(dlookr)
 library(tigris)
+library(biscale)
 library(glue)
 library(maps)
 library(sf)
@@ -141,6 +142,8 @@ df_mental_health <- df_hpsa %>%
             by = c('zip_cleaned' = 'zipcode'))
 ```
 
+
+https://cran.r-project.org/web/packages/biscale/vignettes/biscale.html
 
 ```{r fig.width=10, fig.height=6.2}
 df_mental_health %>% 
