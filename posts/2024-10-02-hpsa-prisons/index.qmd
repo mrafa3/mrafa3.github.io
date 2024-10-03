@@ -1,6 +1,6 @@
 ---
 title: "Analyzing Health Professional Shortage Areas in the U.S."
-description: "This post shows how to make a beautiful U.S. map and create your own ggplot theme"
+description: ""
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
@@ -32,6 +32,7 @@ library(tidyverse)
 library(ggtext)
 library(rvest)
 library(dlookr)
+library(tigris)
 library(glue)
 library(maps)
 library(sf)
@@ -59,6 +60,8 @@ theme_american_inequality_map <- function() {
 ```
 
 # Data 
+
+## Healthcare Professional Shortage Areas 
 
 ```{r col_types, include=TRUE, echo=FALSE}
 col_types <- cols(
@@ -89,9 +92,84 @@ df_hpsa <- read_csv('https://data.hrsa.gov/DataDownload/DD_Files/HPSA_DASHBOARD.
 # write_csv(df_hpsa, './/data/hpsa_download.csv')
 ```
 
-## Prison populations data 
 
 ```{r}
+df_hpsa %>% 
+  dlookr::diagnose_category()
+```
+
+I'd like to analyze the bivariate relationship between mental healthcare providers (at correctional facilities) and the inmate populations across the U.S. *Which areas have the most acute shortage of healthcare professionals working in correctional facilities?*
+
+```{r}
+df_hpsa %>% 
+  filter(discipline == 'Mental Health',
+         hpsa_sub_type == 'Correctional Facility')
+```
+
+```{r mutate_clean_zip, include=TRUE, echo=FALSE}
+df_hpsa <- df_hpsa %>% 
+  mutate(zip_cleaned = str_extract(hpsa_facility_zip_code, "^\\d{5}"))
+```
+
+
+```{r}
+zctas <- zctas(year = 2020, cb = TRUE)
+
+# Download county data
+counties <- counties(year = 2020, cb = TRUE)
+
+# Perform a spatial join between ZCTAs and counties
+zcta_county <- st_join(zctas, counties)
+```
+
+
+```{r}
+df_mental_health <- df_hpsa %>% 
+  filter(discipline == 'Mental Health',
+         hpsa_sub_type == 'Correctional Facility') %>% 
+  group_by(state, county, zip_cleaned) %>% 
+  summarise(count_mental_health_professionals = n(),
+            avg_hpsa_score = mean(hpsa_score, na.rm = TRUE),
+            sum_hpsa_designated_population = sum(hpsa_designation_population, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  # note that there's at least one empty geometry that I'll need to evaluate
+  left_join(x=.,
+            y=zcta_county %>% select(NAME, STUSPS, ZCTA5CE20, geometry) %>%
+              rename(county_name = NAME,
+                     state_name = STUSPS,
+                     zipcode = ZCTA5CE20),
+            by = c('zip_cleaned' = 'zipcode'))
+```
+
+
+```{r fig.width=10, fig.height=6.2}
+df_mental_health %>% 
+  filter(!state_name %in% c('AK', 'HI', 'PR', 'GU')) %>% 
+  ggplot(.) + 
+  geom_sf(aes(fill=avg_hpsa_score, geometry=geometry)) + 
+  coord_sf(datum = NA) + 
+    scale_fill_gradient2(
+    low = "#2469b3",
+    mid = "#f0eee5",
+    high = "#b6202c",
+    midpoint = median(df_mental_health$avg_hpsa_score, na.rm = TRUE),
+    name = ''
+  ) + 
+  theme_american_inequality_map()
+```
+
+
+```{r}
+df_hpsa %>% 
+  ggplot(.) + 
+  geom_histogram(aes(last_update_date))
+```
+
+## Prison populations data 
+
+
+
+```{r df_prison_pop, include=TRUE}
 df_prison_pop <- read_html('https://www.prisonpolicy.org/data/prison_pops_2019_2023_sources.html') %>% 
   html_node("table") %>%  # This selects the first table on the page
   html_table() %>% 
@@ -133,6 +211,14 @@ df_prison_pop %>%
   theme_american_inequality_map() + 
   theme(legend.position = 'none')
 ```
+
+```{r}
+
+```
+
+
+
+# Federal Bureau of Prisons 
 
 The Federal Bureau of Prisons has the largest population in this dataset, so I'll need to find a way to assign this population to individual states. I found the BOP inmate population by facility on the [bop.gov/ website](https://www.bop.gov/about/statistics/population_statistics.jsp#old_pops), so I've brought that in and summed the population numbers by state. I'll apply the percent from each state to the Federal BOP population and add that to the state.
 
@@ -377,23 +463,7 @@ df_hpsa %>%
 
 ## Exploratory Data Analysis
 
-```{r}
-df_hpsa %>% 
-  dlookr::diagnose_category()
-```
 
-```{r}
-df_hpsa %>% 
-  filter(discipline == 'Mental Health',
-         hpsa_sub_type == 'Correctional Facility')
-```
-
-
-```{r}
-df_hpsa %>% 
-  ggplot(.) + 
-  geom_histogram(aes(last_update_date))
-```
 
 
 
