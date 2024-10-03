@@ -9,7 +9,7 @@ date: 09-12-2024
 categories: [R, data-viz, tidyverse, tidycensus, api, purrr] # self-defined categories
 #citation: 
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
-# image: co_county_pov_2022.png
+image: co_comet.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 code-annotations: hover
 editor: 
@@ -309,7 +309,11 @@ combined_acs_data %>%
     table.border.bottom.color = "transparent",
     #adjust font sizes and alignment
     source_notes.font.size = 12,
-    heading.align = "left"
+    heading.align = "left",
+    table.font.size = 16,
+    heading.title.font.size = 24,
+    heading.subtitle.font.size = 16,
+    column_labels.font.size = 16
   )
 ```
 
