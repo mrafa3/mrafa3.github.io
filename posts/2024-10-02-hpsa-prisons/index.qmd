@@ -481,6 +481,17 @@ df_hpsa %>%
 
 
 
+```{r}
+df_mental_health %>% 
+  ggplot(.,
+         aes(x=count_mental_health_professionals,
+             y=sum_hpsa_designated_population)) + 
+  geom_point() + 
+  scale_x_continuous(breaks = scales::pretty_breaks()) + 
+  scale_y_continuous(breaks = scales::pretty_breaks(),
+                     labels = scales::comma) + 
+  theme_american_inequality_map()
+```
 
 
 
