@@ -289,7 +289,7 @@ df %>%
 
 **Find the names of employees who earn more than the average salary in their department.**
 
-```{sql sub4.2_sql, connection="con", include=FALSE, eval=FALSE}
+```{sql sub4.2_sql, connection="con", include=TRUE}
 with dept_avg_salary as (
 select *,
         AVG(salary_annual) OVER(
