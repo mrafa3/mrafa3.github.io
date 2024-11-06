@@ -230,6 +230,36 @@ df_prison_pop %>%
         axis.text = element_text(size=14))
 ```
 
+```{r}
+state_population <- tidycensus::get_acs(
+  geography = 'state',
+  variables = 'B01003_001',
+  year = 2023,
+  survey = 'acs1',
+  geometry = FALSE
+)
+```
+
+```{r warning=FALSE}
+df_prison_pop %>% 
+  left_join(x=.,
+            y=state_population,
+            by=c('state' = 'NAME')) %>% 
+  ggplot(.,
+         aes(x=estimate,
+             y=prisonpop_2023_derived)) + 
+  geom_point() + 
+  geom_smooth(method='lm', se=FALSE) + 
+  ggrepel::geom_text_repel(aes(label=state),
+                           box.padding = .5) + 
+  scale_x_continuous(labels = scales::comma) + 
+  scale_y_continuous(labels = scales::comma) + 
+  theme_american_inequality_map()
+# note: need to distribute Federal BOP populations according to BOP facilities
+```
+
+
+
 # Federal Bureau of Prisons 
 
 The Federal Bureau of Prisons has the largest population in this dataset, so I'll need to find a way to assign this population to individual states. I found the BOP inmate population by facility on the [bop.gov/ website](https://www.bop.gov/about/statistics/population_statistics.jsp#old_pops), so I've brought that in and summed the population numbers by state. I'll apply the percent from each state to the Federal BOP population and add that to the state.
