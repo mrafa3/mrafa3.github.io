@@ -27,7 +27,7 @@ To review and understand what is measured and available in the Healthcare Profes
 
 ## Setup
 
-```{r libraries, include=TRUE, message=FALSE}
+```{r libraries, include=TRUE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggtext)
 library(rvest)
