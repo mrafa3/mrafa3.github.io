@@ -47,7 +47,7 @@ theme_american_inequality_map <- function() {
       text = element_text(family = 'Roboto Condensed'),
       plot.title = element_textbox_simple(face = 'bold', hjust=0, size = 20), 
       plot.title.position = 'plot',
-      plot.subtitle = element_text(hjust=0, size=14), 
+      plot.subtitle = element_textbox_simple(hjust=0, size=14), 
       legend.position = "top",
       legend.direction = "horizontal",
       legend.key.height = unit(0.5, "cm"),
@@ -218,7 +218,6 @@ df_prison_pop %>%
                fill=if_else(state == 'Federal BOP', 'Federal BOP', 'Other'))) + 
   scale_x_continuous(labels = scales::comma,
                      expand = expansion(mult = c(0, 0.05))) + 
-  # scale_y_discrete(expand = expansion(mult = c(0, 0.05))) +
   scale_fill_manual(values = bop_cols) + 
   ggtitle(glue("The <span style='color:#228B22'>**Federal Bureau of Prisons**</span> has a larger inmate<br>population than any state in 2023"),
           subtitle = '\n') + 
@@ -258,6 +257,31 @@ df_prison_pop %>%
 # note: need to distribute Federal BOP populations according to BOP facilities
 ```
 
+```{r}
+(df_mental_health_state <- df_mental_health %>% 
+  group_by(state) %>% 
+  summarise(ttl_mental_health_professionals = sum(count_mental_health_professionals, na.rm = TRUE),
+            ttl_designated_population = sum(sum_hpsa_designated_population, na.rm = TRUE),
+            .groups = 'drop'))
+```
+
+
+```{r}
+df_prison_pop %>% 
+  left_join(x=.,
+            y=df_mental_health_state,
+            by='state') %>% 
+  ggplot(.,
+         aes(x=prisonpop_2023_derived,
+             y=ttl_mental_health_professionals)) + 
+  geom_point() + 
+  geom_smooth(method='lm', se=FALSE) + 
+  ggrepel::geom_text_repel(aes(label = state),
+                           box.padding = .5) + 
+    scale_x_continuous(labels = scales::comma) + 
+  scale_y_continuous(labels = scales::comma) + 
+  theme_american_inequality_map()
+```
 
 
 # Federal Bureau of Prisons 
@@ -502,20 +526,24 @@ df_prison_bop %>%
     ) %>% 
   ggplot(.) + 
   geom_col(aes(x=values,
-               y=state,
+               y=reorder(state, values),
+               # y=state,
                # y=reorder(state, df_prison_bop %>% top_n(10, prisonpop_2023_incl_bop) %>% arrange(-prisonpop_2023_incl_bop) %>% pull(prisonpop_2023_incl_bop)),
                fill=state_or_bop)) + 
-  scale_x_continuous(labels = scales::comma) + 
+  scale_x_continuous(labels = scales::comma,
+                     expand = expansion(mult = c(0, 0.05))) + 
   scale_fill_manual(values = bop_cols) + 
   # ggtitle(glue("The <span style='color:#228B22'>**Federal Bureau of Prisons**</span> has a larger inmate<br>population than any state in 2023"),
   #         subtitle = '\n') + 
   labs(x='',
        y='',
-       caption='Source: Prison Policy Initiative\nData for Texas from 2022') + 
+       caption='Source: Prison Policy Initiative\nData for Texas from 2022') +  
+  ggtitle('Top 10 prison populations by state in 2023',
+          subtitle=glue("Populations within facilities operated by the <span style='color:#228B22'>**Federal Bureau of Prisons**</span>")) + 
   theme_american_inequality_map() + 
-  theme(legend.position = 'none')
+  theme(legend.position = 'none',
+        axis.text = element_text(size=14))
 ```
-
 
 ```{r}
 df_hpsa %>% 
