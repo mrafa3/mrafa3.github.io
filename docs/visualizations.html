@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Mickey Rafa">
 
 <title>Visualizations</title>
 <style>
@@ -79,9 +78,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-image','listing-title','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] }],
+      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-categories"],
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -178,7 +177,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(0)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(1)</span></div><div class="category" data-category="data-viz">data-viz <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ggplot">ggplot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="tidyverse">tidyverse <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -191,12 +190,6 @@ window.Quarto = {
 
 <div class="quarto-title-meta column-page-left">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Mickey Rafa </p>
-          </div>
-  </div>
     
   
     
@@ -207,34 +200,63 @@ window.Quarto = {
 </header>
 
 
-<div id="data_visualizations">
-
-</div>
 
 
 
 
 <div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-         <option value="listing-title" data-direction="asc">
-          Title
-        </option>
-     </select>
-  </div>
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-categories="R,tidyverse,ggplot,data-viz" data-listing-date-sort="1672383600000" data-listing-file-modified-sort="1731014562071" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="15" data-listing-word-count-sort="2892">
+<a href="./visualizations/12-30-2022-tt-wk38-2019/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./visualizations/12-30-2022-tt-wk38-2019/plot_viz_538.png" class="thumbnail-image card-img" style="height: 150px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+Tidy Tuesday: Week 38, 2019
+</h5>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
+R
 </div>
-<div class="list grid quarto-listing-cols-4">
+<div class="listing-category" onclick="window.quartoListingCategory('tidyverse'); return false;">
+tidyverse
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ggplot'); return false;">
+ggplot
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('data-viz'); return false;">
+data-viz
+</div>
+</div>
+<div class="card-text listing-description">
 
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu">library</span>(tidytuesdayR)</span>
+<span id="cb1-3"><span class="fu">library</span>(scales)</span>
+<span id="cb1-4"><span class="fu">library</span>(extrafont)</span>
+<span id="cb1-5"><span class="fu">library</span>(glue)</span>
+<span id="cb1-6"><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-7"><span class="fu">library</span>(ggtext)</span>
+<span id="cb1-8"><span class="fu">library</span>(ggbump)</span>
+<span id="cb1-9"><span class="fu">library</span>(gghighlight)</span>
+<span id="cb1-10"><span class="fu">library</span>(s…</span><span id="cb1-11"><span class="fu"></span></span><span id="cb1-12"><span class="fu"></span></span><span id="cb1-13"><span class="fu"></span><span class="co"></span></span><span id="cb1-14"><span class="fu"></span><span class="co"></span></span><span id="cb1-15"><span class="fu"></span><span class="co"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="co"></span></span><span id="cb2-2"><span class="co"></span></span><span id="cb2-3"><span class="co"></span></span><span id="cb2-4"><span class="fu"></span><span class="st"></span><span class="st"></span></span><span id="cb2-5"><span class="co"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="sc"></span><span class="fu"></span><span class="st"></span><span class="st"></span></span><span id="cb3-2"><span class="sc"></span><span class="fu"></span></span><span id="cb3-3"><span class="sc"></span><span class="fu"></span><span class="at"></span><span class="dv"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="ot"></span><span class="fu"></span></span><span id="cb4-2"><span class="at"></span><span class="fu"></span><span class="at"></span><span class="st"></span></span><span id="cb4-3"><span class="at"></span><span class="fu"></span><span class="at"></span><span class="st"></span><span class="at"></span><span class="st"></span><span class="at"></span><span class="dv"></span><span class="at"></span><span class="dv"></span></span><span id="cb4-4"><span class="at"></span><span class="fu"></span><span class="at"></span><span class="st"></span><span class="at"></span><span class="dv"></span><span class="at"></span><span class="dv"></span></span><span id="cb4-5"><span class="at"></span><span class="fu"></span></span><span id="cb4-6"><span class="at"></span><span class="fu"></span></span><span id="cb4-7"><span class="at"></span><span class="fu"></span></span><span id="cb4-8"><span class="at"></span><span class="fu"></span></span><span id="cb4-9"><span class="at"></span><span class="fu"></span><span class="at"></span><span class="st"></span><span class="at"></span><span class="dv"></span></span><span id="cb4-10"><span class="at"></span><span class="fu"></span></span><span id="cb4-11"><span class="at"></span><span class="fu"></span></span><span id="cb4-12"><span class="at"></span><span class="fu"></span></span><span id="cb4-13"><span class="at"></span><span class="fu"></span></span><span id="cb4-14"><span class="at"></span><span class="fu"></span></span><span id="cb4-15"><span class="at"></span><span class="fu"></span><span class="at"></span><span class="st"></span><span class="at"></span><span class="dv"></span><span class="at"></span><span class="dv"></span></span><span id="cb4-16"><span class="at"></span><span class="st"></span></span><span id="cb4-17"><span class="at"></span><span class="fu"></span><span class="at"></span><span class="st"></span><span class="at"></span><span class="dv"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="ot"></span><span class="sc"></span><span class="fu"></span><span class="dv"></span><span class="at"></span><span class="dv"></span></span></code></pre></div><div class="cell-output cell-output-stderr"><pre><code></code></pre></div><div class="cell-output cell-output-stderr"><pre><code></code></pre></div><div class="cell-output cell-output-stderr"><pre><code></code></pre></div><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="ot"></span><span class="sc"></span></span></code></pre></div></div><div class="cell"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="sc"></span></span><span id="cb10-2"><span class="fu"></span></span></code></pre></div><div class="cell-output cell-output-stdout"><pre><code></code></pre></div></div>
+</div>
+<div class="card-attribution card-text-small justify">
+<div class="listing-author">
+Mickey Rafa
+</div>
+<div class="listing-date">
+Dec 30, 2022
+</div>
+</div>
+</div>
+</div>
+</a>
+</div>
 </div>
 <div class="listing-no-matching d-none">
 No matching items

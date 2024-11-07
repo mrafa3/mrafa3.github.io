@@ -1,23 +1,8 @@
 ---
 title: "Visualizations"
-author: "Mickey Rafa"
-listing:
-  contents: visualizations
-  exclude: 
-    title: "Template"
-  sort: "date desc"
-  type: grid
-  image-align: left
-  categories: numbered
-  grid-item-border: false
-  grid-columns: 4
-  table-hover: true
-  date-format: "long"
-  feed: true
-  fields: [image,title, date]
-  sort-ui: [date, title]
-  page-size: 20
+listing: 
+  contents: visualizations # all Quarto docs in the `posts` directory will be included on your listing page
+  type: grid # or `default` or `table`; each type has its own set of yaml options to include
+  sort: "date desc" # can also sort on more than one field
+  categories: true # allows you to sort posts by assigned categories 
 ---
-
-::: {#data_visualizations} 
-:::
