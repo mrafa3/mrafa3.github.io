@@ -5,7 +5,7 @@ author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
 date: 12-30-2022
-categories: [R, "#TidyTuesday", bump-chart] # self-defined categories
+categories: [R, "#TidyTuesday", bump-chart, gt, web-scraping] # self-defined categories
 image: plot_viz_538.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
@@ -89,15 +89,10 @@ tuesdata <- tidytuesdayR::tt_load(2019, week = 38)
 df <- tuesdata$national_parks
 ```
 
-```{r df_summary, include=TRUE}
-df %>% 
-  summary()
-```
-
 # Annual, bump chart  
 
-```{r plot_, fig.height=6.2}
-(df_annual <- df %>% 
+```{r df_annual}
+df_annual <- df %>% 
   filter(year != 'Total',
          unit_type == 'National Park') %>% 
   mutate(year = as.numeric(year)) %>% 
@@ -107,14 +102,14 @@ df %>%
   mutate(annual_visitor_rank = as.integer(rank(-visitors))) %>% 
   select(annual_visitor_rank, year, unit_name, visitors, everything()) %>% 
   arrange(year, annual_visitor_rank) %>% 
-  ungroup())
+  ungroup()
 ```
 
 ```{r highlight_parks, include=TRUE}
-(highlight_list_annual <- df_annual %>% 
+highlight_list_annual <- df_annual %>% 
   filter(year ==2016,
          annual_visitor_rank <=5) %>% 
-  pull(unit_name))
+  pull(unit_name)
 ```
 
 ```{r viz_text, include=TRUE}
@@ -132,9 +127,9 @@ caption <- paste0("<span style='font-family:lato;'>**Source**: TidyTuesday Week 
 ```
 
 ```{r}
-(df_annual <- df_annual %>% 
+df_annual <- df_annual %>% 
   separate(col=unit_name, into = c("parkname_full", "parktype"), sep = "National Park",
-           remove=FALSE))
+           remove=FALSE)
 ```
 
 
@@ -218,10 +213,7 @@ title_premodern <- tagList(p('Ranking of popularity of U.S. National Parks (1904
   theme(legend.position = 'none'))
 ```
 
-```{r ggsave_2, include=TRUE}
-# ggsave("./graphics/plot_viz_premodern.png", plot_viz_premodern,
-#        width = 12, height = 8, dpi = 300)
-```
+
 
 # By decade, bump chart  
 
@@ -415,7 +407,7 @@ df_maintenance <- read_csv(url) %>%
   select(park_name, deferred_maintenance)
 ```
 
-```{r}
+```{r scatter_maintenance_visitors, include=FALSE}
 df_recent_all_types %>% 
   filter(year == 2016) %>% 
   left_join(x=.,
@@ -435,7 +427,7 @@ df_recent_all_types %>%
 # Table 
 
 ```{r}
-(df_tbl <- df_annual %>% 
+df_tbl <- df_annual %>% 
   group_by(unit_name) %>% 
   mutate(year_opened = min(year)) %>% 
   ungroup() %>% 
@@ -454,7 +446,7 @@ df_recent_all_types %>%
   ungroup() %>% 
   mutate(deferred_maintenance = round(deferred_maintenance / 1000000, 0)) %>% 
   arrange(-visitors) %>% 
-  slice(1:15))
+  slice(1:15)
 ```
 
 ```{r min_max_palette, include=TRUE}
@@ -546,6 +538,3 @@ deferred_palette <- col_numeric(c("#fee0d2", "#de2d26"),
   ))
 ```
 
-```{r save_tbl1, include=TRUE}
-# tbl_viz %>% gtsave(filename = "graphics/tbl_viz.png")
-```
