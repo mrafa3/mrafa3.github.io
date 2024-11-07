@@ -2,17 +2,13 @@
   {
     "listing": "/posts.html",
     "items": [
-      "/posts/2024-10-02-hpsa-prisons/index.html",
       "/posts/2024-10-01-cdcplaces-pt2/index.html",
       "/posts/2024-09-30-cdcplaces/index.html",
-      "/posts/2024-09-15-tidycensus-exploration-pt4/index.html",
       "/posts/2024-09-12-tidycensus-poverty-update/index.html",
-      "/posts/2024-09-24-fred-cpi-analysis/index.html",
       "/posts/2024-09-15-pandas-datareader/index.html",
       "/posts/2024-08-28-tidycensus-exploration-pt3/index.html",
       "/posts/2024-08-20-tidycensus-exploration-pt2/index.html",
       "/posts/2024-08-18-duckdb-intro/index.html",
-      "/posts/2024-08-21-exploring-nid-data/index.html",
       "/posts/2024-08-13-tidycensus-exploration/index.html",
       "/posts/2024-08-02-mapboxgl-exploration/index.html",
       "/posts/2024-07-30-braintree-sql-questions/index.html",

@@ -29,9 +29,9 @@ execute:
   eval: true
 ---
 
-# Setup
+# 1. Load Packages & Setup
 
-```{r setup, include=TRUE}
+```{r libraries, include=TRUE}
 library(tidyverse)
 library(tidytuesdayR)
 library(scales)
@@ -47,24 +47,37 @@ library(gt)
 library(gtExtras)      #for font awesome icons in gt tables
 library(janitor)       #for clean_names()
 library(htmltools)     #for tagList()
-```
+library(dlookr)
 
-```{r font_add, include=TRUE}
-# First argument = name in R
-# Second argument = path to .otf-file
-#font_add('fa-reg', 'fonts/Font Awesome 6 Free-Regular-400.otf')
 font_add('fa-brands', 'fonts/Font Awesome 6 Brands-Regular-400.otf')
-#font_add('fa-solid', 'fonts/Font Awesome 6 Free-Solid-900.otf')
-```
 
-```{r showtext, include=TRUE}
 sysfonts::font_add_google("Lato","lato")
 showtext::showtext_auto()
 showtext::showtext_opts(dpi=300)
 ```
 
-```{r my.theme, include=TRUE}
-my.theme <- theme(
+# 2. Read in the Data
+
+```{r read_data, include=TRUE}
+tuesdata <- tidytuesdayR::tt_load(2019, week = 38)
+
+df <- tuesdata$national_parks
+```
+
+# 3. Examine the Data 
+
+```{r diagnose, include=TRUE}
+df %>% 
+  diagnose()
+```
+
+# 4. Tidy the Data 
+
+
+# 5. Visualization Parameters 
+
+```{r my_theme, include=TRUE}
+my_theme <- theme(
   text = element_text(family = 'lato'), 
   plot.title = element_textbox_simple(color="black", face="bold", size=20, hjust=0), 
   plot.subtitle = element_textbox_simple(color="black", size=12, hjust=0), 
@@ -83,11 +96,28 @@ my.theme <- theme(
   strip.text = element_text(color="black", size=14))
 ```
 
-```{r read_data, include=TRUE}
-tuesdata <- tidytuesdayR::tt_load(2019, week = 38)
+```{r viz_text, include=TRUE}
+title <- tagList(p('Ranking of popularity of U.S. National Parks'))
 
-df <- tuesdata$national_parks
+subtitle <- tagList(span('*by the number of visitors annually*'))
+
+caption <- paste0("<span style='font-family:lato;'>**Source**: TidyTuesday Week 38 (2019)</span><br>",
+                "<span style='font-family:fa-brands;'>&#xf099;</span>",
+                 "<span style='font-family:lato;'>@mickey.rafa</span>",
+                 "<span style='font-family:lato;color:white;'>....</span>",
+                 "<span style='font-family:fa-brands;'>&#xf09b;</span>",
+                 "<span style='font-family:lato;color:white;'>.</span>",
+                 "<span style='font-family:lato;'>mrafa3</span>")
+
+title_premodern <- tagList(p('Ranking of popularity of U.S. National Parks (1904-1966)'))
+
+color_palette <- viridisLite::mako(8)
+description_color <- 'grey40'
+
+subtitle_3 <- tagList(span('*by the number of visitors by decade*'))
 ```
+
+# 6. Plot 
 
 # Annual, bump chart  
 
@@ -112,19 +142,7 @@ highlight_list_annual <- df_annual %>%
   pull(unit_name)
 ```
 
-```{r viz_text, include=TRUE}
-title <- tagList(p('Ranking of popularity of U.S. National Parks'))
 
-subtitle <- tagList(span('*by the number of visitors annually*'))
-
-caption <- paste0("<span style='font-family:lato;'>**Source**: TidyTuesday Week 38 (2019)</span><br>",
-                "<span style='font-family:fa-brands;'>&#xf099;</span>",
-                 "<span style='font-family:lato;'>@mickey.rafa</span>",
-                 "<span style='font-family:lato;color:white;'>....</span>",
-                 "<span style='font-family:fa-brands;'>&#xf09b;</span>",
-                 "<span style='font-family:lato;color:white;'>.</span>",
-                 "<span style='font-family:lato;'>mrafa3</span>")
-```
 
 ```{r}
 df_annual <- df_annual %>% 
@@ -155,7 +173,7 @@ df_annual <- df_annual %>%
        subtitle = subtitle,
        caption = caption) + 
   coord_cartesian(xlim = c(1900, 2040), ylim = c(-65, 2), expand = F) + 
-  my.theme + 
+  my_theme + 
   theme(legend.position = 'none'))
 ```
 ```{r ggsave_1, include=TRUE}
@@ -183,9 +201,6 @@ df_annual <- df_annual %>%
   pull(unit_name))
 ```
 
-```{r viz_text_2, include=TRUE}
-title_premodern <- tagList(p('Ranking of popularity of U.S. National Parks (1904-1966)'))
-```
 
 ```{r premodern_viz, include=TRUE}
 (plot_viz_premodern <- df_premodern %>% 
@@ -209,7 +224,7 @@ title_premodern <- tagList(p('Ranking of popularity of U.S. National Parks (1904
        subtitle = subtitle,
        caption = caption) + 
   coord_cartesian(xlim = c(1900, 1985), ylim = c(-48, 3), expand = F) + 
-  my.theme + 
+  my_theme + 
   theme(legend.position = 'none'))
 ```
 
@@ -240,15 +255,7 @@ top_2010s <- df_decade %>% filter(decade == 2010) %>% arrange(rank_visitors_by_d
 ```
 
 
-```{r}
-color_palette <- viridisLite::mako(8)
-description_color <- 'grey40'
-```
 
-
-```{r viz_text_3, include=TRUE}
-subtitle_3 <- tagList(span('*by the number of visitors by decade*'))
-```
 
 ```{r viz_decade_bump, include=TRUE}
 (plot_viz_decade_bump <- df_decade %>% 
@@ -297,7 +304,7 @@ subtitle_3 <- tagList(span('*by the number of visitors by decade*'))
     fontface = 'bold') + 
   coord_cartesian(xlim = c(1860, 2070), ylim = c(-45, 10), expand = F) + 
   #theme_void() + 
-  my.theme + 
+  my_theme + 
   theme(legend.position = 'none',
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
@@ -381,7 +388,7 @@ df_recent_all_types %>%
   #scale_color_manual(values = country_colors) +
   coord_cartesian(xlim = c(2005, 2020), ylim = c(12, 0), expand = F) + 
   #theme_void() + 
-  my.theme + 
+  my_theme + 
   theme(legend.position = 'none',
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
@@ -420,7 +427,7 @@ df_recent_all_types %>%
   #geom_smooth(stat = 'lm') + 
   #geom_text(data=. %>% filter(integer(rank(deferred_maintenance)) <= 5),
    #         aes(label=unit_name)) + 
-  my.theme
+  my_theme
 ```
 
 
@@ -538,3 +545,8 @@ deferred_palette <- col_numeric(c("#fee0d2", "#de2d26"),
   ))
 ```
 
+# 7. Save 
+
+# 8. Session Info
+
+# 9. Github Repository 
