@@ -25,6 +25,10 @@
     ]
   },
   {
+    "listing": "/visualizations.html",
+    "items": []
+  },
+  {
     "listing": "/workshops.html",
     "items": [
       "/workshops/2018-05-15-korbel-skills-tidyverse-part2/index.html",

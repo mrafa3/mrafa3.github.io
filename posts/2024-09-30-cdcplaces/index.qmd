@@ -137,7 +137,7 @@ df_social_needs %>%
 
 I also like to visualize the error bands associated with point estimates. The `geom_errorborh()` function comes in handy for that. I'll visualize the top 25 food insecure counties, along with their confidence intervals.
 
-```{r fig.height=10, fig.width=8}
+```{r food_insecurity_counties, include=TRUE, fig.height=10, fig.width=8}
 df_social_needs %>% 
   filter(data_value_type == 'Crude prevalence',
          measureid == 'FOODINSECU') %>% 
@@ -167,7 +167,7 @@ df_social_needs %>%
 
 And I'll visualize the food insecurity data from my home state, West Viriginia, where parts of central and southern West Virginia experience the highest rates of food insecurity in the state.
 
-```{r}
+```{r wv_food_insecurity, include=TRUE}
 df_social_needs %>% 
   filter(measureid == 'FOODINSECU',
          statedesc == 'West Virginia') %>%
