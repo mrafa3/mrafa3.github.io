@@ -2,7 +2,6 @@
 title: "Visualizations"
 author: "Mickey Rafa"
 listing:
-  <!-- id: "data_visualizations" -->
   contents: visualizations
   exclude: 
     title: "Template"
