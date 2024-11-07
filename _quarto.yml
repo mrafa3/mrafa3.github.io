@@ -13,6 +13,8 @@ website:
         text: Portfolio
       - href: workshops.qmd
         text: Workshops
+      - href: visualizations.qmd
+        text: Visualizations
 
 format:
   html:
