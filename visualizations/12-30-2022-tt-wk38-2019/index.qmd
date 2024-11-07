@@ -4,18 +4,34 @@ description: "Tidy Tuesday: Week 38, 2019"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
-    #orcid: 0000-0002-5300-3075
 date: 12-30-2022
-categories: [R, tidy-tuesday, bump-chart] # self-defined categories
-#citation: 
- # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
+categories: [R, "#TidyTuesday", bump-chart] # self-defined categories
 image: plot_viz_538.png
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+
+format:
+  html:
+    toc: true
+    toc-depth: 5
+    code-link: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    self-contained: true
+
+editor_options: 
+  chunk_output_type: inline
+  
+execute: 
+  error: false
+  message: false
+  warning: false
+  eval: true
 ---
 
 # Setup
 
-```{r setup, include=TRUE, warning=FALSE, message=FALSE}
+```{r setup, include=TRUE}
 library(tidyverse)
 library(tidytuesdayR)
 library(scales)
