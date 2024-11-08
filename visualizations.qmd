@@ -1,5 +1,5 @@
 ---
-title: "Visualizations"
+title: "Visualizations (more coming soon!)"
 listing: 
   contents: visualizations # all Quarto docs in the `posts` directory will be included on your listing page
   type: grid # or `default` or `table`; each type has its own set of yaml options to include
