@@ -5,8 +5,8 @@ author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
 date: 12-30-2022
-categories: [R, "#TidyTuesday", bump-chart, web-scraping] # self-defined categories
-image: "thumbnails/tt_2019_38.png"
+categories: [R, "#TidyTuesday", bump-chart] # self-defined categories
+image: "../thumbnails/tt_2019_38.png"
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
 format:
@@ -28,6 +28,9 @@ execute:
   warning: false
   eval: true
 ---
+
+![Bump chart illustrating the ranking of U.S. National Parks over time (1904-2016) by the count of visitors. This chart highlights the top 5 national parks as of 2016, and shows their relative popularity over time.](plot_viz_538.png){#fig-1}
+
 
 # 1. Load Packages & Setup
 
@@ -70,14 +73,14 @@ df <- tuesdata$national_parks
 
 # 3. Examine the Data 
 
-```{r glimpse, include=TRUE}
+```{r glimpse, include=TRUE, echo=TRUE}
 df %>% 
   glimpse()
 ```
 
 It's important to note that there are records for sites other than U.S. National Parks, which can be identified by the `unit_type` field.
 
-```{r diagnose, include=TRUE}
+```{r diagnose, include=TRUE, echo=TRUE}
 df %>% 
   diagnose_category() %>% 
   filter(variables == 'unit_type')
@@ -99,17 +102,12 @@ df_annual <- df %>%
   ungroup() %>% 
   separate(col=unit_name, into = c("parkname_full", "parktype"), sep = "National Park",
            remove=FALSE)
-```
 
-```{r highlight_parks, include=TRUE}
 highlight_list_annual <- df_annual %>% 
   filter(year ==2016,
          annual_visitor_rank <=5) %>% 
   pull(unit_name)
-```
 
-
-```{r df_decade, include=TRUE}
 df_decade <- df %>% 
   filter(unit_type == 'National Park',
          year != 'Total') %>% 
@@ -118,7 +116,6 @@ df_decade <- df %>%
   group_by(decade, unit_name) %>% 
   summarise(visitors_by_decade = sum(visitors, na.rm = TRUE),
             .groups = 'drop') %>% 
-  ungroup() %>% 
   group_by(decade) %>% 
   mutate(rank_visitors_by_decade = as.integer(rank(-visitors_by_decade))) %>% 
   ungroup() %>% 
@@ -163,10 +160,9 @@ caption <- paste0("<span style='font-family:lato;'>**Source**: TidyTuesday Week 
                  "<span style='font-family:lato;color:white;'>.</span>",
                  "<span style='font-family:lato;'>mrafa3</span>")
 
-color_palette <- viridisLite::mako(8)
 description_color <- 'grey40'
 
-subtitle_3 <- tagList(span('*by the number of visitors by decade*'))
+subtitle_2 <- tagList(span('*by the number of visitors by decade*'))
 ```
 
 # 6. Plot 
@@ -252,14 +248,13 @@ I like this high-level plot, and I think it's effective if you want to highlight
   theme(legend.position = 'none',
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
-    #plot.background = element_rect(fill = color_palette[8], color = NA),
     text = element_text(
       color = description_color
     )
   ) +
   labs(
     title = title,
-    subtitle = subtitle_3,
+    subtitle = subtitle_2,
     caption = caption
   ))
 ```
@@ -269,15 +264,15 @@ I like this high-level plot, and I think it's effective if you want to highlight
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
 ggsave(
-  filename = here::here(glue("visualizations/TidyTuesday/{tt_year}/tt_{tt_year}_{tt_week}.png")), 
+  filename = here::here(glue("visualizations/tt_{tt_year}_{tt_week}.png")), 
   plot = plot_viz_538,
   width = 10, height = 8, units = "in", dpi = 320
 )
-
+here()
 # make thumbnail for page
-magick::image_read(here::here(glue("visualizations/TidyTuesday/{tt_year}/tt_{tt_year}_{tt_week}.png"))) %>% 
+magick::image_read(here::here(glue("visualizations/tt_{tt_year}_{tt_week}.png"))) %>% 
   magick::image_resize(geometry = "400") %>% 
-  magick::image_write(here::here(glue("visualizations/TidyTuesday/{tt_year}/thumbnails/tt_{tt_year}_{tt_week}.png")))
+  magick::image_write(here::here(glue("visualizations/thumbnails/tt_{tt_year}_{tt_week}.png")))
 ```
 
 # 8. Session Info
