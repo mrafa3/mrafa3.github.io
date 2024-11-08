@@ -6,7 +6,7 @@ author:
     url: https://mrafa3.github.io/
 date: 12-30-2022
 categories: [R, "#TidyTuesday", bump-chart, web-scraping] # self-defined categories
-image: plot_viz_538.png
+image: "thumbnails/tt_2019_38.png"
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
 format:
@@ -60,7 +60,10 @@ showtext::showtext_opts(dpi=300)
 # 2. Read in the Data
 
 ```{r read_data, include=TRUE}
-tuesdata <- tidytuesdayR::tt_load(2019, week = 38)
+tt_year <- 2019
+tt_week <- 38
+
+tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
 
 df <- tuesdata$national_parks
 ```
@@ -72,8 +75,15 @@ df %>%
   glimpse()
 ```
 
-# 4. Tidy the Data 
+It's important to note that there are records for sites other than U.S. National Parks, which can be identified by the `unit_type` field.
 
+```{r diagnose, include=TRUE}
+df %>% 
+  diagnose_category() %>% 
+  filter(variables == 'unit_type')
+```
+
+# 4. Tidy the Data 
 
 ```{r df_annual}
 df_annual <- df %>% 
@@ -105,8 +115,9 @@ df_decade <- df %>%
          year != 'Total') %>% 
   mutate(year = as.numeric(year)) %>% 
   mutate(decade = year - (year %% 10)) %>% 
-  group_by(decade, unit_name, .groups=TRUE) %>% 
-  summarise(visitors_by_decade = sum(visitors, na.rm = TRUE)) %>% 
+  group_by(decade, unit_name) %>% 
+  summarise(visitors_by_decade = sum(visitors, na.rm = TRUE),
+            .groups = 'drop') %>% 
   ungroup() %>% 
   group_by(decade) %>% 
   mutate(rank_visitors_by_decade = as.integer(rank(-visitors_by_decade))) %>% 
@@ -254,6 +265,20 @@ I like this high-level plot, and I think it's effective if you want to highlight
 ```
 
 # 7. Save 
+
+```{r save_plot, include=TRUE}
+# Save the plot as PNG
+ggsave(
+  filename = here::here(glue("visualizations/TidyTuesday/{tt_year}/tt_{tt_year}_{tt_week}.png")), 
+  plot = plot_viz_538,
+  width = 10, height = 8, units = "in", dpi = 320
+)
+
+# make thumbnail for page
+magick::image_read(here::here(glue("visualizations/TidyTuesday/{tt_year}/tt_{tt_year}_{tt_week}.png"))) %>% 
+  magick::image_resize(geometry = "400") %>% 
+  magick::image_write(here::here(glue("visualizations/TidyTuesday/{tt_year}/thumbnails/tt_{tt_year}_{tt_week}.png")))
+```
 
 # 8. Session Info
 
