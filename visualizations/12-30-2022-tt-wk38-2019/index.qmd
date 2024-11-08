@@ -6,7 +6,7 @@ author:
     url: https://mrafa3.github.io/
 date: 12-30-2022
 categories: [R, "#TidyTuesday", bump-chart] # self-defined categories
-image: "../thumbnails/tt_2019_38.png"
+image: "tt_2019_38_thumbnail.png"
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
 format:
@@ -29,8 +29,7 @@ execute:
   eval: true
 ---
 
-![Bump chart illustrating the ranking of U.S. National Parks over time (1904-2016) by the count of visitors. This chart highlights the top 5 national parks as of 2016, and shows their relative popularity over time.](plot_viz_538.png){#fig-1}
-
+![Bump chart illustrating the ranking of U.S. National Parks over time (1904-2016) by the count of visitors. This chart highlights the top 5 national parks as of 2016, and shows their relative popularity over time.](tt_2019_38.png){#fig-1}
 
 # 1. Load Packages & Setup
 
@@ -264,15 +263,15 @@ I like this high-level plot, and I think it's effective if you want to highlight
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
 ggsave(
-  filename = here::here(glue("visualizations/tt_{tt_year}_{tt_week}.png")), 
+  filename = glue("tt_{tt_year}_{tt_week}.png"), 
   plot = plot_viz_538,
   width = 10, height = 8, units = "in", dpi = 320
 )
-here()
+
 # make thumbnail for page
-magick::image_read(here::here(glue("visualizations/tt_{tt_year}_{tt_week}.png"))) %>% 
+magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>% 
   magick::image_resize(geometry = "400") %>% 
-  magick::image_write(here::here(glue("visualizations/thumbnails/tt_{tt_year}_{tt_week}.png")))
+  magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
 ```
 
 # 8. Session Info
@@ -281,9 +280,6 @@ magick::image_read(here::here(glue("visualizations/tt_{tt_year}_{tt_week}.png"))
 ##### Expand for Session Info
 
 ```{r, echo = FALSE}
-#| eval: true
-#| warning: false
-
 sessionInfo()
 ```
 :::
