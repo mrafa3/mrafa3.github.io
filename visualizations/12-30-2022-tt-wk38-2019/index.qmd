@@ -160,7 +160,9 @@ subtitle_3 <- tagList(span('*by the number of visitors by decade*'))
 
 # 6. Plot 
 
-```{r plot_viz_538, include=TRUE, fig.align='center'}
+For the first plot, I wanted to replicate the bump chart created by [FiveThirtyEight](https://fivethirtyeight.com/features/the-national-parks-have-never-been-more-popular/), which shows the ranking of U.S. national parks by annual visitors.
+
+```{r plot_viz_538, include=TRUE, fig.width=10, fig.height=6, fig.align='center'}
 (plot_viz_538 <- df_annual %>% 
   ggplot(.,
          aes(x=year,
@@ -186,7 +188,9 @@ subtitle_3 <- tagList(span('*by the number of visitors by decade*'))
   theme(legend.position = 'none'))
 ```
 
-```{r viz_decade_bump, include=TRUE, fig.align='center'}
+I like this high-level plot, and I think it's effective if you want to highlight individual parks (or show a top 5, as I've done), but there is plenty of noise. In the next plot, I aggregated visitors by decade, and I'm only showing parks that were in the top five in the first decade of the dataset or the last decade. This strips out the noise and shows some interesting changes in park rankings over time.
+
+```{r viz_decade_bump, include=TRUE, fig.width=10, fig.height=6, fig.align='center'}
 (plot_viz_decade_bump <- df_decade %>% 
   filter(unit_name %in% c(top_1900s, top_2010s),
          decade >= 1900) %>% 
