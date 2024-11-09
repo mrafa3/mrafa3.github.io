@@ -29,9 +29,13 @@ execute:
   eval: true
 ---
 
+
+
 ![Plot showing the average maximum annual rainfall and temperatures across major Australian cities from 1900-2019. Australia was experiencing a 60-year drought, and at that point in 2019, the hottest temperatures on record. Source: Australian Bureau of Meteorology. Inspiration: Tidy Tuesday work from [jkaupp](https://github.com/jkaupp/tidytuesdays/tree/master/2020/week2).](tt_2020_2.png){#fig-1 width="100%"}
 
 # 1. Load Packages & Setup
+
+
 
 ```{r setup, include=TRUE}
 if (!require("pacman")) install.packages("pacman")
@@ -55,7 +59,11 @@ font_add_google("Roboto")
 font_add_google("Roboto Condensed")
 ```
 
+
+
 # 2. Read in the Data
+
+
 
 ```{r read_data, include=TRUE}
 tt_year <- 2020
@@ -67,7 +75,11 @@ rainfall <- tuesdata$rainfall
 temperature <- tuesdata$temperature
 ```
 
+
+
 # 3. Examine the Data 
+
+
 
 ```{r examine, include=TRUE, echo=TRUE}
 rainfall %>%
@@ -77,7 +89,11 @@ temperature %>%
   glimpse()
 ```
 
+
+
 # 4. Tidy the Data 
+
+
 
 ```{r annualize, include=TRUE}
 annual_rainfall <- rainfall %>% 
@@ -97,7 +113,11 @@ annual_temperature <- temperature %>%
   filter(year < 2020)
 ```
 
+
+
 # 5. Visualization Parameters 
+
+
 
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
@@ -117,7 +137,11 @@ my_theme <- theme(
 )
 ```
 
+
+
 # 6. Plot 
+
+
 
 ```{r plot_rain_temp, fig.width=10, fig.height=6, fig.align='center'}
 plot_rainfall <- annual_rainfall %>% 
@@ -182,7 +206,11 @@ plot_rain_temp <- plot_rainfall +
   )
 ```
 
+
+
 # 7. Save 
+
+
 
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
@@ -198,14 +226,20 @@ magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
   magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
 ```
 
+
+
 # 8. Session Info
 
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
+
+
 ```{r, echo = FALSE}
 sessionInfo()
 ```
+
+
 :::
 
 # 9. Github Repository 
