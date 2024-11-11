@@ -157,9 +157,9 @@ penguin_ternary_viz <- penguins_complete %>%
   scale_fill_manual(values = peng_cols) + 
   labs(title = 'Relationship between bill length, body mass, and flipper length',
        subtitle = glue(
-      "for <span style='color:maroon1'>**Gentoo**</span>, <span style='color:seagreen3'>**Chinstrap**</span>, and <span style='color:cornflowerblue'>**Adelie**</span> penguins"
-    ),
-       x='', y='', z='') + 
+      "for <span style='color:maroon1'>**Gentoo**</span>, <span style='color:seagreen3'>**Chinstrap**</span>, and <span style='color:cornflowerblue'>**Adelie**</span> penguins"),
+       x='', y='', z='',
+      caption='Tidy Tuesday Week 31 (2020)<br>**Source**: {palmerpenguins}') + 
   Larrowlab("Bill length (0-100 scaled)\n") + 
   Tarrowlab("Body mass (0-100 scaled)\n") + 
   Rarrowlab("\nFlipper length (0-100 scaled)") + 
