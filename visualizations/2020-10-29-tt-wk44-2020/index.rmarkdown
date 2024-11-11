@@ -29,9 +29,13 @@ execute:
   eval: true
 ---
 
+
+
 ![Line plot of wind turbine projects commissioned in Canadian provinces from 1993-2019. Ontario, Quebec, and Alberta are highlighted as having the largest number of commissioned projects in this period. Source: Government of Canada.](tt_2020_44.png){#fig-1}
 
 # 1. Load Packages & Setup
+
+
 
 ```{r setup, include=TRUE}
 if (!require("pacman")) install.packages("pacman")
@@ -55,7 +59,11 @@ pacman::p_load(
 font_add_google("Lato")
 ```
 
+
+
 # 2. Read in the Data
+
+
 
 ```{r read_data, include=TRUE}
 tt_year <- 2020
@@ -66,7 +74,11 @@ tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
 turbines <- tuesdata$`wind-turbine`
 ```
 
+
+
 # 3. Examine the Data 
+
+
 
 ```{r examine, include=TRUE, echo=TRUE}
 turbines %>% 
@@ -76,9 +88,13 @@ turbines %>%
   summary()
 ```
 
+
+
 # 4. Tidy the Data 
 
 If I did some tidying of `commissioning_date`, we could do a running total plot of turbine projects by province (some, for instance, have "2001/2002").
+
+
 
 ```{r distinct_commissioning_date, include=TRUE}
 turbines %>% 
@@ -100,7 +116,11 @@ turbines_cum_sum <- turbines %>%
                                  as.character(province_territory), 'Other'))
 ```
 
+
+
 # 5. Visualization Parameters 
+
+
 
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
@@ -134,7 +154,11 @@ prov_size <- c('Ontario' = 1.25,
 
 ```
 
+
+
 # 6. Plot 
+
+
 
 ```{r include=TRUE, fig.width=10, fig.height=6, fig.align='center'}
 (running_ttl_viz <- turbines_cum_sum %>% 
@@ -167,7 +191,11 @@ prov_size <- c('Ontario' = 1.25,
 ```
 
 
+
+
 # 7. Save 
+
+
 
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
@@ -183,14 +211,20 @@ magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
   magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
 ```
 
+
+
 # 8. Session Info
 
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
+
+
 ```{r, echo = FALSE}
 sessionInfo()
 ```
+
+
 :::
 
 # 9. Github Repository 
