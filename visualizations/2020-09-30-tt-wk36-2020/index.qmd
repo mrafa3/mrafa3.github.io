@@ -71,9 +71,6 @@ yield <- tuesdata$key_crop_yields
 ```{r examine, include=TRUE, echo=TRUE}
 yield %>% 
   glimpse()
-
-yield %>% 
-  summary()
 ```
 
 The dataset contains yeild data across a variety of crop types and includes countries, territories, and regions. I want to narrow this to look at only corn yields in countries in the Southern African Development Community.
@@ -152,12 +149,6 @@ yield_gt <- yield_df %>%
 ```
 
 # 7. Save 
-
-```{r save_yield_gt, include=TRUE}
-yield_gt %>% 
-  gtsave(filename = 'yield_gt.png',
-         path = './/graphics/yield_gt.png')
-```
 
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
