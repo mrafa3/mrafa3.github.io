@@ -1,0 +1,193 @@
+---
+title: "Visualizing agricultural data using conditionally formatted tables"
+description: "Using the {gt} package to visualize data in tables"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+date: 12-30-2022
+categories: [R, "#TidyTuesday", gt] # self-defined categories
+image: "tt_2020_36_thumbnail.png"
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+
+format:
+  html:
+    toc: true
+    toc-depth: 5
+    code-link: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    self-contained: true
+
+editor_options: 
+  chunk_output_type: inline
+  
+execute: 
+  error: false
+  message: false
+  warning: false
+  eval: true
+---
+
+![Maize yield of countries in the Southern African Development Community from 2010 to 2018. This table is conditionally formatted to highlight values of higher maize yield in this subset of data. Source: Our World in Data.](tt_2020_36.png){#fig-1}
+
+
+# 1. Load Packages & Setup
+
+```{r setup, include=TRUE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    tidytuesdayR,
+    dlookr,
+    ggtext,
+    countrycode,
+    gt,
+    gtExtras,  #for font awesome icons in gt tables
+    ggbump,
+    showtext,
+    janitor,   #for clean_names()
+    scales,
+    htmltools, #for tagList()
+    glue,
+    here,
+    geomtextpath
+)    
+```
+
+# 2. Read in the Data
+
+```{r read_data, include=TRUE}
+tt_year <- 2020
+tt_week <- 36
+
+tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
+
+yield <- tuesdata$key_crop_yields
+```
+
+# 3. Examine the Data 
+
+```{r examine, include=TRUE, echo=TRUE}
+yield %>% 
+  glimpse()
+
+yield %>% 
+  summary()
+```
+
+The dataset contains yeild data across a variety of crop types and includes countries, territories, and regions. I want to narrow this to look at only corn yields in countries in the Southern African Development Community.
+
+# 4. Tidy the Data 
+
+```{r yield_mutate, include=TRUE}
+yield <- yield %<>% 
+  janitor::clean_names() %>% 
+  left_join(x=.,
+            y=countrycode::codelist %>% 
+              select(continent, iso3c, un.regionsub.name) %>% 
+              filter(complete.cases(.)),
+            by=c('code' = 'iso3c')) %>% 
+  gather(crop, yield, 4:14) %>% 
+  mutate(decade = as.factor(year - (year %% 10)),
+         crop = str_to_title(str_remove(crop, "_tonnes_per_hectare")))
+
+sadc <- c('Angola', 'Botswana', 'Comoros', 
+          'Democratic Republic of Congo', 'Swaziland', 
+          'Lesotho', 'Madagascar', 'Malawi', 'Mauritius',
+          'Mozambique', 'Namibia', 'Seychelles', 
+          'South Africa', 'Tanzania', 'Zambia', 'Zimbabwe')
+
+yield_df <- yield %>% 
+  filter(decade == '2010',
+         entity %in% sadc) %>% 
+  select(-c(decade, continent, code, un.regionsub.name)) %>% 
+  spread(year, yield) %>% 
+  rename(country = entity) %>%
+  filter(crop == 'Maize') %>% 
+  select(-crop)
+```
+
+# 5. Visualization Parameters 
+
+```{r viz_params, include=TRUE}
+title_text <- md("**Maize Yields in the Southern African Development Community**")
+
+subtitle_text <- md("*in tons per hectare* between 2010 and 2018")
+
+source_text <-  md("**Source**: Our World In Data<br>**Inspiration**: https://themockup.blog/posts/2020-09-04-10-table-rules-in-r/")
+```
+
+# 6. Plot 
+
+```{r yield_gt, include=TRUE}
+yield_gt <- yield_df %>% 
+  gt(rowname_col = 'country') %>% 
+  fmt_number(columns = 2:last_col(),
+             decimals = 1) %>% 
+  sub_missing(columns = 2:last_col(),
+              missing_text = '-') %>% 
+  tab_header(title = title_text,
+             subtitle = subtitle_text) %>% 
+  data_color(
+    columns = 2:last_col(),
+    colors = 
+      scales::col_numeric(
+        paletteer::paletteer_d(
+          palette = "ggsci::green_material") %>% 
+          as.character(),
+        domain = NULL)) %>% 
+  opt_table_font(
+    font = list(
+      google_font("Rubik"),
+      default_fonts()
+    )) %>% 
+  tab_source_note(source_note = source_text) %>% 
+  tab_options(
+    heading.subtitle.font.size = 12,
+    heading.align = "left",
+    table.border.top.color = "black",
+    column_labels.border.bottom.color = "black",
+    column_labels.border.bottom.width= px(3))
+```
+
+# 7. Save 
+
+```{r save_yield_gt, include=TRUE}
+yield_gt %>% 
+  gtsave(filename = 'yield_gt.png',
+         path = './/graphics/yield_gt.png')
+```
+
+```{r save_plot, include=TRUE}
+# Save the plot as PNG
+yield_gt %>% 
+  gtsave(
+  filename = glue("tt_{tt_year}_{tt_week}.png"),
+  path = here::here()
+)
+
+# make thumbnail for page
+magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
+  magick::image_resize(geometry = "400") %>%
+  magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
+```
+
+# 8. Session Info
+
+::: {.callout-tip collapse="true"}
+##### Expand for Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+:::
+
+# 9. Github Repository 
+
+::: {.callout-tip collapse="true"}
+
+##### Expand for GitHub Repo
+ 
+[Access the GitHub repository here](https://github.com/mrafa3/mrafa3.github.io)
+:::
