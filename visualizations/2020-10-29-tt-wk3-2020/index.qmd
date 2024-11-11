@@ -74,19 +74,16 @@ passwords %>%
 
 passwords %>% 
   summary()
-
-passwords %>% 
-  slice_max(strength)
 ```
 
 # 4. Tidy the Data 
 
 ```{r passwords_grp, include=TRUE}
-(passwords_grp <- passwords %>% 
+passwords_grp <- passwords %>% 
   filter(!is.na(category)) %>% 
   group_by(category) %>% 
   mutate(mean_password_strength = mean(strength),
-         median_password_strength = median(strength)))
+         median_password_strength = median(strength))
 ```
 
 # 5. Visualization Parameters 
