@@ -149,7 +149,7 @@ my_theme <- theme(
 ggsave(
   filename = glue("tt_{tt_year}_{tt_week}.png"),
   plot = strength_viz,
-  width = 5, height = 3, units = "in",
+  width = 10, height = 6, units = "in",
   dpi = 300
 )
 

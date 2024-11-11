@@ -25,18 +25,18 @@
     ]
   },
   {
-    "listing": "/workshops.html",
-    "items": [
-      "/workshops/2018-05-15-korbel-skills-tidyverse-part2/index.html",
-      "/workshops/2018-05-15-korbel-skills-tidyverse/index.html"
-    ]
-  },
-  {
     "listing": "/visualizations.html",
     "items": [
       "/visualizations/2020-10-29-tt-wk3-2020/index.html",
       "/visualizations/12-30-2022-tt-wk38-2019/index.html",
       "/visualizations/2020-09-23-tt-wk2-2020/index.html"
+    ]
+  },
+  {
+    "listing": "/workshops.html",
+    "items": [
+      "/workshops/2018-05-15-korbel-skills-tidyverse-part2/index.html",
+      "/workshops/2018-05-15-korbel-skills-tidyverse/index.html"
     ]
   }
 ]
