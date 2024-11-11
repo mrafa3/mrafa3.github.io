@@ -29,7 +29,9 @@ execute:
   eval: true
 ---
 
-![](){#fig-1}
+![Ternary plot that shows the distribution of the palmer penguins species by bill length, body mass, and flipper length. This illustrates that flipper length is a distinguishing feature, as shown along the horizontal axis, where Adelie's tend to have smaller flippers, while Gentoo's tend to have larger flippers.](tt_2020_31_ternary.png){#fig-1}
+
+![Ridge plot illustrating the distribution of body mass (in g) by the three islands in the dataset: Torgersen, Dream, and Briscoe. Briscoe island is home to larger penguins than the other islands in the dataset.](tt_2020_31_ridge.png){#fig-2}
 
 # 1. Load Packages & Setup
 
@@ -54,7 +56,6 @@ pacman::p_load(
     geomtextpath
 )    
 
-font_add('fa-brands', 'fonts/Font Awesome 6 Brands-Regular-400.otf')
 font_add_google("Lato")
 ```
 
@@ -67,7 +68,6 @@ tt_week <- 31
 tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
 
 penguins <- tuesdata$penguins
-penguins_raw <- tuesdata$penguins_raw
 ```
 
 # 3. Examine the Data 
@@ -76,23 +76,19 @@ penguins_raw <- tuesdata$penguins_raw
 penguins %>% 
   glimpse()
 
-penguins_raw %>% 
-  glimpse()
-
 penguins %>% 
   summary()
 ```
 
-```{r scaling_vars, include=TRUE}
-penguins %>% 
-  mutate_if(is.numeric, scale) %>% 
-  summarise_if(is.double, list(min, max), na.rm=TRUE)
-```
-
 # 4. Tidy the Data 
 
-```{r}
+```{r tidy_penguins, include=TRUE}
+penguins_scale <- penguins %>% 
+  mutate_if(is.numeric, scale) %>% 
+  summarise_if(is.double, list(min, max), na.rm=TRUE)
 
+penguins_complete <- penguins %>% 
+  filter(complete.cases(.))
 ```
 
 # 5. Visualization Parameters 
@@ -100,21 +96,14 @@ penguins %>%
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
   text = element_text(family = 'Lato', size = 14), 
-  # plot.title = element_text(family="Gill Sans MT", color="black", face="bold", size=24, hjust=0), 
-  # plot.subtitle = element_text(family="Gill Sans MT", color="black", size=12, hjust=0), 
-  # axis.title = element_text(family="Gill Sans MT", color="black", face="bold", size=12), 
-  # axis.text = element_text(family="Gill Sans MT", color="black", size=18), 
   axis.ticks = element_blank(), 
-  # plot.caption = element_text(family="Gill Sans MT", color="black", size=12), 
   plot.background = element_blank(),
   panel.background =  element_blank(), 
   legend.background = element_blank(), 
-  panel.grid.major = element_line(colour = "grey90", size = 0.5),
-  panel.grid.minor = element_line(colour = "grey93", size = 0.5),
+  panel.grid.major = element_line(colour = "grey90", linewidth = 0.5),
+  panel.grid.minor = element_line(colour = "grey93", linewidth = 0.5),
   panel.border = element_blank(), 
-  #panel.border = element_rect(colour = "black", size = 0.5, fill=NA, linetype = 1),
   legend.title=element_blank(), 
-  # legend.text = element_text(family="Gill Sans MT", color="black", size=12, hjust=0),
   legend.position = 'top')
 
 peng_cols <- c('Biscoe' = 'cornflowerblue', 
@@ -126,13 +115,10 @@ peng_cols <- c('Biscoe' = 'cornflowerblue',
                  'Gentoo' = 'maroon1')
 ```
 
-
 # 6. Plot 
 
-
 ```{r pen_mass_by_island_ridgeplot_viz, include=TRUE, fig.height=6, fig.width=10}
-pen_mass_by_island_ridgeplot_viz <- penguins %>% 
-  filter(complete.cases(.)) %>% 
+pen_mass_by_island_ridgeplot_viz <- penguins_complete %>% 
   ggplot(.) + 
   ggridges::geom_density_ridges2(aes(x=body_mass_g,
                                     y=island,
@@ -158,8 +144,7 @@ pen_mass_by_island_ridgeplot_viz <- penguins %>%
 
 
 ```{r penguin_ternary_viz, fig.height=9, fig.width=9}
-penguin_ternary_viz <- penguins %>% 
-  filter(complete.cases(.)) %>% 
+penguin_ternary_viz <- penguins_complete %>% 
   ggtern(aes(x = scale(bill_length_mm), 
                y = scale(body_mass_g), 
                z = scale(flipper_length_mm),
