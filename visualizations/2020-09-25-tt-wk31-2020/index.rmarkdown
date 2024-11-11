@@ -29,11 +29,15 @@ execute:
   eval: true
 ---
 
+
+
 ![Ternary plot that shows the distribution of the palmer penguins species by bill length, body mass, and flipper length. This illustrates that flipper length is a distinguishing feature, as shown along the horizontal axis, where Adelie's tend to have smaller flippers, while Gentoo's tend to have larger flippers.](tt_2020_31_ternary.png){#fig-1}
 
 ![Ridge plot illustrating the distribution of body mass (in g) by the three islands in the dataset: Torgersen, Dream, and Briscoe. Briscoe island is home to larger penguins than the other islands in the dataset.](tt_2020_31_ridge.png){#fig-2}
 
 # 1. Load Packages & Setup
+
+
 
 ```{r setup, include=TRUE}
 if (!require("pacman")) install.packages("pacman")
@@ -59,7 +63,11 @@ pacman::p_load(
 font_add_google("Lato")
 ```
 
+
+
 # 2. Read in the Data
+
+
 
 ```{r read_data, include=TRUE}
 tt_year <- 2020
@@ -70,7 +78,11 @@ tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
 penguins <- tuesdata$penguins
 ```
 
+
+
 # 3. Examine the Data 
+
+
 
 ```{r examine, include=TRUE, echo=TRUE}
 penguins %>% 
@@ -80,7 +92,11 @@ penguins %>%
   summary()
 ```
 
+
+
 # 4. Tidy the Data 
+
+
 
 ```{r tidy_penguins, include=TRUE}
 penguins_scale <- penguins %>% 
@@ -91,7 +107,11 @@ penguins_complete <- penguins %>%
   filter(complete.cases(.))
 ```
 
+
+
 # 5. Visualization Parameters 
+
+
 
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
@@ -115,7 +135,11 @@ peng_cols <- c('Biscoe' = 'cornflowerblue',
                  'Gentoo' = 'maroon1')
 ```
 
+
+
 # 6. Plot 
+
+
 
 ```{r pen_mass_by_island_ridgeplot_viz, include=TRUE, fig.height=6, fig.width=10}
 pen_mass_by_island_ridgeplot_viz <- penguins_complete %>% 
@@ -141,7 +165,6 @@ pen_mass_by_island_ridgeplot_viz <- penguins_complete %>%
         plot.subtitle = element_textbox(),
         plot.caption = element_textbox())
 ```
-
 
 ```{r penguin_ternary_viz, fig.height=9, fig.width=9}
 penguin_ternary_viz <- penguins_complete %>% 
@@ -172,7 +195,11 @@ penguin_ternary_viz <- penguins_complete %>%
         plot.caption = element_textbox())
 ```
 
+
+
 # 7. Save 
+
+
 
 ```{r save_plot, include=TRUE}
 # RIDGEPLOT
@@ -200,14 +227,20 @@ magick::image_read(glue("tt_{tt_year}_{tt_week}_ternary.png")) %>%
   magick::image_write(glue("tt_{tt_year}_{tt_week}_ternary_thumbnail.png"))
 ```
 
+
+
 # 8. Session Info
 
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
+
+
 ```{r, echo = FALSE}
 sessionInfo()
 ```
+
+
 :::
 
 # 9. Github Repository 
