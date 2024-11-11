@@ -6,8 +6,8 @@ author:
     url: https://mrafa3.github.io/
 date: 10-29-2020
 categories: [R, "#TidyTuesday", line-chart] # self-defined categories
-# image: "tt_2020_44_thumbnail.png"
-draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+image: "tt_2020_44_thumbnail.png"
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
 format:
   html:
@@ -105,11 +105,6 @@ turbines_cum_sum <- turbines %>%
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
   text = element_text(family = 'Lato', size=12), 
-  # plot.title = element_text(family="Gill Sans MT", color="black", face="bold", size=24, hjust=0),
-  # axis.title = element_text(family="Gill Sans MT", color="black", face="bold", size=12), 
-  # plot.subtitle = element_text(family="Gill Sans MT", color="black", size=12, hjust=0), 
-  # plot.caption = element_text(family="Gill Sans MT", color="black", size=12), 
-  # axis.text = element_text(family="Gill Sans MT", color="black", size=18), 
   axis.ticks = element_blank(), 
   plot.background = element_blank(),
   panel.background =  element_blank(), 
@@ -117,9 +112,7 @@ my_theme <- theme(
   panel.grid.major = element_line(colour = "grey90", linewidth = 0.5),
   panel.grid.minor = element_line(colour = "grey93", linewidth = 0.5),
   panel.border = element_blank(), 
-  # legend.text = element_text(family="Gill Sans MT", color="black", size=12, hjust=0),
   legend.title=element_blank())
-  
 
 prov_cols <- c('Ontario' = 'steelblue4',
                'Quebec' = 'springgreen4',
@@ -130,14 +123,12 @@ prov_size <- c('Ontario' = 1.25,
                'Quebec' = 1.25,
                'Alberta' = 1.25,
                'Other' = .9)
-
-
 ```
 
 # 6. Plot 
 
 ```{r include=TRUE, fig.width=10, fig.height=6, fig.align='center'}
-(running_ttl_viz <- turbines_cum_sum %>% 
+running_ttl_viz <- turbines_cum_sum %>% 
   ggplot(.,
          aes(x=year,
              y=running_total_new_turbines)) + 
@@ -163,7 +154,7 @@ prov_size <- c('Ontario' = 1.25,
         plot.subtitle = element_textbox(size=rel(1.3)),
         axis.title = element_textbox(size=rel(1.3)),
         axis.text = element_text(size=rel(1.3)),
-        plot.caption = element_textbox()))
+        plot.caption = element_textbox())
 ```
 
 
