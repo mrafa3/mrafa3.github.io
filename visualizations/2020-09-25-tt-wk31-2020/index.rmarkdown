@@ -1,6 +1,6 @@
 ---
 title: "Analyzing size distributions in the Palmer Penguins dataset"
-# description: "Visualizing distributions with some alternative chart types"
+description: "Visualizing distributions with some alternative chart types"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
