@@ -7,7 +7,7 @@ author:
 date: 12-30-2022
 categories: [R, "#TidyTuesday", jitter-plot] # self-defined categories
 image: "tt_2020_3_thumbnail.png"
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
 format:
   html:
