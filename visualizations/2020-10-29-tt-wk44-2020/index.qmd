@@ -1,0 +1,163 @@
+---
+title: "Template document for TidyTuesday exercises"
+# description: "Tidy Tuesday: Week 38, 2019"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+date: 12-30-2022
+categories: [R, "#TidyTuesday", bump-chart] # self-defined categories
+# image: "tt_2019_38_thumbnail.png"
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+
+format:
+  html:
+    toc: true
+    toc-depth: 5
+    code-link: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    self-contained: true
+
+editor_options: 
+  chunk_output_type: inline
+  
+execute: 
+  error: false
+  message: false
+  warning: false
+  eval: true
+---
+
+![](){#fig-1}
+
+# 1. Load Packages & Setup
+
+```{r setup, include=TRUE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    tidytuesdayR,
+    dlookr,
+    ggtext,
+    gt,
+    gtExtras,  #for font awesome icons in gt tables
+    ggbump,
+    showtext,
+    janitor,   #for clean_names()
+    scales,
+    htmltools, #for tagList()
+    glue,
+    here,
+    geomtextpath
+)    
+
+font_add('fa-brands', 'fonts/Font Awesome 6 Brands-Regular-400.otf')
+```
+
+# 2. Read in the Data
+
+```{r read_data, include=TRUE}
+# tt_year <- 2019
+# tt_week <- 38
+# 
+# tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
+
+# df <- tuesdata$national_parks
+```
+
+# 3. Examine the Data 
+
+```{r examine, include=TRUE, echo=TRUE}
+# df %>% 
+#   glimpse()
+# 
+# df %>% 
+#   diagnose_category()
+```
+
+# 4. Tidy the Data 
+
+```{r}
+
+```
+
+# 5. Visualization Parameters 
+
+```{r my_theme, include=TRUE}
+my_theme <- theme(
+  # choose font family
+  text = element_text(family = 'lato'), 
+  plot.title = element_textbox_simple(color="black", face="bold", size=20, hjust=0), 
+  plot.subtitle = element_textbox_simple(color="black", size=12, hjust=0), 
+  axis.title = element_blank(), 
+  axis.text = element_blank(), 
+  axis.ticks = element_blank(),
+  axis.line = element_blank(), 
+  plot.caption = element_textbox_simple(color="black", size=12), 
+  panel.background =  element_blank(), 
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(), 
+  legend.title=element_blank(), 
+  legend.text = element_text(color="black", size=12, hjust=0),
+  legend.position = 'top',
+  strip.text = element_text(color="black", size=14))
+
+# title <- tagList(p('Ranking of popularity of U.S. National Parks'))
+# 
+# subtitle <- tagList(span('*by the number of visitors annually*'))
+# 
+# caption <- paste0("<span style='font-family:lato;'>**Source**: TidyTuesday Week 38 (2019)</span><br>",
+#                 "<span style='font-family:fa-brands;'>&#xf099;</span>",
+#                  "<span style='font-family:lato;'>@mickey.rafa</span>",
+#                  "<span style='font-family:lato;color:white;'>....</span>",
+#                  "<span style='font-family:fa-brands;'>&#xf09b;</span>",
+#                  "<span style='font-family:lato;color:white;'>.</span>",
+#                  "<span style='font-family:lato;'>mrafa3</span>")
+# 
+# description_color <- 'grey40'
+# 
+# subtitle_2 <- tagList(span('*by the number of visitors by decade*'))
+```
+
+# 6. Plot 
+
+```{r include=TRUE, fig.width=10, fig.height=6, fig.align='center'}
+
+```
+
+# 7. Save 
+
+```{r save_plot, include=TRUE}
+# Save the plot as PNG
+# ggsave(
+#   filename = glue("tt_{tt_year}_{tt_week}.png"), 
+#   plot = p,
+#   width = 10, height = 8, units = "in", dpi = 320
+# )
+# 
+# make thumbnail for page
+# magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>% 
+#   magick::image_resize(geometry = "400") %>% 
+#   magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
+```
+
+# 8. Session Info
+
+::: {.callout-tip collapse="true"}
+##### Expand for Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+:::
+
+# 9. Github Repository 
+
+::: {.callout-tip collapse="true"}
+
+##### Expand for GitHub Repo
+ 
+[Access the GitHub repository here](https://github.com/mrafa3/mrafa3.github.io)
+:::
