@@ -1,6 +1,6 @@
 ---
 title: "Analyzing relative password strength"
-# description: "Tidy Tuesday: Week 38, 2019"
+description: "Using a jitterplot to show the relative distribution of categories"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
