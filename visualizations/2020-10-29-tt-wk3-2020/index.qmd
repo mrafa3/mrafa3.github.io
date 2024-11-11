@@ -90,10 +90,10 @@ passwords_grp <- passwords %>%
 
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
-  plot.title = element_markdown(family="Courier Prime", color="black", size=22, hjust=0, margin = margin(b = 5)), 
-  plot.subtitle = element_textbox_simple(family="Courier Prime", color="black", size=12, hjust=0, margin = margin(b = 5)), 
+  plot.title = element_markdown(family="Courier Prime", color="black", size=28, hjust=0, margin = margin(b = 5)), 
+  plot.subtitle = element_textbox_simple(family="Courier Prime", color="black", size=18, hjust=0, margin = margin(b = 5)), 
   axis.title = element_text(family="Courier Prime", color="black", face="bold", size=12), 
-  axis.text = element_text(family="Courier Prime", color="black", size=13), 
+  axis.text = element_text(family="Courier Prime", color="black", size=16), 
   axis.ticks.y = element_blank(), 
   plot.caption = element_textbox_simple(family="Courier Prime", color="black", size=10), 
   plot.background = element_blank(),
@@ -133,7 +133,7 @@ my_theme <- theme(
   labs(x='\nRelative strength of password',
        y='',
        title='Relative **password strength** by category',
-       subtitle = "Each dot represents a unique password from the Knowledge is Beautiful password database<br><span style='margin-top:0.5em;'>**rush2112** is the password with the highest strength score in the dataset</span>",
+       subtitle = "Each dot represents a unique password from the Knowledge is Beautiful password database<br><span style='margin-top:0.2em;'>**rush2112** is the password with the highest strength score in the dataset</span>",
        caption='Tidy Tuesday Week 3 (2020)<br>**Source**: Knowledge is Beautiful') + 
   my_theme + 
   theme(legend.position = 'none'))
