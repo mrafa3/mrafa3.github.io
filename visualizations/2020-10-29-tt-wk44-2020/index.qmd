@@ -127,7 +127,7 @@ prov_size <- c('Ontario' = 1.25,
 
 # 6. Plot 
 
-```{r include=TRUE, fig.width=10, fig.height=6, fig.align='center'}
+```{r running_ttl_viz, include=TRUE, fig.width=10, fig.height=6, fig.align='center'}
 running_ttl_viz <- turbines_cum_sum %>% 
   ggplot(.,
          aes(x=year,
@@ -179,7 +179,7 @@ magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
-```{r, echo = FALSE}
+```{r session_info, echo = FALSE}
 sessionInfo()
 ```
 :::
