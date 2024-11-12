@@ -154,7 +154,7 @@ running_ttl_viz <- turbines_cum_sum %>%
         plot.title = element_markdown(size=rel(2.6), face='bold'),
         plot.subtitle = element_textbox(size=rel(1.4), lineheight = .5),
         axis.title = element_textbox(size=rel(1.3)),
-        axis.text = element_text(size=rel(1.5)),
+        axis.text = element_text(size=rel(1.75)),
         plot.caption = element_textbox(size=rel(1.3), margin = margin(b=5), lineheight = .5))
 ```
 
