@@ -96,14 +96,9 @@ expedition_attempts <- peaks %>%
 my_theme <- theme(
   # choose font family
   text = element_text(family = 'Open Sans', size=14), 
-  # plot.title = element_text(family="Open Sans", color="black", face="bold", size=24, hjust=0), 
-  # plot.subtitle = element_text(family="Open Sans", color="black", size=12, hjust=0), 
-  # axis.title = element_text(family="Open Sans", color="black", face="bold", size=12), 
-  # axis.text = element_text(family="Open Sans", color="black", size=18), 
   axis.ticks = element_blank(), 
-  # plot.caption = element_text(family="Open Sans", color="black", size=12), 
-  plot.background = element_rect(fill = "#F7F7F7", colour = NA),
-  panel.background =  element_rect(fill = "#F7F7F7", colour = NA), 
+  plot.background = element_rect(fill = "white", colour = NA),
+  panel.background =  element_rect(fill = "white", colour = NA), 
   legend.position = 'none',
   panel.grid.major = element_blank(),
   panel.grid.minor = element_blank(),
