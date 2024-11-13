@@ -5009,7 +5009,7 @@ $ males_married_by_18   &lt;dbl&gt; 0.073, 0.012, NA, 0.060, 0.004, 0.004, 0.044
 </details>
 </div>
 </section><section id="plot" class="level1"><h1>6. Plot</h1>
-<section id="bar-plot" class="level2"><h2 class="anchored" data-anchor-id="bar-plot">Bar plot</h2>
+<section id="bar-plot" class="level4"><h4 class="anchored" data-anchor-id="bar-plot">Bar plot</h4>
 <div class="cell">
 <details class="code-fold"><summary>Show code</summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">top10_viz</span> <span class="op">&lt;-</span> <span class="va">top_10_girls15_df</span> <span class="op">%&gt;%</span> </span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">.</span>,</span>
@@ -5052,7 +5052,7 @@ $ males_married_by_18   &lt;dbl&gt; 0.073, 0.012, NA, 0.060, 0.004, 0.004, 0.044
 <span>        panel.grid.major <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</section><section id="connected-dot-plot" class="level2"><h2 class="anchored" data-anchor-id="connected-dot-plot">Connected dot plot</h2>
+</section><section id="connected-dot-plot" class="level4"><h4 class="anchored" data-anchor-id="connected-dot-plot">Connected dot plot</h4>
 <div class="cell">
 <details class="code-fold"><summary>Show code</summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">disparity_viz</span> <span class="op">&lt;-</span> <span class="va">top_10_disparity_df</span> <span class="op">%&gt;%</span> </span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">.</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -5083,7 +5083,7 @@ $ males_married_by_18   &lt;dbl&gt; 0.073, 0.012, NA, 0.060, 0.004, 0.004, 0.044
 <span>        axis.text.y <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size<span class="op">=</span><span class="fu">rel</span><span class="op">(</span><span class="fl">2.75</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</section><section id="tile-map" class="level2"><h2 class="anchored" data-anchor-id="tile-map">Tile map</h2>
+</section><section id="tile-map" class="level4"><h4 class="anchored" data-anchor-id="tile-map">Tile map</h4>
 <div class="cell">
 <details class="code-fold"><summary>Show code</summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">tilemap_viz</span> <span class="op">&lt;-</span> <span class="va">tile_data</span> <span class="op">%&gt;%</span> </span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">.</span>, </span>
@@ -5884,7 +5884,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb14-160"><a href="#cb14-160" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Plot </span></span>
 <span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bar plot</span></span>
+<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Bar plot</span></span>
 <span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r top10_viz, include=TRUE, fig.height=7, fig.width=12}</span></span>
 <span id="cb14-166"><a href="#cb14-166" aria-hidden="true" tabindex="-1"></a><span class="in">top10_viz &lt;- top_10_girls15_df %&gt;% </span></span>
@@ -5928,7 +5928,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb14-204"><a href="#cb14-204" aria-hidden="true" tabindex="-1"></a><span class="in">        panel.grid.major = element_blank())</span></span>
 <span id="cb14-205"><a href="#cb14-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb14-206"><a href="#cb14-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a><span class="fu">## Connected dot plot</span></span>
+<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Connected dot plot</span></span>
 <span id="cb14-208"><a href="#cb14-208" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-209"><a href="#cb14-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{r disparity_viz, include=TRUE, fig.height=7.5, fig.width=12}</span></span>
 <span id="cb14-210"><a href="#cb14-210" aria-hidden="true" tabindex="-1"></a><span class="in">disparity_viz &lt;- top_10_disparity_df %&gt;% </span></span>
@@ -5960,7 +5960,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb14-236"><a href="#cb14-236" aria-hidden="true" tabindex="-1"></a><span class="in">        axis.text.y = element_text(size=rel(2.75)))</span></span>
 <span id="cb14-237"><a href="#cb14-237" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb14-238"><a href="#cb14-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tile map</span></span>
+<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Tile map</span></span>
 <span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tilemap_viz, fig.width=10, fig.height=9}</span></span>
 <span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a><span class="in">tilemap_viz &lt;- tile_data %&gt;% </span></span>

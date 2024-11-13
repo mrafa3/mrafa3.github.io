@@ -5,7 +5,7 @@ author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
 date: 12-21-2022
-categories: [R, "#TidyTuesday", line-plot] # self-defined categories
+categories: [R, "#TidyTuesday", line-plot, ribbon-plot] # self-defined categories
 image: "tt_2021_6_thumbnail.png"
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
@@ -86,8 +86,8 @@ hbcu_all %>%
 
 ```{r tidy_hbcu_all, include=TRUE}
 hbcu_all <- hbcu_all %>% 
-  select(year, Men=males, Women=females) %>% 
-  gather(gender, annual_enrollment, 2:3)
+  select(year, males, females)
+  # gather(gender, annual_enrollment, 2:3)
 ```
 
 # 5. Visualization Parameters 
@@ -127,13 +127,24 @@ caption <- paste0("<span style = 'color:#ffffff;'>.....</span>",
 
 # 6. Plot 
 
+```{r}
+hbcu_all %>% 
+  pivot_wider()
+```
+
+
 ```{r include=TRUE, fig.width=11, fig.height=6, fig.align='center'}
-plot_enrollment <- hbcu_all %>% 
+(plot_enrollment <- hbcu_all %>% 
   ggplot(aes(x=year,
-             y=annual_enrollment,
-             label=gender,
-             color=gender)) + 
-  geomtextpath::geom_textline(linewidth=2, hjust=1, vjust=-.25, fontface="bold", size=8) + 
+             # y=annual_enrollment,
+             )) + 
+  geom_ribbon(aes(ymin=males,
+                  ymax=females),
+              fill='gray90') + 
+  geomtextpath::geom_textline(aes(y=males, color='Men'),
+                              label='Men', linewidth=1.2, vjust=1.2, fontface="bold", size=8, text_smoothing=40) + 
+  geomtextpath::geom_textline(aes(y=females, color='Women'),
+                              label='Women', linewidth=1.2, vjust=-.25, fontface="bold", size=8, text_smoothing=40) +
   labs(x='',
        y='',
        title=title,
@@ -146,7 +157,7 @@ plot_enrollment <- hbcu_all %>%
         plot.title = element_textbox_simple(face="bold", size=rel(2), margin=margin(b=5)),
         plot.subtitle = element_textbox_simple(size=rel(1.2), margin=margin(b=10)),
         plot.caption = element_textbox_simple(size=rel(1.2)),
-        axis.text = element_text(color="black", size=rel(1.5)))
+        axis.text = element_text(color="black", size=rel(1.5))))
 ```
 
 # 7. Save 
