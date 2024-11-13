@@ -160,7 +160,7 @@ region_cols <- c('Southern Asia' = 'darkorchid3',
 
 # 6. Plot 
 
-## Bar plot
+#### Bar plot
 
 ```{r top10_viz, include=TRUE, fig.height=7, fig.width=12}
 top10_viz <- top_10_girls15_df %>% 
@@ -204,7 +204,7 @@ top10_viz <- top_10_girls15_df %>%
         panel.grid.major = element_blank())
 ```
 
-## Connected dot plot
+#### Connected dot plot
 
 ```{r disparity_viz, include=TRUE, fig.height=7.5, fig.width=12}
 disparity_viz <- top_10_disparity_df %>% 
@@ -236,7 +236,7 @@ disparity_viz <- top_10_disparity_df %>%
         axis.text.y = element_text(size=rel(2.75)))
 ```
 
-## Tile map
+#### Tile map
 
 ```{r tilemap_viz, fig.width=10, fig.height=9}
 tilemap_viz <- tile_data %>% 
