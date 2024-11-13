@@ -5,7 +5,7 @@ author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
 date: 10-29-2020
-categories: [R, "#TidyTuesday", line-chart] # self-defined categories
+categories: [R, "#TidyTuesday", line-plot] # self-defined categories
 image: "tt_2020_44_thumbnail.png"
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
