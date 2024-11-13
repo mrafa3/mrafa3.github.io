@@ -239,7 +239,7 @@ disparity_viz <- top_10_disparity_df %>%
 ## Tile map
 
 ```{r tilemap_viz, fig.width=10, fig.height=9}
-(tilemap_viz <- tile_data %>% 
+tilemap_viz <- tile_data %>% 
   ggplot(., 
          aes(xmin = x, ymin = y, xmax = x + 1, ymax = y + 1)) +
   geom_rect(aes(fill=females_married_by_15), color = "#ffffff") + 
@@ -269,7 +269,7 @@ disparity_viz <- top_10_disparity_df %>%
         legend.title = element_blank(),
         legend.text = element_text(size=rel(3)), 
         legend.background = element_rect(fill = "white", color = NA),
-        legend.spacing.x = unit(0.2, 'cm')))
+        legend.spacing.x = unit(0.2, 'cm'))
 ```
 
 # 7. Save 
