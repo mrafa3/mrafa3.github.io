@@ -108,8 +108,7 @@ codelist <- countrycode::codelist %>%
   rename(country = un.name.en) %>% 
   filter(!is.na(country))
 
-# adjust text of some names
-# join on codelist
+# adjust text of some names and join on codelist
 df <- df %>% 
   mutate(country = recode(country,
                           "Cote d'Ivoire" = "Côte D'Ivoire",
