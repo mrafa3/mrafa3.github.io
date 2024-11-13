@@ -1,0 +1,254 @@
+---
+title: "How do Beyonce and Taylor Swift lyrics differ?"
+description: "Using {tidytext} to process and visualize song lyrics"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+date: 10-04-2020
+categories: [R, "#TidyTuesday", bar-plot, nlp] # self-defined categories
+# image: "tt_2019_38_thumbnail.png"
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+
+format:
+  html:
+    toc: true
+    toc-depth: 5
+    code-link: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    self-contained: true
+
+editor_options: 
+  chunk_output_type: inline
+  
+execute: 
+  error: false
+  message: false
+  warning: false
+  eval: true
+---
+
+![](){#fig-1}
+
+# 1. Load Packages & Setup
+
+```{r setup, include=TRUE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    tidytuesdayR,
+    ggtext,
+    showtext,
+    janitor,   #for clean_names()
+    scales,
+    htmltools, #for tagList()
+    glue,
+    here,
+    stopwords,
+    tidytext,     #for text management
+    tidylo,
+    SnowballC    #for text stemming
+)    
+
+font_add('fa-brands', 'fonts/Font Awesome 6 Brands-Regular-400.otf')
+font_add_google('Lora')
+```
+
+# 2. Read in the Data
+
+```{r read_data, include=TRUE}
+tt_year <- 2020
+tt_week <- 40
+
+tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
+
+beyonce_lyrics <- tuesdata$beyonce_lyrics
+taylor_swift_lyrics <- tuesdata$taylor_swift_lyrics
+```
+
+# 3. Examine the Data 
+
+```{r examine, include=TRUE, echo=TRUE}
+beyonce_lyrics %>% 
+  glimpse()
+
+taylor_swift_lyrics %>% 
+  glimpse()
+```
+
+# 4. Tidy the Data 
+
+```{r tok_beyonce_lyrics, include=TRUE}
+(tok_beyonce_lyrics <- beyonce_lyrics %>% 
+   janitor::clean_names() %>% 
+   tidytext::unnest_tokens(output = word, 
+                          input = line) %>% 
+   distinct(word, song_id, .keep_all = TRUE) %>% 
+   select(word, artist_name))
+```
+
+```{r tok_taylor_swift_lyrics, include=TRUE}
+(tok_taylor_swift_lyrics <- taylor_swift_lyrics %>% 
+   janitor::clean_names() %>% 
+   unnest_tokens(word, lyrics) %>% 
+   distinct(word, artist, keep.all = TRUE) %>% 
+   select(word, artist_name = artist))
+```
+
+```{r tidy_lyrics, include=TRUE}
+(tidy_lyrics <- 
+  bind_rows(tok_taylor_swift_lyrics, tok_beyonce_lyrics) %>% 
+    anti_join(tidytext::get_stopwords(), by = 'word') %>% 
+    count(artist_name, word, sort = TRUE) %>%
+    filter(!is.na(word)))
+```
+
+```{r bind_log_odds, include=TRUE}
+tidy_lyrics <- tidy_lyrics %>%
+  bind_log_odds(artist_name, word, n)
+```
+
+```{r}
+(count_tswift <- taylor_swift_lyrics %>% 
+  janitor::clean_names() %>% 
+  unnest_tokens(word, lyrics) %>% 
+  anti_join(get_stopwords(), by = 'word') %>% 
+  janitor::tabyl(word) %>% 
+  as.data.frame() %>% 
+  arrange(-n))
+
+(count_beyonce <- beyonce_lyrics %>% 
+  janitor::clean_names() %>% 
+  unnest_tokens(word, line) %>% 
+  anti_join(get_stopwords(), by = 'word') %>% 
+  janitor::tabyl(word) %>% 
+  as.data.frame() %>% 
+  arrange(-n))
+```
+
+# 5. Visualization Parameters 
+
+```{r my_theme, include=TRUE}
+my_theme <- theme(
+  # choose font family
+  text = element_text(family = 'Lora'), 
+  # plot.title = element_text(family="Lora", color="black", face="bold", size=24, hjust=0), 
+  # plot.subtitle = element_text(family="Lora", color="black", size=12, hjust=0), 
+  # axis.title = element_text(family="Lora", color="gray98", face="bold", size=12), 
+  # axis.text = element_text(family="Lora", color="gray98", size=24), 
+  axis.ticks = element_blank(), 
+  # plot.caption = element_text(family="Lora", color="black", size=12), 
+  plot.background = element_rect(fill = "gray20", color = NA),
+  panel.background =  element_rect(fill = "gray20", color = NA), 
+  legend.background = element_rect(fill = "gray20", color = NA), 
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(), 
+  axis.title.x = element_text(color='gray98'),
+  axis.text.y = element_blank(), 
+  axis.text.x = element_text(color='gray98'), 
+  # axis.line.x.bottom = element_line(color='gray98'),
+  legend.title = element_blank())
+  # legend.text = element_text(family="Lora", color="black", size=12, hjust=0),
+  # legend.position = 'top',
+  # strip.text = element_text(family="Lora", color="black", size=14))
+```
+
+# 6. Plot 
+
+```{r tswift_BoW_viz, include=TRUE, fig.height=6.2}
+(tswift_BoW_viz <- count_tswift %>% 
+  slice_max(percent, n=10) %>% 
+  ggplot(.,
+         aes(x=percent,
+             y=reorder(word, percent))) + 
+  geom_col(fill = 'cyan3') + 
+  geom_text(aes(label = word),
+            hjust = 1.5,
+            size = 12,
+            color = 'gray98',
+            family = 'Lora',
+            fontface = 'bold') + 
+  labs(x='\nWord Count (% of corpus)',
+       y='') + 
+  scale_x_continuous(labels = percent) + 
+  my_theme)
+```
+
+```{r beyonce_BoW_viz, include=TRUE, fig.height=6.2}
+(beyonce_BoW_viz <- count_beyonce %>% 
+  slice_max(percent, n=10) %>% 
+  ggplot(.,
+         aes(x=percent,
+             y=reorder(word, percent))) + 
+  geom_col(fill = 'green3') + 
+  geom_text(aes(label = word),
+            hjust = 1.5,
+            size = 12,
+            color = 'gray98',
+            family = 'Lora',
+            fontface = 'bold') + 
+  labs(x='\nWord Count (% of corpus)',
+       y='') + 
+  scale_x_continuous(labels = percent) + 
+  my_theme)
+``` 
+
+```{r fig.height=10}
+(BoW_viz <- tswift_BoW_viz + beyonce_BoW_viz + 
+  plot_annotation(title = glue('Most frequently used words in ',
+                               {highlight_text("Taylor Swift", "cyan3", "b", size = 60)}, 
+                               ' and ', 
+                               {highlight_text("Beyonce", "green3", "b", size = 60)}, ' songs'),
+                  subtitle = 'Top 10 songs by artist',
+                  caption = '<br><b>Tidy Tuesday Week 40 (2020)',
+                  theme = theme_jk(markdown = TRUE, 
+                                   dark = TRUE,
+                                   plot_title_family = "Lora", 
+                                   subtitle_family = "Lora",
+                                   subtitle_size = 40,
+                                   caption_family = "Lora",
+                                   caption_size = 30, 
+                                   plot_title_size = 60)))
+```
+
+# 7. Save 
+
+```{r save, include=TRUE}
+# ggsave("graphics/BoW_viz.png", BoW_viz,
+#        width = 18, height = 10, dpi = 300)
+```
+
+```{r save_plot, include=TRUE}
+# Save the plot as PNG
+# ggsave(
+#   filename = glue("tt_{tt_year}_{tt_week}.png"), 
+#   plot = p,
+#   width = 10, height = 8, units = "in", dpi = 320
+# )
+# 
+# make thumbnail for page
+# magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>% 
+#   magick::image_resize(geometry = "400") %>% 
+#   magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
+```
+
+# 8. Session Info
+
+::: {.callout-tip collapse="true"}
+##### Expand for Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+:::
+
+# 9. Github Repository 
+
+::: {.callout-tip collapse="true"}
+
+##### Expand for GitHub Repo
+ 
+[Access the GitHub repository here](https://github.com/mrafa3/mrafa3.github.io)
+:::
