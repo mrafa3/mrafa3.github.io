@@ -29,6 +29,8 @@ execute:
   eval: true
 ---
 
+
+
 Every year, millions of children – mostly young girls – have their futures decided for them through child marriage. This isn't just about numbers in a dataset; it's about real kids losing their chance to grow, dream, and choose their own paths. While there has been progress, child marriage still happens too often, driven by from poverty and gender power dynamics in societies. Before I worked on this #MakeoverMonday, I wanted to recognize the humanity and pain in this data.
 
 Here's some more information from [UNICEF's website](https://www.unicef.org/protection/child-marriage):
@@ -48,6 +50,8 @@ Now, here's the **original plot for #MakeoverMonday**
 ![Stylized tile map showing the rate of marriage among girls aged 15. This type of map can be an effective way to communicate geographic patterns, while avoiding some shortcomings of typical map projections, like land area having large differences that can introduce cognitive biases. Source: UNICEF.](mm_2020_39_tilemap.png){#fig-4}
 
 # 1. Load Packages & Setup
+
+
 
 ```{r setup, include=TRUE}
 if (!require("pacman")) install.packages("pacman")
@@ -74,7 +78,11 @@ pacman::p_load(
 font_add_google('Lato')
 ```
 
+
+
 # 2. Read in the Data
+
+
 
 ```{r read_data, include=TRUE}
 mm_year <- 2020
@@ -87,7 +95,11 @@ df <- read.csv("https://query.data.world/s/qss24rzobvbkg6gc7y7lzfn75c4b46",
 tile_data <- read_csv("https://gist.githubusercontent.com/maartenzam/787498bbc07ae06b637447dbd430ea0a/raw/9a9dafafb44d8990f85243a9c7ca349acd3a0d07/worldtilegrid.csv")
 ```
 
+
+
 # 3. Examine the Data 
+
+
 
 ```{r examine, include=TRUE, echo=TRUE}
 df %>% 
@@ -97,7 +109,11 @@ df %>%
   summary()
 ```
 
+
+
 # 4. Tidy the Data 
+
+
 
 ```{r tidy_df, include=TRUE}
 # collect country codes and regions
@@ -139,7 +155,11 @@ top_10_disparity_df <- df %>%
   slice_max(order_by = diff_by_18, n = 10)
 ```
 
+
+
 # 5. Visualization Parameters 
+
+
 
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
@@ -158,9 +178,13 @@ region_cols <- c('Southern Asia' = 'darkorchid3',
                  'Sub-Saharan Africa' = 'springgreen4')
 ```
 
+
+
 # 6. Plot 
 
 #### Bar plot
+
+
 
 ```{r top10_viz, include=TRUE, fig.height=7, fig.width=12}
 top10_viz <- top_10_girls15_df %>% 
@@ -204,7 +228,11 @@ top10_viz <- top_10_girls15_df %>%
         panel.grid.major = element_blank())
 ```
 
+
+
 #### Connected dot plot
+
+
 
 ```{r disparity_viz, include=TRUE, fig.height=7.5, fig.width=12}
 disparity_viz <- top_10_disparity_df %>% 
@@ -236,7 +264,11 @@ disparity_viz <- top_10_disparity_df %>%
         axis.text.y = element_text(size=rel(2.75)))
 ```
 
+
+
 #### Tile map
+
+
 
 ```{r tilemap_viz, fig.width=10, fig.height=9}
 tilemap_viz <- tile_data %>% 
@@ -272,7 +304,11 @@ tilemap_viz <- tile_data %>%
         legend.spacing.x = unit(0.2, 'cm'))
 ```
 
+
+
 # 7. Save 
+
+
 
 ```{r save_plot, include=TRUE}
 # TOP 10 PLOT
@@ -310,14 +346,20 @@ magick::image_read(glue("mm_{mm_year}_{mm_week}_tilemap.png")) %>%
   magick::image_write(glue("mm_{mm_year}_{mm_week}_tilemap_thumbnail.png"))
 ```
 
+
+
 # 8. Session Info
 
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
+
+
 ```{r session_info, echo=FALSE}
 sessionInfo()
 ```
+
+
 :::
 
 # 9. Github Repository 
