@@ -1,6 +1,6 @@
 ---
 title: "Visualizing child marriage globally"
-# description: "Making over a dashboard with a series of plots that tell the story of child marriage"
+description: "Making over a dashboard with a series of plots that tell the story of child marriage"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
