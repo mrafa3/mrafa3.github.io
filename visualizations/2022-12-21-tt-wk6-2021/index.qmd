@@ -127,14 +127,8 @@ caption <- paste0("<span style = 'color:#ffffff;'>.....</span>",
 
 # 6. Plot 
 
-```{r}
-hbcu_all %>% 
-  pivot_wider()
-```
-
-
-```{r include=TRUE, fig.width=11, fig.height=6, fig.align='center'}
-(plot_enrollment <- hbcu_all %>% 
+```{r plot_enrollment, include=TRUE, fig.width=11, fig.height=6, fig.align='center'}
+plot_enrollment <- hbcu_all %>% 
   ggplot(aes(x=year,
              # y=annual_enrollment,
              )) + 
@@ -157,7 +151,7 @@ hbcu_all %>%
         plot.title = element_textbox_simple(face="bold", size=rel(2), margin=margin(b=5)),
         plot.subtitle = element_textbox_simple(size=rel(1.2), margin=margin(b=10)),
         plot.caption = element_textbox_simple(size=rel(1.2)),
-        axis.text = element_text(color="black", size=rel(1.5))))
+        axis.text = element_text(color="black", size=rel(1.5)))
 ```
 
 # 7. Save 
