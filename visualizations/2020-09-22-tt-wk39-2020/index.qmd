@@ -73,7 +73,6 @@ expeditions %>%
   glimpse()
 ```
 
-
 # 4. Tidy the Data 
 
 ```{r tidy_expedition, include=TRUE}
@@ -122,7 +121,7 @@ peak_hist_viz <- peaks %>%
              aes(x = 8600, y = 9, xend = 8850, yend = 4), 
              color = 'black', arrow = arw) +
   annotate("text", x=8600, y=11, label = 'Mt. Everest', family='Open Sans', size=7) + 
-  ggtitle('Mount Everest is really tall..',
+  ggtitle('Mount Everest is really tall',
           subtitle = 'Distribution of peak heights in the Himalayas') + 
   labs(x='<br>Height (meters)',
        y='Count',
