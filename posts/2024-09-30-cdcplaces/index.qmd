@@ -116,9 +116,9 @@ df_social_needs <- get_places(geography = 'county',
                  geometry = TRUE)
 ```
 
-For this first release of **social needs** indicators, there are only `r n_distinct(df_social_needs$stateabbr)` states included.[^1]
+For this first release of **social needs** indicators, there are only `r n_distinct(df_social_needs$stateabbr)` states included.[^2]
 
-[^1]: At the time of this review, Arkansas, Colorado, Connecticut, Illinois, Louisiana, New York, North Dakota, Oregon, Pennsylvania, South Dakota, and Virginia are not included in the social needs indicators in CDCPLACES.
+[^2]: At the time of this review, Arkansas, Colorado, Connecticut, Illinois, Louisiana, New York, North Dakota, Oregon, Pennsylvania, South Dakota, and Virginia are not included in the social needs indicators in CDCPLACES.
 
 ```{r map2, include=TRUE}
 df_social_needs %>% 
