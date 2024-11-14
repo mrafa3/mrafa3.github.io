@@ -40,6 +40,7 @@ pacman::p_load(
     tidytuesdayR,
     ggtext,
     showtext,
+    patchwork,
     janitor,   #for clean_names()
     scales,
     htmltools, #for tagList()
@@ -51,8 +52,7 @@ pacman::p_load(
     SnowballC    #for text stemming
 )    
 
-font_add('fa-brands', 'fonts/Font Awesome 6 Brands-Regular-400.otf')
-font_add_google('Lora')
+font_add_google("Roboto")
 ```
 
 # 2. Read in the Data
@@ -132,27 +132,29 @@ tidy_lyrics <- tidy_lyrics %>%
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
   # choose font family
-  text = element_text(family = 'Lora'), 
-  # plot.title = element_text(family="Lora", color="black", face="bold", size=24, hjust=0), 
-  # plot.subtitle = element_text(family="Lora", color="black", size=12, hjust=0), 
-  # axis.title = element_text(family="Lora", color="gray98", face="bold", size=12), 
-  # axis.text = element_text(family="Lora", color="gray98", size=24), 
+  text = element_text(family = 'Roboto', size=14), 
+  # plot.title = element_text(family="Roboto", color="black", face="bold", size=24, hjust=0), 
+  # plot.subtitle = element_text(family="Roboto", color="black", size=12, hjust=0), 
+  # axis.title = element_text(family="Roboto", color="gray98", face="bold", size=12), 
+  # axis.text = element_text(family="Roboto", color="gray98", size=24), 
   axis.ticks = element_blank(), 
-  # plot.caption = element_text(family="Lora", color="black", size=12), 
-  plot.background = element_rect(fill = "gray20", color = NA),
-  panel.background =  element_rect(fill = "gray20", color = NA), 
-  legend.background = element_rect(fill = "gray20", color = NA), 
+  # plot.caption = element_text(family="Roboto", color="black", size=12), 
+  plot.background = element_rect(fill = "gray20", color = "gray20"),
+  panel.background =  element_rect(fill = "gray20", color = "gray20"),
+  # legend.background = element_rect(fill = "gray20", color = "gray20"), 
   panel.grid.major = element_blank(),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(), 
+  axis.line.x = element_line(color='gray98'), 
   axis.title.x = element_text(color='gray98'),
   axis.text.y = element_blank(), 
   axis.text.x = element_text(color='gray98'), 
   # axis.line.x.bottom = element_line(color='gray98'),
-  legend.title = element_blank())
-  # legend.text = element_text(family="Lora", color="black", size=12, hjust=0),
+  legend.position = 'none')
+  # legend.title = element_blank())
+  # legend.text = element_text(family="Roboto", color="black", size=12, hjust=0),
   # legend.position = 'top',
-  # strip.text = element_text(family="Lora", color="black", size=14))
+  # strip.text = element_text(family="Roboto", color="black", size=14))
 ```
 
 # 6. Plot 
@@ -168,7 +170,7 @@ my_theme <- theme(
             hjust = 1.5,
             size = 12,
             color = 'gray98',
-            family = 'Lora',
+            family = 'Roboto',
             fontface = 'bold') + 
   labs(x='\nWord Count (% of corpus)',
        y='') + 
@@ -187,7 +189,7 @@ my_theme <- theme(
             hjust = 1.5,
             size = 12,
             color = 'gray98',
-            family = 'Lora',
+            family = 'Roboto',
             fontface = 'bold') + 
   labs(x='\nWord Count (% of corpus)',
        y='') + 
@@ -196,21 +198,14 @@ my_theme <- theme(
 ``` 
 
 ```{r fig.height=10}
-(BoW_viz <- tswift_BoW_viz + beyonce_BoW_viz + 
-  plot_annotation(title = glue('Most frequently used words in ',
-                               {highlight_text("Taylor Swift", "cyan3", "b", size = 60)}, 
-                               ' and ', 
-                               {highlight_text("Beyonce", "green3", "b", size = 60)}, ' songs'),
-                  subtitle = 'Top 10 songs by artist',
-                  caption = '<br><b>Tidy Tuesday Week 40 (2020)',
-                  theme = theme_jk(markdown = TRUE, 
-                                   dark = TRUE,
-                                   plot_title_family = "Lora", 
-                                   subtitle_family = "Lora",
-                                   subtitle_size = 40,
-                                   caption_family = "Lora",
-                                   caption_size = 30, 
-                                   plot_title_size = 60)))
+tswift_BoW_viz + beyonce_BoW_viz + 
+  plot_annotation(title = glue("Most frequently used words in <span style='color:cyan3'>**Taylor Swift**</span> and <span style='color:green3'>**Beyonce**</span> songs"),
+                  theme = theme(plot.title = element_textbox_simple(size=rel(4), face='bold', color='gray98',
+                                                                    margin = margin(t=10)), 
+                                plot.background = element_rect(fill = "gray20", color = NA),
+                                panel.background = element_rect(fill = "gray20"),
+                                plot.margin = unit(c(0, 0, 0, 0), "pt")))
+
 ```
 
 # 7. Save 
