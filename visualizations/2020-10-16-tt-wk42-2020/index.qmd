@@ -1,0 +1,189 @@
+---
+title: "Visualizing Anscombe's Quartet"
+description: "Different shapes can have similar summary statistics"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+date: 10-16-2020
+categories: [R, "#TidyTuesday", bump-chart] # self-defined categories
+image: "tt_2020_42_thumbnail.png"
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+
+format:
+  html:
+    toc: true
+    toc-depth: 5
+    code-link: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    self-contained: true
+
+editor_options: 
+  chunk_output_type: inline
+  
+execute: 
+  error: false
+  message: false
+  warning: false
+  eval: true
+---
+
+![[Anscombe's Quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet) is a statistical trap, where datasets with fundamentally different characteristics and distributions can have the same (or very similar) summary statistics. This dataset is a modern more example that shows this trap in action. The graphic above visualizes a bullseye, dinosaur, and star, which are similar in their summary statistics but are obviously quite different visually.](tt_2020_42.png){#fig-1}
+
+# 1. Load Packages & Setup
+
+```{r setup, include=TRUE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    tidytuesdayR,
+    patchwork,
+    ggtext,
+    showtext,
+    janitor,   #for clean_names()
+    glue,
+    here
+)    
+
+font_add_google('Source Code Pro')
+showtext_auto()
+```
+
+# 2. Read in the Data
+
+```{r read_data, include=TRUE}
+tt_year <- 2020
+tt_week <- 42
+
+tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
+
+datasaurus <- tuesdata$datasaurus
+```
+
+# 3. Examine the Data 
+
+```{r examine, include=TRUE, echo=TRUE}
+datasaurus %>% 
+  glimpse()
+```
+
+# 4. Tidy the Data 
+
+```{r sum_datasaurus, include=TRUE}
+sum_datasaurus <- datasaurus %>% 
+  group_by(dataset) %>% 
+  summarise_all(list(mean = mean, 
+                     min = min, 
+                     max = max,
+                     sd = sd))
+
+column_names <- c('dataset', 'Mean(x)', 'Mean(y)', 'Min(x)', 'Min(y)', 'Max(x)', 'Max(y)', 'Std Dev(x)', 'Std Dev(y)')
+
+names(sum_datasaurus) <- column_names
+
+sum_datasaurus <- sum_datasaurus %>% 
+  gather(summary_statistic, value, 2:9) %>% 
+  mutate(value = round(value, 2)) %>% 
+  mutate(label = paste(summary_statistic, value, sep = " = "))
+
+sum_datasaurus$summary_statistic <- factor(sum_datasaurus$summary_statistic, 
+                                           levels =  c('Std Dev(y)', 'Std Dev(x)', 
+                                                       'Min(y)', 'Min(x)', 
+                                                       'Max(y)', 'Max(x)', 
+                                                       'Mean(y)', 'Mean(x)'))
+```
+
+# 5. Visualization Parameters 
+
+```{r my_theme, include=TRUE}
+my_theme <- theme(
+  # choose font family
+  text = element_text(family = 'Source Code Pro', size=12, color='black'), 
+  axis.ticks = element_blank(), 
+  plot.background = element_blank(),
+  panel.background =  element_blank(), 
+  legend.background = element_blank(), 
+  panel.grid.major = element_line(colour = "grey90", linewidth = 0.5),
+  panel.grid.minor = element_line(colour = "grey93", linewidth = 0.5),
+  panel.border = element_blank(),
+  strip.text = element_textbox(size=rel(2), face='bold'))
+```
+
+# 6. Plot 
+
+
+```{r facet_datasaurus_viz, include=TRUE, fig.height=6.2, fig.width=3}
+facet_datasaurus_viz <- datasaurus %>% 
+  filter(dataset %in% c('dino', 'bullseye', 'star')) %>% 
+  ggplot(.) + 
+  geom_point(aes(x=x,
+                 y=y),
+             size=.7) + 
+  facet_wrap(~dataset,
+             ncol = 1) + 
+  my_theme
+
+datasaurus_summary_stat_viz <- sum_datasaurus %>% 
+  filter(dataset %in% c('dino', 'bullseye', 'star')) %>% 
+  mutate(nrow = row_number()) %>% 
+  ggplot(.) + 
+  geom_text(aes(x=1,
+                y=-nrow,
+                label=label),
+            family="Source Code Pro",
+            size=7) + 
+  facet_wrap(~dataset,
+             ncol = 1) + 
+  my_theme + 
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title = element_blank(),
+        axis.text = element_blank())
+```
+
+```{r datasaurus_viz, include=TRUE, fig.height=6.5, fig.width=10}
+datasaurus_viz <- datasaurus_summary_stat_viz + facet_datasaurus_viz + 
+  plot_annotation(title = '**Summary statistics can mislead**',
+                  subtitle = "The Anscombe Quartet is a statistical trap that demonstrates that summary statistics can be misleading. The visualization below shows three contemporary examples of the Anscombe Quartet problem. **Only by visualizing the data** can you understand the dramatic differences in the distribution of the data.",
+                  caption = '**Source**: Tidy Tuesday Week 41 (2020)',
+                  theme = theme(plot.title = element_textbox(size=rel(4.5), face='bold'),
+                                plot.subtitle = element_textbox_simple(size=rel(2), lineheight=.3),
+                                plot.caption = element_textbox(size=rel(1.5)))
+                  )
+```
+
+# 7. Save 
+
+```{r save_plot, include=TRUE}
+# Save the plot as PNG
+ggsave(
+  filename = glue("tt_{tt_year}_{tt_week}.png"),
+  plot = datasaurus_viz,
+  width = 5, height = 5, units = "in", dpi = 320
+)
+
+# make thumbnail for page
+magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
+  magick::image_resize(geometry = "400") %>%
+  magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
+```
+
+# 8. Session Info
+
+::: {.callout-tip collapse="true"}
+##### Expand for Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+:::
+
+# 9. Github Repository 
+
+::: {.callout-tip collapse="true"}
+
+##### Expand for GitHub Repo
+ 
+[Access the GitHub repository here](https://github.com/mrafa3/mrafa3.github.io)
+:::
