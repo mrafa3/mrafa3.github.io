@@ -29,9 +29,13 @@ execute:
   eval: true
 ---
 
+
+
 ![[Anscombe's Quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet) is a statistical trap, where datasets with fundamentally different characteristics and distributions can have the same (or very similar) summary statistics. This dataset is a modern more example that shows this trap in action. The graphic above visualizes a bullseye, dinosaur, and star, which are similar in their summary statistics but are obviously quite different visually.](tt_2020_42.png){#fig-1}
 
 # 1. Load Packages & Setup
+
+
 
 ```{r setup, include=TRUE}
 if (!require("pacman")) install.packages("pacman")
@@ -50,7 +54,11 @@ font_add_google('Source Code Pro')
 showtext_auto()
 ```
 
+
+
 # 2. Read in the Data
+
+
 
 ```{r read_data, include=TRUE}
 tt_year <- 2020
@@ -61,14 +69,22 @@ tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
 datasaurus <- tuesdata$datasaurus
 ```
 
+
+
 # 3. Examine the Data 
+
+
 
 ```{r examine, include=TRUE, echo=TRUE}
 datasaurus %>% 
   glimpse()
 ```
 
+
+
 # 4. Tidy the Data 
+
+
 
 ```{r sum_datasaurus, include=TRUE}
 sum_datasaurus <- datasaurus %>% 
@@ -94,7 +110,11 @@ sum_datasaurus$summary_statistic <- factor(sum_datasaurus$summary_statistic,
                                                        'Mean(y)', 'Mean(x)'))
 ```
 
+
+
 # 5. Visualization Parameters 
+
+
 
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
@@ -110,7 +130,11 @@ my_theme <- theme(
   strip.text = element_textbox(size=rel(2), face='bold'))
 ```
 
+
+
 # 6. Plot 
+
+
 
 
 ```{r facet_datasaurus_viz, include=TRUE, fig.height=6.2, fig.width=3}
@@ -153,7 +177,11 @@ datasaurus_viz <- datasaurus_summary_stat_viz + facet_datasaurus_viz +
                   )
 ```
 
+
+
 # 7. Save 
+
+
 
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
@@ -169,14 +197,20 @@ magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
   magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
 ```
 
+
+
 # 8. Session Info
 
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
+
+
 ```{r, echo = FALSE}
 sessionInfo()
 ```
+
+
 :::
 
 # 9. Github Repository 
