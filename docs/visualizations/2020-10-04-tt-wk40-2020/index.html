@@ -4854,9 +4854,7 @@ Figure 1: Barplot illustrating the top word pairs used by Taylor Swift and Beyo
 <span>    <span class="va">glue</span>,</span>
 <span>    <span class="va">here</span>,</span>
 <span>    <span class="va">stopwords</span>,</span>
-<span>    <span class="va">tidytext</span>,     <span class="co">#for text management</span></span>
-<span>    <span class="va">tidylo</span>,</span>
-<span>    <span class="va">SnowballC</span>    <span class="co">#for text stemming</span></span>
+<span>    <span class="va">tidytext</span>     <span class="co">#for text management</span></span>
 <span><span class="op">)</span>    </span>
 <span></span>
 <span><span class="fu">font_add_google</span><span class="op">(</span><span class="st">&quot;Charm&quot;</span><span class="op">)</span></span>
@@ -5071,30 +5069,30 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] SnowballC_0.7.1    tidylo_0.2.0       tidytext_0.4.2     stopwords_2.3     
- [5] here_1.0.1         glue_1.8.0         htmltools_0.5.8.1  scales_1.3.0      
- [9] janitor_2.2.0      patchwork_1.3.0    showtext_0.9-7     showtextdb_3.0    
-[13] sysfonts_0.8.9     ggtext_0.1.2       tidytuesdayR_1.1.2 lubridate_1.9.3   
-[17] forcats_1.0.0      stringr_1.5.1      dplyr_1.1.4        purrr_1.0.2       
-[21] readr_2.1.5        tidyr_1.3.1        tibble_3.2.1       ggplot2_3.5.1     
-[25] tidyverse_2.0.0    pacman_0.5.1      
+ [1] tidytext_0.4.2     stopwords_2.3      here_1.0.1         glue_1.8.0        
+ [5] htmltools_0.5.8.1  scales_1.3.0       janitor_2.2.0      patchwork_1.3.0   
+ [9] showtext_0.9-7     showtextdb_3.0     sysfonts_0.8.9     ggtext_0.1.2      
+[13] tidytuesdayR_1.1.2 lubridate_1.9.3    forcats_1.0.0      stringr_1.5.1     
+[17] dplyr_1.1.4        purrr_1.0.2        readr_2.1.5        tidyr_1.3.1       
+[21] tibble_3.2.1       ggplot2_3.5.1      tidyverse_2.0.0    pacman_0.5.1      
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.5      httr2_1.0.5       xfun_0.48         htmlwidgets_1.6.4
+ [1] gtable_0.3.5      xfun_0.48         httr2_1.0.5       htmlwidgets_1.6.4
  [5] gh_1.4.1          lattice_0.22-6    tzdb_0.4.0        vctrs_0.6.5      
  [9] tools_4.4.0       generics_0.1.3    parallel_4.4.0    curl_5.2.3       
 [13] fansi_1.0.6       janeaustenr_1.0.0 pkgconfig_2.0.3   tokenizers_0.3.0 
 [17] Matrix_1.7-1      lifecycle_1.0.4   compiler_4.4.0    farver_2.1.2     
-[21] textshaping_0.4.0 munsell_0.5.1     snakecase_0.11.1  yaml_2.3.10      
-[25] crayon_1.5.3      pillar_1.9.0      magick_2.8.5      commonmark_1.9.2 
-[29] tidyselect_1.2.1  digest_0.6.37     stringi_1.8.4     labeling_0.4.3   
-[33] rprojroot_2.0.4   fastmap_1.2.0     grid_4.4.0        colorspace_2.1-1 
-[37] cli_3.6.3         magrittr_2.0.3    utf8_1.2.4        withr_3.0.1      
-[41] rappdirs_0.3.3    bit64_4.5.2       timechange_0.3.0  rmarkdown_2.28   
-[45] gitcreds_0.1.2    bit_4.5.0         ragg_1.3.3        hms_1.1.3        
-[49] evaluate_1.0.1    knitr_1.48        markdown_1.13     rlang_1.1.4      
-[53] gridtext_0.1.5    Rcpp_1.0.13       xml2_1.3.6        vroom_1.6.5      
-[57] rstudioapi_0.17.1 jsonlite_1.8.9    R6_2.5.1          systemfonts_1.1.0</code></pre>
+[21] textshaping_0.4.0 munsell_0.5.1     snakecase_0.11.1  SnowballC_0.7.1  
+[25] yaml_2.3.10       crayon_1.5.3      pillar_1.9.0      magick_2.8.5     
+[29] commonmark_1.9.2  tidyselect_1.2.1  digest_0.6.37     stringi_1.8.4    
+[33] labeling_0.4.3    rprojroot_2.0.4   fastmap_1.2.0     grid_4.4.0       
+[37] colorspace_2.1-1  cli_3.6.3         magrittr_2.0.3    utf8_1.2.4       
+[41] withr_3.0.1       rappdirs_0.3.3    bit64_4.5.2       timechange_0.3.0 
+[45] rmarkdown_2.28    gitcreds_0.1.2    bit_4.5.0         ragg_1.3.3       
+[49] hms_1.1.3         evaluate_1.0.1    knitr_1.48        markdown_1.13    
+[53] rlang_1.1.4       gridtext_0.1.5    Rcpp_1.0.13       xml2_1.3.6       
+[57] vroom_1.6.5       rstudioapi_0.17.1 jsonlite_1.8.9    R6_2.5.1         
+[61] systemfonts_1.1.0</code></pre>
 </div>
 </div>
 </div>
@@ -5641,200 +5639,198 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a><span class="in">    glue,</span></span>
 <span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a><span class="in">    here,</span></span>
 <span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a><span class="in">    stopwords,</span></span>
-<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a><span class="in">    tidytext,     #for text management</span></span>
-<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a><span class="in">    tidylo,</span></span>
-<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a><span class="in">    SnowballC    #for text stemming</span></span>
-<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a><span class="in">)    </span></span>
-<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a><span class="in">font_add_google(&quot;Charm&quot;)</span></span>
-<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a><span class="in">showtext_auto()</span></span>
-<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a><span class="in">    tidytext     #for text management</span></span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a><span class="in">)    </span></span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a><span class="in">font_add_google(&quot;Charm&quot;)</span></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a><span class="in">showtext_auto()</span></span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Read in the Data</span></span>
 <span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2. Read in the Data</span></span>
-<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a><span class="in">```{r read_data, include=TRUE}</span></span>
-<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a><span class="in">tt_year &lt;- 2020</span></span>
-<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a><span class="in">tt_week &lt;- 40</span></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r read_data, include=TRUE}</span></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a><span class="in">tt_year &lt;- 2020</span></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a><span class="in">tt_week &lt;- 40</span></span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a><span class="in">tuesdata &lt;- tidytuesdayR::tt_load(tt_year, week = tt_week)</span></span>
 <span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="in">tuesdata &lt;- tidytuesdayR::tt_load(tt_year, week = tt_week)</span></span>
-<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a><span class="in">beyonce_lyrics &lt;- tuesdata$beyonce_lyrics</span></span>
-<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a><span class="in">taylor_swift_lyrics &lt;- tuesdata$taylor_swift_lyrics</span></span>
-<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a><span class="in">beyonce_lyrics &lt;- tuesdata$beyonce_lyrics</span></span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a><span class="in">taylor_swift_lyrics &lt;- tuesdata$taylor_swift_lyrics</span></span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Examine the Data </span></span>
 <span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3. Examine the Data </span></span>
-<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a><span class="in">```{r examine, include=TRUE, echo=TRUE}</span></span>
-<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a><span class="in">beyonce_lyrics %&gt;% </span></span>
-<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a><span class="in">  glimpse()</span></span>
-<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a><span class="in">taylor_swift_lyrics %&gt;% </span></span>
-<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a><span class="in">  glimpse()</span></span>
-<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r examine, include=TRUE, echo=TRUE}</span></span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a><span class="in">beyonce_lyrics %&gt;% </span></span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a><span class="in">  glimpse()</span></span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a><span class="in">taylor_swift_lyrics %&gt;% </span></span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="in">  glimpse()</span></span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-79"><a href="#cb13-79" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Tidy the Data </span></span>
 <span id="cb13-80"><a href="#cb13-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a><span class="fu"># 4. Tidy the Data </span></span>
+<span id="cb13-81"><a href="#cb13-81" aria-hidden="true" tabindex="-1"></a>Stop words should be approached in a custom way given the context of the data. Because lyrics tend to use lots of traditional stop words that are meaningful to the song, I chose to only filter out stop words of three characters or less (using the snowball lexicon). </span>
 <span id="cb13-82"><a href="#cb13-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a>Stop words should be approached in a custom way given the context of the data. Because lyrics tend to use lots of traditional stop words that are meaningful to the song, I chose to only filter out stop words of three characters or less (using the snowball lexicon). </span>
-<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r stop_words_lyrics, include=TRUE}</span></span>
-<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a><span class="in">stop_words_lyrics &lt;- stop_words %&gt;% </span></span>
-<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(lexicon == &#39;snowball&#39;) %&gt;% </span></span>
-<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(str_length(word) &lt; 4)</span></span>
-<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-83"><a href="#cb13-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{r stop_words_lyrics, include=TRUE}</span></span>
+<span id="cb13-84"><a href="#cb13-84" aria-hidden="true" tabindex="-1"></a><span class="in">stop_words_lyrics &lt;- stop_words %&gt;% </span></span>
+<span id="cb13-85"><a href="#cb13-85" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(lexicon == &#39;snowball&#39;) %&gt;% </span></span>
+<span id="cb13-86"><a href="#cb13-86" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(str_length(word) &lt; 4)</span></span>
+<span id="cb13-87"><a href="#cb13-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-88"><a href="#cb13-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-89"><a href="#cb13-89" aria-hidden="true" tabindex="-1"></a>I&#39;d like to visualize the bigrams, or word pairs, in their lyrics, excluding any that are repeated words. I also considered removing any numbers, but given that I plan to only visualize the top bigrams, these won&#39;t be a factor.</span>
 <span id="cb13-90"><a href="#cb13-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a>I&#39;d like to visualize the bigrams, or word pairs, in their lyrics, excluding any that are repeated words. I also considered removing any numbers, but given that I plan to only visualize the top bigrams, these won&#39;t be a factor.</span>
-<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tok_beyonce_lyrics, include=TRUE}</span></span>
-<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a><span class="in">tok_beyonce_lyrics &lt;- beyonce_lyrics %&gt;% </span></span>
-<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::clean_names() %&gt;%</span></span>
-<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a><span class="in">   tidytext::unnest_tokens(output = bigram, </span></span>
-<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a><span class="in">                          input = line,</span></span>
-<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a><span class="in">                          token = &#39;ngrams&#39;,</span></span>
-<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a><span class="in">                          n = 2) %&gt;% </span></span>
-<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a><span class="in">   distinct(bigram, song_id, .keep_all = TRUE) %&gt;% </span></span>
-<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a><span class="in">   select(bigram, artist_name) %&gt;% </span></span>
-<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a><span class="in">   separate(bigram, into = c(&#39;first&#39;, &#39;second&#39;), sep=&#39; &#39;, remove=FALSE) %&gt;%</span></span>
-<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;first&#39; = &#39;word&#39;)) %&gt;% </span></span>
-<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;second&#39; = &#39;word&#39;)) %&gt;% </span></span>
-<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(first_stopword = if_else(is.na(lexicon.x), 0, 1),</span></span>
-<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="in">          second_stopword = if_else(is.na(lexicon.y), 0, 1)) %&gt;% </span></span>
-<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="in">   filter(first_stopword == 0 &amp; second_stopword == 0,</span></span>
-<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="in">          first != second,</span></span>
-<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a><span class="in">          !is.na(bigram)) %&gt;% </span></span>
-<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a><span class="in">   select(-starts_with(&#39;lexicon&#39;),</span></span>
-<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a><span class="in">          -ends_with(&#39;stopword&#39;)) %&gt;% </span></span>
-<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::tabyl(bigram) %&gt;%</span></span>
-<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a><span class="in">   as.data.frame() %&gt;%</span></span>
-<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(artist_name = &#39;Beyoncé&#39;)</span></span>
-<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a><span class="in">tok_taylor_swift_lyrics &lt;- taylor_swift_lyrics %&gt;% </span></span>
-<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::clean_names() %&gt;% </span></span>
-<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a><span class="in">   unnest_tokens(output = bigram, </span></span>
-<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a><span class="in">                 input = lyrics,</span></span>
-<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a><span class="in">                 token = &#39;ngrams&#39;,</span></span>
-<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a><span class="in">                 n = 2) %&gt;% </span></span>
-<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a><span class="in">   distinct(bigram, title, .keep_all = TRUE) %&gt;% </span></span>
-<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a><span class="in">   select(bigram, artist_name = artist) %&gt;% </span></span>
-<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a><span class="in">   separate(bigram, into = c(&#39;first&#39;, &#39;second&#39;), sep=&#39; &#39;, remove=FALSE) %&gt;% </span></span>
-<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;first&#39; = &#39;word&#39;)) %&gt;% </span></span>
-<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;second&#39; = &#39;word&#39;)) %&gt;% </span></span>
-<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(first_stopword = if_else(is.na(lexicon.x), 0, 1),</span></span>
-<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a><span class="in">          second_stopword = if_else(is.na(lexicon.y), 0, 1)) %&gt;% </span></span>
-<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="in">   filter(first_stopword == 0 &amp; second_stopword == 0,</span></span>
-<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a><span class="in">          first != second) %&gt;% </span></span>
-<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a><span class="in">   select(-starts_with(&#39;lexicon&#39;),</span></span>
-<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a><span class="in">          -ends_with(&#39;stopword&#39;)) %&gt;% </span></span>
-<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::tabyl(bigram) %&gt;% </span></span>
-<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a><span class="in">   as.data.frame() %&gt;% </span></span>
-<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(artist_name = &#39;Taylor Swift&#39;)</span></span>
-<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-91"><a href="#cb13-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tok_beyonce_lyrics, include=TRUE}</span></span>
+<span id="cb13-92"><a href="#cb13-92" aria-hidden="true" tabindex="-1"></a><span class="in">tok_beyonce_lyrics &lt;- beyonce_lyrics %&gt;% </span></span>
+<span id="cb13-93"><a href="#cb13-93" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::clean_names() %&gt;%</span></span>
+<span id="cb13-94"><a href="#cb13-94" aria-hidden="true" tabindex="-1"></a><span class="in">   tidytext::unnest_tokens(output = bigram, </span></span>
+<span id="cb13-95"><a href="#cb13-95" aria-hidden="true" tabindex="-1"></a><span class="in">                          input = line,</span></span>
+<span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a><span class="in">                          token = &#39;ngrams&#39;,</span></span>
+<span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a><span class="in">                          n = 2) %&gt;% </span></span>
+<span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a><span class="in">   distinct(bigram, song_id, .keep_all = TRUE) %&gt;% </span></span>
+<span id="cb13-99"><a href="#cb13-99" aria-hidden="true" tabindex="-1"></a><span class="in">   select(bigram, artist_name) %&gt;% </span></span>
+<span id="cb13-100"><a href="#cb13-100" aria-hidden="true" tabindex="-1"></a><span class="in">   separate(bigram, into = c(&#39;first&#39;, &#39;second&#39;), sep=&#39; &#39;, remove=FALSE) %&gt;%</span></span>
+<span id="cb13-101"><a href="#cb13-101" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;first&#39; = &#39;word&#39;)) %&gt;% </span></span>
+<span id="cb13-102"><a href="#cb13-102" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;second&#39; = &#39;word&#39;)) %&gt;% </span></span>
+<span id="cb13-103"><a href="#cb13-103" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(first_stopword = if_else(is.na(lexicon.x), 0, 1),</span></span>
+<span id="cb13-104"><a href="#cb13-104" aria-hidden="true" tabindex="-1"></a><span class="in">          second_stopword = if_else(is.na(lexicon.y), 0, 1)) %&gt;% </span></span>
+<span id="cb13-105"><a href="#cb13-105" aria-hidden="true" tabindex="-1"></a><span class="in">   filter(first_stopword == 0 &amp; second_stopword == 0,</span></span>
+<span id="cb13-106"><a href="#cb13-106" aria-hidden="true" tabindex="-1"></a><span class="in">          first != second,</span></span>
+<span id="cb13-107"><a href="#cb13-107" aria-hidden="true" tabindex="-1"></a><span class="in">          !is.na(bigram)) %&gt;% </span></span>
+<span id="cb13-108"><a href="#cb13-108" aria-hidden="true" tabindex="-1"></a><span class="in">   select(-starts_with(&#39;lexicon&#39;),</span></span>
+<span id="cb13-109"><a href="#cb13-109" aria-hidden="true" tabindex="-1"></a><span class="in">          -ends_with(&#39;stopword&#39;)) %&gt;% </span></span>
+<span id="cb13-110"><a href="#cb13-110" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::tabyl(bigram) %&gt;%</span></span>
+<span id="cb13-111"><a href="#cb13-111" aria-hidden="true" tabindex="-1"></a><span class="in">   as.data.frame() %&gt;%</span></span>
+<span id="cb13-112"><a href="#cb13-112" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(artist_name = &#39;Beyoncé&#39;)</span></span>
+<span id="cb13-113"><a href="#cb13-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-114"><a href="#cb13-114" aria-hidden="true" tabindex="-1"></a><span class="in">tok_taylor_swift_lyrics &lt;- taylor_swift_lyrics %&gt;% </span></span>
+<span id="cb13-115"><a href="#cb13-115" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::clean_names() %&gt;% </span></span>
+<span id="cb13-116"><a href="#cb13-116" aria-hidden="true" tabindex="-1"></a><span class="in">   unnest_tokens(output = bigram, </span></span>
+<span id="cb13-117"><a href="#cb13-117" aria-hidden="true" tabindex="-1"></a><span class="in">                 input = lyrics,</span></span>
+<span id="cb13-118"><a href="#cb13-118" aria-hidden="true" tabindex="-1"></a><span class="in">                 token = &#39;ngrams&#39;,</span></span>
+<span id="cb13-119"><a href="#cb13-119" aria-hidden="true" tabindex="-1"></a><span class="in">                 n = 2) %&gt;% </span></span>
+<span id="cb13-120"><a href="#cb13-120" aria-hidden="true" tabindex="-1"></a><span class="in">   distinct(bigram, title, .keep_all = TRUE) %&gt;% </span></span>
+<span id="cb13-121"><a href="#cb13-121" aria-hidden="true" tabindex="-1"></a><span class="in">   select(bigram, artist_name = artist) %&gt;% </span></span>
+<span id="cb13-122"><a href="#cb13-122" aria-hidden="true" tabindex="-1"></a><span class="in">   separate(bigram, into = c(&#39;first&#39;, &#39;second&#39;), sep=&#39; &#39;, remove=FALSE) %&gt;% </span></span>
+<span id="cb13-123"><a href="#cb13-123" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;first&#39; = &#39;word&#39;)) %&gt;% </span></span>
+<span id="cb13-124"><a href="#cb13-124" aria-hidden="true" tabindex="-1"></a><span class="in">   left_join(stop_words_lyrics, by=c(&#39;second&#39; = &#39;word&#39;)) %&gt;% </span></span>
+<span id="cb13-125"><a href="#cb13-125" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(first_stopword = if_else(is.na(lexicon.x), 0, 1),</span></span>
+<span id="cb13-126"><a href="#cb13-126" aria-hidden="true" tabindex="-1"></a><span class="in">          second_stopword = if_else(is.na(lexicon.y), 0, 1)) %&gt;% </span></span>
+<span id="cb13-127"><a href="#cb13-127" aria-hidden="true" tabindex="-1"></a><span class="in">   filter(first_stopword == 0 &amp; second_stopword == 0,</span></span>
+<span id="cb13-128"><a href="#cb13-128" aria-hidden="true" tabindex="-1"></a><span class="in">          first != second) %&gt;% </span></span>
+<span id="cb13-129"><a href="#cb13-129" aria-hidden="true" tabindex="-1"></a><span class="in">   select(-starts_with(&#39;lexicon&#39;),</span></span>
+<span id="cb13-130"><a href="#cb13-130" aria-hidden="true" tabindex="-1"></a><span class="in">          -ends_with(&#39;stopword&#39;)) %&gt;% </span></span>
+<span id="cb13-131"><a href="#cb13-131" aria-hidden="true" tabindex="-1"></a><span class="in">   janitor::tabyl(bigram) %&gt;% </span></span>
+<span id="cb13-132"><a href="#cb13-132" aria-hidden="true" tabindex="-1"></a><span class="in">   as.data.frame() %&gt;% </span></span>
+<span id="cb13-133"><a href="#cb13-133" aria-hidden="true" tabindex="-1"></a><span class="in">   mutate(artist_name = &#39;Taylor Swift&#39;)</span></span>
+<span id="cb13-134"><a href="#cb13-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-135"><a href="#cb13-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-136"><a href="#cb13-136" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Visualization Parameters </span></span>
 <span id="cb13-137"><a href="#cb13-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a><span class="fu"># 5. Visualization Parameters </span></span>
-<span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{r my_theme, include=TRUE}</span></span>
-<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a><span class="in">my_theme &lt;- theme(</span></span>
-<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a><span class="in">  # choose font family</span></span>
-<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a><span class="in">  text = element_text(family = &#39;Charm&#39;, size=14, color=&#39;gray98&#39;), </span></span>
-<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.ticks = element_blank(), </span></span>
-<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a><span class="in">  plot.background = element_rect(fill = &quot;gray20&quot;, color = &quot;gray20&quot;),</span></span>
-<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.background =  element_rect(fill = &quot;gray20&quot;, color = &quot;gray20&quot;),</span></span>
-<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.grid.major = element_blank(),</span></span>
-<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.grid.minor = element_blank(),</span></span>
-<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.border = element_blank(), </span></span>
-<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.line.x = element_line(color=&#39;gray98&#39;), </span></span>
-<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.title.x = element_text(color=&#39;gray98&#39;),</span></span>
-<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.text.y = element_blank(), </span></span>
-<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.text.x = element_text(color=&#39;gray98&#39;), </span></span>
-<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a><span class="in">  legend.position = &#39;none&#39;)</span></span>
-<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-138"><a href="#cb13-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r my_theme, include=TRUE}</span></span>
+<span id="cb13-139"><a href="#cb13-139" aria-hidden="true" tabindex="-1"></a><span class="in">my_theme &lt;- theme(</span></span>
+<span id="cb13-140"><a href="#cb13-140" aria-hidden="true" tabindex="-1"></a><span class="in">  # choose font family</span></span>
+<span id="cb13-141"><a href="#cb13-141" aria-hidden="true" tabindex="-1"></a><span class="in">  text = element_text(family = &#39;Charm&#39;, size=14, color=&#39;gray98&#39;), </span></span>
+<span id="cb13-142"><a href="#cb13-142" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.ticks = element_blank(), </span></span>
+<span id="cb13-143"><a href="#cb13-143" aria-hidden="true" tabindex="-1"></a><span class="in">  plot.background = element_rect(fill = &quot;gray20&quot;, color = &quot;gray20&quot;),</span></span>
+<span id="cb13-144"><a href="#cb13-144" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.background =  element_rect(fill = &quot;gray20&quot;, color = &quot;gray20&quot;),</span></span>
+<span id="cb13-145"><a href="#cb13-145" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.grid.major = element_blank(),</span></span>
+<span id="cb13-146"><a href="#cb13-146" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.grid.minor = element_blank(),</span></span>
+<span id="cb13-147"><a href="#cb13-147" aria-hidden="true" tabindex="-1"></a><span class="in">  panel.border = element_blank(), </span></span>
+<span id="cb13-148"><a href="#cb13-148" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.line.x = element_line(color=&#39;gray98&#39;), </span></span>
+<span id="cb13-149"><a href="#cb13-149" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.title.x = element_text(color=&#39;gray98&#39;),</span></span>
+<span id="cb13-150"><a href="#cb13-150" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.text.y = element_blank(), </span></span>
+<span id="cb13-151"><a href="#cb13-151" aria-hidden="true" tabindex="-1"></a><span class="in">  axis.text.x = element_text(color=&#39;gray98&#39;), </span></span>
+<span id="cb13-152"><a href="#cb13-152" aria-hidden="true" tabindex="-1"></a><span class="in">  legend.position = &#39;none&#39;)</span></span>
+<span id="cb13-153"><a href="#cb13-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-154"><a href="#cb13-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-155"><a href="#cb13-155" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Plot </span></span>
 <span id="cb13-156"><a href="#cb13-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a><span class="fu"># 6. Plot </span></span>
-<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tswift_viz, include=TRUE, fig.height=4, fig.width=5}</span></span>
-<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a><span class="in">tswift_viz &lt;- tok_taylor_swift_lyrics %&gt;% </span></span>
-<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a><span class="in">  slice_max(percent, n=10) %&gt;% </span></span>
-<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(.,</span></span>
-<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a><span class="in">         aes(x=percent,</span></span>
-<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a><span class="in">             y=reorder(bigram, percent))) + </span></span>
-<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_col(fill = &#39;cyan3&#39;) + </span></span>
-<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_text(aes(label = bigram),</span></span>
-<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="in">            hjust = 1.5,</span></span>
-<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a><span class="in">            size = 12,</span></span>
-<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a><span class="in">            color = &#39;gray98&#39;,</span></span>
-<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a><span class="in">            family = &#39;Charm&#39;,</span></span>
-<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a><span class="in">            fontface = &#39;bold&#39;) + </span></span>
-<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(x=&#39;Word Count (% of corpus)&#39;,</span></span>
-<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a><span class="in">       y=&#39;&#39;) + </span></span>
-<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(labels = percent) + </span></span>
-<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a><span class="in">  my_theme</span></span>
-<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a><span class="in">beyonce_viz &lt;- tok_beyonce_lyrics %&gt;% </span></span>
-<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a><span class="in">  slice_max(percent, n=10) %&gt;% </span></span>
-<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(.,</span></span>
-<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a><span class="in">         aes(x=percent,</span></span>
-<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a><span class="in">             y=reorder(bigram, percent))) + </span></span>
-<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_col(fill = &#39;green3&#39;) + </span></span>
-<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_text(aes(label = bigram),</span></span>
-<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a><span class="in">            hjust = 1.5,</span></span>
-<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a><span class="in">            size = 12,</span></span>
-<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a><span class="in">            color = &#39;gray98&#39;,</span></span>
-<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a><span class="in">            family = &#39;Charm&#39;,</span></span>
-<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a><span class="in">            fontface = &#39;bold&#39;) + </span></span>
-<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(x=&#39;Word Count (% of corpus)&#39;,</span></span>
-<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a><span class="in">       y=&#39;&#39;) + </span></span>
-<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(labels = percent) + </span></span>
-<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a><span class="in">  my_theme</span></span>
-<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="in">p &lt;- tswift_viz + beyonce_viz + </span></span>
-<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a><span class="in">  plot_annotation(title = glue(&quot;Most frequently used bigrams in &lt;span style=&#39;color:cyan3&#39;&gt;**Taylor Swift**&lt;/span&gt; and &lt;span style=&#39;color:green3&#39;&gt;**Beyonce**&lt;/span&gt; songs&quot;),</span></span>
-<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a><span class="in">                  subtitle = &#39;Top 10 bigrams by artist&#39;,</span></span>
-<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a><span class="in">                  caption = &#39;&lt;br&gt;Tidy Tuesday Week 40 (2020)&lt;br&gt;Created by @mickey_rafa&#39;,</span></span>
-<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a><span class="in">                  theme = theme(plot.title = element_textbox_simple(size=rel(4), family=&#39;Charm&#39;, </span></span>
-<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a><span class="in">                                                                    face=&#39;bold&#39;, color=&#39;gray98&#39;,</span></span>
-<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a><span class="in">                                                                    margin = margin(t=10)), </span></span>
-<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.subtitle = element_textbox_simple(size=rel(2.5), family=&#39;Charm&#39;, </span></span>
-<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a><span class="in">                                                                    face=&#39;bold&#39;, color=&#39;gray98&#39;), </span></span>
-<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.caption = element_textbox(size=rel(2), color=&#39;gray98&#39;, </span></span>
-<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="in">                                                               family=&#39;Charm&#39;, lineheight=.3), </span></span>
-<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.background = element_rect(fill = &quot;gray20&quot;, color = NA),</span></span>
-<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a><span class="in">                                panel.background = element_rect(fill = &quot;gray20&quot;),</span></span>
-<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.margin = unit(c(0, 0, 0, 0), &quot;pt&quot;)))</span></span>
-<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-157"><a href="#cb13-157" aria-hidden="true" tabindex="-1"></a><span class="in">```{r tswift_viz, include=TRUE, fig.height=4, fig.width=5}</span></span>
+<span id="cb13-158"><a href="#cb13-158" aria-hidden="true" tabindex="-1"></a><span class="in">tswift_viz &lt;- tok_taylor_swift_lyrics %&gt;% </span></span>
+<span id="cb13-159"><a href="#cb13-159" aria-hidden="true" tabindex="-1"></a><span class="in">  slice_max(percent, n=10) %&gt;% </span></span>
+<span id="cb13-160"><a href="#cb13-160" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(.,</span></span>
+<span id="cb13-161"><a href="#cb13-161" aria-hidden="true" tabindex="-1"></a><span class="in">         aes(x=percent,</span></span>
+<span id="cb13-162"><a href="#cb13-162" aria-hidden="true" tabindex="-1"></a><span class="in">             y=reorder(bigram, percent))) + </span></span>
+<span id="cb13-163"><a href="#cb13-163" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_col(fill = &#39;cyan3&#39;) + </span></span>
+<span id="cb13-164"><a href="#cb13-164" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_text(aes(label = bigram),</span></span>
+<span id="cb13-165"><a href="#cb13-165" aria-hidden="true" tabindex="-1"></a><span class="in">            hjust = 1.5,</span></span>
+<span id="cb13-166"><a href="#cb13-166" aria-hidden="true" tabindex="-1"></a><span class="in">            size = 12,</span></span>
+<span id="cb13-167"><a href="#cb13-167" aria-hidden="true" tabindex="-1"></a><span class="in">            color = &#39;gray98&#39;,</span></span>
+<span id="cb13-168"><a href="#cb13-168" aria-hidden="true" tabindex="-1"></a><span class="in">            family = &#39;Charm&#39;,</span></span>
+<span id="cb13-169"><a href="#cb13-169" aria-hidden="true" tabindex="-1"></a><span class="in">            fontface = &#39;bold&#39;) + </span></span>
+<span id="cb13-170"><a href="#cb13-170" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(x=&#39;Word Count (% of corpus)&#39;,</span></span>
+<span id="cb13-171"><a href="#cb13-171" aria-hidden="true" tabindex="-1"></a><span class="in">       y=&#39;&#39;) + </span></span>
+<span id="cb13-172"><a href="#cb13-172" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(labels = percent) + </span></span>
+<span id="cb13-173"><a href="#cb13-173" aria-hidden="true" tabindex="-1"></a><span class="in">  my_theme</span></span>
+<span id="cb13-174"><a href="#cb13-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-175"><a href="#cb13-175" aria-hidden="true" tabindex="-1"></a><span class="in">beyonce_viz &lt;- tok_beyonce_lyrics %&gt;% </span></span>
+<span id="cb13-176"><a href="#cb13-176" aria-hidden="true" tabindex="-1"></a><span class="in">  slice_max(percent, n=10) %&gt;% </span></span>
+<span id="cb13-177"><a href="#cb13-177" aria-hidden="true" tabindex="-1"></a><span class="in">  ggplot(.,</span></span>
+<span id="cb13-178"><a href="#cb13-178" aria-hidden="true" tabindex="-1"></a><span class="in">         aes(x=percent,</span></span>
+<span id="cb13-179"><a href="#cb13-179" aria-hidden="true" tabindex="-1"></a><span class="in">             y=reorder(bigram, percent))) + </span></span>
+<span id="cb13-180"><a href="#cb13-180" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_col(fill = &#39;green3&#39;) + </span></span>
+<span id="cb13-181"><a href="#cb13-181" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_text(aes(label = bigram),</span></span>
+<span id="cb13-182"><a href="#cb13-182" aria-hidden="true" tabindex="-1"></a><span class="in">            hjust = 1.5,</span></span>
+<span id="cb13-183"><a href="#cb13-183" aria-hidden="true" tabindex="-1"></a><span class="in">            size = 12,</span></span>
+<span id="cb13-184"><a href="#cb13-184" aria-hidden="true" tabindex="-1"></a><span class="in">            color = &#39;gray98&#39;,</span></span>
+<span id="cb13-185"><a href="#cb13-185" aria-hidden="true" tabindex="-1"></a><span class="in">            family = &#39;Charm&#39;,</span></span>
+<span id="cb13-186"><a href="#cb13-186" aria-hidden="true" tabindex="-1"></a><span class="in">            fontface = &#39;bold&#39;) + </span></span>
+<span id="cb13-187"><a href="#cb13-187" aria-hidden="true" tabindex="-1"></a><span class="in">  labs(x=&#39;Word Count (% of corpus)&#39;,</span></span>
+<span id="cb13-188"><a href="#cb13-188" aria-hidden="true" tabindex="-1"></a><span class="in">       y=&#39;&#39;) + </span></span>
+<span id="cb13-189"><a href="#cb13-189" aria-hidden="true" tabindex="-1"></a><span class="in">  scale_x_continuous(labels = percent) + </span></span>
+<span id="cb13-190"><a href="#cb13-190" aria-hidden="true" tabindex="-1"></a><span class="in">  my_theme</span></span>
+<span id="cb13-191"><a href="#cb13-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-192"><a href="#cb13-192" aria-hidden="true" tabindex="-1"></a><span class="in">p &lt;- tswift_viz + beyonce_viz + </span></span>
+<span id="cb13-193"><a href="#cb13-193" aria-hidden="true" tabindex="-1"></a><span class="in">  plot_annotation(title = glue(&quot;Most frequently used bigrams in &lt;span style=&#39;color:cyan3&#39;&gt;**Taylor Swift**&lt;/span&gt; and &lt;span style=&#39;color:green3&#39;&gt;**Beyonce**&lt;/span&gt; songs&quot;),</span></span>
+<span id="cb13-194"><a href="#cb13-194" aria-hidden="true" tabindex="-1"></a><span class="in">                  subtitle = &#39;Top 10 bigrams by artist&#39;,</span></span>
+<span id="cb13-195"><a href="#cb13-195" aria-hidden="true" tabindex="-1"></a><span class="in">                  caption = &#39;&lt;br&gt;Tidy Tuesday Week 40 (2020)&lt;br&gt;Created by @mickey_rafa&#39;,</span></span>
+<span id="cb13-196"><a href="#cb13-196" aria-hidden="true" tabindex="-1"></a><span class="in">                  theme = theme(plot.title = element_textbox_simple(size=rel(4), family=&#39;Charm&#39;, </span></span>
+<span id="cb13-197"><a href="#cb13-197" aria-hidden="true" tabindex="-1"></a><span class="in">                                                                    face=&#39;bold&#39;, color=&#39;gray98&#39;,</span></span>
+<span id="cb13-198"><a href="#cb13-198" aria-hidden="true" tabindex="-1"></a><span class="in">                                                                    margin = margin(t=10)), </span></span>
+<span id="cb13-199"><a href="#cb13-199" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.subtitle = element_textbox_simple(size=rel(2.5), family=&#39;Charm&#39;, </span></span>
+<span id="cb13-200"><a href="#cb13-200" aria-hidden="true" tabindex="-1"></a><span class="in">                                                                    face=&#39;bold&#39;, color=&#39;gray98&#39;), </span></span>
+<span id="cb13-201"><a href="#cb13-201" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.caption = element_textbox(size=rel(2), color=&#39;gray98&#39;, </span></span>
+<span id="cb13-202"><a href="#cb13-202" aria-hidden="true" tabindex="-1"></a><span class="in">                                                               family=&#39;Charm&#39;, lineheight=.3), </span></span>
+<span id="cb13-203"><a href="#cb13-203" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.background = element_rect(fill = &quot;gray20&quot;, color = NA),</span></span>
+<span id="cb13-204"><a href="#cb13-204" aria-hidden="true" tabindex="-1"></a><span class="in">                                panel.background = element_rect(fill = &quot;gray20&quot;),</span></span>
+<span id="cb13-205"><a href="#cb13-205" aria-hidden="true" tabindex="-1"></a><span class="in">                                plot.margin = unit(c(0, 0, 0, 0), &quot;pt&quot;)))</span></span>
+<span id="cb13-206"><a href="#cb13-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-207"><a href="#cb13-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-208"><a href="#cb13-208" aria-hidden="true" tabindex="-1"></a><span class="fu"># 7. Save </span></span>
 <span id="cb13-209"><a href="#cb13-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a><span class="fu"># 7. Save </span></span>
-<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a><span class="in">```{r save_plot, include=TRUE}</span></span>
-<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a><span class="in"># Save the plot as PNG</span></span>
-<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a><span class="in">ggsave(</span></span>
-<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a><span class="in">  filename = glue(&quot;tt_{tt_year}_{tt_week}.png&quot;),</span></span>
-<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a><span class="in">  plot = p,</span></span>
-<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a><span class="in">  width = 6, height = 4, units = &quot;in&quot;, dpi = 320</span></span>
-<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a><span class="in"># make thumbnail for page</span></span>
-<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a><span class="in">magick::image_read(glue(&quot;tt_{tt_year}_{tt_week}.png&quot;)) %&gt;%</span></span>
-<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a><span class="in">  magick::image_resize(geometry = &quot;400&quot;) %&gt;%</span></span>
-<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a><span class="in">  magick::image_write(glue(&quot;tt_{tt_year}_{tt_week}_thumbnail.png&quot;))</span></span>
-<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-210"><a href="#cb13-210" aria-hidden="true" tabindex="-1"></a><span class="in">```{r save_plot, include=TRUE}</span></span>
+<span id="cb13-211"><a href="#cb13-211" aria-hidden="true" tabindex="-1"></a><span class="in"># Save the plot as PNG</span></span>
+<span id="cb13-212"><a href="#cb13-212" aria-hidden="true" tabindex="-1"></a><span class="in">ggsave(</span></span>
+<span id="cb13-213"><a href="#cb13-213" aria-hidden="true" tabindex="-1"></a><span class="in">  filename = glue(&quot;tt_{tt_year}_{tt_week}.png&quot;),</span></span>
+<span id="cb13-214"><a href="#cb13-214" aria-hidden="true" tabindex="-1"></a><span class="in">  plot = p,</span></span>
+<span id="cb13-215"><a href="#cb13-215" aria-hidden="true" tabindex="-1"></a><span class="in">  width = 6, height = 4, units = &quot;in&quot;, dpi = 320</span></span>
+<span id="cb13-216"><a href="#cb13-216" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb13-217"><a href="#cb13-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-218"><a href="#cb13-218" aria-hidden="true" tabindex="-1"></a><span class="in"># make thumbnail for page</span></span>
+<span id="cb13-219"><a href="#cb13-219" aria-hidden="true" tabindex="-1"></a><span class="in">magick::image_read(glue(&quot;tt_{tt_year}_{tt_week}.png&quot;)) %&gt;%</span></span>
+<span id="cb13-220"><a href="#cb13-220" aria-hidden="true" tabindex="-1"></a><span class="in">  magick::image_resize(geometry = &quot;400&quot;) %&gt;%</span></span>
+<span id="cb13-221"><a href="#cb13-221" aria-hidden="true" tabindex="-1"></a><span class="in">  magick::image_write(glue(&quot;tt_{tt_year}_{tt_week}_thumbnail.png&quot;))</span></span>
+<span id="cb13-222"><a href="#cb13-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-223"><a href="#cb13-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-224"><a href="#cb13-224" aria-hidden="true" tabindex="-1"></a><span class="fu"># 8. Session Info</span></span>
 <span id="cb13-225"><a href="#cb13-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a><span class="fu"># 8. Session Info</span></span>
-<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse=&quot;true&quot;}</span>
-<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Expand for Session Info</span></span>
-<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo = FALSE}</span></span>
-<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a><span class="in">sessionInfo()</span></span>
-<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-226"><a href="#cb13-226" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse=&quot;true&quot;}</span>
+<span id="cb13-227"><a href="#cb13-227" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Expand for Session Info</span></span>
+<span id="cb13-228"><a href="#cb13-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-229"><a href="#cb13-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, echo = FALSE}</span></span>
+<span id="cb13-230"><a href="#cb13-230" aria-hidden="true" tabindex="-1"></a><span class="in">sessionInfo()</span></span>
+<span id="cb13-231"><a href="#cb13-231" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-232"><a href="#cb13-232" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-233"><a href="#cb13-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-234"><a href="#cb13-234" aria-hidden="true" tabindex="-1"></a><span class="fu"># 9. Github Repository </span></span>
 <span id="cb13-235"><a href="#cb13-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a><span class="fu"># 9. Github Repository </span></span>
+<span id="cb13-236"><a href="#cb13-236" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse=&quot;true&quot;}</span>
 <span id="cb13-237"><a href="#cb13-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip collapse=&quot;true&quot;}</span>
-<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Expand for GitHub Repo</span></span>
-<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb13-242"><a href="#cb13-242" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Access the GitHub repository here</span><span class="co">](https://github.com/mrafa3/mrafa3.github.io)</span></span>
-<span id="cb13-243"><a href="#cb13-243" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
+<span id="cb13-238"><a href="#cb13-238" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Expand for GitHub Repo</span></span>
+<span id="cb13-239"><a href="#cb13-239" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb13-240"><a href="#cb13-240" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Access the GitHub repository here</span><span class="co">](https://github.com/mrafa3/mrafa3.github.io)</span></span>
+<span id="cb13-241"><a href="#cb13-241" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

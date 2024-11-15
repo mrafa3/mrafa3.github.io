@@ -1,0 +1,157 @@
+---
+title: "Visualizing Big 12 Basketball program performance"
+description: "Which teams have reigned supreme?"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+date: 12-30-2022
+categories: [R, "#TidyTuesday", area-plot, small-multiples] # self-defined categories
+image: "tt_2020_41_thumbnail.png"
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+
+format:
+  html:
+    toc: true
+    toc-depth: 5
+    code-link: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    self-contained: true
+
+editor_options: 
+  chunk_output_type: inline
+  
+execute: 
+  error: false
+  message: false
+  warning: false
+  eval: true
+---
+
+![Area plot showing Big 12 women's basketball programs and their regular season win percentage relative to the historical median percentage for programs over time (1982-2018). Years of data only available if team made the NCAA tournament in that year.](tt_2020_41.png){#fig-1}
+
+# 1. Load Packages & Setup
+
+```{r setup, include=TRUE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    tidytuesdayR,
+    ggtext,
+    showtext,
+    janitor,   #for clean_names()
+    scales,
+    glue,
+    here
+)    
+
+font_add_google('Lexend')
+showtext_auto()
+```
+
+# 2. Read in the Data
+
+```{r read_data, include=TRUE}
+tt_year <- 2020
+tt_week <- 41
+
+tuesdata <- tidytuesdayR::tt_load(tt_year, week = tt_week)
+
+tournament <- tuesdata$tournament
+```
+
+# 3. Examine the Data 
+
+```{r examine, include=TRUE, echo=TRUE}
+tournament %>% 
+  glimpse()
+```
+
+# 4. Tidy the Data 
+
+```{r tidy_tournament, include=TRUE}
+tournament <- tournament %>% 
+  mutate(median_w_l = median(reg_percent, na.rm = TRUE)) %>% 
+  mutate(above_below_median = ifelse(reg_percent > median_w_l, 
+                                     reg_percent, median_w_l))
+```
+
+# 5. Visualization Parameters 
+
+```{r my_theme, include=TRUE}
+my_theme <- theme(
+  # choose font family
+  text = element_text(family = 'Lexend', color='black', size=14), 
+  plot.background = element_rect(color='white'),
+  panel.background =  element_blank(), 
+  axis.ticks = element_blank(), 
+  panel.border = element_blank(), 
+  legend.position = 'none',
+  strip.background = element_blank())
+```
+
+# 6. Plot 
+
+```{r big12_viz, fig.height=4, fig.width=4}
+big12_viz <- tournament %>% 
+  filter(conference == 'Big 12',
+         !school %in% c('Colorado', 'Missouri', 'Nebraska', 'Texas A&M')) %>% 
+  ggplot(.,
+         aes(x=year,
+             y=reg_percent/100)) + 
+  geom_line() + 
+  geom_hline(yintercept = tournament$median_w_l[1]/100) + 
+  geom_ribbon(aes(ymin=median_w_l/100, ymax=full_percent/100), 
+              fill='firebrick1') + 
+  geom_ribbon(aes(ymin=median_w_l/100, ymax=above_below_median/100), 
+              fill='springgreen3') + 
+  facet_wrap(~ school) + 
+  ggtitle("Baylor has dominated the Big 12",
+          subtitle = "Plot compares season-by-season win percentage of Big 12 programs in the regular season compared with the historical median win percentage of all programs in women's basketball<br>") + 
+  labs(x='Year',
+       y='',
+       # y='Win % by season compared to\nhistorical median for all programs\n',
+       caption='Tidy Tuesday Week 41 (2020)<br>**Source**: FiveThirtyEight') + 
+  scale_y_continuous(labels = percent) + 
+  my_theme + 
+  theme(plot.title = element_textbox(size=rel(3), face='bold'),
+        plot.subtitle = element_textbox_simple(size=rel(1.1), lineheight=.3),
+        plot.caption = element_textbox(lineheight=.3), 
+        strip.text = element_textbox(size=rel(1.1), face='bold'))
+```
+
+# 7. Save 
+
+```{r save_plot, include=TRUE}
+# Save the plot as PNG
+ggsave(
+  filename = glue("tt_{tt_year}_{tt_week}.png"),
+  plot = big12_viz,
+  width = 4, height = 3, units = "in", dpi = 320
+)
+
+# make thumbnail for page
+magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
+  magick::image_resize(geometry = "400") %>%
+  magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
+```
+
+# 8. Session Info
+
+::: {.callout-tip collapse="true"}
+##### Expand for Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+:::
+
+# 9. Github Repository 
+
+::: {.callout-tip collapse="true"}
+
+##### Expand for GitHub Repo
+ 
+[Access the GitHub repository here](https://github.com/mrafa3/mrafa3.github.io)
+:::
