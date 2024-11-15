@@ -1,13 +1,13 @@
 ---
 title: "How do Beyonce and Taylor Swift lyrics differ?"
-description: "Using {tidytext} to process and visualize song lyrics"
+description: "Using {tidytext} to process and visualize word pairs in song lyrics"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
 date: 10-04-2020
 categories: [R, "#TidyTuesday", bar-plot, nlp] # self-defined categories
-# image: "tt_2019_38_thumbnail.png"
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+image: "tt_2020_40_thumbnail.png"
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
 format:
   html:
@@ -29,7 +29,7 @@ execute:
   eval: true
 ---
 
-![](){#fig-1}
+![Barplot illustrating the top word pairs used by Taylor Swift and Beyonce in their song catalog.](tt_2020_40.png){#fig-1}
 
 # 1. Load Packages & Setup
 
@@ -52,7 +52,8 @@ pacman::p_load(
     SnowballC    #for text stemming
 )    
 
-font_add_google("Roboto")
+font_add_google("Charm")
+showtext_auto()
 ```
 
 # 2. Read in the Data
@@ -79,52 +80,59 @@ taylor_swift_lyrics %>%
 
 # 4. Tidy the Data 
 
+Stop words should be approached in a custom way given the context of the data. Because lyrics tend to use lots of traditional stop words that are meaningful to the song, I chose to only filter out stop words of three characters or less (using the snowball lexicon). 
+
+```{r stop_words_lyrics, include=TRUE}
+stop_words_lyrics <- stop_words %>% 
+  filter(lexicon == 'snowball') %>% 
+  filter(str_length(word) < 4)
+```
+
+I'd like to visualize the bigrams, or word pairs, in their lyrics, excluding any that are repeated words. I also considered removing any numbers, but given that I plan to only visualize the top bigrams, these won't be a factor.
+
 ```{r tok_beyonce_lyrics, include=TRUE}
-(tok_beyonce_lyrics <- beyonce_lyrics %>% 
+tok_beyonce_lyrics <- beyonce_lyrics %>% 
+   janitor::clean_names() %>%
+   tidytext::unnest_tokens(output = bigram, 
+                          input = line,
+                          token = 'ngrams',
+                          n = 2) %>% 
+   distinct(bigram, song_id, .keep_all = TRUE) %>% 
+   select(bigram, artist_name) %>% 
+   separate(bigram, into = c('first', 'second'), sep=' ', remove=FALSE) %>%
+   left_join(stop_words_lyrics, by=c('first' = 'word')) %>% 
+   left_join(stop_words_lyrics, by=c('second' = 'word')) %>% 
+   mutate(first_stopword = if_else(is.na(lexicon.x), 0, 1),
+          second_stopword = if_else(is.na(lexicon.y), 0, 1)) %>% 
+   filter(first_stopword == 0 & second_stopword == 0,
+          first != second,
+          !is.na(bigram)) %>% 
+   select(-starts_with('lexicon'),
+          -ends_with('stopword')) %>% 
+   janitor::tabyl(bigram) %>%
+   as.data.frame() %>%
+   mutate(artist_name = 'Beyoncé')
+
+tok_taylor_swift_lyrics <- taylor_swift_lyrics %>% 
    janitor::clean_names() %>% 
-   tidytext::unnest_tokens(output = word, 
-                          input = line) %>% 
-   distinct(word, song_id, .keep_all = TRUE) %>% 
-   select(word, artist_name))
-```
-
-```{r tok_taylor_swift_lyrics, include=TRUE}
-(tok_taylor_swift_lyrics <- taylor_swift_lyrics %>% 
-   janitor::clean_names() %>% 
-   unnest_tokens(word, lyrics) %>% 
-   distinct(word, artist, keep.all = TRUE) %>% 
-   select(word, artist_name = artist))
-```
-
-```{r tidy_lyrics, include=TRUE}
-(tidy_lyrics <- 
-  bind_rows(tok_taylor_swift_lyrics, tok_beyonce_lyrics) %>% 
-    anti_join(tidytext::get_stopwords(), by = 'word') %>% 
-    count(artist_name, word, sort = TRUE) %>%
-    filter(!is.na(word)))
-```
-
-```{r bind_log_odds, include=TRUE}
-tidy_lyrics <- tidy_lyrics %>%
-  bind_log_odds(artist_name, word, n)
-```
-
-```{r}
-(count_tswift <- taylor_swift_lyrics %>% 
-  janitor::clean_names() %>% 
-  unnest_tokens(word, lyrics) %>% 
-  anti_join(get_stopwords(), by = 'word') %>% 
-  janitor::tabyl(word) %>% 
-  as.data.frame() %>% 
-  arrange(-n))
-
-(count_beyonce <- beyonce_lyrics %>% 
-  janitor::clean_names() %>% 
-  unnest_tokens(word, line) %>% 
-  anti_join(get_stopwords(), by = 'word') %>% 
-  janitor::tabyl(word) %>% 
-  as.data.frame() %>% 
-  arrange(-n))
+   unnest_tokens(output = bigram, 
+                 input = lyrics,
+                 token = 'ngrams',
+                 n = 2) %>% 
+   distinct(bigram, title, .keep_all = TRUE) %>% 
+   select(bigram, artist_name = artist) %>% 
+   separate(bigram, into = c('first', 'second'), sep=' ', remove=FALSE) %>% 
+   left_join(stop_words_lyrics, by=c('first' = 'word')) %>% 
+   left_join(stop_words_lyrics, by=c('second' = 'word')) %>% 
+   mutate(first_stopword = if_else(is.na(lexicon.x), 0, 1),
+          second_stopword = if_else(is.na(lexicon.y), 0, 1)) %>% 
+   filter(first_stopword == 0 & second_stopword == 0,
+          first != second) %>% 
+   select(-starts_with('lexicon'),
+          -ends_with('stopword')) %>% 
+   janitor::tabyl(bigram) %>% 
+   as.data.frame() %>% 
+   mutate(artist_name = 'Taylor Swift')
 ```
 
 # 5. Visualization Parameters 
@@ -132,16 +140,10 @@ tidy_lyrics <- tidy_lyrics %>%
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
   # choose font family
-  text = element_text(family = 'Roboto', size=14), 
-  # plot.title = element_text(family="Roboto", color="black", face="bold", size=24, hjust=0), 
-  # plot.subtitle = element_text(family="Roboto", color="black", size=12, hjust=0), 
-  # axis.title = element_text(family="Roboto", color="gray98", face="bold", size=12), 
-  # axis.text = element_text(family="Roboto", color="gray98", size=24), 
+  text = element_text(family = 'Charm', size=14, color='gray98'), 
   axis.ticks = element_blank(), 
-  # plot.caption = element_text(family="Roboto", color="black", size=12), 
   plot.background = element_rect(fill = "gray20", color = "gray20"),
   panel.background =  element_rect(fill = "gray20", color = "gray20"),
-  # legend.background = element_rect(fill = "gray20", color = "gray20"), 
   panel.grid.major = element_blank(),
   panel.grid.minor = element_blank(),
   panel.border = element_blank(), 
@@ -149,84 +151,76 @@ my_theme <- theme(
   axis.title.x = element_text(color='gray98'),
   axis.text.y = element_blank(), 
   axis.text.x = element_text(color='gray98'), 
-  # axis.line.x.bottom = element_line(color='gray98'),
   legend.position = 'none')
-  # legend.title = element_blank())
-  # legend.text = element_text(family="Roboto", color="black", size=12, hjust=0),
-  # legend.position = 'top',
-  # strip.text = element_text(family="Roboto", color="black", size=14))
 ```
 
 # 6. Plot 
 
-```{r tswift_BoW_viz, include=TRUE, fig.height=6.2}
-(tswift_BoW_viz <- count_tswift %>% 
+```{r tswift_viz, include=TRUE, fig.height=4, fig.width=5}
+tswift_viz <- tok_taylor_swift_lyrics %>% 
   slice_max(percent, n=10) %>% 
   ggplot(.,
          aes(x=percent,
-             y=reorder(word, percent))) + 
+             y=reorder(bigram, percent))) + 
   geom_col(fill = 'cyan3') + 
-  geom_text(aes(label = word),
+  geom_text(aes(label = bigram),
             hjust = 1.5,
             size = 12,
             color = 'gray98',
-            family = 'Roboto',
+            family = 'Charm',
             fontface = 'bold') + 
-  labs(x='\nWord Count (% of corpus)',
+  labs(x='Word Count (% of corpus)',
        y='') + 
   scale_x_continuous(labels = percent) + 
-  my_theme)
-```
+  my_theme
 
-```{r beyonce_BoW_viz, include=TRUE, fig.height=6.2}
-(beyonce_BoW_viz <- count_beyonce %>% 
+beyonce_viz <- tok_beyonce_lyrics %>% 
   slice_max(percent, n=10) %>% 
   ggplot(.,
          aes(x=percent,
-             y=reorder(word, percent))) + 
+             y=reorder(bigram, percent))) + 
   geom_col(fill = 'green3') + 
-  geom_text(aes(label = word),
+  geom_text(aes(label = bigram),
             hjust = 1.5,
             size = 12,
             color = 'gray98',
-            family = 'Roboto',
+            family = 'Charm',
             fontface = 'bold') + 
-  labs(x='\nWord Count (% of corpus)',
+  labs(x='Word Count (% of corpus)',
        y='') + 
   scale_x_continuous(labels = percent) + 
-  my_theme)
-``` 
+  my_theme
 
-```{r fig.height=10}
-tswift_BoW_viz + beyonce_BoW_viz + 
-  plot_annotation(title = glue("Most frequently used words in <span style='color:cyan3'>**Taylor Swift**</span> and <span style='color:green3'>**Beyonce**</span> songs"),
-                  theme = theme(plot.title = element_textbox_simple(size=rel(4), face='bold', color='gray98',
+p <- tswift_viz + beyonce_viz + 
+  plot_annotation(title = glue("Most frequently used bigrams in <span style='color:cyan3'>**Taylor Swift**</span> and <span style='color:green3'>**Beyonce**</span> songs"),
+                  subtitle = 'Top 10 bigrams by artist',
+                  caption = '<br>Tidy Tuesday Week 40 (2020)<br>Created by @mickey_rafa',
+                  theme = theme(plot.title = element_textbox_simple(size=rel(4), family='Charm', 
+                                                                    face='bold', color='gray98',
                                                                     margin = margin(t=10)), 
+                                plot.subtitle = element_textbox_simple(size=rel(2.5), family='Charm', 
+                                                                    face='bold', color='gray98'), 
+                                plot.caption = element_textbox(size=rel(2), color='gray98', 
+                                                               family='Charm', lineheight=.3), 
                                 plot.background = element_rect(fill = "gray20", color = NA),
                                 panel.background = element_rect(fill = "gray20"),
                                 plot.margin = unit(c(0, 0, 0, 0), "pt")))
-
 ```
 
 # 7. Save 
 
-```{r save, include=TRUE}
-# ggsave("graphics/BoW_viz.png", BoW_viz,
-#        width = 18, height = 10, dpi = 300)
-```
-
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
-# ggsave(
-#   filename = glue("tt_{tt_year}_{tt_week}.png"), 
-#   plot = p,
-#   width = 10, height = 8, units = "in", dpi = 320
-# )
-# 
+ggsave(
+  filename = glue("tt_{tt_year}_{tt_week}.png"),
+  plot = p,
+  width = 6, height = 4, units = "in", dpi = 320
+)
+
 # make thumbnail for page
-# magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>% 
-#   magick::image_resize(geometry = "400") %>% 
-#   magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
+magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
+  magick::image_resize(geometry = "400") %>%
+  magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
 ```
 
 # 8. Session Info
