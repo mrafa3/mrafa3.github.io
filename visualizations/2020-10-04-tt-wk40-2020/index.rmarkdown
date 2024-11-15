@@ -29,9 +29,13 @@ execute:
   eval: true
 ---
 
+
+
 ![Barplot illustrating the top word pairs used by Taylor Swift and Beyonce in their song catalog.](tt_2020_40.png){#fig-1}
 
 # 1. Load Packages & Setup
+
+
 
 ```{r setup, include=TRUE}
 if (!require("pacman")) install.packages("pacman")
@@ -54,7 +58,11 @@ font_add_google("Charm")
 showtext_auto()
 ```
 
+
+
 # 2. Read in the Data
+
+
 
 ```{r read_data, include=TRUE}
 tt_year <- 2020
@@ -66,7 +74,11 @@ beyonce_lyrics <- tuesdata$beyonce_lyrics
 taylor_swift_lyrics <- tuesdata$taylor_swift_lyrics
 ```
 
+
+
 # 3. Examine the Data 
+
+
 
 ```{r examine, include=TRUE, echo=TRUE}
 beyonce_lyrics %>% 
@@ -76,9 +88,13 @@ taylor_swift_lyrics %>%
   glimpse()
 ```
 
+
+
 # 4. Tidy the Data 
 
 Stop words should be approached in a custom way given the context of the data. Because lyrics tend to use lots of traditional stop words that are meaningful to the song, I chose to only filter out stop words of three characters or less (using the snowball lexicon). 
+
+
 
 ```{r stop_words_lyrics, include=TRUE}
 stop_words_lyrics <- stop_words %>% 
@@ -86,7 +102,11 @@ stop_words_lyrics <- stop_words %>%
   filter(str_length(word) < 4)
 ```
 
+
+
 I'd like to visualize the bigrams, or word pairs, in their lyrics, excluding any that are repeated words. I also considered removing any numbers, but given that I plan to only visualize the top bigrams, these won't be a factor.
+
+
 
 ```{r tok_beyonce_lyrics, include=TRUE}
 tok_beyonce_lyrics <- beyonce_lyrics %>% 
@@ -133,7 +153,11 @@ tok_taylor_swift_lyrics <- taylor_swift_lyrics %>%
    mutate(artist_name = 'Taylor Swift')
 ```
 
+
+
 # 5. Visualization Parameters 
+
+
 
 ```{r my_theme, include=TRUE}
 my_theme <- theme(
@@ -152,7 +176,11 @@ my_theme <- theme(
   legend.position = 'none')
 ```
 
+
+
 # 6. Plot 
+
+
 
 ```{r tswift_viz, include=TRUE, fig.height=4, fig.width=5}
 tswift_viz <- tok_taylor_swift_lyrics %>% 
@@ -205,7 +233,11 @@ p <- tswift_viz + beyonce_viz +
                                 plot.margin = unit(c(0, 0, 0, 0), "pt")))
 ```
 
+
+
 # 7. Save 
+
+
 
 ```{r save_plot, include=TRUE}
 # Save the plot as PNG
@@ -221,14 +253,20 @@ magick::image_read(glue("tt_{tt_year}_{tt_week}.png")) %>%
   magick::image_write(glue("tt_{tt_year}_{tt_week}_thumbnail.png"))
 ```
 
+
+
 # 8. Session Info
 
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
+
+
 ```{r, echo = FALSE}
 sessionInfo()
 ```
+
+
 :::
 
 # 9. Github Repository 
