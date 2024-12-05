@@ -41,6 +41,7 @@ pacman::p_load(
     ggrepel,
     ggimage,
     dlookr,
+    lubridate,
     showtext,
     sysfonts,
     janitor,
@@ -275,10 +276,6 @@ So what is clearly *not* working this year? Well, lots of things -- the Jets are
 
 Early in the season, there was a lot of discussion about how passing was down across the league. Defenses were deploying more cover 2 shell looks in an attempt to "keep a lid" on offenses.
 
-::: column-margin
-Like, do we think OCs just forgot how to attack 2-high coverages?
-:::
-
 What we're seeing is a "higher floor, lower cieling" league as far as passing goes. **Only two teams in 2024 average less than 200 yards passing, while no teams average above 300.**
 
 Note: I would love to do some analysis on defensive looks and give a more critical evaluation of this theme, but coverages (and personnel groupings) don't seem to be available in public NFL sources.
@@ -373,3 +370,103 @@ pbp_2024 %>%
     ) +
   theme_nfl_analytics()
 ```
+
+
+# Cam Heyward 
+
+```{r calc_age, include=TRUE, warning=FALSE, message=FALSE}
+#| echo=FALSE
+# thanks to Open Source Football for this code and concept
+
+calc_age <- function(birthDate, refDate = Sys.Date(), unit = "year") {
+  
+  # require(lubridate)
+  
+  if(grepl(x = unit, pattern = "year")) {
+    as.period(interval(birthDate, refDate), unit = 'year')$year
+  } else if(grepl(x = unit, pattern = "month")) {
+    as.period(interval(birthDate, refDate), unit = 'month')$month
+  } else if(grepl(x = unit, pattern = "week")) {
+    floor(as.period(interval(birthDate, refDate), unit = 'day')$day / 7)
+  } else if(grepl(x = unit, pattern = "day")) {
+    as.period(interval(birthDate, refDate), unit = 'day')$day
+  } else {
+    print("Argument 'unit' must be one of 'year', 'month', 'week', or 'day'")
+    NA
+  }
+  
+}
+
+# loop to get 1999 to 2024 rosters
+rosters <- data.frame()
+
+for (x in 1999:2024) {
+  df <- nflfastR::fast_scraper_roster(x) %>%
+    mutate(birth_date = as.Date(birth_date)) %>%
+    select(
+      position,
+      birth_date,
+      gsis_id,
+      season,
+      years_exp,
+      full_name,
+      team
+    ) %>%
+    mutate(age_season_start = calc_age(birth_date, paste0(x,"-09-01")))
+  rosters <- rbind(df, rosters)
+}
+```
+
+```{r}
+player_stats_def_99_24 <- load_player_stats(seasons = TRUE,
+                  stat_type = 'defense') %>% 
+  filter(season_type == 'REG')
+
+def_ranks <- player_stats_def_99_24 %>% 
+  group_by(season, team, player_id, player_display_name, position) %>% 
+  summarise(across(starts_with('def'),
+                   list(
+                     sum = ~sum(., na.rm = TRUE)
+                   ),
+                   .names = '{.fn}_{.col}'
+                   ),
+            distinct_weeks = n_distinct(week),
+            .groups = 'drop'
+            )
+  # group_by(season) %>% 
+  # mutate(across(starts_with('sum'),
+  #               list(
+  #                 rank = ~rank(-.)
+  #               ),
+  #               .names = '{.fn}_{.col}'
+  #               ),
+  #        )
+  
+def_ranks %>% 
+  left_join(x=.,
+            y=rosters,
+            by=c('player_id' = 'gsis_id',
+                 'season',
+                 'team')) %>% 
+  filter(age_season_start >= 35,
+         position.x == 'DT') %>% 
+  arrange(-sum_def_sacks)
+  mutate(over_35 = if_else(age_season_start >= 35, 1, 0)) %>%
+  filter(over_35 == 1) %>%
+  group_by(full_name, over_35) %>%
+  summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),
+            .groups = 'drop') %>%
+  arrange(-ttl_sacks_over_35) %>%
+  mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))
+```
+
+Coming off of a season where he struggled with a groin injury, Heyward is having a historic season.
+
+In the last 25 years, no defensive tackle over 35 years old has been this dominant. Among seasons where a defensive tackle began the season at least 35 years old, Heyward's 2024 season ranks first in sacks, tackles for loss, QB hits, tipped passes, and **maybe tackles**.
+
+
+::: column-margin
+This story led me to looking at John Randle's career stats. He was more of a pass-rusher than an all-around player, but damn was he **good**.
+
+I wanted to layer in data on snap counts to see how his utilization compares with others in this category, but the {nflverse} snap count data only goes back to 2012.
+:::
