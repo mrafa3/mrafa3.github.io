@@ -283,9 +283,38 @@ What we're seeing is a "higher floor, lower cieling" league as far as passing go
 
 Note: I would love to do some analysis on defensive looks and give a more critical evaluation of this theme, but coverages (and personnel groupings) don't seem to be available in public NFL sources.
 
+Joe Burrow and the Bengals look like they're *cooking* on offense (in terms of passing) -- and they mostly have been. But they are averaging {r top_2024_passing_team}, which would rank in the {r top_2024_passing_team_percentile}th percentile in the last 25 years. They've been very good, but not great in the historical context.
+
 ::: column-margin
-Maybe I'll subscribe to an NFL data service some day and revisit this!
+Only 2 offenses -- the Bengals and the Seahawks -- had a passing attack that would rank in the top quartile from the last 25 seasons.
 :::
+
+```{r ttl_passing_stats_99_24, include=TRUE}
+#| echo=FALSE
+ttl_passing_stats_99_24 <- player_stats_99_24 %>% 
+  filter(season_type == 'REG') %>% 
+  group_by(season, week, recent_team) %>% 
+  summarise(ttl_passing_yards = sum(passing_yards, na.rm = TRUE),
+            .groups = 'drop') %>% 
+  group_by(season, recent_team) %>%
+  summarise(passing_yards_per_game = mean(ttl_passing_yards, na.rm = TRUE),
+            .groups = 'drop') %>% 
+  mutate(percentile_rank = percent_rank(passing_yards_per_game) * 100) %>% 
+  arrange(-season, passing_yards_per_game)
+
+top_2024_passing_team <- ttl_passing_stats_99_24 %>% 
+  filter(season == 2024) %>% 
+  slice_max(passing_yards_per_game) %>% 
+  pull(passing_yards_per_game) %>% 
+  round()
+
+top_2024_passing_team_percentile <- ttl_passing_stats_99_24 %>% 
+  filter(season == 2024) %>% 
+  slice_max(passing_yards_per_game) %>% 
+  pull(percentile_rank) %>% 
+  round()
+```
+
 
 ```{r season_passing_league, fig.width=9}
 player_stats_99_24 %>% 
@@ -296,6 +325,7 @@ player_stats_99_24 %>%
   group_by(season, recent_team) %>%
   summarise(passing_yards_per_game = mean(ttl_passing_yards, na.rm = TRUE),
             .groups = 'drop') %>% 
+  # arrange(-season, passing_yards_per_game)
   ggplot(.,
          aes(x=passing_yards_per_game,
              y=season)) + 
@@ -305,7 +335,7 @@ player_stats_99_24 %>%
                  summarise(mean_yards = mean(passing_yards_per_game)),
                aes(x = mean_yards, xend = mean_yards,
                    y = season - 0.6, yend = season + 0.6),
-               color = "red", linetype = "dashed", linewidth = 1.2) +
+               color = "red", linetype = "solid", linewidth = 1.2) +
   labs(title = 'Distribution of passing yards per game on a seasonal basis (1999-2024)',
        subtitle = "Each dot represents a team's average total passing from a season<br>Red lines mark the league-wide average for a season",
        y='Season',
