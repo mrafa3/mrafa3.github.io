@@ -1,0 +1,269 @@
+---
+title: "The 2024 NFL Season in 10 Graphs"
+description: ""
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+date: 12-04-2024
+categories: [R, data-viz, sports] # self-defined categories
+# image: theme_map.png
+draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+code-annotations: hover
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-summary: "Show the code"
+editor: visual
+fig-cap-location: margin
+title-block-banner: "#f0f3f5"
+title-block-banner-color: "black"
+---
+
+# Introduction
+
+## Purpose
+
+## Setup
+
+```{r setup, include=TRUE, warning=FALSE, message=FALSE}
+#| echo=FALSE
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    nflverse,
+    plotly,
+    gt,
+    gtExtras,
+    gtUtils,
+    ggfx,
+    rvest,
+    httr,
+    jsonlite,
+    patchwork,
+    ggtext,
+    ggrepel,
+    ggimage,
+    dlookr,
+    showtext,
+    sysfonts,
+    janitor,
+    grid,
+    ggiraph,
+    glue,
+    here
+)    
+
+sysfonts::font_add_google("Lexend")
+showtext::showtext_auto()
+```
+
+```{r nfl_analytics_theme, include=TRUE}
+#| echo=FALSE
+theme_nfl_analytics <- function(..., base_size = 12) {
+  theme(
+    text = element_text(family = "Lexend", size = base_size, color = "black"),
+    axis.ticks = element_blank(),
+    axis.title = element_text(face = "bold"),
+    axis.text = element_text(face = "bold"),
+    plot.title.position = "plot",
+    plot.title = element_textbox(size = 16, vjust = .02, hjust = 0.5, face='bold'),
+    plot.subtitle = element_textbox(hjust = 0.5, lineheight = .4),
+    plot.caption = element_textbox(size = 8),
+    panel.grid.minor = element_blank(),
+    panel.grid.major =  element_line(color = "#d0d0d0"),
+    panel.background = element_rect(fill = "#f7f7f7"),
+    plot.background = element_rect(fill = "#f7f7f7"),
+    panel.border = element_blank(),
+    legend.background = element_rect(color = "#F7F7F7"),
+    legend.key = element_rect(color = "#F7F7F7"),
+    legend.title = element_text(face = "bold", hjust = .5),
+    strip.text = element_text(face = "bold"))
+}
+```
+
+```{r teams, include=TRUE}
+#| echo=FALSE
+teams <- load_teams(current = TRUE)
+```
+
+```{r make_2024_df, include=TRUE}
+#| echo=FALSE
+pbp_2024 <- load_pbp(seasons = 2024)
+ftn_2024 <- load_ftn_charting(seasons = 2024)
+
+pbp_2024 <- pbp_2024 %>% 
+  left_join(x=.,
+            y=ftn_2024,
+            by=c('game_id' = 'nflverse_game_id',
+                 'play_id' = 'nflverse_play_id',
+                 'season',
+                 'week'))
+```
+
+```{r params, include=TRUE}
+#| echo=FALSE
+max_week_param <- pbp_2024 %>% 
+  summarise(max(week)) %>% 
+  pull()
+```
+
+# Rookie QBs: performance and inconsistency
+
+*Note: could explore a toggle to show the total season vs. week-to-week*
+
+```{r rookie_qb_epa_weekly_2024, include=TRUE}
+#| echo=FALSE
+rookie_qb_epa_weekly_2024 <- pbp_2024 %>% 
+  filter(passer %in% c('J.Daniels', 'C.Williams', 'B.Nix', 'D.Maye')) %>% 
+  group_by(game_id, week, posteam, passer, passer_id) %>% 
+  summarise(across(
+    c('qb_epa', 'pass_attempt', 'air_epa', 'yac_epa'),
+    list(
+        mean = ~round(mean(., na.rm = TRUE), 2),
+        sum = ~round(sum(., na.rm = TRUE), 2)
+      ),
+      .names = "{.fn}_{.col}"
+    ),
+    .groups = 'drop') %>% 
+  filter(sum_pass_attempt >= 10)
+```
+
+```{r plot_rookie_qb_epa, include=TRUE, fig.width=9}
+rookie_qb_epa_weekly_2024 %>% 
+  ggplot(.,
+         aes(x=week,
+             y=mean_qb_epa,
+             color=posteam)) + 
+  geom_line(linewidth=1.2) + 
+  geom_point(data=. %>% filter(week == max_week_param),
+             size=3) + 
+  geom_text(data=. %>% filter(week == max_week_param),
+            aes(x=week + 1,
+                label=passer),
+            family='Lexend') + 
+  geom_hline(yintercept = 0, color='black', linetype='dashed') + 
+  labs(title='EPA per dropback of 1st round rookies in 2024',
+       subtitle = glue('Through Week {max_week_param}'),
+       caption = 'Source: {nflverse} package<br>Minimum 10 attempts to qualify as a full game',
+       x='Week',
+       y='EPA/dropback') + 
+  theme_nfl_analytics() +
+  scale_color_nfl(type='secondary')
+  # theme(axis.title.y = element_text(angle=0))
+```
+
+# Aaron Rodgers 
+
+```{r passing_data, include=TRUE}
+#| echo=FALSE
+player_stats_99_24 <- load_player_stats(seasons = TRUE,
+                                       stat_type = 'offense')
+
+season_qbr_06_24 <- nflreadr::load_espn_qbr(seasons = TRUE,
+                        summary_type = 'season')
+```
+
+```{r rodgers_season_qbr, include=TRUE, fig.width=9}
+season_qbr_06_24 %>% 
+  filter(name_short == 'A. Rodgers',
+         season_type == 'Regular') %>% 
+  ggplot(.,
+         aes(x=season,
+             y=qbr_total)) + 
+  geom_line() + 
+  geom_smooth(se=FALSE) + 
+  geom_median_lines(data = season_qbr_06_24 %>% filter(qualified == TRUE,
+                                                       season_type == 'Regular'),
+                    aes(y0 = qbr_total)) + 
+  scale_y_continuous(breaks = scales::pretty_breaks()) + 
+  scale_x_continuous(breaks = scales::pretty_breaks()) + 
+  theme_nfl_analytics()
+```
+
+```{r dropback_pbp_08_24, include=TRUE}
+#| echo=FALSE
+dropback_pbp_08_24 <- load_pbp(seasons = c(2008:2024)) %>% 
+  filter(season_type == 'REG',
+         !is.na(passer)) %>% 
+  group_by(season, passer, posteam) %>% 
+  summarise(plays = n(),
+            interceptions = sum(interception, na.rm = TRUE),
+            sum_qb_epa = sum(qb_epa, na.rm = TRUE),
+            sum_air_epa = sum(air_epa, na.rm = TRUE),
+            sum_yac_epa = sum(yac_epa, na.rm = TRUE),
+            sum_qb_epa_int = sum(qb_epa[interception == 1], na.rm = TRUE),
+            sum_qb_epa_sack = sum(qb_epa[sack == 1], na.rm = TRUE),
+            sum_qb_epa_dpi = sum(qb_epa[penalty_type == 'Defensive Pass Interference'], na.rm = TRUE),
+            sum_qb_epa_scramble = sum(qb_epa[qb_scramble == 1], na.rm = TRUE),
+            .groups = 'drop') %>% 
+  filter(plays >= 150) %>% 
+  mutate(
+    across(
+      starts_with("sum"),
+      list(
+        mean_centered = ~. - mean(., na.rm = TRUE)
+      ),
+      .names = "{.fn}_{.col}"
+    ))
+```
+
+```{r rodgers_gt, include=TRUE}
+dropback_pbp_08_24 %>% 
+  filter(passer == 'A.Rodgers',
+         season != 2023) %>% 
+  left_join(x=.,
+            y=teams %>% select(team_abbr, team_logo_wikipedia),
+            by=c('posteam' = 'team_abbr')) %>% 
+  select(season, team_logo_wikipedia, plays, contains('mean_centered')) %>% 
+  arrange(-season) %>% 
+  gt() %>% 
+  cols_label(season = 'Season',
+             team_logo_wikipedia = 'Team',
+             plays = 'Plays',
+             mean_centered_sum_qb_epa = 'EPA',
+             mean_centered_sum_air_epa = 'Air',
+             mean_centered_sum_yac_epa = 'YAC',
+             mean_centered_sum_qb_epa_int = 'INTs',
+             mean_centered_sum_qb_epa_sack = 'Sacks',
+             mean_centered_sum_qb_epa_dpi = 'DPI',
+             mean_centered_sum_qb_epa_scramble = 'Scramble') %>% 
+  gt_color_pills(mean_centered_sum_qb_epa, digits = 3,
+                 domain = c(-230, 230)) %>% 
+  gt_color_pills(mean_centered_sum_air_epa, digits = 3,
+                 domain = c(-300, 300)) %>% 
+  gt_color_pills(mean_centered_sum_yac_epa, digits = 3,
+                 domain = c(-240, 240)) %>% 
+  gt_color_pills(mean_centered_sum_qb_epa_int, digits = 3,
+                 domain = c(-110, 110)) %>% 
+  gt_color_pills(mean_centered_sum_qb_epa_sack, digits = 3,
+                 domain = c(-60, 60)) %>% 
+  gt_color_pills(mean_centered_sum_qb_epa_dpi, digits = 3,
+                 domain = c(-30, 30)) %>% 
+  gt_color_pills(mean_centered_sum_qb_epa_scramble, digits = 3,
+                 domain = c(-50, 50)) %>% 
+  tab_header(title = md("**Aaron Rodgers** career EPA data by season"),
+             subtitle = md("*Centering EPA categories on the league average to assess how Rodgers has succeeded historically*<br>Highlighting 2014, 2020, and 2021 as his MVP seasons")) %>% 
+  tab_source_note(source_note = md("**Source**: {nflverse}<br>Minimum 150 snaps in a season for QBs to qualify<br>Excluding 2023 as injury-shortened season")) %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = "lightgray"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      rows = season %in% c(2014, 2020, 2021)
+    )
+  ) %>% 
+  tab_spanner(
+    label = md("**Mean Centered**<br>Positive values indicate performance above league average in that season"),    
+    columns = c(mean_centered_sum_qb_epa:mean_centered_sum_qb_epa_scramble)
+  ) %>% 
+  gt_img_rows(
+    columns = team_logo_wikipedia,
+    height = 30
+  ) %>% 
+  gt_theme_athletic()
+```
+
+
