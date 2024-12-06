@@ -21,7 +21,6 @@ title-block-banner: "#f0f3f5"
 title-block-banner-color: "black"
 ---
 
-
 ```{r setup, include=TRUE, warning=FALSE, message=FALSE}
 #| echo=FALSE
 if (!require("pacman")) install.packages("pacman")
@@ -451,13 +450,13 @@ def_ranks %>%
   filter(age_season_start >= 35,
          position.x == 'DT') %>% 
   arrange(-sum_def_sacks)
-  mutate(over_35 = if_else(age_season_start >= 35, 1, 0)) %>%
-  filter(over_35 == 1) %>%
-  group_by(full_name, over_35) %>%
-  summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),
-            .groups = 'drop') %>%
-  arrange(-ttl_sacks_over_35) %>%
-  mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))
+  # mutate(over_35 = if_else(age_season_start >= 35, 1, 0)) %>%
+  # filter(over_35 == 1) %>%
+  # group_by(full_name, over_35) %>%
+  # summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),
+  #           .groups = 'drop') %>%
+  # arrange(-ttl_sacks_over_35) %>%
+  # mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))
 ```
 
 Coming off of a season where he struggled with a groin injury, Heyward is having a historic season.
@@ -470,3 +469,61 @@ This story led me to looking at John Randle's career stats. He was more of a pas
 
 I wanted to layer in data on snap counts to see how his utilization compares with others in this category, but the {nflverse} snap count data only goes back to 2012.
 :::
+
+
+# New City, New You: Derrick Henry and Saquon Barkley 
+
+```{r}
+load_pbp(seasons = 2016:2024) %>% 
+  filter(season_type == 'REG')
+```
+
+
+Three backs have separated themselves into the elite  
+
+```{r ball_carrier_epa, include=TRUE}
+#| echo=FALSE
+ball_carrier_epa <- pbp_2024 %>% 
+  mutate(ball_carrier = if_else(is.na(rusher), receiver, rusher),
+         ball_carrier_id = if_else(is.na(rusher_player_id), receiver_player_id, rusher_player_id)) %>%
+  arrange(game_date, play_id) %>% 
+  filter(!is.na(ball_carrier),
+         play_type != 'no_play') %>% 
+  group_by(posteam, ball_carrier, ball_carrier_id) %>% 
+  summarise(cumsum_epa = cumsum(epa),
+            touch = row_number(),
+            ttl_touch = max(touch),
+            .groups = 'drop') %>% 
+  left_join(x=.,
+            y=rosters %>% select(position, gsis_id),
+            by=c('ball_carrier_id' = 'gsis_id'))
+  # filter(ttl_touch >= 150)
+
+rosters
+
+ball_carrier_epa %>% 
+  distinct(ball_carrier, position)
+```
+
+This is a sstory about positional value, with only a small number of running backs generating much in the way of EPA. (Should also look at it on a per-play basis).
+
+```{r rush_epa_rbs, include=TRUE, fig.width=9}
+# Look at the cumulative sum of expected points (with proper citation from Substack!).
+ball_carrier_epa %>% 
+  filter(!position %in% c('QB')) %>% 
+  # arrange(-cumsum_epa)
+  mutate(spotlight = if_else(ball_carrier %in% c('S.Barkley', 
+                                           'D.Henry',
+                                           'J.Gibbs'), 
+                             ball_carrier, 'Other')) %>% 
+  ggplot(.,
+         aes(x=touch,
+             y=cumsum_epa,
+             color=if_else(position == 'RB', position, 'non-RB'))) + 
+             # color=if_else(rusher == 'S.Barkley', 'S.Barkley', 'Other'))) + 
+  geom_line(aes(groups=ball_carrier)) + 
+  # scale_color_manual(values = c('S.Barkley' = 'black',
+  #                               'Other' = 'gray98')) + 
+  theme_nfl_analytics()
+  # theme(legend.position = 'none')
+```
