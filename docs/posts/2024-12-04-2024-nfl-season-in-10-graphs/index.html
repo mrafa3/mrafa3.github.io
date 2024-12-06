@@ -295,85 +295,96 @@ background: #f0f3f5;
 </div>
 </div>
 <div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in readRDS(con): URL
+'https://objects.githubusercontent.com/github-production-release-asset-2e65be/452908115/fd3c896b-9039-4679-9dfb-e3acea35e25d?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=releaseassetproduction%2F20241206%2Fus-east-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20241206T222707Z&amp;X-Amz-Expires=300&amp;X-Amz-Signature=4424e61eeba227709788816757df18fe8280eb2790c88ded47a326d0c54822c2&amp;X-Amz-SignedHeaders=host&amp;response-content-disposition=attachment%3B%20filename%3Dplay_by_play_2009.rds&amp;response-content-type=application%2Foctet-stream':
+Timeout of 60 seconds was reached</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Failed to readRDS from
+&lt;https://github.com/nflverse/nflverse-data/releases/download/pbp/play_by_play_2009.rds&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dropback_pbp_08_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(passer <span class="sc">==</span> <span class="st">'A.Rodgers'</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>         season <span class="sc">!=</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>teams <span class="sc">%&gt;%</span> <span class="fu">select</span>(team_abbr, team_logo_wikipedia),</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'posteam'</span> <span class="ot">=</span> <span class="st">'team_abbr'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(season, team_logo_wikipedia, plays, <span class="fu">contains</span>(<span class="st">'mean_centered'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>season) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">season =</span> <span class="st">'Season'</span>,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">team_logo_wikipedia =</span> <span class="st">'Team'</span>,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">plays =</span> <span class="st">'Plays'</span>,</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa =</span> <span class="st">'EPA'</span>,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_air_epa =</span> <span class="st">'Air'</span>,</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_yac_epa =</span> <span class="st">'YAC'</span>,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_int =</span> <span class="st">'INTs'</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_sack =</span> <span class="st">'Sacks'</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_dpi =</span> <span class="st">'DPI'</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_scramble =</span> <span class="st">'Scramble'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">230</span>, <span class="dv">230</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_air_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">300</span>, <span class="dv">300</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_yac_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">240</span>, <span class="dv">240</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_int, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">110</span>, <span class="dv">110</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_sack, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">60</span>, <span class="dv">60</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_dpi, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">30</span>, <span class="dv">30</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_scramble, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">50</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Aaron Rodgers** career EPA data by season"</span>),</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>             <span class="at">subtitle =</span> <span class="fu">md</span>(<span class="st">"*Centering EPA categories on the league average to assess how Rodgers has succeeded historically*&lt;br&gt;Highlighting 2014, 2020, and 2021 as his MVP seasons"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="fu">md</span>(<span class="st">"**Source**: {nflverse}&lt;br&gt;Minimum 150 snaps in a season for QBs to qualify&lt;br&gt;Excluding 2023 as injury-shortened season"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"#FFB612"</span>),</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>)</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_body</span>(</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> season <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2014</span>, <span class="dv">2020</span>, <span class="dv">2021</span>)</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_spanner</span>(</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">md</span>(<span class="st">"**Mean Centered**&lt;br&gt;Positive values indicate performance above league average in that season"</span>),    </span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(mean_centered_sum_qb_epa<span class="sc">:</span>mean_centered_sum_qb_epa_scramble)</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_img_rows</span>(</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> team_logo_wikipedia,</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">30</span></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_athletic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dropback_pbp_08_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(passer <span class="sc">==</span> <span class="st">'A.Rodgers'</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>         season <span class="sc">!=</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>teams <span class="sc">%&gt;%</span> <span class="fu">select</span>(team_abbr, team_logo_wikipedia),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'posteam'</span> <span class="ot">=</span> <span class="st">'team_abbr'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(season, team_logo_wikipedia, plays, <span class="fu">contains</span>(<span class="st">'mean_centered'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>season) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">season =</span> <span class="st">'Season'</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">team_logo_wikipedia =</span> <span class="st">'Team'</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">plays =</span> <span class="st">'Plays'</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa =</span> <span class="st">'EPA'</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_air_epa =</span> <span class="st">'Air'</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_yac_epa =</span> <span class="st">'YAC'</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_int =</span> <span class="st">'INTs'</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_sack =</span> <span class="st">'Sacks'</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_dpi =</span> <span class="st">'DPI'</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_scramble =</span> <span class="st">'Scramble'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">230</span>, <span class="dv">230</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_air_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">300</span>, <span class="dv">300</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_yac_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">240</span>, <span class="dv">240</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_int, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">110</span>, <span class="dv">110</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_sack, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">60</span>, <span class="dv">60</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_dpi, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">30</span>, <span class="dv">30</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_scramble, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">50</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Aaron Rodgers** career EPA data by season"</span>),</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>             <span class="at">subtitle =</span> <span class="fu">md</span>(<span class="st">"*Centering EPA categories on the league average to assess how Rodgers has succeeded historically*&lt;br&gt;Highlighting 2014, 2020, and 2021 as his MVP seasons"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="fu">md</span>(<span class="st">"**Source**: {nflverse}&lt;br&gt;Minimum 150 snaps in a season for QBs to qualify&lt;br&gt;Excluding 2023 as injury-shortened season"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"#FFB612"</span>),</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_body</span>(</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> season <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2014</span>, <span class="dv">2020</span>, <span class="dv">2021</span>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_spanner</span>(</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">md</span>(<span class="st">"**Mean Centered**&lt;br&gt;Positive values indicate performance above league average in that season"</span>),    </span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(mean_centered_sum_qb_epa<span class="sc">:</span>mean_centered_sum_qb_epa_scramble)</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_img_rows</span>(</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> team_logo_wikipedia,</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">30</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_athletic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="epnncmppww" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="ypihpyulzj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#epnncmppww table {
+#ypihpyulzj table {
   font-family: 'Spline Sans Mono', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#epnncmppww thead, #epnncmppww tbody, #epnncmppww tfoot, #epnncmppww tr, #epnncmppww td, #epnncmppww th {
+#ypihpyulzj thead, #ypihpyulzj tbody, #ypihpyulzj tfoot, #ypihpyulzj tr, #ypihpyulzj td, #ypihpyulzj th {
   border-style: none;
 }
 
-#epnncmppww p {
+#ypihpyulzj p {
   margin: 0;
   padding: 0;
 }
 
-#epnncmppww .gt_table {
+#ypihpyulzj .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -399,12 +410,12 @@ background: #f0f3f5;
   border-left-color: #D3D3D3;
 }
 
-#epnncmppww .gt_caption {
+#ypihpyulzj .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#epnncmppww .gt_title {
+#ypihpyulzj .gt_title {
   color: #333333;
   font-size: 26px;
   font-weight: initial;
@@ -416,7 +427,7 @@ background: #f0f3f5;
   border-bottom-width: 0;
 }
 
-#epnncmppww .gt_subtitle {
+#ypihpyulzj .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -428,7 +439,7 @@ background: #f0f3f5;
   border-top-width: 0;
 }
 
-#epnncmppww .gt_heading {
+#ypihpyulzj .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -440,13 +451,13 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#epnncmppww .gt_bottom_border {
+#ypihpyulzj .gt_bottom_border {
   border-bottom-style: none;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#epnncmppww .gt_col_headings {
+#ypihpyulzj .gt_col_headings {
   border-top-style: none;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -461,7 +472,7 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#epnncmppww .gt_col_heading {
+#ypihpyulzj .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -481,7 +492,7 @@ background: #f0f3f5;
   overflow-x: hidden;
 }
 
-#epnncmppww .gt_column_spanner_outer {
+#ypihpyulzj .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -493,15 +504,15 @@ background: #f0f3f5;
   padding-right: 4px;
 }
 
-#epnncmppww .gt_column_spanner_outer:first-child {
+#ypihpyulzj .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#epnncmppww .gt_column_spanner_outer:last-child {
+#ypihpyulzj .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#epnncmppww .gt_column_spanner {
+#ypihpyulzj .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-bottom-color: #000000;
@@ -513,11 +524,11 @@ background: #f0f3f5;
   width: 100%;
 }
 
-#epnncmppww .gt_spanner_row {
+#ypihpyulzj .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#epnncmppww .gt_group_heading {
+#ypihpyulzj .gt_group_heading {
   padding-top: 1.5px;
   padding-bottom: 1.5px;
   padding-left: 5px;
@@ -543,7 +554,7 @@ background: #f0f3f5;
   text-align: left;
 }
 
-#epnncmppww .gt_empty_group_heading {
+#ypihpyulzj .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -558,15 +569,15 @@ background: #f0f3f5;
   vertical-align: middle;
 }
 
-#epnncmppww .gt_from_md > :first-child {
+#ypihpyulzj .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#epnncmppww .gt_from_md > :last-child {
+#ypihpyulzj .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#epnncmppww .gt_row {
+#ypihpyulzj .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -585,7 +596,7 @@ background: #f0f3f5;
   overflow-x: hidden;
 }
 
-#epnncmppww .gt_stub {
+#ypihpyulzj .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -598,7 +609,7 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#epnncmppww .gt_stub_row_group {
+#ypihpyulzj .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -612,15 +623,15 @@ background: #f0f3f5;
   vertical-align: top;
 }
 
-#epnncmppww .gt_row_group_first td {
+#ypihpyulzj .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#epnncmppww .gt_row_group_first th {
+#ypihpyulzj .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#epnncmppww .gt_summary_row {
+#ypihpyulzj .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -630,16 +641,16 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#epnncmppww .gt_first_summary_row {
+#ypihpyulzj .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#epnncmppww .gt_first_summary_row.thick {
+#ypihpyulzj .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#epnncmppww .gt_last_summary_row {
+#ypihpyulzj .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -649,7 +660,7 @@ background: #f0f3f5;
   border-bottom-color: #D3D3D3;
 }
 
-#epnncmppww .gt_grand_summary_row {
+#ypihpyulzj .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -659,7 +670,7 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#epnncmppww .gt_first_grand_summary_row {
+#ypihpyulzj .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -669,7 +680,7 @@ background: #f0f3f5;
   border-top-color: #D3D3D3;
 }
 
-#epnncmppww .gt_last_grand_summary_row_top {
+#ypihpyulzj .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -679,11 +690,11 @@ background: #f0f3f5;
   border-bottom-color: #D3D3D3;
 }
 
-#epnncmppww .gt_striped {
+#ypihpyulzj .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#epnncmppww .gt_table_body {
+#ypihpyulzj .gt_table_body {
   border-top-style: none;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -692,7 +703,7 @@ background: #f0f3f5;
   border-bottom-color: #D3D3D3;
 }
 
-#epnncmppww .gt_footnotes {
+#ypihpyulzj .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -706,7 +717,7 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#epnncmppww .gt_footnote {
+#ypihpyulzj .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -715,7 +726,7 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#epnncmppww .gt_sourcenotes {
+#ypihpyulzj .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -729,7 +740,7 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#epnncmppww .gt_sourcenote {
+#ypihpyulzj .gt_sourcenote {
   font-size: 10px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -737,89 +748,89 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#epnncmppww .gt_left {
+#ypihpyulzj .gt_left {
   text-align: left;
 }
 
-#epnncmppww .gt_center {
+#ypihpyulzj .gt_center {
   text-align: center;
 }
 
-#epnncmppww .gt_right {
+#ypihpyulzj .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#epnncmppww .gt_font_normal {
+#ypihpyulzj .gt_font_normal {
   font-weight: normal;
 }
 
-#epnncmppww .gt_font_bold {
+#ypihpyulzj .gt_font_bold {
   font-weight: bold;
 }
 
-#epnncmppww .gt_font_italic {
+#ypihpyulzj .gt_font_italic {
   font-style: italic;
 }
 
-#epnncmppww .gt_super {
+#ypihpyulzj .gt_super {
   font-size: 65%;
 }
 
-#epnncmppww .gt_footnote_marks {
+#ypihpyulzj .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#epnncmppww .gt_asterisk {
+#ypihpyulzj .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#epnncmppww .gt_indent_1 {
+#ypihpyulzj .gt_indent_1 {
   text-indent: 5px;
 }
 
-#epnncmppww .gt_indent_2 {
+#ypihpyulzj .gt_indent_2 {
   text-indent: 10px;
 }
 
-#epnncmppww .gt_indent_3 {
+#ypihpyulzj .gt_indent_3 {
   text-indent: 15px;
 }
 
-#epnncmppww .gt_indent_4 {
+#ypihpyulzj .gt_indent_4 {
   text-indent: 20px;
 }
 
-#epnncmppww .gt_indent_5 {
+#ypihpyulzj .gt_indent_5 {
   text-indent: 25px;
 }
 
-#epnncmppww .katex-display {
+#ypihpyulzj .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#epnncmppww div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#ypihpyulzj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 
-#epnncmppww tbody tr:last-child {
+#ypihpyulzj tbody tr:last-child {
   border-bottom: 2px solid #ffffff00;
 }
 
-#epnncmppww .gt_subtitle {
+#ypihpyulzj .gt_subtitle {
   padding-top: 0px !important;
   padding-bottom: 4px !important;
 }
 
-#epnncmppww .gt_sourcenote {
+#ypihpyulzj .gt_sourcenote {
   border-bottom-color: #FFFDF5 !important;
 }
 
-#epnncmppww .gt_heading {
+#ypihpyulzj .gt_heading {
   padding-bottom: 0px;
   padding-top: 6px;
 }
@@ -868,196 +879,184 @@ background: #f0f3f5;
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2024</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/New_York_Jets_logo.svg/100px-New_York_Jets_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">482</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-28.357</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7774C; color: #FFFFFF; border-radius: 10px; text-align: center; ">-35.435</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A07C50; color: #FFFFFF; border-radius: 10px; text-align: center; ">3.561</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9F7D51; color: #FFFFFF; border-radius: 10px; text-align: center; ">4.033</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9F7E51; color: #FFFFFF; border-radius: 10px; text-align: center; ">2.562</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.478</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A8764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-7.168</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-29.155</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7774C; color: #FFFFFF; border-radius: 10px; text-align: center; ">-35.651</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C50; color: #FFFFFF; border-radius: 10px; text-align: center; ">3.064</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9F7D51; color: #FFFFFF; border-radius: 10px; text-align: center; ">3.770</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9F7E51; color: #FFFFFF; border-radius: 10px; text-align: center; ">2.953</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978556; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.322</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A8754B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-7.364</span></td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2022</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">621</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A37B4F; color: #FFFFFF; border-radius: 10px; text-align: center; ">-6.623</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8153; color: #FFFFFF; border-radius: 10px; text-align: center; ">36.015</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AB7248; color: #FFFFFF; border-radius: 10px; text-align: center; ">-52.004</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A6784C; color: #FFFFFF; border-radius: 10px; text-align: center; ">-10.357</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AF6E46; color: #FFFFFF; border-radius: 10px; text-align: center; ">-18.410</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #958557; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.979</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8154; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.686</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A37A4E; color: #FFFFFF; border-radius: 10px; text-align: center; ">-7.420</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8153; color: #FFFFFF; border-radius: 10px; text-align: center; ">35.800</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AB7248; color: #FFFFFF; border-radius: 10px; text-align: center; ">-52.502</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A6784C; color: #FFFFFF; border-radius: 10px; text-align: center; ">-10.620</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AE6E46; color: #FFFFFF; border-radius: 10px; text-align: center; ">-18.019</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.823</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8154; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.490</span></td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_center" headers="season" style="background-color: #FFB612; font-weight: bold; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2021</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">606</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #869060; color: #FFFFFF; border-radius: 10px; text-align: center; ">115.550</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8154; color: #FFFFFF; border-radius: 10px; text-align: center; ">39.562</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #91885A; color: #FFFFFF; border-radius: 10px; text-align: center; ">73.911</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">22.251</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C50; color: #FFFFFF; border-radius: 10px; text-align: center; ">0.597</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #90895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.767</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A07D50; color: #FFFFFF; border-radius: 10px; text-align: center; ">1.475</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #869060; color: #FFFFFF; border-radius: 10px; text-align: center; ">114.753</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8154; color: #FFFFFF; border-radius: 10px; text-align: center; ">39.347</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #91885A; color: #FFFFFF; border-radius: 10px; text-align: center; ">73.414</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">21.988</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A07D50; color: #FFFFFF; border-radius: 10px; text-align: center; ">0.989</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #91895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.611</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A07D50; color: #FFFFFF; border-radius: 10px; text-align: center; ">1.279</span></td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_center" headers="season" style="background-color: #FFB612; font-weight: bold; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2020</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">604</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #6F9B6B; color: #FFFFFF; border-radius: 10px; text-align: center; ">186.660</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">44.057</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8A8D5D; color: #FFFFFF; border-radius: 10px; text-align: center; ">101.521</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #988355; color: #FFFFFF; border-radius: 10px; text-align: center; ">19.820</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #948758; color: #FFFFFF; border-radius: 10px; text-align: center; ">15.938</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #90895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.882</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">7.491</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #6F9B6A; color: #FFFFFF; border-radius: 10px; text-align: center; ">185.863</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">43.842</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8B8D5D; color: #FFFFFF; border-radius: 10px; text-align: center; ">101.024</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #988355; color: #FFFFFF; border-radius: 10px; text-align: center; ">19.557</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #938758; color: #FFFFFF; border-radius: 10px; text-align: center; ">16.330</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #90895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.725</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">7.295</span></td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2019</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">678</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #948758; color: #FFFFFF; border-radius: 10px; text-align: center; ">59.742</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #898E5E; color: #FFFFFF; border-radius: 10px; text-align: center; ">132.612</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B06D45; color: #FFFFFF; border-radius: 10px; text-align: center; ">-81.146</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">24.926</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B26A43; color: #FFFFFF; border-radius: 10px; text-align: center; ">-23.246</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #888E5F; color: #FFFFFF; border-radius: 10px; text-align: center; ">13.790</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8153; color: #FFFFFF; border-radius: 10px; text-align: center; ">5.938</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #948658; color: #FFFFFF; border-radius: 10px; text-align: center; ">58.945</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #898E5E; color: #FFFFFF; border-radius: 10px; text-align: center; ">132.397</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B06C44; color: #FFFFFF; border-radius: 10px; text-align: center; ">-81.644</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">24.664</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B26A43; color: #FFFFFF; border-radius: 10px; text-align: center; ">-22.855</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #898E5E; color: #FFFFFF; border-radius: 10px; text-align: center; ">13.634</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9C8153; color: #FFFFFF; border-radius: 10px; text-align: center; ">5.742</span></td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2018</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">720</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #958657; color: #FFFFFF; border-radius: 10px; text-align: center; ">55.464</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #878F5F; color: #FFFFFF; border-radius: 10px; text-align: center; ">144.540</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AE6F46; color: #FFFFFF; border-radius: 10px; text-align: center; ">-69.472</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #91895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">34.234</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #BD5B3A; color: #FFFFFF; border-radius: 10px; text-align: center; ">-40.836</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.662</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8F8A5B; color: #FFFFFF; border-radius: 10px; text-align: center; ">17.267</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #958657; color: #FFFFFF; border-radius: 10px; text-align: center; ">54.667</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #878F5F; color: #FFFFFF; border-radius: 10px; text-align: center; ">144.324</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AE6F46; color: #FFFFFF; border-radius: 10px; text-align: center; ">-69.970</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #91895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">33.971</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #BD5B3A; color: #FFFFFF; border-radius: 10px; text-align: center; ">-40.445</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.505</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8F8A5B; color: #FFFFFF; border-radius: 10px; text-align: center; ">17.071</span></td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2017</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">301</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C4F; color: #FFFFFF; border-radius: 10px; text-align: center; ">-0.267</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AE6F46; color: #FFFFFF; border-radius: 10px; text-align: center; ">-88.654</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8F8A5B; color: #FFFFFF; border-radius: 10px; text-align: center; ">85.071</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">16.554</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998255; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.275</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A5784C; color: #FFFFFF; border-radius: 10px; text-align: center; ">-2.800</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9E7F51; color: #FFFFFF; border-radius: 10px; text-align: center; ">3.123</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C4F; color: #FFFFFF; border-radius: 10px; text-align: center; ">-1.064</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AE6F46; color: #FFFFFF; border-radius: 10px; text-align: center; ">-88.870</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8F8A5B; color: #FFFFFF; border-radius: 10px; text-align: center; ">84.573</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">16.292</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998355; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.666</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A6784C; color: #FFFFFF; border-radius: 10px; text-align: center; ">-2.957</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9E7E51; color: #FFFFFF; border-radius: 10px; text-align: center; ">2.927</span></td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2016</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">731</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #799766; color: #FFFFFF; border-radius: 10px; text-align: center; ">157.930</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #809363; color: #FFFFFF; border-radius: 10px; text-align: center; ">175.189</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AB7249; color: #FFFFFF; border-radius: 10px; text-align: center; ">-51.296</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978556; color: #FFFFFF; border-radius: 10px; text-align: center; ">23.096</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AD7047; color: #FFFFFF; border-radius: 10px; text-align: center; ">-16.468</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #91895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.260</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #859060; color: #FFFFFF; border-radius: 10px; text-align: center; ">25.297</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #799766; color: #FFFFFF; border-radius: 10px; text-align: center; ">157.133</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #809363; color: #FFFFFF; border-radius: 10px; text-align: center; ">174.974</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AB7248; color: #FFFFFF; border-radius: 10px; text-align: center; ">-51.794</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">22.833</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AD7047; color: #FFFFFF; border-radius: 10px; text-align: center; ">-16.077</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #918859; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.104</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #869060; color: #FFFFFF; border-radius: 10px; text-align: center; ">25.101</span></td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2015</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">737</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9C8053; color: #FFFFFF; border-radius: 10px; text-align: center; ">24.447</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8B8D5D; color: #FFFFFF; border-radius: 10px; text-align: center; ">125.965</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B46741; color: #FFFFFF; border-radius: 10px; text-align: center; ">-106.179</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9D7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">8.375</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #C15537; color: #FFFFFF; border-radius: 10px; text-align: center; ">-46.560</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #61A170; color: #FFFFFF; border-radius: 10px; text-align: center; ">28.842</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #958557; color: #FFFFFF; border-radius: 10px; text-align: center; ">11.590</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9C8053; color: #FFFFFF; border-radius: 10px; text-align: center; ">23.649</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8B8D5D; color: #FFFFFF; border-radius: 10px; text-align: center; ">125.749</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B46741; color: #FFFFFF; border-radius: 10px; text-align: center; ">-106.677</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9E7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">8.112</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #C05537; color: #FFFFFF; border-radius: 10px; text-align: center; ">-46.169</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #62A06F; color: #FFFFFF; border-radius: 10px; text-align: center; ">28.685</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">11.394</span></td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_center" headers="season" style="background-color: #FFB612; font-weight: bold; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2014</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">611</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #729A69; color: #FFFFFF; border-radius: 10px; text-align: center; ">176.597</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8C8C5D; color: #FFFFFF; border-radius: 10px; text-align: center; ">120.752</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8154; color: #FFFFFF; border-radius: 10px; text-align: center; ">29.851</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998355; color: #FFFFFF; border-radius: 10px; text-align: center; ">18.888</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C4F; color: #FFFFFF; border-radius: 10px; text-align: center; ">-0.172</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.856</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #90895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">16.393</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #739A69; color: #FFFFFF; border-radius: 10px; text-align: center; ">175.800</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8C8C5D; color: #FFFFFF; border-radius: 10px; text-align: center; ">120.537</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8153; color: #FFFFFF; border-radius: 10px; text-align: center; ">29.353</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998355; color: #FFFFFF; border-radius: 10px; text-align: center; ">18.625</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C50; color: #FFFFFF; border-radius: 10px; text-align: center; ">0.219</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968557; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.699</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="background-color: #FFB612; font-weight: bold; border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #90895A; color: #FFFFFF; border-radius: 10px; text-align: center; ">16.197</span></td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2013</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">346</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #928859; color: #FFFFFF; border-radius: 10px; text-align: center; ">69.131</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A8764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-41.694</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8D8C5C; color: #FFFFFF; border-radius: 10px; text-align: center; ">93.000</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998355; color: #FFFFFF; border-radius: 10px; text-align: center; ">18.393</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8D8C5C; color: #FFFFFF; border-radius: 10px; text-align: center; ">23.209</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A9744A; color: #FFFFFF; border-radius: 10px; text-align: center; ">-5.416</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9D7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">4.054</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #928859; color: #FFFFFF; border-radius: 10px; text-align: center; ">68.333</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A8764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-41.910</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8D8C5C; color: #FFFFFF; border-radius: 10px; text-align: center; ">92.502</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998355; color: #FFFFFF; border-radius: 10px; text-align: center; ">18.130</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8C8C5C; color: #FFFFFF; border-radius: 10px; text-align: center; ">23.601</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AA7449; color: #FFFFFF; border-radius: 10px; text-align: center; ">-5.573</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9D7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">3.858</span></td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2012</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">688</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #869060; color: #FFFFFF; border-radius: 10px; text-align: center; ">113.603</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #928859; color: #FFFFFF; border-radius: 10px; text-align: center; ">85.495</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #988355; color: #FFFFFF; border-radius: 10px; text-align: center; ">43.993</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9C8053; color: #FFFFFF; border-radius: 10px; text-align: center; ">11.061</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B8623E; color: #FFFFFF; border-radius: 10px; text-align: center; ">-33.126</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #928859; color: #FFFFFF; border-radius: 10px; text-align: center; ">8.685</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.945</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #869060; color: #FFFFFF; border-radius: 10px; text-align: center; ">112.806</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #938859; color: #FFFFFF; border-radius: 10px; text-align: center; ">85.280</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #988355; color: #FFFFFF; border-radius: 10px; text-align: center; ">43.495</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9C8053; color: #FFFFFF; border-radius: 10px; text-align: center; ">10.798</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B8623E; color: #FFFFFF; border-radius: 10px; text-align: center; ">-32.734</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #938859; color: #FFFFFF; border-radius: 10px; text-align: center; ">8.529</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9A8254; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.749</span></td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2011</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">595</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #679E6D; color: #FFFFFF; border-radius: 10px; text-align: center; ">206.412</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #888E5F; color: #FFFFFF; border-radius: 10px; text-align: center; ">137.585</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #948658; color: #FFFFFF; border-radius: 10px; text-align: center; ">61.023</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998355; color: #FFFFFF; border-radius: 10px; text-align: center; ">18.024</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A37A4E; color: #FFFFFF; border-radius: 10px; text-align: center; ">-2.251</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">6.144</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.782</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #689E6D; color: #FFFFFF; border-radius: 10px; text-align: center; ">205.615</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #888E5F; color: #FFFFFF; border-radius: 10px; text-align: center; ">137.370</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #948658; color: #FFFFFF; border-radius: 10px; text-align: center; ">60.525</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998355; color: #FFFFFF; border-radius: 10px; text-align: center; ">17.761</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A37B4E; color: #FFFFFF; border-radius: 10px; text-align: center; ">-1.859</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">5.988</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #988456; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.586</span></td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2010</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">565</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #898E5E; color: #FFFFFF; border-radius: 10px; text-align: center; ">101.739</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8D8B5C; color: #FFFFFF; border-radius: 10px; text-align: center; ">112.493</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-31.782</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9D7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">8.411</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C4F; color: #FFFFFF; border-radius: 10px; text-align: center; ">-0.115</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AA7349; color: #FFFFFF; border-radius: 10px; text-align: center; ">-5.957</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">10.357</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #898E5E; color: #FFFFFF; border-radius: 10px; text-align: center; ">100.942</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8D8B5C; color: #FFFFFF; border-radius: 10px; text-align: center; ">112.277</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-32.279</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9E7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">8.148</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C50; color: #FFFFFF; border-radius: 10px; text-align: center; ">0.277</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AA7349; color: #FFFFFF; border-radius: 10px; text-align: center; ">-6.114</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978456; color: #FFFFFF; border-radius: 10px; text-align: center; ">10.161</span></td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2009</td>
-<td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
-<td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">645</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #859060; color: #FFFFFF; border-radius: 10px; text-align: center; ">116.794</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8A8E5E; color: #FFFFFF; border-radius: 10px; text-align: center; ">131.397</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A37A4E; color: #FFFFFF; border-radius: 10px; text-align: center; ">-7.993</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9B8153; color: #FFFFFF; border-radius: 10px; text-align: center; ">13.598</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #B46741; color: #FFFFFF; border-radius: 10px; text-align: center; ">-26.481</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #998255; color: #FFFFFF; border-radius: 10px; text-align: center; ">4.633</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #988355; color: #FFFFFF; border-radius: 10px; text-align: center; ">9.073</span></td>
-</tr>
-<tr class="even">
 <td class="gt_row gt_center" headers="season" style="border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">2008</td>
 <td class="gt_row gt_center" headers="team_logo_wikipedia" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Green_Bay_Packers_logo.svg/100px-Green_Bay_Packers_logo.svg.png" class="img-fluid" style="height:30px;"></td>
 <td class="gt_row gt_center" headers="plays" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black">614</td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #968556; color: #FFFFFF; border-radius: 10px; text-align: center; ">49.140</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8E8B5B; color: #FFFFFF; border-radius: 10px; text-align: center; ">108.406</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A8754A; color: #FFFFFF; border-radius: 10px; text-align: center; ">-37.643</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C4F; color: #FFFFFF; border-radius: 10px; text-align: center; ">-0.124</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-8.166</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AC7148; color: #FFFFFF; border-radius: 10px; text-align: center; ">-7.155</span></td>
-<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9E7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">3.583</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #978556; color: #FFFFFF; border-radius: 10px; text-align: center; ">48.342</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_air_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #8E8B5B; color: #FFFFFF; border-radius: 10px; text-align: center; ">108.190</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_yac_epa" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 8ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A8754A; color: #FFFFFF; border-radius: 10px; text-align: center; ">-38.140</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_int" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A17C4F; color: #FFFFFF; border-radius: 10px; text-align: center; ">-0.386</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_sack" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 7ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #A7764B; color: #FFFFFF; border-radius: 10px; text-align: center; ">-7.775</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_dpi" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #AC7148; color: #FFFFFF; border-radius: 10px; text-align: center; ">-7.311</span></td>
+<td class="gt_row gt_center" headers="mean_centered_sum_qb_epa_scramble" style="border-left-width: 0.5px; border-left-style: solid; border-left-color: black; border-top-width: 1.5px; border-top-style: dotted; border-top-color: black"><span style="display: inline-block; width: 6ch; padding-left: 3px; padding-right: 3px; height: 25px; line-height: 25px; background-color: #9E7F52; color: #FFFFFF; border-radius: 10px; text-align: center; ">3.387</span></td>
 </tr>
 </tbody><tfoot class="gt_sourcenotes">
-<tr class="even">
+<tr class="odd">
 <td colspan="10" class="gt_sourcenote"><strong>Source</strong>: {nflverse}<br>Minimum 150 snaps in a season for QBs to qualify<br>Excluding 2023 as injury-shortened season</td>
 </tr>
 </tfoot>
@@ -1087,34 +1086,34 @@ background: #f0f3f5;
 </div></div><div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>player_stats_99_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, week, recent_team) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ttl_passing_yards =</span> <span class="fu">sum</span>(passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, recent_team) <span class="sc">%&gt;%</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">passing_yards_per_game =</span> <span class="fu">mean</span>(ttl_passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-season, passing_yards_per_game)</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>passing_yards_per_game,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>season)) <span class="sc">+</span> </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width=</span><span class="dv">0</span>, <span class="at">height=</span>.<span class="dv">1</span>, <span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span> </span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">group_by</span>(season) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">summarise</span>(<span class="at">mean_yards =</span> <span class="fu">mean</span>(passing_yards_per_game)),</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> mean_yards, <span class="at">xend =</span> mean_yards,</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> season <span class="sc">-</span> <span class="fl">0.6</span>, <span class="at">yend =</span> season <span class="sc">+</span> <span class="fl">0.6</span>),</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Distribution of passing yards per game on a seasonal basis (1999-2024)'</span>,</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Each dot represents a team's average total passing from a season&lt;br&gt;Red lines mark the league-wide average for a season"</span>,</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">'Season'</span>,</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'Average pass yards per game'</span>,</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">'**Source**: {nflverse}'</span>) <span class="sc">+</span> </span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>player_stats_99_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, week, recent_team) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ttl_passing_yards =</span> <span class="fu">sum</span>(passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, recent_team) <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">passing_yards_per_game =</span> <span class="fu">mean</span>(ttl_passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-season, passing_yards_per_game)</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>passing_yards_per_game,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>season)) <span class="sc">+</span> </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width=</span><span class="dv">0</span>, <span class="at">height=</span>.<span class="dv">1</span>, <span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">group_by</span>(season) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">summarise</span>(<span class="at">mean_yards =</span> <span class="fu">mean</span>(passing_yards_per_game)),</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> mean_yards, <span class="at">xend =</span> mean_yards,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> season <span class="sc">-</span> <span class="fl">0.6</span>, <span class="at">yend =</span> season <span class="sc">+</span> <span class="fl">0.6</span>),</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Distribution of passing yards per game on a seasonal basis (1999-2024)'</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Each dot represents a team's average total passing from a season&lt;br&gt;Red lines mark the league-wide average for a season"</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">'Season'</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'Average pass yards per game'</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">'**Source**: {nflverse}'</span>) <span class="sc">+</span> </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1130,28 +1129,28 @@ background: #f0f3f5;
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pbp_2024 <span class="sc">%&gt;%</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'run'</span>, <span class="st">'pass'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, play_type) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">epa_per_play =</span> <span class="fu">mean</span>(epa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> play_type, <span class="at">values_from =</span> epa_per_play) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>run,</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>pass)) <span class="sc">+</span> </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_mean_lines</span>(<span class="fu">aes</span>(<span class="at">x0=</span><span class="dv">0</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">y0=</span><span class="dv">0</span>),</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">color=</span><span class="st">'black'</span>, <span class="at">linewidth=</span>.<span class="dv">8</span>, <span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span> </span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_nfl_logos</span>(<span class="fu">aes</span>(<span class="at">team_abbr =</span> posteam), <span class="at">width =</span> <span class="fl">0.09</span>, <span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">'**Expected Points Added per Play**: Rush Offense vs. Pass Offense'</span>,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">'2024 season, through Week {max_week_param}'</span>),</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rush EPA/play"</span>,</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pass EPA/play"</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pbp_2024 <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'run'</span>, <span class="st">'pass'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, play_type) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">epa_per_play =</span> <span class="fu">mean</span>(epa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> play_type, <span class="at">values_from =</span> epa_per_play) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>run,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>pass)) <span class="sc">+</span> </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_mean_lines</span>(<span class="fu">aes</span>(<span class="at">x0=</span><span class="dv">0</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">y0=</span><span class="dv">0</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">color=</span><span class="st">'black'</span>, <span class="at">linewidth=</span>.<span class="dv">8</span>, <span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_nfl_logos</span>(<span class="fu">aes</span>(<span class="at">team_abbr =</span> posteam), <span class="at">width =</span> <span class="fl">0.09</span>, <span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">'**Expected Points Added per Play**: Rush Offense vs. Pass Offense'</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">'2024 season, through Week {max_week_param}'</span>),</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rush EPA/play"</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pass EPA/play"</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1167,39 +1166,39 @@ background: #f0f3f5;
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>player_stats_def_99_24 <span class="ot">&lt;-</span> <span class="fu">load_player_stats</span>(<span class="at">seasons =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">stat_type =</span> <span class="st">'defense'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="ot">&lt;-</span> player_stats_def_99_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, team, player_id, player_display_name, position) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">'def'</span>),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sum =</span> <span class="sc">~</span><span class="fu">sum</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>                   ),</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">'{.fn}_{.col}'</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                   ),</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">distinct_weeks =</span> <span class="fu">n_distinct</span>(week),</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(season) %&gt;% </span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(across(starts_with('sum'),</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               list(</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                 rank = ~rank(-.)</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               .names = '{.fn}_{.col}'</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#        )</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="sc">%&gt;%</span> </span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>rosters,</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'player_id'</span> <span class="ot">=</span> <span class="st">'gsis_id'</span>,</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'season'</span>,</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'team'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age_season_start <span class="sc">&gt;=</span> <span class="dv">35</span>,</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>         position.x <span class="sc">==</span> <span class="st">'DT'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>sum_def_sacks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>player_stats_def_99_24 <span class="ot">&lt;-</span> <span class="fu">load_player_stats</span>(<span class="at">seasons =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">stat_type =</span> <span class="st">'defense'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="ot">&lt;-</span> player_stats_def_99_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, team, player_id, player_display_name, position) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">'def'</span>),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sum =</span> <span class="sc">~</span><span class="fu">sum</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                   ),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">'{.fn}_{.col}'</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                   ),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">distinct_weeks =</span> <span class="fu">n_distinct</span>(week),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(season) %&gt;% </span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(across(starts_with('sum'),</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               list(</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                 rank = ~rank(-.)</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               .names = '{.fn}_{.col}'</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#        )</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="sc">%&gt;%</span> </span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>rosters,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'player_id'</span> <span class="ot">=</span> <span class="st">'gsis_id'</span>,</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'season'</span>,</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'team'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age_season_start <span class="sc">&gt;=</span> <span class="dv">35</span>,</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>         position.x <span class="sc">==</span> <span class="st">'DT'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>sum_def_sacks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 21 × 33
@@ -1225,13 +1224,13 @@ background: #f0f3f5;
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(over_35 = if_else(age_season_start &gt;= 35, 1, 0)) %&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(over_35 == 1) %&gt;%</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(full_name, over_35) %&gt;%</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#           .groups = 'drop') %&gt;%</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-ttl_sacks_over_35) %&gt;%</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(over_35 = if_else(age_season_start &gt;= 35, 1, 0)) %&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(over_35 == 1) %&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(full_name, over_35) %&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#           .groups = 'drop') %&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-ttl_sacks_over_35) %&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Coming off of a season where he struggled with a groin injury, Heyward is having a historic season.</p>
@@ -1246,10 +1245,10 @@ background: #f0f3f5;
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nextgen_rushing_16_24 <span class="ot">&lt;-</span> <span class="fu">load_nextgen_stats</span>(<span class="at">seasons =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">stat_type =</span> <span class="st">'rushing'</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>nextgen_rushing_16_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(player_display_name <span class="sc">==</span> <span class="st">'Saquon Barkley'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nextgen_rushing_16_24 <span class="ot">&lt;-</span> <span class="fu">load_nextgen_stats</span>(<span class="at">seasons =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">stat_type =</span> <span class="st">'rushing'</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>nextgen_rushing_16_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(player_display_name <span class="sc">==</span> <span class="st">'Saquon Barkley'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>── nflverse Next Gen Stats weekly rushing data ─────────────────────────────────</code></pre>
@@ -1284,33 +1283,33 @@ background: #f0f3f5;
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the cumulative sum of expected points (with proper citation from Substack!).</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>pbp_2024 <span class="sc">%&gt;%</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># select(contains('date'))</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(game_date, play_id) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rusher)) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, rusher) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">cumsum_epa =</span> <span class="fu">cumsum</span>(epa),</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">carry =</span> <span class="fu">row_number</span>(),</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">ttl_carry =</span> <span class="fu">max</span>(carry),</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ttl_carry <span class="sc">&gt;=</span> <span class="dv">150</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(rusher) %&gt;% </span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># slice_max(carry) %&gt;% </span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-cumsum_epa)</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spotlight =</span> <span class="fu">if_else</span>(rusher <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'S.Barkley'</span>, </span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'D.Henry'</span>,</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'J.Gibbs'</span>), </span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>                             rusher, <span class="st">'Other'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>carry,</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>cumsum_epa,</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span>spotlight)) <span class="sc">+</span> </span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>             <span class="co"># color=if_else(rusher == 'S.Barkley', 'S.Barkley', 'Other'))) + </span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">groups=</span>rusher)) <span class="sc">+</span> </span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># scale_color_manual(values = c('S.Barkley' = 'black',</span></span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                               'Other' = 'gray98')) + </span></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the cumulative sum of expected points (with proper citation from Substack!).</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>pbp_2024 <span class="sc">%&gt;%</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># select(contains('date'))</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(game_date, play_id) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(rusher)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, rusher) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">cumsum_epa =</span> <span class="fu">cumsum</span>(epa),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">carry =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">ttl_carry =</span> <span class="fu">max</span>(carry),</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ttl_carry <span class="sc">&gt;=</span> <span class="dv">150</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(rusher) %&gt;% </span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># slice_max(carry) %&gt;% </span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-cumsum_epa)</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spotlight =</span> <span class="fu">if_else</span>(rusher <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'S.Barkley'</span>, </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'D.Henry'</span>,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'J.Gibbs'</span>), </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>                             rusher, <span class="st">'Other'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>carry,</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>cumsum_epa,</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span>spotlight)) <span class="sc">+</span> </span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>             <span class="co"># color=if_else(rusher == 'S.Barkley', 'S.Barkley', 'Other'))) + </span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">groups=</span>rusher)) <span class="sc">+</span> </span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># scale_color_manual(values = c('S.Barkley' = 'black',</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                               'Other' = 'gray98')) + </span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Returning more (or less) than 1 row per `summarise()` group was deprecated in
@@ -1331,7 +1330,7 @@ dplyr 1.1.0.
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme(legend.position = 'none')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme(legend.position = 'none')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
