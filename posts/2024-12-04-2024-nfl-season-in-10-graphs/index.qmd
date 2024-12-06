@@ -474,8 +474,40 @@ I wanted to layer in data on snap counts to see how his utilization compares wit
 # New City, New You: Derrick Henry and Saquon Barkley 
 
 ```{r}
-load_pbp(seasons = 2016:2024) %>% 
-  filter(season_type == 'REG')
+#| fig.width=9
+pbp_16_24 <- load_pbp(seasons = 2016:2024) %>% 
+  filter(season_type == 'REG',
+         posteam %in% c('TEN', 'NYG', 'BAL', 'PHI')) %>% 
+  mutate(ball_carrier = if_else(is.na(rusher), receiver, rusher),
+         ball_carrier_id = if_else(is.na(rusher_player_id), receiver_player_id, rusher_player_id)) %>%
+  arrange(season, game_date, play_id) %>% 
+  filter(ball_carrier %in% c('D.Henry', 'S.Barkley'),
+         play_type != 'no_play')
+
+
+barkley_henry <- pbp_16_24 %>% 
+  group_by(season, posteam, ball_carrier, ball_carrier_id) %>% 
+  summarise(cumsum_epa = cumsum(epa),
+            touch = row_number(),
+            ttl_touch = max(touch),
+            epa_per_play = mean(epa, na.rm=TRUE),
+            .groups = 'drop')
+
+barkley_henry_epa_per_play <- pbp_16_24 %>% 
+  group_by(season, ball_carrier) %>% 
+  summarise(epa_per_play = mean(epa, na.rm=TRUE),
+            ttl_epa = sum(epa, na.rm=TRUE), 
+            .groups = 'drop')
+  
+barkley_henry %>% 
+  ggplot(.,
+         aes(x=touch,
+             y=cumsum_epa,
+             color=ball_carrier)) + 
+  geom_hline(aes(yintercept = 0), linetype='dashed') + 
+  geom_line() + 
+  facet_wrap(~season) + 
+  theme_nfl_analytics()
 ```
 
 
