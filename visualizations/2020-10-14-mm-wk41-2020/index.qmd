@@ -7,7 +7,7 @@ author:
 date: 10-14-2020
 categories: [R, "#MakeoverMonday", bar-plot] # self-defined categories
 image: "mm_2020_41_thumbnail.png"
-draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
 format:
   html:
