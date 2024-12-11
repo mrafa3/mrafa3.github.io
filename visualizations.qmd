@@ -7,5 +7,3 @@ listing:
   categories: true # allows you to sort posts by assigned categories
   # fields: [image, title, date] this line pushes the subtitle to the specific page and off of the visualizations landing page
 ---
-
-I'll be migrating my full viz portfolio here soon (Nov 2024)!
