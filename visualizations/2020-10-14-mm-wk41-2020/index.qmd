@@ -122,17 +122,17 @@ respondents_plot <- df %>%
   geom_col(aes(fill=financial_sector)) + 
   geom_text(aes(x=respondents_percent / 100 + .01,
                 label=paste(respondents_percent, '%', sep="")),
-            family='Montserrat', fontface='bold', size=8) + 
+            family='Montserrat', fontface='bold', size=7) + 
   annotate("text", label="Makeover Monday\nWeek 41 (2020)", x=.11, y=2, family="Montserrat", 
-           size=8, lineheight=.3) + 
+           size=7, lineheight=.9) + 
   labs(title='Responses to data and analytics strategy adoption survey by **dataIQ**',
        subtitle=glue("Percent of respondents by industry, highlighting the <span style='color:darkorange2'>**financial sector**")) + 
   scale_x_continuous(limits = c(0, .15),
                      labels = percent) + 
   scale_fill_manual(values = industry_cols) + 
   my_theme + 
-  theme(plot.title = element_textbox(size=rel(2)),
-        plot.subtitle = element_textbox(size=rel(1.5)),
+  theme(plot.title = element_textbox_simple(size=rel(2), margin = margin(b=5)),
+        plot.subtitle = element_textbox_simple(size=rel(1.35), margin = margin(b=5)),
         axis.text = element_text(size=rel(1.4)))
 ```
 # 7. Save 
@@ -142,7 +142,7 @@ respondents_plot <- df %>%
 ggsave(
   filename = glue("mm_{mm_year}_{mm_week}.png"),
   plot = respondents_plot,
-  width = 5, height = 3, units = "in", dpi = 320
+  width = 10, height = 6, units = "in", dpi = 320
 )
 
 # make thumbnail for page
