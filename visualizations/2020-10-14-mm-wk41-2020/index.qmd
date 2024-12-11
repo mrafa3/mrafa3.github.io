@@ -39,6 +39,7 @@ execute:
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(
     tidyverse,
+    httr,
     readxl,
     sysfonts,
     ggtext,
@@ -155,7 +156,7 @@ magick::image_read(glue("mm_{mm_year}_{mm_week}.png")) %>%
 ::: {.callout-tip collapse="true"}
 ##### Expand for Session Info
 
-```{r, echo = FALSE}
+```{r session_info, echo = FALSE}
 sessionInfo()
 ```
 :::
