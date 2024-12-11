@@ -1,11 +1,11 @@
 ---
-title: "Responses to Analytics Strategy Adoption Survey"
-# description: "Tidy Tuesday: Week 38, 2019"
+title: "Visualizing responses to an analytics strategy survey"
+description: "Refreshing a style-forward graphic to improve understanding"
 author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
-date: 12-30-2022
-categories: [R, "#MakeoverMonday", bar-chart] # self-defined categories
+date: 10-14-2020
+categories: [R, "#MakeoverMonday", bar-plot] # self-defined categories
 image: "mm_2020_41_thumbnail.png"
 draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
@@ -29,7 +29,9 @@ execute:
   eval: true
 ---
 
-![](mm_2020_41.png){#fig-1}
+![Original graphic depicting the proportion of respondents to the dataIQ Analytics Strategy Adoption Survey.](mm_circular_plot.png){#fig-1}
+
+![Bar plot visualizing the composition of respondents from the dataIQ Analytics Strategy Adoption Survey. The financial services sector is highlighted.](mm_2020_41.png){#fig-2}
 
 # 1. Load Packages & Setup
 
@@ -112,7 +114,7 @@ industry_cols <- c('Financial' = 'darkorange2',
 # 6. Plot 
 
 ```{r respondents_plot, include=TRUE, fig.width=5, fig.height=3, fig.align='center'}
-(respondents_plot <- df %>% 
+respondents_plot <- df %>% 
   ggplot(.,
          aes(x=respondents_percent / 100,
                y=reorder(industry_sector, respondents_percent))) + 
@@ -131,7 +133,6 @@ industry_cols <- c('Financial' = 'darkorange2',
   theme(plot.title = element_textbox(size=rel(2)),
         plot.subtitle = element_textbox(size=rel(1.5)),
         axis.text = element_text(size=rel(1.4)))
- )
 ```
 # 7. Save 
 
