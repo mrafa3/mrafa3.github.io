@@ -149,7 +149,7 @@ rookie_qb_epa_weekly_2024 %>%
   # theme(axis.title.y = element_text(angle=0))
 ```
 
-# Aaron Rodgers 
+# Aaron Rodgers
 
 ```{r passing_data, include=TRUE}
 #| echo=FALSE
@@ -262,14 +262,12 @@ dropback_pbp_08_24 %>%
   gt_theme_athletic()
 ```
 
-
 So what is clearly *not* working this year? Well, lots of things -- the Jets are a mess. But throughout Rodgers' career, two things stand out:
 
-*  **Air EPA** was a strength of his game. He could push the ball down the field and add value to his team by completing passes that improve his team's expected points. Only in 2013 and 2017 -- both injury-shortened seasons -- did Rodgers post air EPA numbers below the league average. In 2024, his offense is more reliant on yards after the catch than in most of his career.
-*  Rodgers has always posted above average EPA from **scrambles**, and this is the first season where that doesn't hold true. Whether it's the injury or just a reluctance to run, Rodgers is simply more stationary and less effective at scrambling at this stage in his career.
+-   **Air EPA** was a strength of his game. He could push the ball down the field and add value to his team by completing passes that improve his team's expected points. Only in 2013 and 2017 -- both injury-shortened seasons -- did Rodgers post air EPA numbers below the league average. In 2024, his offense is more reliant on yards after the catch than in most of his career.
+-   Rodgers has always posted above average EPA from **scrambles**, and this is the first season where that doesn't hold true. Whether it's the injury or just a reluctance to run, Rodgers is simply more stationary and less effective at scrambling at this stage in his career.
 
-
-# "Passing is down league-wide..." 
+# "Passing is down league-wide..."
 
 ...or is it?
 
@@ -310,7 +308,6 @@ top_2024_passing_team_percentile <- ttl_passing_stats_99_24 %>%
   pull(percentile_rank) %>% 
   round()
 ```
-
 
 ```{r season_passing_league, fig.width=9}
 player_stats_99_24 %>% 
@@ -370,8 +367,7 @@ pbp_2024 %>%
   theme_nfl_analytics()
 ```
 
-
-# Cam Heyward 
+# Cam Heyward
 
 ```{r calc_age, include=TRUE, warning=FALSE, message=FALSE}
 #| echo=FALSE
@@ -463,22 +459,19 @@ Coming off of a season where he struggled with a groin injury, Heyward is having
 
 In the last 25 years, no defensive tackle over 35 years old has been this dominant. Among seasons where a defensive tackle began the season at least 35 years old, Heyward's 2024 season ranks first in sacks, tackles for loss, QB hits, tipped passes, and **maybe tackles**.
 
-
 ::: column-margin
 This story led me to looking at John Randle's career stats. He was more of a pass-rusher than an all-around player, but damn was he **good**.
 
 I wanted to layer in data on snap counts to see how his utilization compares with others in this category, but the {nflverse} snap count data only goes back to 2012.
 :::
 
-
-# New City, New You: Derrick Henry and Saquon Barkley 
+# New City, New You: Derrick Henry and Saquon Barkley
 
 ```{r barkley_henry_cols, include=TRUE}
 #| echo=FALSE
 barkley_henry_cols <- c('D.Henry' = '#241773',
                         'S.Barkley' = '#acc0c6')
 ```
-
 
 ```{r make_barkley_henry_df, include=TRUE}
 #| echo=FALSE
@@ -527,10 +520,9 @@ barkley_henry %>%
         plot.subtitle = element_textbox(lineheight = .5))
 ```
 
-
 # RB vs WR value
 
-Three backs have separated themselves into the elite  
+Three backs have separated themselves into the elite
 
 ```{r ball_carrier_epa, include=TRUE}
 #| echo=FALSE

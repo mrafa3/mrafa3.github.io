@@ -1,0 +1,47 @@
+[
+  {
+    "listing": "/visualizations.html",
+    "items": [
+      "/visualizations/2024-12-12-mm-wk47-2024/index.html",
+      "/visualizations/2020-10-29-tt-wk3-2020/index.html",
+      "/visualizations/2020-10-09-tt-wk41-2020/index.html",
+      "/visualizations/12-30-2022-tt-wk38-2019/index.html",
+      "/visualizations/2020-09-30-tt-wk36-2020/index.html",
+      "/visualizations/2022-12-31-tt-wk35-2022/index.html",
+      "/visualizations/2022-12-21-tt-wk6-2021/index.html",
+      "/visualizations/2020-10-29-tt-wk44-2020/index.html",
+      "/visualizations/2020-10-16-tt-wk42-2020/index.html",
+      "/visualizations/2020-10-14-mm-wk41-2020/index.html",
+      "/visualizations/2020-10-12-mm-wk39-2020/index.html",
+      "/visualizations/2020-10-04-tt-wk40-2020/index.html",
+      "/visualizations/2020-09-25-tt-wk31-2020/index.html",
+      "/visualizations/2020-09-23-tt-wk2-2020/index.html",
+      "/visualizations/2020-09-22-tt-wk39-2020/index.html"
+    ]
+  },
+  {
+    "listing": "/posts.html",
+    "items": [
+      "/posts/2024-10-01-cdcplaces-pt2/index.html",
+      "/posts/2024-09-30-cdcplaces/index.html",
+      "/posts/2024-09-12-tidycensus-poverty-update/index.html",
+      "/posts/2024-09-15-pandas-datareader/index.html",
+      "/posts/2024-08-28-tidycensus-exploration-pt3/index.html",
+      "/posts/2024-08-20-tidycensus-exploration-pt2/index.html",
+      "/posts/2024-08-18-duckdb-intro/index.html",
+      "/posts/2024-08-13-tidycensus-exploration/index.html",
+      "/posts/2024-08-02-mapboxgl-exploration/index.html",
+      "/posts/2024-07-30-braintree-sql-questions/index.html",
+      "/posts/2024-07-24-chicago-employee-query-comparison/index.html",
+      "/posts/2023-07-29-data-science-workflows-js-3/index.html",
+      "/posts/2023-07-22-data-science-workflows-js-2/index.html",
+      "/posts/2023-07-11-data-science-workflows-js-1/index.html",
+      "/posts/2024-07-15-wikipedia-international-mens-soccer/index.html",
+      "/posts/2019-06-25-mapping-african-health-clusters/index.html",
+      "/posts/2019-06-18-clustering-african-health-outcomes/index.html",
+      "/posts/2019-04-15-distance-sustainable-development-health/index.html",
+      "/posts/2017-10-15-gapminder-gganimate/index.html",
+      "/posts/2017-10-01-gapminder-nested-models/index.html"
+    ]
+  }
+]

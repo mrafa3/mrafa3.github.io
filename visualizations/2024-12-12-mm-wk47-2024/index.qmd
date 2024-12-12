@@ -1,0 +1,187 @@
+---
+title: "Visualizing the prevalence and occurence of modern slavery globally"
+description: "Remaking a table from the Global Slavery Index Report by Walk Free"
+author:
+  - name: Mickey Rafa
+    url: https://mrafa3.github.io/
+date: 12-12-2024
+categories: [R, "#MakeoverMonday", gt] # self-defined categories
+image: "mm_2024_47_thumbnail.png"
+draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+
+format:
+  html:
+    toc: true
+    toc-depth: 5
+    code-link: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    self-contained: true
+
+editor_options: 
+  chunk_output_type: inline
+  
+execute: 
+  error: false
+  message: false
+  warning: false
+  eval: true
+---
+
+![Table illustrating the country-level prevalence and absolute estimates of modern slavery. Source: Walk Free's Global Slavery Index Report.](mm_2024_47.png){#fig-1}
+
+# 1. Load Packages & Setup
+
+```{r setup, include=TRUE}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    tidyverse,
+    httr,
+    readxl,
+    dlookr,
+    ggtext,
+    gt,
+    gtExtras,  #for font awesome icons in gt tables
+    ggbump,
+    showtext,
+    tidycountries,
+    janitor,   #for clean_names()
+    scales,
+    htmltools, #for tagList()
+    glue,
+    here,
+    geomtextpath
+)    
+```
+
+# 2. Read in the Data
+
+```{r read_data, include=TRUE}
+#| echo=FALSE
+mm_year <- 2024
+mm_week <- 47
+
+GET("https://query.data.world/s/z5q77nd26spalnn6hu632vkjp4xsie?dws=00000", write_disk(tf <- tempfile(fileext = ".xlsx")))
+df <- read_excel(tf) %>% 
+  clean_names()
+
+country_df <- tidycountries::restcountries_tidy_data %>% 
+  select(common_name, official_name, flags_png) %>% 
+  distinct()
+```
+
+# 3. Examine the Data 
+
+```{r examine, include=TRUE}
+#| echo=FALSE
+df %>%
+  diagnose()
+```
+
+# 4. Tidy the Data
+
+```{r tidy_data, include=TRUE}
+df <- df %>% 
+  mutate(country = case_match(country,
+                              'Türkiye' ~ 'Turkey',
+                              'United States of America' ~ 'United States',
+                              'Democratic Republic of the Congo' ~ 'DR Congo',
+                              'Viet Nam' ~ 'Vietnam',
+                              "Côte d'Ivoire" ~ 'Ivory Coast',
+                              'Lao PDR' ~ 'Laos',
+                              'Brunei Darussalam' ~ 'Brunei',
+                              .default = country),
+         percentile_nmbr_in_slavery = 
+           round(100 * percent_rank(estimated_number_of_people_in_modern_slavery), 0),
+         rank_prevalence = rank(-estimated_prevalence_of_modern_slavery_per_1_000_population)) %>% 
+  left_join(x=.,
+            y=country_df,
+            by=c('country' = 'common_name'))
+```
+
+# 5. Evaluate the Original Plot
+
+![Original plot visualizing countries with the highest and lowest estimated prevalence of modern slavery. Source: Walk Free](mm_wk47_2024_orig.png){#fig-2}
+
+This is an interesting dataset that reminds me of some work that I contributed to at the Pardee Center. There's a lot that could be explored here, including things like mapping or analyzing the data with cluster analysis or PCA.
+
+While there's data available, the Makeover Monday is specifically about the top and bottom 10 prevalence charts, so that's what I'll give my take on. I like a chart to display this information, but there’s some elements that I’ll reconsider:
+
+*  The **color encoding of prevalence rate has no meaning**. It's also odd/counterintuitive to use yellow for the countries with the highest prevalence and red for those with the lowest.
+*  The **number of people estimated to be in modern slavery is washed out** by the prevalence rates. Yes, prevalence rate likely corresponds to the subtitle of the charts – countries with poor governance or high conflict zones are likely to have higher rates of slavery. But I couldn’t help but notice Japan’s estimate is very high, despite it being among the bottom 10 in prevalence rate. There could be something there to work on. Maybe adding a column for percentile rank of the number of people estimated to be in slavery conditions.
+*  I want to create a long table (not just a top 10) to showcase the full data set and highlight countries with the *largest numbers* of people in modern slavery. Slicing this and show the top and bottom 10 by prevalence rate is an efficient use of space, but the distribution of prevalence rate is very heavily skewed, which makes that approach less meaningful.
+*  I'd like to **add the country flags** to the table, because it's a small design element that improves the recognition of some countries (at least for some). I have never used the {tidycountries} package, so I'll give that a try.
+
+# 6. Visualization Parameters 
+
+None (using theme functions from {gtExtras} to style the table).
+
+# 7. Plot 
+
+```{r gt_walk_free, include=TRUE, fig.align='center'}
+gt_walk_free <- df %>% 
+  select(flags_png, country, rank_prevalence, estimated_prevalence_of_modern_slavery_per_1_000_population, estimated_number_of_people_in_modern_slavery, percentile_nmbr_in_slavery) %>%
+  filter(!is.na(estimated_number_of_people_in_modern_slavery)) %>% 
+  arrange(rank_prevalence) %>% 
+  gt() %>% 
+  cols_label(country = '',
+             flags_png = '',
+             rank_prevalence = 'Rank (Prevalence)',
+             estimated_prevalence_of_modern_slavery_per_1_000_population = 'Prevalence Rate',
+             estimated_number_of_people_in_modern_slavery = '# of People (percentile rank)') %>% 
+  tab_header(title = md("**Estimates of modern slavery by country from the Global Slavery Index**"),
+             subtitle = md("Prevalence defined as the estimated number of people in slavery per 1,000 population<br><br>Highlighted rows indicate countries that are in the top 25% in terms of the number of people in slavery and includes many countries with relatively low prevalence rates, including South Korea, Argentina, Italy, and the United States")) %>% 
+  tab_source_note(source_note = "Estimates from Walk Free's Global Slavery Index Report") %>% 
+  gt_merge_stack(col1 = estimated_number_of_people_in_modern_slavery, col2 = percentile_nmbr_in_slavery) %>%
+  fmt_number(columns = estimated_number_of_people_in_modern_slavery,
+             decimals = 0) %>% 
+  fmt_number(columns = estimated_prevalence_of_modern_slavery_per_1_000_population,
+             decimals = 1) %>% 
+  gt_img_rows(
+    columns = flags_png,
+    height = 10
+  ) %>% 
+  gt_highlight_rows(
+    rows = percentile_nmbr_in_slavery >= 75,# a logic statement
+    fill = "gray90",
+    bold_target_only = FALSE) %>% 
+  data_color(columns = estimated_prevalence_of_modern_slavery_per_1_000_population,
+             palette = c("white", "red")) %>%
+  gt_theme_538()
+```
+
+# 8. Save 
+
+```{r save_plot, include=TRUE}
+# Save the plot as PNG
+gt_walk_free %>% 
+  gtsave(
+  filename = glue("mm_{mm_year}_{mm_week}.png"),
+  path = here::here('.//visualizations/2024-12-12-mm-wk47-2024/')
+)
+
+# make thumbnail for page
+magick::image_read(glue("mm_{mm_year}_{mm_week}.png")) %>%
+  magick::image_resize(geometry = "400") %>%
+  magick::image_write(glue("mm_{mm_year}_{mm_week}_thumbnail.png"))
+```
+
+# 9. Session Info
+
+::: {.callout-tip collapse="true"}
+##### Expand for Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
+:::
+
+# 10. Github Repository 
+
+::: {.callout-tip collapse="true"}
+
+##### Expand for GitHub Repo
+ 
+[Access the GitHub repository here](https://github.com/mrafa3/mrafa3.github.io)
+:::
