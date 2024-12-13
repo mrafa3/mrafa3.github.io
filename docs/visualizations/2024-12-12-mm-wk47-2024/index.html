@@ -4786,6 +4786,7 @@ vertical-align: -.125em;
                 <div class="quarto-category">R</div>
                 <div class="quarto-category">#MakeoverMonday</div>
                 <div class="quarto-category">gt</div>
+                <div class="quarto-category">bubble-chart</div>
               </div>
                   </div>
   </div>
@@ -4887,11 +4888,11 @@ Figure 3: Companion chart with Figure 2, showing the five countries in each reg
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Response [https://download.data.world/file_download/makeovermonday/2024w47-global-slavery-index/MM%20W49%20-%20Global%20Slavery%20Index%202023.xlsx?auth=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9kLXVzZXItY2xpZW50Om1yYWZhMyIsImlzcyI6ImFnZW50Om1yYWZhMzo6ODg0MjQ2ZDItMTgzMy00NmZjLTk2YTMtZjQ2MWMzMDJjOTZiIiwiaWF0IjoxNzM0MDE4Mzg5LCJyb2xlIjpbInVzZXIiLCJ1c2VyX2FwaV9hZG1pbiIsInVzZXJfYXBpX2VudGVycHJpc2VfYWRtaW4iLCJ1c2VyX2FwaV9yZWFkIiwidXNlcl9hcGlfd3JpdGUiXSwiZ2VuZXJhbC1wdXJwb3NlIjpmYWxzZSwidXJsIjoiNjI5OGY4ZmE0MDlkZTYxNTk5ZjFmM2M1Zjk4YjA1ZjVkYzcyZmE1ZCJ9.41u7KXt0E1E6-eg9iVwIiM5F-9nxsSrpPHJJnTtHXVoynnZWCU5kBr2b3B6OGXtBMjOkJXsDt4ybxJbSW5nn7g]
-  Date: 2024-12-13 18:05
+  Date: 2024-12-13 19:41
   Status: 200
   Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
   Size: 126 kB
-&lt;ON DISK&gt;  /var/folders/ck/dmgn8lbx6vl8sl89vlhr0sv00000gn/T//Rtmp879t4D/file79131c38e2a0.xlsx</code></pre>
+&lt;ON DISK&gt;  /var/folders/ck/dmgn8lbx6vl8sl89vlhr0sv00000gn/T//RtmpaCTAYz/file83f05ef8698c.xlsx</code></pre>
 </div>
 </div>
 </section><section id="examine-the-data" class="level1"><h1>3. Examine the Data</h1>
@@ -5129,7 +5130,7 @@ Figure 4: Original plot visualizing countries with the highest and lowest estim
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># make thumbnail for page</span></span>
-<span><span class="fu">magick</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_read</a></span><span class="op">(</span><span class="fu">glue</span><span class="op">(</span><span class="st">&quot;mm_{mm_year}_{mm_week}.png&quot;</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="fu">magick</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_read</a></span><span class="op">(</span><span class="fu">glue</span><span class="op">(</span><span class="st">&quot;mm_{mm_year}_{mm_week}_circlepack.png&quot;</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">magick</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/transform.html">image_resize</a></span><span class="op">(</span>geometry <span class="op">=</span> <span class="st">&quot;400&quot;</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">magick</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/magick/reference/editing.html">image_write</a></span><span class="op">(</span><span class="fu">glue</span><span class="op">(</span><span class="st">&quot;mm_{mm_year}_{mm_week}_thumbnail.png&quot;</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -5718,7 +5719,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">  - name: Mickey Rafa</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">    url: https://mrafa3.github.io/</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> 12-12-2024</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [R, &quot;#MakeoverMonday&quot;, gt] # self-defined categories</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> [R, &quot;#MakeoverMonday&quot;, gt, bubble-chart] # self-defined categories</span></span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="an">image:</span><span class="co"> &quot;mm_2024_47_thumbnail.png&quot;</span></span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="an">draft:</span><span class="co"> false # setting this to `true` will prevent your post from appearing on your listing page until you&#39;re ready!</span></span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
@@ -6015,7 +6016,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb11-302"><a href="#cb11-302" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
 <span id="cb11-303"><a href="#cb11-303" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-304"><a href="#cb11-304" aria-hidden="true" tabindex="-1"></a><span class="in"># make thumbnail for page</span></span>
-<span id="cb11-305"><a href="#cb11-305" aria-hidden="true" tabindex="-1"></a><span class="in">magick::image_read(glue(&quot;mm_{mm_year}_{mm_week}.png&quot;)) %&gt;%</span></span>
+<span id="cb11-305"><a href="#cb11-305" aria-hidden="true" tabindex="-1"></a><span class="in">magick::image_read(glue(&quot;mm_{mm_year}_{mm_week}_circlepack.png&quot;)) %&gt;%</span></span>
 <span id="cb11-306"><a href="#cb11-306" aria-hidden="true" tabindex="-1"></a><span class="in">  magick::image_resize(geometry = &quot;400&quot;) %&gt;%</span></span>
 <span id="cb11-307"><a href="#cb11-307" aria-hidden="true" tabindex="-1"></a><span class="in">  magick::image_write(glue(&quot;mm_{mm_year}_{mm_week}_thumbnail.png&quot;))</span></span>
 <span id="cb11-308"><a href="#cb11-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>

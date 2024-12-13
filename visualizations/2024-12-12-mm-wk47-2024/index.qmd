@@ -5,7 +5,7 @@ author:
   - name: Mickey Rafa
     url: https://mrafa3.github.io/
 date: 12-12-2024
-categories: [R, "#MakeoverMonday", gt] # self-defined categories
+categories: [R, "#MakeoverMonday", gt, bubble-chart] # self-defined categories
 image: "mm_2024_47_thumbnail.png"
 draft: false # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
 
@@ -302,7 +302,7 @@ gt_walk_free_region_top_5 %>%
 )
 
 # make thumbnail for page
-magick::image_read(glue("mm_{mm_year}_{mm_week}.png")) %>%
+magick::image_read(glue("mm_{mm_year}_{mm_week}_circlepack.png")) %>%
   magick::image_resize(geometry = "400") %>%
   magick::image_write(glue("mm_{mm_year}_{mm_week}_thumbnail.png"))
 ```
