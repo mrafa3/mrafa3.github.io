@@ -78,7 +78,7 @@ theme_nfl_analytics <- function(..., base_size = 12) {
 }
 ```
 
-```{r teams, include=TRUE}
+```{r teams, include=TRUE, message=FALSE}
 #| echo=FALSE
 teams <- load_teams(current = TRUE)
 ```
@@ -413,12 +413,69 @@ for (x in 1999:2024) {
 ```
 
 ```{r}
+# player_stats_off_99_24 <- load_player_stats(seasons = TRUE,
+#                                             stat_type = 'offense') %>% 
+#   filter(season_type == 'REG') %>% 
+#   select(player_id, player_display_name, position, position_group, season) %>% 
+#   distinct_all() %>%
+#   left_join(x=.,
+#             y=rosters %>% select(gsis_id, season, age_season_start),
+#             by=c('player_id' = 'gsis_id',
+#                  'season')) %>% 
+#   filter(age_season_start >= 35)
+# 
+# player_stats_special_99_24 <- load_player_stats(seasons = TRUE,
+#                                         stat_type = 'kicking') %>% 
+#   filter(season_type == 'REG') %>% 
+#     select(player_id, player_display_name, position, position_group, season) %>% 
+#   distinct_all() %>% 
+#   left_join(x=.,
+#             y=rosters %>% select(gsis_id, season, age_season_start),
+#             by=c('player_id' = 'gsis_id',
+#                  'season')) %>% 
+#   filter(age_season_start >= 35)
+# 
+# player_stats_def_99_24 <- load_player_stats(seasons = TRUE,
+#                                         stat_type = 'defense') %>% 
+#   filter(season_type == 'REG') %>% 
+#     select(player_id, player_display_name, position, position_group, season) %>% 
+#   distinct_all() %>% 
+#   left_join(x=.,
+#             y=rosters %>% select(gsis_id, season, age_season_start),
+#             by=c('player_id' = 'gsis_id',
+#                  'season')) %>% 
+#   filter(age_season_start >= 35)
+# 
+# player_seasons_over_35 <- bind_rows(player_stats_def_99_24, player_stats_off_99_24, player_stats_special_99_24) %>% 
+#   group_by(position_group, season) %>% 
+#   tally()
+# 
+# player_seasons_over_35 %>% group_by(position_group) %>% slice_max(season)
+# 
+# player_seasons_over_35 %>% 
+#   ggplot(.,
+#          aes(x=season,
+#              y=n,
+#              group=position_group,
+#              color=position_group)) + 
+#   geom_line() + 
+#   geom_text(data=. %>% group_by(position_group) %>% slice_max(season),
+#             aes(x=season + 1,
+#                 label = position_group),
+#             family='Lexend', fontface='bold') + 
+  facet_wrap(~position_group) + 
+  # labs(title='Number of players over 35') + 
+  # theme_nfl_analytics() + 
+  # theme(legend.position = 'none')
+```
+
+```{r}
 player_stats_def_99_24 <- load_player_stats(seasons = TRUE,
                   stat_type = 'defense') %>% 
   filter(season_type == 'REG')
 
 def_ranks <- player_stats_def_99_24 %>% 
-  group_by(season, team, player_id, player_display_name, position) %>% 
+  group_by(season, team, player_id, player_display_name, position, position_group) %>% 
   summarise(across(starts_with('def'),
                    list(
                      sum = ~sum(., na.rm = TRUE)
@@ -444,7 +501,8 @@ def_ranks %>%
                  'season',
                  'team')) %>% 
   filter(age_season_start >= 35,
-         position.x == 'DT') %>% 
+         # position_group == 'DL') %>% 
+         position.x == 'DT') %>%
   arrange(-sum_def_sacks)
   # mutate(over_35 = if_else(age_season_start >= 35, 1, 0)) %>%
   # filter(over_35 == 1) %>%
@@ -464,6 +522,11 @@ This story led me to looking at John Randle's career stats. He was more of a pas
 
 I wanted to layer in data on snap counts to see how his utilization compares with others in this category, but the {nflverse} snap count data only goes back to 2012.
 :::
+
+There are only 14 defensive tackles in the last 25 years that have **even played** past the age of 35. For Cam Heyward to be playing at such a high level is without precedent. 
+
+Hall of Fame defensive tackle John Randle (played from 1990-2003) is the closest historical comparison to Heyward's 2024 season. Randle recorded 5.5 sacks in his final season (as a 35 year old), and his last Pro Bowl was two seasons prior. With a strong finish, Cam Heyward should be named to the All-Pro team this season. 
+
 
 # New City, New You: Derrick Henry and Saquon Barkley
 
