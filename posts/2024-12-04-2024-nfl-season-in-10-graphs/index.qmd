@@ -632,3 +632,27 @@ ball_carrier_epa %>%
   theme_nfl_analytics()
   # theme(legend.position = 'none')
 ```
+
+# The hip drop tackle 
+
+Outlawed ahead of the 2024 season. How is it being enforced?
+
+```{r}
+fines_url <- "https://www.spotrac.com/nfl/fines/_/year/2024"
+
+df_fines <- fines_url %>%
+  rvest::read_html() %>%
+  rvest::html_nodes(xpath='//*[@id="table-wrapper"]/div[2]') %>% 
+  html_table() %>% 
+  .[[1]] %>% 
+  clean_names() %>% 
+  # removes total from table
+  filter(!is.na(week))
+```
+
+```{r}
+
+```
+
+
+
