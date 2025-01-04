@@ -596,9 +596,8 @@ ball_carrier_epa <- pbp_2024 %>%
          play_type != 'no_play') %>% 
   group_by(posteam, ball_carrier, ball_carrier_id) %>% 
   summarise(cumsum_epa = cumsum(epa),
-            touch = row_number(),
-            ttl_touch = max(touch),
-            .groups = 'drop') %>% 
+          touch = row_number(),
+          ttl_touch = max(touch))
   left_join(x=.,
             y=rosters %>% select(position, gsis_id),
             by=c('ball_carrier_id' = 'gsis_id'))
@@ -612,6 +611,15 @@ ball_carrier_epa %>%
 
 This is a sstory about positional value, with only a small number of running backs generating much in the way of EPA. (Should also look at it on a per-play basis).
 
+```{r}
+ball_carrier_epa %>% 
+  filter(position != 'QB',
+         ttl_touch >= 50) %>% 
+  group_by(posteam, ball_carrier) %>% 
+  slice_max(touch)
+```
+
+
 ```{r rush_epa_rbs, include=TRUE, fig.width=9}
 # Look at the cumulative sum of expected points (with proper citation from Substack!).
 ball_carrier_epa %>% 
@@ -621,16 +629,16 @@ ball_carrier_epa %>%
                                            'D.Henry',
                                            'J.Gibbs'), 
                              ball_carrier, 'Other')) %>% 
+  filter(ttl_touch >= 100) %>% 
   ggplot(.,
          aes(x=touch,
              y=cumsum_epa,
              color=if_else(position == 'RB', position, 'non-RB'))) + 
              # color=if_else(rusher == 'S.Barkley', 'S.Barkley', 'Other'))) + 
-  geom_line(aes(groups=ball_carrier)) + 
-  # scale_color_manual(values = c('S.Barkley' = 'black',
-  #                               'Other' = 'gray98')) + 
-  theme_nfl_analytics()
-  # theme(legend.position = 'none')
+  geom_line(aes(group=ball_carrier)) + 
+  labs(title='Top WR value is much higher than top RBs') + 
+  theme_nfl_analytics() + 
+  theme(legend.position = 'none')
 ```
 
 # The hip drop tackle 
