@@ -594,13 +594,16 @@ ball_carrier_epa <- pbp_2024 %>%
   arrange(game_date, play_id) %>% 
   filter(!is.na(ball_carrier),
          play_type != 'no_play') %>% 
-  group_by(posteam, ball_carrier, ball_carrier_id) %>% 
-  summarise(cumsum_epa = cumsum(epa),
-          touch = row_number(),
-          ttl_touch = max(touch))
   left_join(x=.,
             y=rosters %>% select(position, gsis_id),
-            by=c('ball_carrier_id' = 'gsis_id'))
+            by=c('ball_carrier_id' = 'gsis_id')) %>% 
+  group_by(posteam, ball_carrier, ball_carrier_id, position) %>% 
+  # something wrong with my touches calc -- it's way too many
+  reframe(touch = row_number(),
+         ttl_touch = max(touch),
+         cumsum_epa = cumsum(epa)) %>% 
+  arrange(-touch)
+  
   # filter(ttl_touch >= 150)
 
 rosters
@@ -616,7 +619,9 @@ ball_carrier_epa %>%
   filter(position != 'QB',
          ttl_touch >= 50) %>% 
   group_by(posteam, ball_carrier) %>% 
-  slice_max(touch)
+  slice_max(touch) %>% 
+  mutate(epa_per_touch = cumsum_epa / touch) %>% 
+  arrange(-epa_per_touch)
 ```
 
 
