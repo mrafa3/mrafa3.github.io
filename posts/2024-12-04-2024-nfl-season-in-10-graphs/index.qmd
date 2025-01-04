@@ -651,8 +651,22 @@ df_fines <- fines_url %>%
 ```
 
 ```{r}
-
+df_fines <- df_fines %>% 
+  mutate(amount_lost = parse_number(amount_lost),
+         date = parse_date_time(date, orders = "mdy"),
+         infraction = str_extract(infraction, "(?<=/ ).*"))
 ```
 
+```{r}
+df_fines %>% 
+  group_by(infraction) %>% 
+  summarise(ttl_fines = sum(amount_lost, na.rm = TRUE),
+            count_fines = n(),
+            .groups = 'drop') %>% 
+  mutate(avg_fine_per_infraction = ttl_fines / count_fines) %>% 
+  arrange(-avg_fine_per_infraction) %>% 
+  gt()
+
+```
 
 
