@@ -11,6 +11,7 @@ categories: [R, data-viz, mapping, tidyverse, mental-health, web-scraping] # sel
  # url: https://mrafa3.github.io/posts/2024-07-15-wikipedia-international-mens-soccer/ 
 # image: theme_map.png
 draft: true # setting this to `true` will prevent your post from appearing on your listing page until you're ready!
+draft-mode: gone
 code-annotations: hover
 editor: 
   markdown: 
