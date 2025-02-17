@@ -85,7 +85,7 @@ teams <- load_teams(current = TRUE)
 
 ```{r make_2024_df, include=TRUE}
 #| echo=FALSE
-pbp_2024 <- load_pbp(seasons = 2024)
+pbp_2024 <- load_pbp(seasons = 2024) %>% filter(season_type == 'REG')
 ftn_2024 <- load_ftn_charting(seasons = 2024)
 
 pbp_2024 <- pbp_2024 %>% 
@@ -124,6 +124,13 @@ rookie_qb_epa_weekly_2024 <- pbp_2024 %>%
     .groups = 'drop') %>% 
   filter(sum_pass_attempt >= 10)
 ```
+
+```{r}
+# rookie_qb_epa_weekly_2024 %>% 
+#   group_by(passer) %>% 
+#   filter(max(week))
+```
+
 
 ```{r plot_rookie_qb_epa, include=TRUE, fig.width=9}
 rookie_qb_epa_weekly_2024 %>% 
