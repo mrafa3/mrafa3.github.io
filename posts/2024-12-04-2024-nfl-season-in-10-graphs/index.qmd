@@ -15,7 +15,9 @@ format:
     number-sections: true
     code-fold: true
     code-summary: "Show the code"
-editor: visual
+editor: 
+  markdown: 
+    wrap: 72
 fig-cap-location: margin
 title-block-banner: "#f0f3f5"
 title-block-banner-color: "black"
@@ -124,6 +126,20 @@ rookie_qb_epa_weekly_2024 <- pbp_2024_reg %>%
     ),
     .groups = 'drop') %>% 
   filter(sum_pass_attempt >= 10)
+
+
+rookie_qp_epa_season_2024 <- pbp_2024_reg %>% 
+  filter(passer %in% c('J.Daniels', 'C.Williams', 'B.Nix', 'D.Maye')) %>% 
+  group_by(posteam, passer, passer_id) %>% 
+  summarise(across(
+    c('qb_epa', 'pass_attempt', 'air_epa', 'yac_epa'),
+    list(
+        mean = ~round(mean(., na.rm = TRUE), 2),
+        sum = ~round(sum(., na.rm = TRUE), 2)
+      ),
+      .names = "{.fn}_{.col}"
+    ),
+    .groups = 'drop')
 ```
 
 ```{r last_week_rookie_qb, include=TRUE}
@@ -156,6 +172,11 @@ rookie_qb_epa_weekly_2024 %>%
   scale_color_nfl(type='secondary')
   # theme(axis.title.y = element_text(angle=0))
 ```
+
+```{r}
+rookie_qp_epa_season_2024
+```
+
 
 # Aaron Rodgers
 
@@ -279,18 +300,6 @@ So what is clearly *not* working this year? Well, lots of things -- the Jets are
 
 ...or is it?
 
-Early in the season, there was a lot of discussion about how passing was down across the league. Defenses were deploying more cover 2 shell looks in an attempt to "keep a lid" on offenses.
-
-What we're seeing is a "higher floor, lower cieling" league as far as passing goes. **Only two teams in 2024 average less than 200 yards passing, while no teams average above 300.**
-
-Note: I would love to do some analysis on defensive looks and give a more critical evaluation of this theme, but coverages (and personnel groupings) don't seem to be available in public NFL sources.
-
-Joe Burrow and the Bengals look like they're *cooking* on offense (in terms of passing) -- and they mostly have been. But they are averaging {r top_2024_passing_team}, which would rank in the {r top_2024_passing_team_percentile}th percentile in the last 25 years. They've been very good, but not great in the historical context.
-
-::: column-margin
-Only 2 offenses -- the Bengals and the Seahawks -- had a passing attack that would rank in the top quartile from the last 25 seasons.
-:::
-
 ```{r ttl_passing_stats_99_24, include=TRUE}
 #| echo=FALSE
 ttl_passing_stats_99_24 <- player_stats_99_24 %>% 
@@ -315,7 +324,21 @@ top_2024_passing_team_percentile <- ttl_passing_stats_99_24 %>%
   slice_max(passing_yards_per_game) %>% 
   pull(percentile_rank) %>% 
   round()
+
+ttl_passing_stats_99_24 %>% filter(season == 2024) %>% arrange(-passing_yards_per_game)
 ```
+
+Early in the season, there was a lot of discussion about how passing was down across the league. Defenses were deploying more cover 2 shell looks in an attempt to "keep a lid" on offenses.
+
+What we're seeing is a "higher floor, lower cieling" league as far as passing goes. **Only one team in 2024 averaged less than 200 yards passing (Patriots), while no teams average above 300.**
+
+Note: I would love to do some analysis on defensive looks and give a more critical evaluation of this theme, but coverages (and personnel groupings) don't seem to be available in public NFL sources.
+
+Joe Burrow and the Bengals look like they're *cooking* on offense (in terms of passing) -- and they mostly have been. But they are averaging {r top_2024_passing_team}, which would rank in the {r top_2024_passing_team_percentile}th percentile in the last 25 years. They've been very good, but not great in the historical context.
+
+::: column-margin
+Only 2 offenses -- the Bengals and the Seahawks -- had a passing attack that would rank in the top quartile from the last 25 seasons.
+:::
 
 ```{r season_passing_league, fig.width=9}
 player_stats_99_24 %>% 
