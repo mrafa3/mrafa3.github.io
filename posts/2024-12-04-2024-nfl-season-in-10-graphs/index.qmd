@@ -352,7 +352,7 @@ passing_yards_season_average <- player_stats_99_24 %>%
 ```
 
 
-```{r season_passing_league, fig.width=9}
+```{r season_passing_league_jitter, fig.width=9}
 passing_yards_season_average %>% 
   ggplot(.,
          aes(x=passing_yards_per_game,
@@ -375,13 +375,18 @@ passing_yards_season_average %>%
   theme(axis.title.y = element_text(angle = 0))
 ```
 
-```{r}
+```{r season_passing_league_column, fig.width=9}
 passing_yards_season_average %>% 
   ggplot(.,
          aes(x=reorder(paste(season, recent_team, sep = ", "), passing_yards_per_game),
-             y=passing_yards_per_game)) + 
-  geom_col()
-  
+             y=passing_yards_per_game,
+             fill=if_else(season == 2024, '2024', 'Other'))) + 
+  geom_col() + 
+  scale_fill_manual(values = c('2024' = 'red',
+                               'Other' = 'gray70')) +
+  theme_nfl_analytics() +
+  theme(legend.position = 'none',
+        axis.text.x = element_blank())
 ```
 
 
