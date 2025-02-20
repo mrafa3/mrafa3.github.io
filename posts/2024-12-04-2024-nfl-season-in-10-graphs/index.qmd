@@ -340,16 +340,20 @@ Joe Burrow and the Bengals look like they're *cooking* on offense (in terms of p
 Only 2 offenses -- the Bengals and the Seahawks -- had a passing attack that would rank in the top quartile from the last 25 seasons.
 :::
 
-```{r season_passing_league, fig.width=9}
-player_stats_99_24 %>% 
+```{r passing_yards_season_average, include=TRUE}
+passing_yards_season_average <- player_stats_99_24 %>% 
   filter(season_type == 'REG') %>% 
   group_by(season, week, recent_team) %>% 
   summarise(ttl_passing_yards = sum(passing_yards, na.rm = TRUE),
             .groups = 'drop') %>% 
   group_by(season, recent_team) %>%
   summarise(passing_yards_per_game = mean(ttl_passing_yards, na.rm = TRUE),
-            .groups = 'drop') %>% 
-  # arrange(-season, passing_yards_per_game)
+            .groups = 'drop') 
+```
+
+
+```{r season_passing_league, fig.width=9}
+passing_yards_season_average %>% 
   ggplot(.,
          aes(x=passing_yards_per_game,
              y=season)) + 
@@ -370,6 +374,16 @@ player_stats_99_24 %>%
   theme_nfl_analytics() + 
   theme(axis.title.y = element_text(angle = 0))
 ```
+
+```{r}
+passing_yards_season_average %>% 
+  ggplot(.,
+         aes(x=reorder(paste(season, recent_team, sep = ", "), passing_yards_per_game),
+             y=passing_yards_per_game)) + 
+  geom_col()
+  
+```
+
 
 # Offensive EPA: rush vs. pass
 
