@@ -178,7 +178,7 @@ rookie_qp_epa_season_2024
 ```
 
 
-# Aaron Rodgers
+# Aaron Rodgers {.tabset}
 
 ```{r passing_data, include=TRUE}
 #| echo=FALSE
@@ -190,6 +190,7 @@ season_qbr_06_24 <- nflreadr::load_espn_qbr(seasons = TRUE,
 ```
 
 ```{r rodgers_season_qbr, include=TRUE, fig.width=9}
+#| title: Rodgers' QBR by season, compared to the league average
 season_qbr_06_24 %>% 
   filter(name_short == 'A. Rodgers',
          season_type == 'Regular') %>% 
@@ -234,7 +235,7 @@ dropback_pbp_08_24 <- load_pbp(seasons = c(2008:2024)) %>%
 ```
 
 ```{r rodgers_gt, include=TRUE}
-#| fig.cap="Mean centering is a way to contextualize EPA relative to league-wide performance. Values close to zero indicate that performance in that category is near the league average; strong positive values indicate categories where Rodgers led the league in that category in that season."
+#| title: Rodgers' 2
 dropback_pbp_08_24 %>% 
   filter(passer == 'A.Rodgers',
          season != 2023) %>% 
@@ -292,6 +293,8 @@ dropback_pbp_08_24 %>%
 ```
 
 So what is clearly *not* working this year? Well, lots of things -- the Jets are a mess. But throughout Rodgers' career, two things stand out:
+
+#| fig.cap="Mean centering is a way to contextualize EPA relative to league-wide performance. Values close to zero indicate that performance in that category is near the league average; strong positive values indicate categories where Rodgers led the league in that category in that season."
 
 -   **Air EPA** was a strength of his game. He could push the ball down the field and add value to his team by completing passes that improve his team's expected points. Only in 2013 and 2017 -- both injury-shortened seasons -- did Rodgers post air EPA numbers below the league average. In 2024, his offense is more reliant on yards after the catch than in most of his career.
 -   Rodgers has always posted above average EPA from **scrambles**, and this is the first season where that doesn't hold true. Whether it's the injury or just a reluctance to run, Rodgers is simply more stationary and less effective at scrambling at this stage in his career.

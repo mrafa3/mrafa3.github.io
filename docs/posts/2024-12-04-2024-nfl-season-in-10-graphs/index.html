@@ -272,26 +272,43 @@ background: #f0f3f5;
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme(axis.title.y = element_text(angle=0))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</section>
-<section id="aaron-rodgers" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Aaron Rodgers</h1>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>season_qbr_06_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name_short <span class="sc">==</span> <span class="st">'A. Rodgers'</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>         season_type <span class="sc">==</span> <span class="st">'Regular'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>season,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>qbr_total)) <span class="sc">+</span> </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">se=</span><span class="cn">FALSE</span>) <span class="sc">+</span> </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_median_lines</span>(<span class="at">data =</span> season_qbr_06_24 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(qualified <span class="sc">==</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                                                       season_type <span class="sc">==</span> <span class="st">'Regular'</span>),</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">aes</span>(<span class="at">y0 =</span> qbr_total)) <span class="sc">+</span> </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rookie_qp_epa_season_2024</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 11
+  posteam passer     passer_id  mean_qb_epa sum_qb_epa mean_pass_attempt
+  &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;             &lt;dbl&gt;
+1 CHI     C.Williams 00-0039918       -0.02      -15.0              0.87
+2 DEN     B.Nix      00-0039732        0.08       50.8              0.88
+3 NE      D.Maye     00-0039851        0.03       12.7              0.83
+4 WAS     J.Daniels  00-0039910        0.2       129.               0.84
+# ℹ 5 more variables: sum_pass_attempt &lt;dbl&gt;, mean_air_epa &lt;dbl&gt;,
+#   sum_air_epa &lt;dbl&gt;, mean_yac_epa &lt;dbl&gt;, sum_yac_epa &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="aaron-rodgers" class="level1 tabset" data-number="2">
+<h1 class="tabset" data-number="2"><span class="header-section-number">2</span> Aaron Rodgers</h1>
+<div class="cell" title="Rodgers' QBR by season, compared to the league average">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>season_qbr_06_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(name_short <span class="sc">==</span> <span class="st">'A. Rodgers'</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>         season_type <span class="sc">==</span> <span class="st">'Regular'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>season,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>qbr_total)) <span class="sc">+</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">se=</span><span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_median_lines</span>(<span class="at">data =</span> season_qbr_06_24 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(qualified <span class="sc">==</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                                                       season_type <span class="sc">==</span> <span class="st">'Regular'</span>),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">aes</span>(<span class="at">y0 =</span> qbr_total)) <span class="sc">+</span> </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
@@ -304,86 +321,86 @@ background: #f0f3f5;
 </div>
 </div>
 </div>
-<div class="cell">
+<div class="cell" title="Rodgers' 2">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dropback_pbp_08_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(passer <span class="sc">==</span> <span class="st">'A.Rodgers'</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>         season <span class="sc">!=</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>teams <span class="sc">%&gt;%</span> <span class="fu">select</span>(team_abbr, team_logo_wikipedia),</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'posteam'</span> <span class="ot">=</span> <span class="st">'team_abbr'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(season, team_logo_wikipedia, plays, <span class="fu">contains</span>(<span class="st">'mean_centered'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>season) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">season =</span> <span class="st">'Season'</span>,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">team_logo_wikipedia =</span> <span class="st">'Team'</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">plays =</span> <span class="st">'Plays'</span>,</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa =</span> <span class="st">'EPA'</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_air_epa =</span> <span class="st">'Air'</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_yac_epa =</span> <span class="st">'YAC'</span>,</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_int =</span> <span class="st">'INTs'</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_sack =</span> <span class="st">'Sacks'</span>,</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_dpi =</span> <span class="st">'DPI'</span>,</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_scramble =</span> <span class="st">'Scramble'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">230</span>, <span class="dv">230</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_air_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">300</span>, <span class="dv">300</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_yac_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">240</span>, <span class="dv">240</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_int, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">110</span>, <span class="dv">110</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_sack, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">60</span>, <span class="dv">60</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_dpi, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">30</span>, <span class="dv">30</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_scramble, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">50</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Aaron Rodgers** career EPA data by season"</span>),</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>             <span class="at">subtitle =</span> <span class="fu">md</span>(<span class="st">"*Centering EPA categories on the league average to assess how Rodgers has succeeded historically*&lt;br&gt;Highlighting 2014, 2020, and 2021 as his MVP seasons"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="fu">md</span>(<span class="st">"**Source**: {nflverse}&lt;br&gt;Minimum 150 snaps in a season for QBs to qualify&lt;br&gt;Excluding 2023 as injury-shortened season"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"#FFB612"</span>),</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>)</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_body</span>(</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> season <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2014</span>, <span class="dv">2020</span>, <span class="dv">2021</span>)</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_spanner</span>(</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">md</span>(<span class="st">"**Mean Centered**&lt;br&gt;Positive values indicate performance above league average in that season"</span>),    </span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(mean_centered_sum_qb_epa<span class="sc">:</span>mean_centered_sum_qb_epa_scramble)</span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_img_rows</span>(</span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> team_logo_wikipedia,</span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">30</span></span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_athletic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dropback_pbp_08_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(passer <span class="sc">==</span> <span class="st">'A.Rodgers'</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>         season <span class="sc">!=</span> <span class="dv">2023</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>teams <span class="sc">%&gt;%</span> <span class="fu">select</span>(team_abbr, team_logo_wikipedia),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'posteam'</span> <span class="ot">=</span> <span class="st">'team_abbr'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(season, team_logo_wikipedia, plays, <span class="fu">contains</span>(<span class="st">'mean_centered'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>season) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(<span class="at">season =</span> <span class="st">'Season'</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">team_logo_wikipedia =</span> <span class="st">'Team'</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">plays =</span> <span class="st">'Plays'</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa =</span> <span class="st">'EPA'</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_air_epa =</span> <span class="st">'Air'</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_yac_epa =</span> <span class="st">'YAC'</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_int =</span> <span class="st">'INTs'</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_sack =</span> <span class="st">'Sacks'</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_dpi =</span> <span class="st">'DPI'</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>             <span class="at">mean_centered_sum_qb_epa_scramble =</span> <span class="st">'Scramble'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">230</span>, <span class="dv">230</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_air_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">300</span>, <span class="dv">300</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_yac_epa, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">240</span>, <span class="dv">240</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_int, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">110</span>, <span class="dv">110</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_sack, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">60</span>, <span class="dv">60</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_dpi, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">30</span>, <span class="dv">30</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_color_pills</span>(mean_centered_sum_qb_epa_scramble, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                 <span class="at">domain =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">50</span>, <span class="dv">50</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="fu">md</span>(<span class="st">"**Aaron Rodgers** career EPA data by season"</span>),</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>             <span class="at">subtitle =</span> <span class="fu">md</span>(<span class="st">"*Centering EPA categories on the league average to assess how Rodgers has succeeded historically*&lt;br&gt;Highlighting 2014, 2020, and 2021 as his MVP seasons"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_source_note</span>(<span class="at">source_note =</span> <span class="fu">md</span>(<span class="st">"**Source**: {nflverse}&lt;br&gt;Minimum 150 snaps in a season for QBs to qualify&lt;br&gt;Excluding 2023 as injury-shortened season"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">style =</span> <span class="fu">list</span>(</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_fill</span>(<span class="at">color =</span> <span class="st">"#FFB612"</span>),</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>)</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_body</span>(</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> season <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2014</span>, <span class="dv">2020</span>, <span class="dv">2021</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_spanner</span>(</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">label =</span> <span class="fu">md</span>(<span class="st">"**Mean Centered**&lt;br&gt;Positive values indicate performance above league average in that season"</span>),    </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(mean_centered_sum_qb_epa<span class="sc">:</span>mean_centered_sum_qb_epa_scramble)</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_img_rows</span>(</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> team_logo_wikipedia,</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">30</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt_theme_athletic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="bygwcswdxv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="parjifnnzx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-#bygwcswdxv table {
+#parjifnnzx table {
   font-family: 'Spline Sans Mono', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#bygwcswdxv thead, #bygwcswdxv tbody, #bygwcswdxv tfoot, #bygwcswdxv tr, #bygwcswdxv td, #bygwcswdxv th {
+#parjifnnzx thead, #parjifnnzx tbody, #parjifnnzx tfoot, #parjifnnzx tr, #parjifnnzx td, #parjifnnzx th {
   border-style: none;
 }
 
-#bygwcswdxv p {
+#parjifnnzx p {
   margin: 0;
   padding: 0;
 }
 
-#bygwcswdxv .gt_table {
+#parjifnnzx .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -409,12 +426,12 @@ background: #f0f3f5;
   border-left-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_caption {
+#parjifnnzx .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#bygwcswdxv .gt_title {
+#parjifnnzx .gt_title {
   color: #333333;
   font-size: 26px;
   font-weight: initial;
@@ -426,7 +443,7 @@ background: #f0f3f5;
   border-bottom-width: 0;
 }
 
-#bygwcswdxv .gt_subtitle {
+#parjifnnzx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -438,7 +455,7 @@ background: #f0f3f5;
   border-top-width: 0;
 }
 
-#bygwcswdxv .gt_heading {
+#parjifnnzx .gt_heading {
   background-color: #FFFFFF;
   text-align: left;
   border-bottom-color: #FFFFFF;
@@ -450,13 +467,13 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_bottom_border {
+#parjifnnzx .gt_bottom_border {
   border-bottom-style: none;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_col_headings {
+#parjifnnzx .gt_col_headings {
   border-top-style: none;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -471,7 +488,7 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_col_heading {
+#parjifnnzx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -491,7 +508,7 @@ background: #f0f3f5;
   overflow-x: hidden;
 }
 
-#bygwcswdxv .gt_column_spanner_outer {
+#parjifnnzx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -503,15 +520,15 @@ background: #f0f3f5;
   padding-right: 4px;
 }
 
-#bygwcswdxv .gt_column_spanner_outer:first-child {
+#parjifnnzx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bygwcswdxv .gt_column_spanner_outer:last-child {
+#parjifnnzx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bygwcswdxv .gt_column_spanner {
+#parjifnnzx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-bottom-color: #000000;
@@ -523,11 +540,11 @@ background: #f0f3f5;
   width: 100%;
 }
 
-#bygwcswdxv .gt_spanner_row {
+#parjifnnzx .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#bygwcswdxv .gt_group_heading {
+#parjifnnzx .gt_group_heading {
   padding-top: 1.5px;
   padding-bottom: 1.5px;
   padding-left: 5px;
@@ -553,7 +570,7 @@ background: #f0f3f5;
   text-align: left;
 }
 
-#bygwcswdxv .gt_empty_group_heading {
+#parjifnnzx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -568,15 +585,15 @@ background: #f0f3f5;
   vertical-align: middle;
 }
 
-#bygwcswdxv .gt_from_md > :first-child {
+#parjifnnzx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bygwcswdxv .gt_from_md > :last-child {
+#parjifnnzx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bygwcswdxv .gt_row {
+#parjifnnzx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -595,7 +612,7 @@ background: #f0f3f5;
   overflow-x: hidden;
 }
 
-#bygwcswdxv .gt_stub {
+#parjifnnzx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -608,7 +625,7 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#bygwcswdxv .gt_stub_row_group {
+#parjifnnzx .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -622,15 +639,15 @@ background: #f0f3f5;
   vertical-align: top;
 }
 
-#bygwcswdxv .gt_row_group_first td {
+#parjifnnzx .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#bygwcswdxv .gt_row_group_first th {
+#parjifnnzx .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#bygwcswdxv .gt_summary_row {
+#parjifnnzx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -640,16 +657,16 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#bygwcswdxv .gt_first_summary_row {
+#parjifnnzx .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_first_summary_row.thick {
+#parjifnnzx .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#bygwcswdxv .gt_last_summary_row {
+#parjifnnzx .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -659,7 +676,7 @@ background: #f0f3f5;
   border-bottom-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_grand_summary_row {
+#parjifnnzx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -669,7 +686,7 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#bygwcswdxv .gt_first_grand_summary_row {
+#parjifnnzx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -679,7 +696,7 @@ background: #f0f3f5;
   border-top-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_last_grand_summary_row_top {
+#parjifnnzx .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -689,11 +706,11 @@ background: #f0f3f5;
   border-bottom-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_striped {
+#parjifnnzx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bygwcswdxv .gt_table_body {
+#parjifnnzx .gt_table_body {
   border-top-style: none;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -702,7 +719,7 @@ background: #f0f3f5;
   border-bottom-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_footnotes {
+#parjifnnzx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -716,7 +733,7 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_footnote {
+#parjifnnzx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -725,7 +742,7 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#bygwcswdxv .gt_sourcenotes {
+#parjifnnzx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -739,7 +756,7 @@ background: #f0f3f5;
   border-right-color: #D3D3D3;
 }
 
-#bygwcswdxv .gt_sourcenote {
+#parjifnnzx .gt_sourcenote {
   font-size: 10px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -747,89 +764,89 @@ background: #f0f3f5;
   padding-right: 5px;
 }
 
-#bygwcswdxv .gt_left {
+#parjifnnzx .gt_left {
   text-align: left;
 }
 
-#bygwcswdxv .gt_center {
+#parjifnnzx .gt_center {
   text-align: center;
 }
 
-#bygwcswdxv .gt_right {
+#parjifnnzx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bygwcswdxv .gt_font_normal {
+#parjifnnzx .gt_font_normal {
   font-weight: normal;
 }
 
-#bygwcswdxv .gt_font_bold {
+#parjifnnzx .gt_font_bold {
   font-weight: bold;
 }
 
-#bygwcswdxv .gt_font_italic {
+#parjifnnzx .gt_font_italic {
   font-style: italic;
 }
 
-#bygwcswdxv .gt_super {
+#parjifnnzx .gt_super {
   font-size: 65%;
 }
 
-#bygwcswdxv .gt_footnote_marks {
+#parjifnnzx .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#bygwcswdxv .gt_asterisk {
+#parjifnnzx .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#bygwcswdxv .gt_indent_1 {
+#parjifnnzx .gt_indent_1 {
   text-indent: 5px;
 }
 
-#bygwcswdxv .gt_indent_2 {
+#parjifnnzx .gt_indent_2 {
   text-indent: 10px;
 }
 
-#bygwcswdxv .gt_indent_3 {
+#parjifnnzx .gt_indent_3 {
   text-indent: 15px;
 }
 
-#bygwcswdxv .gt_indent_4 {
+#parjifnnzx .gt_indent_4 {
   text-indent: 20px;
 }
 
-#bygwcswdxv .gt_indent_5 {
+#parjifnnzx .gt_indent_5 {
   text-indent: 25px;
 }
 
-#bygwcswdxv .katex-display {
+#parjifnnzx .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#bygwcswdxv div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#parjifnnzx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 
-#bygwcswdxv tbody tr:last-child {
+#parjifnnzx tbody tr:last-child {
   border-bottom: 2px solid #ffffff00;
 }
 
-#bygwcswdxv .gt_subtitle {
+#parjifnnzx .gt_subtitle {
   padding-top: 0px !important;
   padding-bottom: 4px !important;
 }
 
-#bygwcswdxv .gt_sourcenote {
+#parjifnnzx .gt_sourcenote {
   border-bottom-color: #FFFDF5 !important;
 }
 
-#bygwcswdxv .gt_heading {
+#parjifnnzx .gt_heading {
   padding-bottom: 0px;
   padding-top: 6px;
 }
@@ -1075,10 +1092,10 @@ background: #f0f3f5;
 </table>
 
 </div>
-<p>Mean centering is a way to contextualize EPA relative to league-wide performance. Values close to zero indicate that performance in that category is near the league average; strong positive values indicate categories where Rodgers led the league in that category in that season.</p>
 </div>
 </div>
 <p>So what is clearly <em>not</em> working this year? Well, lots of things – the Jets are a mess. But throughout Rodgers’ career, two things stand out:</p>
+<p>#| fig.cap=“Mean centering is a way to contextualize EPA relative to league-wide performance. Values close to zero indicate that performance in that category is near the league average; strong positive values indicate categories where Rodgers led the league in that category in that season.”</p>
 <ul>
 <li><strong>Air EPA</strong> was a strength of his game. He could push the ball down the field and add value to his team by completing passes that improve his team’s expected points. Only in 2013 and 2017 – both injury-shortened seasons – did Rodgers post air EPA numbers below the league average. In 2024, his offense is more reliant on yards after the catch than in most of his career.</li>
 <li>Rodgers has always posted above average EPA from <strong>scrambles</strong>, and this is the first season where that doesn’t hold true. Whether it’s the injury or just a reluctance to run, Rodgers is simply more stationary and less effective at scrambling at this stage in his career.</li>
@@ -1087,8 +1104,26 @@ background: #f0f3f5;
 <section id="passing-is-down-league-wide" class="level1 page-columns page-full" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> “Passing is down league-wide…”</h1>
 <p>…or is it?</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 32 × 4
+   season recent_team passing_yards_per_game percentile_rank
+    &lt;int&gt; &lt;chr&gt;                        &lt;dbl&gt;           &lt;dbl&gt;
+ 1   2024 CIN                           289.            92.4
+ 2   2024 DET                           278.            86.4
+ 3   2024 TB                            265             77.5
+ 4   2024 SF                            260.            73.6
+ 5   2024 MIN                           258.            71.7
+ 6   2024 SEA                           258.            71.7
+ 7   2024 ATL                           252.            66.7
+ 8   2024 BAL                           246.            60.7
+ 9   2024 LV                            242.            57.0
+10   2024 LA                            241.            55.8
+# ℹ 22 more rows</code></pre>
+</div>
+</div>
 <p>Early in the season, there was a lot of discussion about how passing was down across the league. Defenses were deploying more cover 2 shell looks in an attempt to “keep a lid” on offenses.</p>
-<p>What we’re seeing is a “higher floor, lower cieling” league as far as passing goes. <strong>Only two teams in 2024 average less than 200 yards passing, while no teams average above 300.</strong></p>
+<p>What we’re seeing is a “higher floor, lower cieling” league as far as passing goes. <strong>Only one team in 2024 averaged less than 200 yards passing (Patriots), while no teams average above 300.</strong></p>
 <p>Note: I would love to do some analysis on defensive looks and give a more critical evaluation of this theme, but coverages (and personnel groupings) don’t seem to be available in public NFL sources.</p>
 <p>Joe Burrow and the Bengals look like they’re <em>cooking</em> on offense (in terms of passing) – and they mostly have been. But they are averaging {r top_2024_passing_team}, which would rank in the {r top_2024_passing_team_percentile}th percentile in the last 25 years. They’ve been very good, but not great in the historical context.</p>
 
@@ -1097,39 +1132,67 @@ background: #f0f3f5;
 </div></div><div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>player_stats_99_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, week, recent_team) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ttl_passing_yards =</span> <span class="fu">sum</span>(passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, recent_team) <span class="sc">%&gt;%</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">passing_yards_per_game =</span> <span class="fu">mean</span>(ttl_passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-season, passing_yards_per_game)</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>passing_yards_per_game,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>season)) <span class="sc">+</span> </span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width=</span><span class="dv">0</span>, <span class="at">height=</span>.<span class="dv">1</span>, <span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span> </span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> </span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">group_by</span>(season) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">summarise</span>(<span class="at">mean_yards =</span> <span class="fu">mean</span>(passing_yards_per_game)),</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> mean_yards, <span class="at">xend =</span> mean_yards,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> season <span class="sc">-</span> <span class="fl">0.6</span>, <span class="at">yend =</span> season <span class="sc">+</span> <span class="fl">0.6</span>),</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Distribution of passing yards per game on a seasonal basis (1999-2024)'</span>,</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Each dot represents a team's average total passing from a season&lt;br&gt;Red lines mark the league-wide average for a season"</span>,</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">'Season'</span>,</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'Average pass yards per game'</span>,</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">'**Source**: {nflverse}'</span>) <span class="sc">+</span> </span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>passing_yards_season_average <span class="ot">&lt;-</span> player_stats_99_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, week, recent_team) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ttl_passing_yards =</span> <span class="fu">sum</span>(passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, recent_team) <span class="sc">%&gt;%</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">passing_yards_per_game =</span> <span class="fu">mean</span>(ttl_passing_yards, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>passing_yards_season_average <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>passing_yards_per_game,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>season)) <span class="sc">+</span> </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width=</span><span class="dv">0</span>, <span class="at">height=</span>.<span class="dv">1</span>, <span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> . <span class="sc">%&gt;%</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">group_by</span>(season) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">summarise</span>(<span class="at">mean_yards =</span> <span class="fu">mean</span>(passing_yards_per_game)),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>               <span class="fu">aes</span>(<span class="at">x =</span> mean_yards, <span class="at">xend =</span> mean_yards,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">y =</span> season <span class="sc">-</span> <span class="fl">0.6</span>, <span class="at">yend =</span> season <span class="sc">+</span> <span class="fl">0.6</span>),</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>, <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">'Distribution of passing yards per game on a seasonal basis (1999-2024)'</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Each dot represents a team's average total passing from a season&lt;br&gt;Red lines mark the league-wide average for a season"</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">'Season'</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'Average pass yards per game'</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">'**Source**: {nflverse}'</span>) <span class="sc">+</span> </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/season_passing_league-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="index_files/figure-html/season_passing_league_jitter-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>passing_yards_season_average <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">reorder</span>(<span class="fu">paste</span>(season, recent_team, <span class="at">sep =</span> <span class="st">", "</span>), passing_yards_per_game),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>passing_yards_per_game,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">fill=</span><span class="fu">if_else</span>(season <span class="sc">==</span> <span class="dv">2024</span>, <span class="st">'2024'</span>, <span class="st">'Other'</span>))) <span class="sc">+</span> </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'2024'</span> <span class="ot">=</span> <span class="st">'red'</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'Other'</span> <span class="ot">=</span> <span class="st">'gray70'</span>)) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/season_passing_league_column-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
@@ -1140,45 +1203,45 @@ background: #f0f3f5;
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>post_teams <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'POST'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(home_team, away_team) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> home_team<span class="sc">:</span>away_team, <span class="at">names_to =</span> <span class="st">"team"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(value) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>post_teams <span class="ot">&lt;-</span> pbp_2024 <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'POST'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(home_team, away_team) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> home_team<span class="sc">:</span>away_team, <span class="at">names_to =</span> <span class="st">"team"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(value) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pbp_2024_reg <span class="sc">%&gt;%</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'run'</span>, <span class="st">'pass'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, play_type) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">epa_per_play =</span> <span class="fu">mean</span>(epa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> play_type, <span class="at">values_from =</span> epa_per_play) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">postseason_team =</span> <span class="fu">if_else</span>(posteam <span class="sc">%in%</span> post_teams, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>run,</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>pass,</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">alpha=</span>postseason_team)) <span class="sc">+</span> </span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_mean_lines</span>(<span class="fu">aes</span>(<span class="at">x0=</span><span class="dv">0</span>,</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                      <span class="at">y0=</span><span class="dv">0</span>),</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                  <span class="at">color=</span><span class="st">'black'</span>, <span class="at">linewidth=</span>.<span class="dv">8</span>, <span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span> </span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_nfl_logos</span>(<span class="fu">aes</span>(<span class="at">team_abbr =</span> posteam), <span class="at">width =</span> <span class="fl">0.09</span>) <span class="sc">+</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">'**Expected Points Added per Play**: Rush Offense vs. Pass Offense'</span>,</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">'2024 season, postseason teams highlighted'</span>),</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rush EPA/play"</span>,</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pass EPA/play"</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># scale_alpha_manual(values = c(0 = .25,</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                               1 = 1)) + </span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pbp_2024_reg <span class="sc">%&gt;%</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'run'</span>, <span class="st">'pass'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, play_type) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">epa_per_play =</span> <span class="fu">mean</span>(epa, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> play_type, <span class="at">values_from =</span> epa_per_play) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">postseason_team =</span> <span class="fu">if_else</span>(posteam <span class="sc">%in%</span> post_teams, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>run,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>pass,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">alpha=</span>postseason_team)) <span class="sc">+</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_mean_lines</span>(<span class="fu">aes</span>(<span class="at">x0=</span><span class="dv">0</span>,</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                      <span class="at">y0=</span><span class="dv">0</span>),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                  <span class="at">color=</span><span class="st">'black'</span>, <span class="at">linewidth=</span>.<span class="dv">8</span>, <span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span> </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_nfl_logos</span>(<span class="fu">aes</span>(<span class="at">team_abbr =</span> posteam), <span class="at">width =</span> <span class="fl">0.09</span>) <span class="sc">+</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span> </span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">'**Expected Points Added per Play**: Rush Offense vs. Pass Offense'</span>,</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> glue<span class="sc">::</span><span class="fu">glue</span>(<span class="st">'2024 season, postseason teams highlighted'</span>),</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Rush EPA/play"</span>,</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Pass EPA/play"</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># scale_alpha_manual(values = c(0 = .25,</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                               1 = 1)) + </span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1194,99 +1257,99 @@ background: #f0f3f5;
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># player_stats_off_99_24 &lt;- load_player_stats(seasons = TRUE,</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#                                             stat_type = 'offense') %&gt;% </span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(season_type == 'REG') %&gt;% </span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   select(player_id, player_display_name, position, position_group, season) %&gt;% </span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct_all() %&gt;%</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(x=.,</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#             y=rosters %&gt;% select(gsis_id, season, age_season_start),</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#             by=c('player_id' = 'gsis_id',</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                  'season')) %&gt;% </span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(age_season_start &gt;= 35)</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># player_stats_special_99_24 &lt;- load_player_stats(seasons = TRUE,</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         stat_type = 'kicking') %&gt;% </span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(season_type == 'REG') %&gt;% </span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#     select(player_id, player_display_name, position, position_group, season) %&gt;% </span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct_all() %&gt;% </span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(x=.,</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">#             y=rosters %&gt;% select(gsis_id, season, age_season_start),</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">#             by=c('player_id' = 'gsis_id',</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#                  'season')) %&gt;% </span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(age_season_start &gt;= 35)</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co"># player_stats_def_99_24 &lt;- load_player_stats(seasons = TRUE,</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         stat_type = 'defense') %&gt;% </span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(season_type == 'REG') %&gt;% </span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#     select(player_id, player_display_name, position, position_group, season) %&gt;% </span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct_all() %&gt;% </span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(x=.,</span></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">#             y=rosters %&gt;% select(gsis_id, season, age_season_start),</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co">#             by=c('player_id' = 'gsis_id',</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co">#                  'season')) %&gt;% </span></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(age_season_start &gt;= 35)</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co"># player_seasons_over_35 &lt;- bind_rows(player_stats_def_99_24, player_stats_off_99_24, player_stats_special_99_24) %&gt;% </span></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co">#   group_by(position_group, season) %&gt;% </span></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co">#   tally()</span></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co"># player_seasons_over_35 %&gt;% group_by(position_group) %&gt;% slice_max(season)</span></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="co"># player_seasons_over_35 %&gt;% </span></span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot(.,</span></span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="co">#          aes(x=season,</span></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="co">#              y=n,</span></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="co">#              group=position_group,</span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="co">#              color=position_group)) + </span></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line() + </span></span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_text(data=. %&gt;% group_by(position_group) %&gt;% slice_max(season),</span></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="co">#             aes(x=season + 1,</span></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="co">#                 label = position_group),</span></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="co">#             family='Lexend', fontface='bold') + </span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># facet_wrap(~position_group) + </span></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># labs(title='Number of players over 35') + </span></span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme_nfl_analytics() + </span></span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme(legend.position = 'none')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># player_stats_off_99_24 &lt;- load_player_stats(seasons = TRUE,</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#                                             stat_type = 'offense') %&gt;% </span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(season_type == 'REG') %&gt;% </span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   select(player_id, player_display_name, position, position_group, season) %&gt;% </span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct_all() %&gt;%</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(x=.,</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#             y=rosters %&gt;% select(gsis_id, season, age_season_start),</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#             by=c('player_id' = 'gsis_id',</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                  'season')) %&gt;% </span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(age_season_start &gt;= 35)</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># player_stats_special_99_24 &lt;- load_player_stats(seasons = TRUE,</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         stat_type = 'kicking') %&gt;% </span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(season_type == 'REG') %&gt;% </span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#     select(player_id, player_display_name, position, position_group, season) %&gt;% </span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct_all() %&gt;% </span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(x=.,</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co">#             y=rosters %&gt;% select(gsis_id, season, age_season_start),</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#             by=c('player_id' = 'gsis_id',</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="co">#                  'season')) %&gt;% </span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(age_season_start &gt;= 35)</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="co"># player_stats_def_99_24 &lt;- load_player_stats(seasons = TRUE,</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co">#                                         stat_type = 'defense') %&gt;% </span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(season_type == 'REG') %&gt;% </span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="co">#     select(player_id, player_display_name, position, position_group, season) %&gt;% </span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   distinct_all() %&gt;% </span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(x=.,</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co">#             y=rosters %&gt;% select(gsis_id, season, age_season_start),</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="co">#             by=c('player_id' = 'gsis_id',</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="co">#                  'season')) %&gt;% </span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="co">#   filter(age_season_start &gt;= 35)</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a><span class="co"># player_seasons_over_35 &lt;- bind_rows(player_stats_def_99_24, player_stats_off_99_24, player_stats_special_99_24) %&gt;% </span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="co">#   group_by(position_group, season) %&gt;% </span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="co">#   tally()</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="co"># player_seasons_over_35 %&gt;% group_by(position_group) %&gt;% slice_max(season)</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="co"># player_seasons_over_35 %&gt;% </span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot(.,</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="co">#          aes(x=season,</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a><span class="co">#              y=n,</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a><span class="co">#              group=position_group,</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="co">#              color=position_group)) + </span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line() + </span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_text(data=. %&gt;% group_by(position_group) %&gt;% slice_max(season),</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="co">#             aes(x=season + 1,</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a><span class="co">#                 label = position_group),</span></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a><span class="co">#             family='Lexend', fontface='bold') + </span></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># facet_wrap(~position_group) + </span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># labs(title='Number of players over 35') + </span></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme_nfl_analytics() + </span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>  <span class="co"># theme(legend.position = 'none')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>player_stats_def_99_24 <span class="ot">&lt;-</span> <span class="fu">load_player_stats</span>(<span class="at">seasons =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">stat_type =</span> <span class="st">'defense'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="ot">&lt;-</span> player_stats_def_99_24 <span class="sc">%&gt;%</span> </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, team, player_id, player_display_name, position, position_group) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">'def'</span>),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sum =</span> <span class="sc">~</span><span class="fu">sum</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                   ),</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">'{.fn}_{.col}'</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                   ),</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">distinct_weeks =</span> <span class="fu">n_distinct</span>(week),</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(season) %&gt;% </span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(across(starts_with('sum'),</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               list(</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                 rank = ~rank(-.)</span></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               .names = '{.fn}_{.col}'</span></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#        )</span></span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="sc">%&gt;%</span> </span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>rosters,</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'player_id'</span> <span class="ot">=</span> <span class="st">'gsis_id'</span>,</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'season'</span>,</span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'team'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age_season_start <span class="sc">&gt;=</span> <span class="dv">35</span>,</span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>         <span class="co"># position_group == 'DL') %&gt;% </span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>         position.x <span class="sc">==</span> <span class="st">'DT'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>sum_def_sacks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>player_stats_def_99_24 <span class="ot">&lt;-</span> <span class="fu">load_player_stats</span>(<span class="at">seasons =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">stat_type =</span> <span class="st">'defense'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(season_type <span class="sc">==</span> <span class="st">'REG'</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="ot">&lt;-</span> player_stats_def_99_24 <span class="sc">%&gt;%</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(season, team, player_id, player_display_name, position, position_group) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">starts_with</span>(<span class="st">'def'</span>),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">list</span>(</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sum =</span> <span class="sc">~</span><span class="fu">sum</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                   ),</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>                   <span class="at">.names =</span> <span class="st">'{.fn}_{.col}'</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                   ),</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">distinct_weeks =</span> <span class="fu">n_distinct</span>(week),</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(season) %&gt;% </span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(across(starts_with('sum'),</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               list(</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">#                 rank = ~rank(-.)</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               .names = '{.fn}_{.col}'</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#               ),</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#        )</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>def_ranks <span class="sc">%&gt;%</span> </span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">x=</span>.,</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">y=</span>rosters,</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">by=</span><span class="fu">c</span>(<span class="st">'player_id'</span> <span class="ot">=</span> <span class="st">'gsis_id'</span>,</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'season'</span>,</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>                 <span class="st">'team'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age_season_start <span class="sc">&gt;=</span> <span class="dv">35</span>,</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>         <span class="co"># position_group == 'DL') %&gt;% </span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>         position.x <span class="sc">==</span> <span class="st">'DT'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>sum_def_sacks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 21 × 34
@@ -1312,13 +1375,13 @@ background: #f0f3f5;
 </div>
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(over_35 = if_else(age_season_start &gt;= 35, 1, 0)) %&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(over_35 == 1) %&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(full_name, over_35) %&gt;%</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#           .groups = 'drop') %&gt;%</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-ttl_sacks_over_35) %&gt;%</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(over_35 = if_else(age_season_start &gt;= 35, 1, 0)) %&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filter(over_35 == 1) %&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group_by(full_name, over_35) %&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#           .groups = 'drop') %&gt;%</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-ttl_sacks_over_35) %&gt;%</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Coming off of a season where he struggled with a groin injury, Heyward is having a historic season.</p>
@@ -1344,23 +1407,23 @@ dplyr 1.1.0.
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>barkley_henry <span class="sc">%&gt;%</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>touch,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>cumsum_epa,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span>ball_carrier)) <span class="sc">+</span> </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> <span class="dv">0</span>), <span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span> </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth=</span><span class="fl">1.2</span>) <span class="sc">+</span> </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>season) <span class="sc">+</span> </span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="fu">glue</span>(<span class="st">"New city, new you: &lt;span style='color:#241773'&gt;Derrick Henry&lt;/span&gt; and &lt;span style='color:  #acc0c6'&gt;Saquon Barkley&lt;/span&gt;'s career 2024 years"</span>),</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">'&lt;br&gt;Comparing the 2024 season with past seasons in terms of cumulative Expected Points Added'</span>,</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">'Cumulative EPA'</span>,</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'</span><span class="sc">\n</span><span class="st">Touch (carry/catch)'</span>,</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'**Source**: {nflverse}'</span>) <span class="sc">+</span> </span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> barkley_henry_cols) <span class="sc">+</span> </span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>,</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_textbox</span>(<span class="at">lineheight =</span> .<span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>barkley_henry <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>touch,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>cumsum_epa,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span>ball_carrier)) <span class="sc">+</span> </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> <span class="dv">0</span>), <span class="at">linetype=</span><span class="st">'dashed'</span>) <span class="sc">+</span> </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth=</span><span class="fl">1.2</span>) <span class="sc">+</span> </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>season) <span class="sc">+</span> </span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="fu">glue</span>(<span class="st">"New city, new you: &lt;span style='color:#241773'&gt;Derrick Henry&lt;/span&gt; and &lt;span style='color:  #acc0c6'&gt;Saquon Barkley&lt;/span&gt;'s career 2024 years"</span>),</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">'&lt;br&gt;Comparing the 2024 season with past seasons in terms of cumulative Expected Points Added'</span>,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="st">'Cumulative EPA'</span>,</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="st">'</span><span class="sc">\n</span><span class="st">Touch (carry/catch)'</span>,</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption=</span><span class="st">'**Source**: {nflverse}'</span>) <span class="sc">+</span> </span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> barkley_henry_cols) <span class="sc">+</span> </span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>,</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle =</span> <span class="fu">element_textbox</span>(<span class="at">lineheight =</span> .<span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1431,13 +1494,13 @@ dplyr 1.1.0.
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ball_carrier_epa <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(position <span class="sc">!=</span> <span class="st">'QB'</span>,</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>         ttl_touch <span class="sc">&gt;=</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, ball_carrier) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(touch) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">epa_per_touch =</span> cumsum_epa <span class="sc">/</span> touch) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>epa_per_touch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ball_carrier_epa <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(position <span class="sc">!=</span> <span class="st">'QB'</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>         ttl_touch <span class="sc">&gt;=</span> <span class="dv">50</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(posteam, ball_carrier) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(touch) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">epa_per_touch =</span> cumsum_epa <span class="sc">/</span> touch) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>epa_per_touch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 326 × 8
@@ -1461,24 +1524,24 @@ dplyr 1.1.0.
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the cumulative sum of expected points (with proper citation from Substack!).</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ball_carrier_epa <span class="sc">%&gt;%</span> </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>position <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'QB'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-cumsum_epa)</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spotlight =</span> <span class="fu">if_else</span>(ball_carrier <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'S.Barkley'</span>, </span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'D.Henry'</span>,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'J.Gibbs'</span>), </span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>                             ball_carrier, <span class="st">'Other'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ttl_touch <span class="sc">&gt;=</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>touch,</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>cumsum_epa,</span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span><span class="fu">if_else</span>(position <span class="sc">==</span> <span class="st">'RB'</span>, position, <span class="st">'non-RB'</span>))) <span class="sc">+</span> </span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>             <span class="co"># color=if_else(rusher == 'S.Barkley', 'S.Barkley', 'Other'))) + </span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>ball_carrier)) <span class="sc">+</span> </span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Top WR value is much higher than top RBs'</span>) <span class="sc">+</span> </span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Look at the cumulative sum of expected points (with proper citation from Substack!).</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ball_carrier_epa <span class="sc">%&gt;%</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>position <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'QB'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># arrange(-cumsum_epa)</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spotlight =</span> <span class="fu">if_else</span>(ball_carrier <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'S.Barkley'</span>, </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'D.Henry'</span>,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'J.Gibbs'</span>), </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                             ball_carrier, <span class="st">'Other'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ttl_touch <span class="sc">&gt;=</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">aes</span>(<span class="at">x=</span>touch,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">y=</span>cumsum_epa,</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span><span class="fu">if_else</span>(position <span class="sc">==</span> <span class="st">'RB'</span>, position, <span class="st">'non-RB'</span>))) <span class="sc">+</span> </span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>             <span class="co"># color=if_else(rusher == 'S.Barkley', 'S.Barkley', 'Other'))) + </span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>ball_carrier)) <span class="sc">+</span> </span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">'Top WR value is much higher than top RBs'</span>) <span class="sc">+</span> </span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_nfl_analytics</span>() <span class="sc">+</span> </span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -1495,57 +1558,57 @@ dplyr 1.1.0.
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fines_url <span class="ot">&lt;-</span> <span class="st">"https://www.spotrac.com/nfl/fines/_/year/2024"</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>df_fines <span class="ot">&lt;-</span> fines_url <span class="sc">%&gt;%</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">read_html</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="at">xpath=</span><span class="st">'//*[@id="table-wrapper"]/div[2]'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  .[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># removes total from table</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(week))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fines_url <span class="ot">&lt;-</span> <span class="st">"https://www.spotrac.com/nfl/fines/_/year/2024"</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>df_fines <span class="ot">&lt;-</span> fines_url <span class="sc">%&gt;%</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">read_html</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="at">xpath=</span><span class="st">'//*[@id="table-wrapper"]/div[2]'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  .[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># removes total from table</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(week))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>df_fines <span class="ot">&lt;-</span> df_fines <span class="sc">%&gt;%</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">amount_lost =</span> <span class="fu">parse_number</span>(amount_lost),</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">date =</span> <span class="fu">parse_date_time</span>(date, <span class="at">orders =</span> <span class="st">"mdy"</span>),</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">infraction =</span> <span class="fu">str_extract</span>(infraction, <span class="st">"(?&lt;=/ ).*"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df_fines <span class="ot">&lt;-</span> df_fines <span class="sc">%&gt;%</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">amount_lost =</span> <span class="fu">parse_number</span>(amount_lost),</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">date =</span> <span class="fu">parse_date_time</span>(date, <span class="at">orders =</span> <span class="st">"mdy"</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">infraction =</span> <span class="fu">str_extract</span>(infraction, <span class="st">"(?&lt;=/ ).*"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>df_fines <span class="sc">%&gt;%</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(infraction) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ttl_fines =</span> <span class="fu">sum</span>(amount_lost, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">count_fines =</span> <span class="fu">n</span>(),</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">avg_fine_per_infraction =</span> ttl_fines <span class="sc">/</span> count_fines) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>avg_fine_per_infraction) <span class="sc">%&gt;%</span> </span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df_fines <span class="sc">%&gt;%</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(infraction) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">ttl_fines =</span> <span class="fu">sum</span>(amount_lost, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">count_fines =</span> <span class="fu">n</span>(),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">avg_fine_per_infraction =</span> ttl_fines <span class="sc">/</span> count_fines) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>avg_fine_per_infraction) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="wlxmzagtdn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#wlxmzagtdn table {
+<div id="jrudtfxqzy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jrudtfxqzy table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#wlxmzagtdn thead, #wlxmzagtdn tbody, #wlxmzagtdn tfoot, #wlxmzagtdn tr, #wlxmzagtdn td, #wlxmzagtdn th {
+#jrudtfxqzy thead, #jrudtfxqzy tbody, #jrudtfxqzy tfoot, #jrudtfxqzy tr, #jrudtfxqzy td, #jrudtfxqzy th {
   border-style: none;
 }
 
-#wlxmzagtdn p {
+#jrudtfxqzy p {
   margin: 0;
   padding: 0;
 }
 
-#wlxmzagtdn .gt_table {
+#jrudtfxqzy .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1571,12 +1634,12 @@ dplyr 1.1.0.
   border-left-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_caption {
+#jrudtfxqzy .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#wlxmzagtdn .gt_title {
+#jrudtfxqzy .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1588,7 +1651,7 @@ dplyr 1.1.0.
   border-bottom-width: 0;
 }
 
-#wlxmzagtdn .gt_subtitle {
+#jrudtfxqzy .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1600,7 +1663,7 @@ dplyr 1.1.0.
   border-top-width: 0;
 }
 
-#wlxmzagtdn .gt_heading {
+#jrudtfxqzy .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1612,13 +1675,13 @@ dplyr 1.1.0.
   border-right-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_bottom_border {
+#jrudtfxqzy .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_col_headings {
+#jrudtfxqzy .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1633,7 +1696,7 @@ dplyr 1.1.0.
   border-right-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_col_heading {
+#jrudtfxqzy .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1653,7 +1716,7 @@ dplyr 1.1.0.
   overflow-x: hidden;
 }
 
-#wlxmzagtdn .gt_column_spanner_outer {
+#jrudtfxqzy .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1665,15 +1728,15 @@ dplyr 1.1.0.
   padding-right: 4px;
 }
 
-#wlxmzagtdn .gt_column_spanner_outer:first-child {
+#jrudtfxqzy .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wlxmzagtdn .gt_column_spanner_outer:last-child {
+#jrudtfxqzy .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wlxmzagtdn .gt_column_spanner {
+#jrudtfxqzy .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1685,11 +1748,11 @@ dplyr 1.1.0.
   width: 100%;
 }
 
-#wlxmzagtdn .gt_spanner_row {
+#jrudtfxqzy .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#wlxmzagtdn .gt_group_heading {
+#jrudtfxqzy .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1715,7 +1778,7 @@ dplyr 1.1.0.
   text-align: left;
 }
 
-#wlxmzagtdn .gt_empty_group_heading {
+#jrudtfxqzy .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1730,15 +1793,15 @@ dplyr 1.1.0.
   vertical-align: middle;
 }
 
-#wlxmzagtdn .gt_from_md > :first-child {
+#jrudtfxqzy .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wlxmzagtdn .gt_from_md > :last-child {
+#jrudtfxqzy .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wlxmzagtdn .gt_row {
+#jrudtfxqzy .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1757,7 +1820,7 @@ dplyr 1.1.0.
   overflow-x: hidden;
 }
 
-#wlxmzagtdn .gt_stub {
+#jrudtfxqzy .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1770,7 +1833,7 @@ dplyr 1.1.0.
   padding-right: 5px;
 }
 
-#wlxmzagtdn .gt_stub_row_group {
+#jrudtfxqzy .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1784,15 +1847,15 @@ dplyr 1.1.0.
   vertical-align: top;
 }
 
-#wlxmzagtdn .gt_row_group_first td {
+#jrudtfxqzy .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#wlxmzagtdn .gt_row_group_first th {
+#jrudtfxqzy .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#wlxmzagtdn .gt_summary_row {
+#jrudtfxqzy .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1802,16 +1865,16 @@ dplyr 1.1.0.
   padding-right: 5px;
 }
 
-#wlxmzagtdn .gt_first_summary_row {
+#jrudtfxqzy .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_first_summary_row.thick {
+#jrudtfxqzy .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#wlxmzagtdn .gt_last_summary_row {
+#jrudtfxqzy .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1821,7 +1884,7 @@ dplyr 1.1.0.
   border-bottom-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_grand_summary_row {
+#jrudtfxqzy .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1831,7 +1894,7 @@ dplyr 1.1.0.
   padding-right: 5px;
 }
 
-#wlxmzagtdn .gt_first_grand_summary_row {
+#jrudtfxqzy .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1841,7 +1904,7 @@ dplyr 1.1.0.
   border-top-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_last_grand_summary_row_top {
+#jrudtfxqzy .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1851,11 +1914,11 @@ dplyr 1.1.0.
   border-bottom-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_striped {
+#jrudtfxqzy .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#wlxmzagtdn .gt_table_body {
+#jrudtfxqzy .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1864,7 +1927,7 @@ dplyr 1.1.0.
   border-bottom-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_footnotes {
+#jrudtfxqzy .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1878,7 +1941,7 @@ dplyr 1.1.0.
   border-right-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_footnote {
+#jrudtfxqzy .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1887,7 +1950,7 @@ dplyr 1.1.0.
   padding-right: 5px;
 }
 
-#wlxmzagtdn .gt_sourcenotes {
+#jrudtfxqzy .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1901,7 +1964,7 @@ dplyr 1.1.0.
   border-right-color: #D3D3D3;
 }
 
-#wlxmzagtdn .gt_sourcenote {
+#jrudtfxqzy .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1909,72 +1972,72 @@ dplyr 1.1.0.
   padding-right: 5px;
 }
 
-#wlxmzagtdn .gt_left {
+#jrudtfxqzy .gt_left {
   text-align: left;
 }
 
-#wlxmzagtdn .gt_center {
+#jrudtfxqzy .gt_center {
   text-align: center;
 }
 
-#wlxmzagtdn .gt_right {
+#jrudtfxqzy .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wlxmzagtdn .gt_font_normal {
+#jrudtfxqzy .gt_font_normal {
   font-weight: normal;
 }
 
-#wlxmzagtdn .gt_font_bold {
+#jrudtfxqzy .gt_font_bold {
   font-weight: bold;
 }
 
-#wlxmzagtdn .gt_font_italic {
+#jrudtfxqzy .gt_font_italic {
   font-style: italic;
 }
 
-#wlxmzagtdn .gt_super {
+#jrudtfxqzy .gt_super {
   font-size: 65%;
 }
 
-#wlxmzagtdn .gt_footnote_marks {
+#jrudtfxqzy .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#wlxmzagtdn .gt_asterisk {
+#jrudtfxqzy .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#wlxmzagtdn .gt_indent_1 {
+#jrudtfxqzy .gt_indent_1 {
   text-indent: 5px;
 }
 
-#wlxmzagtdn .gt_indent_2 {
+#jrudtfxqzy .gt_indent_2 {
   text-indent: 10px;
 }
 
-#wlxmzagtdn .gt_indent_3 {
+#jrudtfxqzy .gt_indent_3 {
   text-indent: 15px;
 }
 
-#wlxmzagtdn .gt_indent_4 {
+#jrudtfxqzy .gt_indent_4 {
   text-indent: 20px;
 }
 
-#wlxmzagtdn .gt_indent_5 {
+#jrudtfxqzy .gt_indent_5 {
   text-indent: 25px;
 }
 
-#wlxmzagtdn .katex-display {
+#jrudtfxqzy .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#wlxmzagtdn div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#jrudtfxqzy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1991,9 +2054,9 @@ dplyr 1.1.0.
 <tbody class="gt_table_body">
 <tr class="odd">
 <td class="gt_row gt_left" headers="infraction">NA</td>
-<td class="gt_row gt_right" headers="ttl_fines">5845775</td>
+<td class="gt_row gt_right" headers="ttl_fines">5865534</td>
 <td class="gt_row gt_right" headers="count_fines">2</td>
-<td class="gt_row gt_right" headers="avg_fine_per_infraction">2922887.500</td>
+<td class="gt_row gt_right" headers="avg_fine_per_infraction">2932767.000</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="infraction">Verbal or other Non-Physical Offense Against Official</td>
@@ -2033,33 +2096,33 @@ dplyr 1.1.0.
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="infraction">Obscene Gesture</td>
-<td class="gt_row gt_right" headers="ttl_fines">358637</td>
-<td class="gt_row gt_right" headers="count_fines">30</td>
-<td class="gt_row gt_right" headers="avg_fine_per_infraction">11954.567</td>
+<td class="gt_row gt_right" headers="ttl_fines">364327</td>
+<td class="gt_row gt_right" headers="count_fines">31</td>
+<td class="gt_row gt_right" headers="avg_fine_per_infraction">11752.484</td>
 </tr>
 <tr class="odd">
+<td class="gt_row gt_left" headers="infraction">Celebration</td>
+<td class="gt_row gt_right" headers="ttl_fines">56346</td>
+<td class="gt_row gt_right" headers="count_fines">5</td>
+<td class="gt_row gt_right" headers="avg_fine_per_infraction">11269.200</td>
+</tr>
+<tr class="even">
 <td class="gt_row gt_left" headers="infraction">Hip Drop Tackle</td>
 <td class="gt_row gt_right" headers="ttl_fines">318382</td>
 <td class="gt_row gt_right" headers="count_fines">29</td>
 <td class="gt_row gt_right" headers="avg_fine_per_infraction">10978.690</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td class="gt_row gt_left" headers="infraction">Unsportsmanlike Conduct</td>
 <td class="gt_row gt_right" headers="ttl_fines">393241</td>
 <td class="gt_row gt_right" headers="count_fines">37</td>
 <td class="gt_row gt_right" headers="avg_fine_per_infraction">10628.135</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td class="gt_row gt_left" headers="infraction">Low Block</td>
 <td class="gt_row gt_right" headers="ttl_fines">169132</td>
 <td class="gt_row gt_right" headers="count_fines">16</td>
 <td class="gt_row gt_right" headers="avg_fine_per_infraction">10570.750</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="infraction">Celebration</td>
-<td class="gt_row gt_right" headers="ttl_fines">42277</td>
-<td class="gt_row gt_right" headers="count_fines">4</td>
-<td class="gt_row gt_right" headers="avg_fine_per_infraction">10569.250</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="infraction">Personal Messages</td>
