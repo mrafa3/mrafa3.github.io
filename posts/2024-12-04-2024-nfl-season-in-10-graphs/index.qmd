@@ -299,6 +299,8 @@ So what is clearly *not* working this year? Well, lots of things -- the Jets are
 -   **Air EPA** was a strength of his game. He could push the ball down the field and add value to his team by completing passes that improve his team's expected points. Only in 2013 and 2017 -- both injury-shortened seasons -- did Rodgers post air EPA numbers below the league average. In 2024, his offense is more reliant on yards after the catch than in most of his career.
 -   Rodgers has always posted above average EPA from **scrambles**, and this is the first season where that doesn't hold true. Whether it's the injury or just a reluctance to run, Rodgers is simply more stationary and less effective at scrambling at this stage in his career.
 
+We haven't seen peak Aaron Rodgers since the 2021 season -- the year that he earned his third league MVP. Which team will take a chance on him in 2025?
+
 # "Passing is down league-wide..."
 
 ...or is it?
@@ -436,7 +438,11 @@ pbp_2024_reg %>%
   theme(legend.position = 'none')
 ```
 
-# Cam Heyward
+# Cameron Heyward: Getting Better with Age
+
+Coming off a down 2023 season, where he had surgery on an injured groin, Cam Heyward signed an extension with Pittsburgh that would (effectively) allow him to end his career with the Steelers. Entering the 2024 season at age 35, there were questions about whether Cam Heyward had anything left in the tank. 
+
+He answered those questions with a **dominant** 2024 season, making his presence felt in big moments and earning All-Pro honors. His 2024 season should also be seen through a historical lense -- interior defensive lineman simply do not perform at this level and at this age.
 
 ```{r calc_age, include=TRUE, warning=FALSE, message=FALSE}
 #| echo=FALSE
@@ -572,19 +578,42 @@ def_ranks %>%
   filter(age_season_start >= 35,
          # position_group == 'DL') %>% 
          position.x == 'DT') %>%
-  arrange(-sum_def_sacks)
-  # mutate(over_35 = if_else(age_season_start >= 35, 1, 0)) %>%
-  # filter(over_35 == 1) %>%
-  # group_by(full_name, over_35) %>%
-  # summarise(ttl_sacks_over_35 = sum(sum_def_sacks, na.rm = TRUE),
-  #           .groups = 'drop') %>%
-  # arrange(-ttl_sacks_over_35) %>%
-  # mutate(per_ttl = ttl_sacks_over_35 / sum(ttl_sacks_over_35))
+  arrange(-sum_def_sacks, -sum_def_tackles) %>% 
+  select(season, team, player_display_name, position.x, sum_def_sacks, sum_def_tackles,
+         sum_def_tackles_for_loss, sum_def_qb_hits, sum_def_pass_defended) %>% 
+  slice(1:10) %>% 
+  gt() %>% 
+  cols_label(team = '',
+             season = 'Season',
+             player_display_name = 'Name',
+             # position.x = 'Position',
+             sum_def_sacks = 'Sacks',
+             sum_def_tackles = 'Tackles',
+             sum_def_tackles_for_loss = 'TFLs',
+             sum_def_qb_hits = 'QB Hits',
+             sum_def_pass_defended = 'Passes Defensed') %>% 
+  tab_header(
+    title = md(glue("Cameron Heyward's Historic 2024 Campaign")),
+    subtitle = md('Heyward is the only DT over 35 to be named All-Pro<br>Defensive Tackles over 35 y.o., ranking the top 10 seasons by sack totals (1999-2024)')
+    ) %>%
+  nflplotR::gt_nfl_logos(columns = "team") %>% 
+  gt_merge_stack(col1 = player_display_name, col2 = position.x) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "gold"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      rows = player_display_name == 'Cameron Heyward'
+    )
+  ) %>% 
+  gt_color_rows(columns = sum_def_sacks:sum_def_pass_defended, palette = "Blues") %>% 
+  tab_source_note(source_note = md("**Source**: {nflverse}")) %>% 
+  # nflplotR::gt_nfl_headshots(columns = 'player_id', height = 60)
+  gt_theme_538()
 ```
 
-Coming off of a season where he struggled with a groin injury, Heyward is having a historic season.
-
-In the last 25 years, no defensive tackle over 35 years old has been this dominant. Among seasons where a defensive tackle began the season at least 35 years old, Heyward's 2024 season ranks first in sacks, tackles for loss, QB hits, tipped passes, and **maybe tackles**.
+In the last 25 years, no defensive tackle over 35 years old has been this dominant. Among seasons where a defensive tackle began the season at least 35 years old, Heyward's 2024 season ranks first in sacks, tackles for loss, QB hits, tipped passes, and tackles. He's not just winning in a narrow or "crafty" way, he's dominating across statistical categories.
 
 ::: column-margin
 This story led me to looking at John Randle's career stats. He was more of a pass-rusher than an all-around player, but damn was he **good**.
@@ -594,7 +623,7 @@ I wanted to layer in data on snap counts to see how his utilization compares wit
 
 There are only 14 defensive tackles in the last 25 years that have **even played** past the age of 35. For Cam Heyward to be playing at such a high level is without precedent. 
 
-Hall of Fame defensive tackle John Randle (played from 1990-2003) is the closest historical comparison to Heyward's 2024 season. Randle recorded 5.5 sacks in his final season (as a 35 year old), and his last Pro Bowl was two seasons prior. With a strong finish, Cam Heyward should be named to the All-Pro team this season. 
+Hall of Fame defensive tackle John Randle (played from 1990-2003) is the closest historical comparison to Heyward's 2024 season. Randle recorded 5.5 sacks in his final season (as a 35 year old), and his last Pro Bowl was two seasons prior.
 
 # New City, New You: Derrick Henry and Saquon Barkley
 
