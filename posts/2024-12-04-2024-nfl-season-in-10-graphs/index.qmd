@@ -746,9 +746,7 @@ ball_carrier_epa %>%
 
 # The hip drop tackle 
 
-Outlawed ahead of the 2024 season. How is it being enforced?
-
-```{r}
+```{r df_fines, include=TRUE}
 fines_url <- "https://www.spotrac.com/nfl/fines/_/year/2024"
 
 df_fines <- fines_url %>%
@@ -761,23 +759,59 @@ df_fines <- fines_url %>%
   filter(!is.na(week))
 ```
 
-```{r}
+```{r df_fines_grouped, include=TRUE}
 df_fines <- df_fines %>% 
+  filter(player != '') %>% 
   mutate(amount_lost = parse_number(amount_lost),
          date = parse_date_time(date, orders = "mdy"),
-         infraction = str_extract(infraction, "(?<=/ ).*"))
-```
+         infraction = str_extract(infraction, "(?<=/ ).*")) %>% 
+  mutate(infraction = if_else(is.na(infraction), 'Impermissible Use of the Helmet', infraction))
 
-```{r}
-df_fines %>% 
+df_fines_grouped <- df_fines %>% 
   group_by(infraction) %>% 
   summarise(ttl_fines = sum(amount_lost, na.rm = TRUE),
             count_fines = n(),
             .groups = 'drop') %>% 
-  mutate(avg_fine_per_infraction = ttl_fines / count_fines) %>% 
-  arrange(-avg_fine_per_infraction) %>% 
-  gt()
-
+  mutate(avg_fine_per_infraction = ttl_fines / count_fines)
 ```
 
+The hip drop tackle was outlawed ahead of the 2024 season. In this style of tackle, a defender wraps the ball carrier from behind and drops their weight to attempt to bring the player to the ground. While this kind of tackle does not *look* flagrant, like using the crown of the helmet, it has led to lots of lower body injuries for ball carriers.
+
+With this new tackle being a point of emphasis, it begs the question -- how was it enforced? According to Spotrac.com, the NFL issued `r df_fines_grouped %>% filter(infraction == 'Hip Drop Tackle') %>% pull(count_fines)` fines for hip drop tackles in 2024 for a total of `r scales::dollar(df_fines_grouped %>% filter(infraction == 'Hip Drop Tackle') %>% pull(ttl_fines), accuracy = 1)`.
+
+At an average fine amount of 
+`r scales::dollar(df_fines_grouped %>% filter(infraction == 'Hip Drop Tackle') %>% pull(avg_fine_per_infraction), accuracy = 1)`, the hip drop tackle was among the smallest fines levied in 2024, indicating that the NFL may be easing into how it's removing the tackle from the game.
+
+::: column-margin
+On a per fine basis, infractions like roughing the passer, impermissible use of the helmet, and the horse collar tackle were all more penalized than the hip drop tackle in 2024.
+:::
+
+```{r df_fines_grouped_gt, include=TRUE}
+df_fines_grouped %>% 
+  arrange(-ttl_fines) %>% 
+  gt() %>% 
+  cols_label(infraction = 'Infraction',
+             ttl_fines = 'Total Fine Amount ($)',
+             count_fines = '# Fines',
+             avg_fine_per_infraction = 'Average Fine') %>% 
+    tab_header(
+    title = md("<img src='https://raw.githubusercontent.com/nflverse/nflverse-pbp/master/NFL.png' style='height:30px;'>    Fines in the 2024 NFL Season by Infraction Type")) %>%
+  tab_source_note(source_note = md("**Source**: Spotrac.com")) %>% 
+  # grand_summary_rows(
+  #   columns = c(ttl_fines, count_fines),
+  #   fns = list(Total = ~sum(.))
+  # ) %>% 
+  fmt_currency(columns = c(ttl_fines, avg_fine_per_infraction),
+               decimals = 0) %>% 
+  tab_style(
+    style = list(
+      cell_fill(color = "lightgray"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      rows = infraction == 'Hip Drop Tackle'
+    )
+  ) %>% 
+  gt_theme_538()
+```
 
