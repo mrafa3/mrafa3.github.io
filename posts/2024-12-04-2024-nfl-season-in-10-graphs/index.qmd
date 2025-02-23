@@ -680,9 +680,9 @@ barkley_henry %>%
         plot.subtitle = element_textbox(lineheight = .5))
 ```
 
-# RB vs WR value
+# Positional value: how do WRs and RBs stack up?
 
-Three backs have separated themselves into the elite
+Perhaps more than most vignettes in this post, this topic could be a post on its own (...or a book). There's been a lot written already about the decline in the value of the RB position in the contemporary NFL. The goal of this story is simple -- I wanted to chart the (cumulative) total expected points added by players in both position groups to see how they compare.
 
 ```{r ball_carrier_epa, include=TRUE}
 #| echo=FALSE
@@ -694,20 +694,15 @@ ball_carrier_epa <- pbp_2024_reg %>%
          play_type != 'no_play') %>% 
   left_join(x=.,
             y=rosters %>% select(position, gsis_id),
-            by=c('ball_carrier_id' = 'gsis_id')) %>% 
-  group_by(posteam, ball_carrier, ball_carrier_id, position) %>% 
+            by=c('ball_carrier_id' = 'gsis_id')) %>%
+  filter(ball_carrier == 'J.Conner') %>% 
+  group_by(posteam, ball_carrier, ball_carrier_id) %>% 
+  # group_by(posteam, ball_carrier, ball_carrier_id, position) %>% 
   # something wrong with my touches calc -- it's way too many
   reframe(touch = row_number(),
          ttl_touch = max(touch),
          cumsum_epa = cumsum(epa)) %>% 
   arrange(-touch)
-  
-  # filter(ttl_touch >= 150)
-
-rosters
-
-ball_carrier_epa %>% 
-  distinct(ball_carrier, position)
 ```
 
 This is a sstory about positional value, with only a small number of running backs generating much in the way of EPA. (Should also look at it on a per-play basis).
@@ -715,7 +710,7 @@ This is a sstory about positional value, with only a small number of running bac
 ```{r}
 ball_carrier_epa %>% 
   filter(position != 'QB',
-         ttl_touch >= 50) %>% 
+         ttl_touch >= 150) %>% 
   group_by(posteam, ball_carrier) %>% 
   slice_max(touch) %>% 
   mutate(epa_per_touch = cumsum_epa / touch) %>% 
@@ -797,10 +792,6 @@ df_fines_grouped %>%
     tab_header(
     title = md("<img src='https://raw.githubusercontent.com/nflverse/nflverse-pbp/master/NFL.png' style='height:30px;'>    Fines in the 2024 NFL Season by Infraction Type")) %>%
   tab_source_note(source_note = md("**Source**: Spotrac.com")) %>% 
-  # grand_summary_rows(
-  #   columns = c(ttl_fines, count_fines),
-  #   fns = list(Total = ~sum(.))
-  # ) %>% 
   fmt_currency(columns = c(ttl_fines, avg_fine_per_infraction),
                decimals = 0) %>% 
   tab_style(
