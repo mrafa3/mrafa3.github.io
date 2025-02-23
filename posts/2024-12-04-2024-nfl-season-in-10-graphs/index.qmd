@@ -337,10 +337,10 @@ What we're seeing is a "higher floor, lower cieling" league as far as passing go
 
 Note: I would love to do some analysis on defensive looks and give a more critical evaluation of this theme, but coverages (and personnel groupings) don't seem to be available in public NFL sources.
 
-Joe Burrow and the Bengals look like they're *cooking* on offense (in terms of passing) -- and they mostly have been. But they are averaging {r top_2024_passing_team}, which would rank in the {r top_2024_passing_team_percentile}th percentile in the last 25 years. They've been very good, but not great in the historical context.
+Joe Burrow and the Bengals were *cooking* on offense in 2024. They are averaged {r top_2024_passing_team} yards per game, which would rank in the {r top_2024_passing_team_percentile}th percentile in the last 25 years.
 
 ::: column-margin
-Only 2 offenses -- the Bengals and the Seahawks -- had a passing attack that would rank in the top quartile from the last 25 seasons.
+Only 3 offenses -- the Bengals, Lions, and Buccaneers -- had a passing attack that would rank in the top quartile from the last 25 seasons.
 :::
 
 ```{r passing_yards_season_average, include=TRUE}
