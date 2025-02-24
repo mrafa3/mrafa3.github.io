@@ -294,7 +294,9 @@ dropback_pbp_08_24 %>%
 
 So what is clearly *not* working this year? Well, lots of things -- the Jets are a mess. But throughout Rodgers' career, two things stand out:
 
-#| fig.cap="Mean centering is a way to contextualize EPA relative to league-wide performance. Values close to zero indicate that performance in that category is near the league average; strong positive values indicate categories where Rodgers led the league in that category in that season."
+::: column-margin
+Mean centering is a way to contextualize EPA relative to league-wide performance. Values close to zero indicate that performance in that category is near the league average; strong positive values indicate categories where Rodgers led the league in that category in that season.
+:::
 
 -   **Air EPA** was a strength of his game. He could push the ball down the field and add value to his team by completing passes that improve his team's expected points. Only in 2013 and 2017 -- both injury-shortened seasons -- did Rodgers post air EPA numbers below the league average. In 2024, his offense is more reliant on yards after the catch than in most of his career.
 -   Rodgers has always posted above average EPA from **scrambles**, and this is the first season where that doesn't hold true. Whether it's the injury or just a reluctance to run, Rodgers is simply more stationary and less effective at scrambling at this stage in his career.
@@ -335,11 +337,11 @@ ttl_passing_stats_99_24 %>% filter(season == 2024) %>% arrange(-passing_yards_pe
 
 Early in the season, there was a lot of discussion about how passing was down across the league. Defenses were deploying more cover 2 shell looks in an attempt to "keep a lid" on offenses.
 
-What we're seeing is a "higher floor, lower cieling" league as far as passing goes. **Only one team in 2024 averaged less than 200 yards passing (Patriots), while no teams average above 300.**
+What we saw in the 2024 season was a "higher floor, lower cieling" league as far as passing goes. **Only one team in 2024 averaged less than 200 yards passing (Patriots), while no teams average above 300.**
 
 Note: I would love to do some analysis on defensive looks and give a more critical evaluation of this theme, but coverages (and personnel groupings) don't seem to be available in public NFL sources.
 
-Joe Burrow and the Bengals were *cooking* on offense in 2024. They are averaged {r top_2024_passing_team} yards per game, which would rank in the {r top_2024_passing_team_percentile}th percentile in the last 25 years.
+Joe Burrow and the Bengals were *cooking* on offense in 2024. They are averaged `r top_2024_passing_team` yards per game, which would rank in the `r top_2024_passing_team_percentile`nd percentile in the last 25 years.
 
 ::: column-margin
 Only 3 offenses -- the Bengals, Lions, and Buccaneers -- had a passing attack that would rank in the top quartile from the last 25 seasons.
@@ -382,16 +384,24 @@ passing_yards_season_average %>%
 
 ```{r season_passing_league_column, fig.width=9}
 passing_yards_season_average %>% 
+  mutate(season_highlight = if_else(season == 2024, '2024', 'Other')) %>% 
   ggplot(.,
-         aes(x=reorder(paste(season, recent_team, sep = ", "), passing_yards_per_game),
-             y=passing_yards_per_game,
-             fill=if_else(season == 2024, '2024', 'Other'))) + 
-  geom_col() + 
+         # aes(x=reorder(paste(season, recent_team, sep = ", "), passing_yards_per_game),
+         #     y=passing_yards_per_game,
+         #     fill=if_else(season == 2024, '2024', 'Other'))) + 
+         aes(x=passing_yards_per_game,
+             fill=season_highlight,
+             color=season_highlight)) + 
+  # geom_col() + 
+  geom_density(position='identity', alpha=.1) + 
+  # geom_mean_lines(aes(x0=passing_yards_season_average)) + 
+  # geom_vline(data=. %>% group_by(season_highlight) %>% summarise(mean_yards_per_game = mean(passing_yards_season_average)))
   scale_fill_manual(values = c('2024' = 'red',
-                               'Other' = 'gray70')) +
-  theme_nfl_analytics() +
-  theme(legend.position = 'none',
-        axis.text.x = element_blank())
+                               'Other' = 'gray10')) +
+  scale_color_manual(values = c('2024' = 'red',
+                               'Other' = 'gray10')) +
+  theme_nfl_analytics() + 
+  theme(legend.position = 'none')
 ```
 
 
@@ -723,32 +733,46 @@ ball_carrier_epa %>%
 
 Granted, RB value may be more inherent in the touches/carries -- someone needs to support carrying the bulk of the offensive snaps; WRs just can't tally that amount of touches, even in pass-heavy offenses.
 
+```{r}
+top_epa_ball_carrier <- ball_carrier_epa %>% 
+  filter(!position %in% c('QB', 'TE')) %>% 
+  filter(ttl_touch >= 125) %>% 
+  filter(touch == ttl_touch) %>% 
+  slice_max(cumsum_epa, n = 10) %>% 
+  pull(ball_carrier)
+```
+
+
 ```{r rush_epa_rbs, include=TRUE, fig.width=9}
 # Look at the cumulative sum of expected points (with proper citation from Substack!).
 ball_carrier_epa %>% 
   filter(!position %in% c('QB', 'TE')) %>% 
-  # arrange(-cumsum_epa)
-  mutate(spotlight = if_else(ball_carrier %in% c('S.Barkley', 
-                                           'D.Henry',
-                                           'J.Gibbs'), 
-                             ball_carrier, 'Other')) %>% 
+  mutate(top_epa_player = if_else(ball_carrier %in% top_epa_ball_carrier, 
+                                  'Top', 'Other')) %>% 
   filter(ttl_touch >= 125) %>% 
   ggplot(.,
          aes(x=touch,
              y=cumsum_epa,
-             color=if_else(position == 'RB', position, 'non-RB'))) +
+             color=top_epa_player,
+             alpha=top_epa_player)) +
   geom_line(aes(group=ball_carrier)) +
   # geom_text()
-  ggrepel::geom_text_repel(data=. %>% filter(touch == ttl_touch) %>% slice_max(cumsum_epa, n = 8),
+  ggrepel::geom_text_repel(data=. %>% filter(touch == ttl_touch) %>% slice_max(cumsum_epa, n = 10),
                            aes(label=ball_carrier),
+                           color='black',
+                           fontface='bold',
                            box.padding = .5,
                            nudge_x = 1,
                            force = 10) +
-  labs(title='Top WR value is much higher than top RBs',
-       subtitle='Minimum 125 touches',
-       caption='**Source**: {nflverse}',
+  labs(title='With fewer touches, top WRs generate more expected points added than RBs',
+       subtitle='WRs generate value through moving the chains and scoring points<br>RB value is in their sheer amount of touches',
+       caption='**Source**: {nflverse}<br>Minimum 125 touches',
        x='Touch #',
        y='Cumulative Expected Points Added') +
+  scale_color_manual(values = c('Top' = 'steelblue2',
+                                'Other' = 'gray70')) + 
+  scale_alpha_manual(values = c('Top' = 1,
+                                'Other' = .2)) + 
   theme_nfl_analytics() +
   theme(legend.position = 'none')
 ```
