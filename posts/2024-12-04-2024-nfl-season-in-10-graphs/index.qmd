@@ -713,28 +713,43 @@ ball_carrier_epa %>%
   group_by(posteam, ball_carrier) %>% 
   slice_max(touch) %>% 
   mutate(epa_per_touch = cumsum_epa / touch) %>% 
-  arrange(-epa_per_touch)
+  ungroup() %>% 
+  arrange(-cumsum_epa) %>% 
+  select(posteam, ball_carrier_id, ball_carrier, everything()) %>% 
+  gt() %>% 
+  nflplotR::gt_nfl_logos(columns = "posteam") %>% 
+  gt_theme_538()
 ```
 
+Granted, RB value may be more inherent in the touches/carries -- someone needs to support carrying the bulk of the offensive snaps; WRs just can't tally that amount of touches, even in pass-heavy offenses.
 
 ```{r rush_epa_rbs, include=TRUE, fig.width=9}
 # Look at the cumulative sum of expected points (with proper citation from Substack!).
 ball_carrier_epa %>% 
-  filter(!position %in% c('QB')) %>% 
+  filter(!position %in% c('QB', 'TE')) %>% 
   # arrange(-cumsum_epa)
   mutate(spotlight = if_else(ball_carrier %in% c('S.Barkley', 
                                            'D.Henry',
                                            'J.Gibbs'), 
                              ball_carrier, 'Other')) %>% 
-  filter(ttl_touch >= 100) %>% 
+  filter(ttl_touch >= 125) %>% 
   ggplot(.,
          aes(x=touch,
              y=cumsum_epa,
-             color=if_else(position == 'RB', position, 'non-RB'))) + 
-             # color=if_else(rusher == 'S.Barkley', 'S.Barkley', 'Other'))) + 
-  geom_line(aes(group=ball_carrier)) + 
-  labs(title='Top WR value is much higher than top RBs') + 
-  theme_nfl_analytics() + 
+             color=if_else(position == 'RB', position, 'non-RB'))) +
+  geom_line(aes(group=ball_carrier)) +
+  # geom_text()
+  ggrepel::geom_text_repel(data=. %>% filter(touch == ttl_touch) %>% slice_max(cumsum_epa, n = 8),
+                           aes(label=ball_carrier),
+                           box.padding = .5,
+                           nudge_x = 1,
+                           force = 10) +
+  labs(title='Top WR value is much higher than top RBs',
+       subtitle='Minimum 125 touches',
+       caption='**Source**: {nflverse}',
+       x='Touch #',
+       y='Cumulative Expected Points Added') +
+  theme_nfl_analytics() +
   theme(legend.position = 'none')
 ```
 
