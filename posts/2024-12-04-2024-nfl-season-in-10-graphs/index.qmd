@@ -635,6 +635,65 @@ There are only 14 defensive tackles in the last 25 years that have **even played
 
 Hall of Fame defensive tackle John Randle (played from 1990-2003) is the closest historical comparison to Heyward's 2024 season. Randle recorded 5.5 sacks in his final season (as a 35 year old), and his last Pro Bowl was two seasons prior.
 
+# Dynamic Kickoff
+
+```{r}
+kickoff_99_24 <- load_pbp(seasons = TRUE) %>% 
+  filter(play_type == 'kickoff',
+         season_type == 'REG')
+
+
+kickoff_99_24 <- kickoff_99_24 %>%
+  mutate(injury = if_else(str_detect(desc, 'injur'), 1, 0),
+         injury_head = if_else(str_detect(desc, 'head injury'), 1, 0),
+         injury_neck = if_else(str_detect(desc, 'neck injury'), 1, 0))
+
+kickoff_vars <- c('touchback', 'return_yards', 'kick_distance', 'kickoff_inside_twenty',
+                  'kickoff_in_endzone', 'kickoff_fair_catch', 'return_touchdown',
+                  # it appears that injury coding changed and the desc field doesn't list injury type anymore 
+                  'injury', 'injury_head', 'injury_neck')
+
+
+kickoff_rates_99_24 <- kickoff_99_24 %>% 
+  group_by(season) %>% 
+  summarise(across(kickoff_vars,
+                   list(
+                     # mean = ~round(mean(., na.rm=TRUE), 5)
+                     mean = ~mean(., na.rm=TRUE)
+                   ),
+                   .names = "{.fn}_{.col}"
+                   ),
+            .groups = 'drop') %>% 
+  mutate(return_rate = 1 - mean_touchback)
+
+
+plot_kickoff_var <- function(var){
+  kickoff_rates_99_24 %>% 
+  ggplot(.,
+         aes(x=season,
+             y= {{ var }})) + 
+  geom_col() + 
+  geom_mean_lines(data = . %>% filter(season != 2024),
+                  aes(y0= {{ var }})) + 
+  labs(x='Season',
+       title="Evaluating the Impact of the NFL's Dynamic Kickoff Rule in 2024", 
+       caption='Source: {nflverse}<br>Mean line excludes 2024 season') + 
+  scale_y_continuous(labels = scales::percent_format(),
+                     breaks = scales::pretty_breaks()) + 
+  scale_x_continuous(breaks = scales::pretty_breaks()) + 
+  theme_nfl_analytics()
+}
+
+# kickoff_vars <- c('touchback', 'return_yards', 'kick_distance', 'kickoff_inside_twenty',
+#                   'kickoff_in_endzone', 'kickoff_fair_catch', 'return_touchdown',
+#                   # it appears that injury coding changed and the desc field doesn't list injury type anymore 
+#                   'injury', 'injury_head', 'injury_neck')
+
+plot_kickoff_var(mean_return_yards)
+```
+
+Doesn't seem to be a service to tie injury data from {nflfastR} to play by play data.
+
 # New City, New You: Derrick Henry and Saquon Barkley
 
 ```{r barkley_henry_cols, include=TRUE}
