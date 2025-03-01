@@ -637,6 +637,8 @@ Hall of Fame defensive tackle John Randle (played from 1990-2003) is the closest
 
 # Dynamic Kickoff
 
+The NFL introduced the dynamic kickoff format for the 2024 season, with the stated goal of increasing returns and reducing head and neck injuries.
+
 ```{r}
 kickoff_99_24 <- load_pbp(seasons = TRUE) %>% 
   filter(play_type == 'kickoff',
@@ -689,8 +691,16 @@ plot_kickoff_var <- function(var){
 #                   # it appears that injury coding changed and the desc field doesn't list injury type anymore 
 #                   'injury', 'injury_head', 'injury_neck')
 
-plot_kickoff_var(mean_return_yards)
+plot_kickoff_var(mean_touchback)
 ```
+
+
+::: column-margin
+Ideally, I would parse play descriptions to determine whether the rate of head and neck injuries has changed on kickoffs; however, starting in the ____ season, {nflfastr} no longer captures this information in play-by-play data. 
+I hope to explore this question further using another data service in a future project.
+:::
+
+
 
 Doesn't seem to be a service to tie injury data from {nflfastR} to play by play data.
 
