@@ -913,3 +913,25 @@ df_fines_grouped %>%
   gt_theme_538()
 ```
 
+
+
+# Bonus: Weird Plays from 2024
+
+```{r}
+pbp_2024_reg %>% 
+  filter(posteam == 'BUF',
+         lateral_receiver_player_name == 'J.Allen',
+         touchdown == 1) %>% 
+  select(desc, td_player_name)
+```
+
+```{r}
+pbp_2024_reg %>% 
+  filter(posteam == 'LAC',
+         kicker_player_name == 'C.Dicker',
+         str_detect(desc, 'Fair-Catch Kick'),
+         field_goal_result == 'made') %>% 
+  select(desc)
+```
+
+
