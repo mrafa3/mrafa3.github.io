@@ -435,14 +435,14 @@ play_action_2024 %>%
   with_outer_glow(geom_text(aes(label = passer),
                             position = position_stack(vjust = .98),
                             angle = 90, hjust = .98, color = "white",
-                            family = "Roboto",
+                            family = "Lexend",
                             fontface = "bold", size = 7),
                   sigma = 6, expand = 1, color = "black") +
   geom_text(aes(label = plays_TRUE),
             position = position_stack(vjust = .05),
-            color = "white", family = "Roboto", fontface = "bold", size = 3) + 
+            color = "white", family = "Lexend", fontface = "bold", size = 3) + 
   annotate("text", label='Attempts', x=1, y=.06, 
-           color='white', family = "Roboto", fontface = "bold", size = 3) + 
+           color='white', family = "Lexend", fontface = "bold", size = 3) + 
   scale_y_continuous(breaks = scales::pretty_breaks(),
                      expand = c(0,0)) +
   labs(x='',
