@@ -460,7 +460,7 @@ play_action_2024 %>%
 
 # Offensive EPA: rush vs. pass
 
-```{r}
+```{r 2024_post_teams, include=TRUE}
 post_teams <- pbp_2024 %>% 
   filter(season_type == 'POST') %>% 
   select(home_team, away_team) %>% 
@@ -550,64 +550,8 @@ for (x in 1999:2024) {
 }
 ```
 
-```{r}
-# player_stats_off_99_24 <- load_player_stats(seasons = TRUE,
-#                                             stat_type = 'offense') %>% 
-#   filter(season_type == 'REG') %>% 
-#   select(player_id, player_display_name, position, position_group, season) %>% 
-#   distinct_all() %>%
-#   left_join(x=.,
-#             y=rosters %>% select(gsis_id, season, age_season_start),
-#             by=c('player_id' = 'gsis_id',
-#                  'season')) %>% 
-#   filter(age_season_start >= 35)
-# 
-# player_stats_special_99_24 <- load_player_stats(seasons = TRUE,
-#                                         stat_type = 'kicking') %>% 
-#   filter(season_type == 'REG') %>% 
-#     select(player_id, player_display_name, position, position_group, season) %>% 
-#   distinct_all() %>% 
-#   left_join(x=.,
-#             y=rosters %>% select(gsis_id, season, age_season_start),
-#             by=c('player_id' = 'gsis_id',
-#                  'season')) %>% 
-#   filter(age_season_start >= 35)
-# 
-# player_stats_def_99_24 <- load_player_stats(seasons = TRUE,
-#                                         stat_type = 'defense') %>% 
-#   filter(season_type == 'REG') %>% 
-#     select(player_id, player_display_name, position, position_group, season) %>% 
-#   distinct_all() %>% 
-#   left_join(x=.,
-#             y=rosters %>% select(gsis_id, season, age_season_start),
-#             by=c('player_id' = 'gsis_id',
-#                  'season')) %>% 
-#   filter(age_season_start >= 35)
-# 
-# player_seasons_over_35 <- bind_rows(player_stats_def_99_24, player_stats_off_99_24, player_stats_special_99_24) %>% 
-#   group_by(position_group, season) %>% 
-#   tally()
-# 
-# player_seasons_over_35 %>% group_by(position_group) %>% slice_max(season)
-# 
-# player_seasons_over_35 %>% 
-#   ggplot(.,
-#          aes(x=season,
-#              y=n,
-#              group=position_group,
-#              color=position_group)) + 
-#   geom_line() + 
-#   geom_text(data=. %>% group_by(position_group) %>% slice_max(season),
-#             aes(x=season + 1,
-#                 label = position_group),
-#             family='Lexend', fontface='bold') + 
-  # facet_wrap(~position_group) + 
-  # labs(title='Number of players over 35') + 
-  # theme_nfl_analytics() + 
-  # theme(legend.position = 'none')
-```
 
-```{r}
+```{r gt_dt_over_35, include=TRUE}
 player_stats_def_99_24 <- load_player_stats(seasons = TRUE,
                   stat_type = 'defense') %>% 
   filter(season_type == 'REG')
@@ -623,14 +567,6 @@ def_ranks <- player_stats_def_99_24 %>%
             distinct_weeks = n_distinct(week),
             .groups = 'drop'
             )
-  # group_by(season) %>% 
-  # mutate(across(starts_with('sum'),
-  #               list(
-  #                 rank = ~rank(-.)
-  #               ),
-  #               .names = '{.fn}_{.col}'
-  #               ),
-  #        )
   
 def_ranks %>% 
   left_join(x=.,
@@ -855,7 +791,7 @@ ball_carrier_epa %>%
 
 Granted, RB value may be more inherent in the touches/carries -- someone needs to support carrying the bulk of the offensive snaps; WRs just can't tally that amount of touches, even in pass-heavy offenses.
 
-```{r}
+```{r top_epa_ball_carrier, include=TRUE}
 top_epa_ball_carrier <- ball_carrier_epa %>% 
   filter(!position %in% c('QB', 'TE')) %>% 
   filter(ttl_touch >= 125) %>% 
@@ -974,7 +910,7 @@ df_fines_grouped %>%
 
 {{< video https://youtu.be/0v0PPqGS49k?si=fkCqf92PGRMrRLfl >}}
 
-```{r}
+```{r josh_allen, include=TRUE}
 pbp_2024_reg %>% 
   filter(posteam == 'BUF',
          lateral_receiver_player_name == 'J.Allen',
@@ -986,7 +922,7 @@ pbp_2024_reg %>%
 
 {{< video https://youtu.be/b77POLcqb0Q?si=rQHxVihJCKUiAMb9 >}}
 
-```{r}
+```{r fair_catch_kick, include=TRUE}
 pbp_2024_reg %>% 
   filter(posteam == 'LAC',
          kicker_player_name == 'C.Dicker',
