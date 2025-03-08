@@ -173,7 +173,7 @@ rookie_qb_epa_weekly_2024 %>%
   # theme(axis.title.y = element_text(angle=0))
 ```
 
-```{r}
+```{r include=FALSE}
 rookie_qp_epa_season_2024
 ```
 
@@ -189,7 +189,7 @@ season_qbr_06_24 <- nflreadr::load_espn_qbr(seasons = TRUE,
                         summary_type = 'season')
 ```
 
-```{r rodgers_season_qbr, include=TRUE, fig.width=9}
+```{r rodgers_season_qbr, include=FALSE, fig.width=9}
 #| title: Rodgers' QBR by season, compared to the league average
 season_qbr_06_24 %>% 
   filter(name_short == 'A. Rodgers',
@@ -331,8 +331,6 @@ top_2024_passing_team_percentile <- ttl_passing_stats_99_24 %>%
   slice_max(passing_yards_per_game) %>% 
   pull(percentile_rank) %>% 
   round()
-
-ttl_passing_stats_99_24 %>% filter(season == 2024) %>% arrange(-passing_yards_per_game)
 ```
 
 Early in the season, there was a lot of discussion about how passing was down across the league. Defenses were deploying more cover 2 shell looks in an attempt to "keep a lid" on offenses.
@@ -402,6 +400,61 @@ passing_yards_season_average %>%
                                'Other' = 'gray10')) +
   theme_nfl_analytics() + 
   theme(legend.position = 'none')
+```
+
+# Play action success 
+
+
+```{r play_action_2024, include=TRUE}
+(play_action_2024 <- pbp_2024_reg %>% 
+  filter(season == 2024,
+         play_type == 'pass',
+         qb_scramble == 0) %>% 
+  group_by(posteam, passer_id, passer, is_play_action) %>% 
+  summarise(plays = n(),
+            sum_epa = sum(qb_epa, na.rm = TRUE),
+            .groups = 'drop') %>% 
+  mutate(epa_per_play = sum_epa / plays) %>% 
+  pivot_wider(names_from = is_play_action, values_from = plays:epa_per_play) %>% 
+  mutate(percent_play_action = plays_TRUE / (plays_TRUE + plays_FALSE),
+         ttl_dropbacks_wo_sacks = plays_FALSE + plays_TRUE) %>% 
+  select(percent_play_action, everything()) %>% 
+  filter(ttl_dropbacks_wo_sacks > 75) %>%
+  arrange(-epa_per_play_TRUE))
+```
+
+
+```{r top_10_perc_play_action_plot, include=TRUE}
+play_action_2024 %>% 
+  slice_max(epa_per_play_TRUE, n=10) %>% 
+  ggplot(., 
+         aes(x = reorder(passer_id, -epa_per_play_TRUE), 
+             y = epa_per_play_TRUE)) +
+  geom_col(aes(color=posteam,
+               fill=posteam)) +
+  with_outer_glow(geom_text(aes(label = passer),
+                            position = position_stack(vjust = .98),
+                            angle = 90, hjust = .98, color = "white",
+                            family = "Roboto",
+                            fontface = "bold", size = 7),
+                  sigma = 6, expand = 1, color = "black") +
+  geom_text(aes(label = plays_TRUE),
+            position = position_stack(vjust = .05),
+            color = "white", family = "Roboto", fontface = "bold", size = 3) + 
+  annotate("text", label='Attempts', x=1, y=.06, 
+           color='white', family = "Roboto", fontface = "bold", size = 3) + 
+  scale_y_continuous(breaks = scales::pretty_breaks(),
+                     expand = c(0,0)) +
+  labs(x='',
+       y='EPA per play',
+       title = "**Top 10 QBs in EPA per play on play action in 2024**",
+       subtitle = glue("*Excludes QB scrambles, minimum 20 play action attempts*"),
+       caption = "Source: {nflverse} package<br>and FTN charting data<br>Inspo: Brad Congelio") +
+  theme_nfl_analytics() + 
+  scale_fill_nfl(type = 'primary') + 
+  scale_color_nfl(type = 'secondary') + 
+  # adds headshots
+  theme(axis.text.x = nflplotR::element_nfl_headshot(size = 1))
 ```
 
 
@@ -917,6 +970,10 @@ df_fines_grouped %>%
 
 # Bonus: Weird Plays from 2024
 
+## Josh Allen throws a touchdown pass to himself
+
+{{< video https://youtu.be/0v0PPqGS49k?si=fkCqf92PGRMrRLfl >}}
+
 ```{r}
 pbp_2024_reg %>% 
   filter(posteam == 'BUF',
@@ -924,6 +981,10 @@ pbp_2024_reg %>%
          touchdown == 1) %>% 
   select(desc, td_player_name)
 ```
+
+## Cameron Dicker's historic fair catch kick 
+
+{{< video https://youtu.be/b77POLcqb0Q?si=rQHxVihJCKUiAMb9 >}}
 
 ```{r}
 pbp_2024_reg %>% 
