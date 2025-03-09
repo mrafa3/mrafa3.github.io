@@ -683,6 +683,24 @@ plot_kickoff_var <- function(var){
 # plot_kickoff_var(mean_touchback)
 plot_kickoff_var(return_rate)
 # plot_kickoff_var(mean_injury)
+
+# maybe I could do PCA here instead?
+kickoff_rates_99_24 %>% 
+  ggplot(.,
+         aes(x=return_rate,
+             y=mean_injury,
+             alpha=if_else(season == 2024, '2024', 'Other'))) +
+  geom_point() + 
+  ggrepel::geom_text_repel(aes(label=season),
+                           family='Lexend', size=6) + 
+  scale_alpha_manual(values = c('2024' = 1,
+                                'Other' = .2)) + 
+  scale_y_continuous(labels = scales::percent_format(),
+                     breaks = scales::pretty_breaks()) + 
+  scale_x_continuous(labels = scales::percent_format(),
+                     breaks = scales::pretty_breaks()) + 
+  theme_nfl_analytics() + 
+  theme(legend.position = 'none')
 ```
 
 
