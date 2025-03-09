@@ -535,7 +535,7 @@ rosters <- data.frame()
 
 for (x in 1999:2024) {
   df <- nflfastR::fast_scraper_roster(x) %>%
-    mutate(birth_date = as.Date(birth_date)) %>%
+    # mutate(birth_date = as.Date(birth_date)) %>%
     select(
       position,
       birth_date,
@@ -626,9 +626,9 @@ Hall of Fame defensive tackle John Randle (played from 1990-2003) is the closest
 
 # Dynamic Kickoff
 
-The NFL introduced the dynamic kickoff format for the 2024 season, with the stated goal of increasing returns and reducing head and neck injuries.
+The NFL introduced the [dynamic kickoff format](https://operations.nfl.com/the-rules/rules-changes/dynamic-kickoff-rule-explainer/) for the 2024 season, with the stated goal of increasing the return rate and reducing high-speed collisions resulting in injuries. With these goals in mind, can the rule change be considered successful after one season?
 
-```{r}
+```{r get_kickoff_data, include=TRUE}
 kickoff_99_24 <- load_pbp(seasons = TRUE) %>% 
   filter(play_type == 'kickoff',
          season_type == 'REG')
@@ -655,7 +655,7 @@ kickoff_rates_99_24 <- kickoff_99_24 %>%
                    .names = "{.fn}_{.col}"
                    ),
             .groups = 'drop') %>% 
-  mutate(return_rate = 1 - mean_touchback)
+  mutate(return_rate = 1 - mean_touchback - mean_kickoff_fair_catch)
 
 
 plot_kickoff_var <- function(var){
@@ -680,18 +680,19 @@ plot_kickoff_var <- function(var){
 #                   # it appears that injury coding changed and the desc field doesn't list injury type anymore 
 #                   'injury', 'injury_head', 'injury_neck')
 
-plot_kickoff_var(mean_touchback)
+# plot_kickoff_var(mean_touchback)
+plot_kickoff_var(return_rate)
+# plot_kickoff_var(mean_injury)
 ```
 
 
 ::: column-margin
-Ideally, I would parse play descriptions to determine whether the rate of head and neck injuries has changed on kickoffs; however, starting in the ____ season, {nflfastr} no longer captures this information in play-by-play data. 
+Ideally, I would parse play descriptions to determine whether the rate of head and neck injuries has changed on kickoffs, because those are the injuries that the NFL is trying to get out of the game; however, starting in the 2016 season, {nflfastr} no longer captures this information in play-by-play data. 
+
 I hope to explore this question further using another data service in a future project.
 :::
 
 
-
-Doesn't seem to be a service to tie injury data from {nflfastR} to play by play data.
 
 # New City, New You: Derrick Henry and Saquon Barkley
 
@@ -774,7 +775,7 @@ ball_carrier_epa <- pbp_2024_reg %>%
 
 This is a story about positional value, with only a small number of running backs generating much in the way of EPA. (Should also look at it on a per-play basis).
 
-```{r}
+```{r ball_carrier_epa_viz, include=TRUE}
 ball_carrier_epa %>% 
   filter(position != 'QB',
          ttl_touch >= 150) %>% 
