@@ -15,6 +15,8 @@ format:
     number-sections: true
     code-fold: true
     code-summary: "Show the code"
+    warning: false
+    message: false
 editor: 
   markdown: 
     wrap: 72
