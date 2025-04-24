@@ -411,66 +411,6 @@ passing_yards_season_average %>%
   theme(legend.position = 'none')
 ```
 
-# Play action success 
-
-```{r play_action_2024, include=TRUE}
-(play_action_2024 <- pbp_2024_reg %>% 
-  filter(season == 2024,
-         play_type == 'pass',
-         qb_scramble == 0) %>% 
-  group_by(posteam, passer_id, passer, is_play_action) %>% 
-  summarise(plays = n(),
-            sum_epa = sum(qb_epa, na.rm = TRUE),
-            .groups = 'drop') %>% 
-  mutate(epa_per_play = sum_epa / plays) %>% 
-  pivot_wider(names_from = is_play_action, values_from = plays:epa_per_play) %>% 
-  mutate(percent_play_action = plays_TRUE / (plays_TRUE + plays_FALSE),
-         ttl_dropbacks_wo_sacks = plays_FALSE + plays_TRUE) %>% 
-  select(percent_play_action, everything()) %>% 
-  filter(ttl_dropbacks_wo_sacks > 75) %>%
-  arrange(-epa_per_play_TRUE))
-```
-
-
-```{r top_10_perc_play_action_plot, include=TRUE}
-play_action_2024 %>% 
-  filter(plays_TRUE >= 75) %>% 
-  slice_max(epa_per_play_TRUE, n=10) %>% 
-  ggplot(., 
-         aes(x = reorder(passer_id, -epa_per_play_TRUE), 
-             y = epa_per_play_TRUE)) +
-  geom_col(aes(color=posteam,
-               fill=posteam)) +
-  with_outer_glow(geom_text(aes(label = passer),
-                            position = position_stack(vjust = .98),
-                            angle = 90, hjust = .98, color = "white",
-                            family = "Lexend",
-                            fontface = "bold", size = 7),
-                  sigma = 6, expand = 1, color = "black") +
-  geom_text(aes(label = plays_TRUE),
-            position = position_stack(vjust = .05),
-            color = "white", 
-            # family = "Lexend", 
-            fontface = "bold", size = 3) + 
-  annotate("text", label='Attempts', x=1, y=.06, 
-           color='white', 
-           # family = "Lexend", 
-           fontface = "bold", size = 3) + 
-  scale_y_continuous(breaks = scales::pretty_breaks(),
-                     expand = c(0,0)) +
-  labs(x='',
-       y='EPA per play',
-       title = "**Top 10 QBs in EPA per play on play action in 2024**",
-       subtitle = glue("*Excludes QB scrambles, minimum 20 play action attempts*"),
-       caption = "Source: {nflverse} package<br>and FTN charting data<br>Inspo: Brad Congelio") +
-  theme_nfl_analytics() + 
-  scale_fill_nfl(type = 'primary') + 
-  scale_color_nfl(type = 'secondary') + 
-  # adds headshots
-  theme(axis.text.x = nflplotR::element_nfl_headshot(size = 1))
-```
-
-
 # Offensive EPA: rush vs. pass
 
 ```{r 2024_post_teams, include=TRUE}
