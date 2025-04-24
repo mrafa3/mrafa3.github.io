@@ -36,6 +36,7 @@ pacman::p_load(
     gtExtras,
     gtUtils,
     ggfx,
+    ggforce,
     rvest,
     httr,
     jsonlite,
@@ -411,7 +412,9 @@ passing_yards_season_average %>%
   theme(legend.position = 'none')
 ```
 
-# Offensive EPA: rush vs. pass
+# Offensive balance and team success
+
+From the 2024 season, teams that have a balanced, productive offensive attack tend to be more successful. Of the eleven teams that had positive EPA/play results in the regular season in rushing **and** passing, eight of them made the playoffs, including **six** of the divisional winners.
 
 ```{r 2024_post_teams, include=TRUE}
 post_teams <- pbp_2024 %>% 
@@ -422,7 +425,6 @@ post_teams <- pbp_2024 %>%
   distinct(value) %>% 
   pull()
 ```
-
 
 ```{r rush_pass_epa, include=TRUE, fig.width=9}
 pbp_2024_reg %>% 
@@ -503,7 +505,6 @@ for (x in 1999:2024) {
 }
 ```
 
-
 ```{r gt_dt_over_35, include=TRUE}
 player_stats_def_99_24 <- load_player_stats(seasons = TRUE,
                   stat_type = 'defense') %>% 
@@ -568,7 +569,7 @@ def_ranks %>%
 In the last 25 years, no defensive tackle over 35 years old has been this dominant. Among seasons where a defensive tackle began the season at least 35 years old, Heyward's 2024 season ranks first in sacks, tackles for loss, QB hits, tipped passes, and tackles. He's not just winning in a narrow or "crafty" way, he's dominating across statistical categories.
 
 ::: column-margin
-This story led me to looking at John Randle's career stats. He was more of a pass-rusher than an all-around player, but damn was he **good**.
+This story led me to looking at John Randle's career stats. He was more of a pass-rusher than an all-around player, but **damn** was he good.
 
 I wanted to layer in data on snap counts to see how his utilization compares with others in this category, but the {nflverse} snap count data only goes back to 2012.
 :::
@@ -633,29 +634,11 @@ plot_kickoff_var <- function(var){
 #                   # it appears that injury coding changed and the desc field doesn't list injury type anymore 
 #                   'injury', 'injury_head', 'injury_neck')
 
-# plot_kickoff_var(mean_touchback)
+plot_kickoff_var(mean_touchback)
 plot_kickoff_var(return_rate)
-# plot_kickoff_var(mean_injury)
-
-# maybe I could do PCA here instead?
-kickoff_rates_99_24 %>% 
-  ggplot(.,
-         aes(x=return_rate,
-             y=mean_injury,
-             alpha=if_else(season == 2024, '2024', 'Other'))) +
-  geom_point() + 
-  ggrepel::geom_text_repel(aes(label=season),
-                           family='Lexend', size=6) + 
-  scale_alpha_manual(values = c('2024' = 1,
-                                'Other' = .2)) + 
-  scale_y_continuous(labels = scales::percent_format(),
-                     breaks = scales::pretty_breaks()) + 
-  scale_x_continuous(labels = scales::percent_format(),
-                     breaks = scales::pretty_breaks()) + 
-  theme_nfl_analytics() + 
-  theme(legend.position = 'none')
+plot_kickoff_var(mean_injury)
+plot_kickoff_var(mean_kickoff_in_endzone)
 ```
-
 
 ::: column-margin
 Ideally, I would parse play descriptions to determine whether the rate of head and neck injuries has changed on kickoffs, because those are the injuries that the NFL is trying to get out of the game; however, starting in the 2016 season, {nflfastr} no longer captures this information in play-by-play data. 
@@ -664,6 +647,42 @@ I hope to explore this question further using another data service in a future p
 :::
 
 
+```{r pca_experimentation, include=FALSE}
+kickoff_test <- kickoff_99_24 %>% 
+  select(season, kickoff_vars) %>% 
+  na.omit()
+
+pca_matrix <- scale(kickoff_rates_99_24 %>% select(-season))
+
+pca_result <- prcomp(pca_matrix, center = TRUE, scale. = FALSE)
+
+df_kickoff_pca <- as.data.frame(pca_result$x[, 1:2]) %>%
+  mutate(
+    season = kickoff_rates_99_24$season
+  )
+
+var_explained <- summary(pca_result)$importance[2, 1:2] * 100
+
+df_kickoff_pca %>% 
+  ggplot(., 
+         aes(x = PC1, 
+             y = PC2, 
+             fill = season)) +
+  geom_point(size = 4, alpha = 0.75, shape = 21, color = "white") +
+  ggrepel::geom_text_repel(aes(label = season)) + 
+  geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.7) +
+  geom_vline(xintercept = 0, linetype = "dashed", alpha = 0.7) +
+  labs(
+    title = "PCA of Kickoff Rate Data by Season",
+    x = paste0("PC1 (", round(var_explained[1], 1), "%)"),
+    y = paste0("PC2 (", round(var_explained[2], 1), "%)"),
+  ) + 
+  scale_y_continuous(breaks = scales::pretty_breaks(),
+                     limits = c(-5, 5)) + 
+  scale_x_continuous(breaks = scales::pretty_breaks(),
+                     limits = c(-5, 5)) + 
+  theme_nfl_analytics()
+```
 
 # New City, New You: Derrick Henry and Saquon Barkley
 
