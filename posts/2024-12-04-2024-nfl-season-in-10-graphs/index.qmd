@@ -111,7 +111,15 @@ max_week_param <- pbp_2024_reg %>%
 
 # Rookie QBs: performance and inconsistency
 
-*Note: could explore a toggle to show the total season vs. week-to-week*
+A major storyline of the 2024 season started with the NFL Draft, when six quarterbacks were selected in the first 12 picks. Four of those QBs saw significant snaps during the season: Caleb Williams (Chicago, Pick #1), Jayden Daniels (Washington, Pick #2), Drake Maye (New England, Pick #3), and Bo Nix (Denver, Pick #12).
+
+:::  column-margin
+Six QBs selected in the first round ties the record set in the 1983 draft -- the draft that included John Elway, Jim Kelly, and Dan Marino.
+:::
+
+Jayden Daniels' had the best campaign of this rookie class and among the best seasons among all passers. Daniels finished fourth in total quarterback rating (QBR) and in total expected points added (EPA), the two primary composite metrics used to evaluate quarterback play. And not only that, Daniels led the Commanders to a surprising NFC title birth in his rookie season.
+
+While this story could have centered on Jayden Daniels' successful year, or the volume of snaps played by this rookie class, the *inconsistency* of play stands out. Aside from Daniels' remarkable season, the other rookie first round QBs turned in a combined record of 19-30 in games that they started in. The below graphic shows the weekly EPA per dropback of the four first rounders with significant playing time, highlighting the performance of Daniels and Bo Nix, who each led their teams to the playoffs.
 
 ```{r rookie_qb_epa_weekly_2024, include=TRUE}
 #| echo=FALSE
@@ -156,7 +164,8 @@ rookie_qb_epa_weekly_2024 %>%
   ggplot(.,
          aes(x=week,
              y=mean_qb_epa,
-             color=posteam)) + 
+             color=posteam,
+             alpha=if_else(passer %in% c('C.Williams','D.Maye'), 'Not playoffs', 'Playoffs'))) + 
   geom_line(linewidth=1.2) + 
   geom_point(data=last_week_rookie_qb,
              size=3) + 
@@ -166,19 +175,17 @@ rookie_qb_epa_weekly_2024 %>%
             family='Lexend') + 
   geom_hline(yintercept = 0, color='black', linetype='dashed') + 
   labs(title='EPA per dropback of 1st round rookies in 2024',
-       subtitle = glue('Through Week {max_week_param}'),
+       # subtitle = glue('Through Week {max_week_param}'),
        caption = 'Source: {nflverse} package<br>Minimum 10 attempts to qualify as a full game',
        x='Week',
        y='EPA/dropback') + 
+  scale_alpha_manual(values = c('Not playoffs' = .3,
+                                'Playoffs' = 1)) + 
   theme_nfl_analytics() +
-  scale_color_nfl(type='secondary')
+  scale_color_nfl(type='secondary') + 
+  theme(legend.position = 'none')
   # theme(axis.title.y = element_text(angle=0))
 ```
-
-```{r include=FALSE}
-rookie_qp_epa_season_2024
-```
-
 
 # Aaron Rodgers {.tabset}
 
@@ -382,7 +389,7 @@ passing_yards_season_average %>%
   theme(axis.title.y = element_text(angle = 0))
 ```
 
-```{r season_passing_league_column, fig.width=9}
+```{r season_passing_league_column, fig.width=9, include=FALSE}
 passing_yards_season_average %>% 
   mutate(season_highlight = if_else(season == 2024, '2024', 'Other')) %>% 
   ggplot(.,
@@ -406,7 +413,6 @@ passing_yards_season_average %>%
 
 # Play action success 
 
-
 ```{r play_action_2024, include=TRUE}
 (play_action_2024 <- pbp_2024_reg %>% 
   filter(season == 2024,
@@ -428,6 +434,7 @@ passing_yards_season_average %>%
 
 ```{r top_10_perc_play_action_plot, include=TRUE}
 play_action_2024 %>% 
+  filter(plays_TRUE >= 75) %>% 
   slice_max(epa_per_play_TRUE, n=10) %>% 
   ggplot(., 
          aes(x = reorder(passer_id, -epa_per_play_TRUE), 
@@ -442,9 +449,13 @@ play_action_2024 %>%
                   sigma = 6, expand = 1, color = "black") +
   geom_text(aes(label = plays_TRUE),
             position = position_stack(vjust = .05),
-            color = "white", family = "Lexend", fontface = "bold", size = 3) + 
+            color = "white", 
+            # family = "Lexend", 
+            fontface = "bold", size = 3) + 
   annotate("text", label='Attempts', x=1, y=.06, 
-           color='white', family = "Lexend", fontface = "bold", size = 3) + 
+           color='white', 
+           # family = "Lexend", 
+           fontface = "bold", size = 3) + 
   scale_y_continuous(breaks = scales::pretty_breaks(),
                      expand = c(0,0)) +
   labs(x='',
@@ -859,32 +870,32 @@ ball_carrier_epa %>%
 # The hip drop tackle 
 
 ```{r df_fines, include=TRUE}
-fines_url <- "https://www.spotrac.com/nfl/fines/_/year/2024"
+# fines_url <- "https://www.spotrac.com/nfl/fines/_/year/2024"
 
-df_fines <- fines_url %>%
-  rvest::read_html() %>%
-  rvest::html_nodes(xpath='//*[@id="table-wrapper"]/div[2]') %>% 
-  html_table() %>% 
-  .[[1]] %>% 
-  clean_names() %>% 
-  # removes total from table
-  filter(!is.na(week))
+# df_fines <- fines_url %>%
+#   rvest::read_html() %>%
+#   rvest::html_nodes(xpath='//*[@id="table-wrapper"]/div[2]') %>% 
+#   html_table() %>% 
+#   .[[1]] %>% 
+#   clean_names() %>% 
+#   # removes total from table
+#   filter(!is.na(week))
 ```
 
 ```{r df_fines_grouped, include=TRUE}
-df_fines <- df_fines %>% 
-  filter(player != '') %>% 
-  mutate(amount_lost = parse_number(amount_lost),
-         date = parse_date_time(date, orders = "mdy"),
-         infraction = str_extract(infraction, "(?<=/ ).*")) %>% 
-  mutate(infraction = if_else(is.na(infraction), 'Impermissible Use of the Helmet', infraction))
-
-df_fines_grouped <- df_fines %>% 
-  group_by(infraction) %>% 
-  summarise(ttl_fines = sum(amount_lost, na.rm = TRUE),
-            count_fines = n(),
-            .groups = 'drop') %>% 
-  mutate(avg_fine_per_infraction = ttl_fines / count_fines)
+# df_fines <- df_fines %>% 
+#   filter(player != '') %>% 
+#   mutate(amount_lost = parse_number(amount_lost),
+#          date = parse_date_time(date, orders = "mdy"),
+#          infraction = str_extract(infraction, "(?<=/ ).*")) %>% 
+#   mutate(infraction = if_else(is.na(infraction), 'Impermissible Use of the Helmet', infraction))
+# 
+# df_fines_grouped <- df_fines %>% 
+#   group_by(infraction) %>% 
+#   summarise(ttl_fines = sum(amount_lost, na.rm = TRUE),
+#             count_fines = n(),
+#             .groups = 'drop') %>% 
+#   mutate(avg_fine_per_infraction = ttl_fines / count_fines)
 ```
 
 The hip drop tackle was outlawed ahead of the 2024 season. In this style of tackle, a defender wraps the ball carrier from behind and drops their weight to attempt to bring the player to the ground. While this kind of tackle does not *look* flagrant, like using the crown of the helmet, it has led to lots of lower body injuries for ball carriers.
