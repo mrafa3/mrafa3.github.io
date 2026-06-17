@@ -9,3 +9,4 @@
 .DS_Store
 .quarto
 /visualizations/templates/
+**/*.quarto_ipynb

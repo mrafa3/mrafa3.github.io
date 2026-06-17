@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Visualizations</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -32,15 +35,16 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <script src="site_libs/quarto-listing/list.min.js"></script>
 <script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-d1b12f2568ecbe55642fee6aa00bd082.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-6033a600180109c3731f6a886c29932c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -99,7 +103,7 @@ ul.task-list li input[type="checkbox"] {
   </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -112,7 +116,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -131,7 +135,7 @@ window.Quarto = {
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -177,7 +181,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(15)</span></div><div class="category" data-category="JTIzTWFrZW92ZXJNb25kYXk=">#MakeoverMonday <span class="quarto-category-count">(3)</span></div><div class="category" data-category="JTIzVGlkeVR1ZXNkYXk=">#TidyTuesday <span class="quarto-category-count">(12)</span></div><div class="category" data-category="Ug==">R <span class="quarto-category-count">(15)</span></div><div class="category" data-category="YXJlYS1wbG90">area-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YmFyLXBsb3Q=">bar-plot <span class="quarto-category-count">(3)</span></div><div class="category" data-category="YnViYmxlLWNoYXJ0">bubble-chart <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YnVtcC1jaGFydA==">bump-chart <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y29ubmVjdGVkLWRvdC1wbG90">connected-dot-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Z3Q=">gt <span class="quarto-category-count">(3)</span></div><div class="category" data-category="aGlzdG9ncmFt">histogram <span class="quarto-category-count">(1)</span></div><div class="category" data-category="aml0dGVyLXBsb3Q=">jitter-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGluZS1wbG90">line-plot <span class="quarto-category-count">(5)</span></div><div class="category" data-category="bmxw">nlp <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmliYm9uLXBsb3Q=">ribbon-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmlkZ2UtcGxvdA==">ridge-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2NhdHRlci1wbG90">scatter-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c21hbGwtbXVsdGlwbGVz">small-multiples <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGVybmFyeS1wbG90">ternary-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGlsZS1tYXA=">tile-map <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(15)</span></div><div class="category" data-category="JTIzTWFrZW92ZXJNb25kYXk=">#MakeoverMonday <span class="quarto-category-count">(3)</span></div><div class="category" data-category="JTIzVGlkeVR1ZXNkYXk=">#TidyTuesday <span class="quarto-category-count">(12)</span></div><div class="category" data-category="YXJlYS1wbG90">area-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YmFyLXBsb3Q=">bar-plot <span class="quarto-category-count">(3)</span></div><div class="category" data-category="YnViYmxlLWNoYXJ0">bubble-chart <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YnVtcC1jaGFydA==">bump-chart <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y29ubmVjdGVkLWRvdC1wbG90">connected-dot-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Z3Q=">gt <span class="quarto-category-count">(3)</span></div><div class="category" data-category="aGlzdG9ncmFt">histogram <span class="quarto-category-count">(1)</span></div><div class="category" data-category="aml0dGVyLXBsb3Q=">jitter-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGluZS1wbG90">line-plot <span class="quarto-category-count">(5)</span></div><div class="category" data-category="bmxw">nlp <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Ug==">R <span class="quarto-category-count">(15)</span></div><div class="category" data-category="cmliYm9uLXBsb3Q=">ribbon-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmlkZ2UtcGxvdA==">ridge-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2NhdHRlci1wbG90">scatter-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c21hbGwtbXVsdGlwbGVz">small-multiples <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGVybmFyeS1wbG90">ternary-plot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGlsZS1tYXA=">tile-map <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -217,21 +221,18 @@ window.Quarto = {
 Visualizing the prevalence and occurence of modern slavery globally
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzTWFrZW92ZXJNb25kYXk='); return false;">#MakeoverMonday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Z3Q='); return false;">gt</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YnViYmxlLWNoYXJ0'); return false;">bubble-chart</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzTWFrZW92ZXJNb25kYXk='); return false;">
-#MakeoverMonday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Z3Q='); return false;">
-gt
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YnViYmxlLWNoYXJ0'); return false;">
-bubble-chart
-</div>
-</div>
-<div class="card-text listing-description">
-Remaking a table from the Global Slavery Index Report (2023) by Walk Free
+<div class="card-text listing-description delink">
+<p>Remaking a table from the Global Slavery Index Report (2023) by Walk Free</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -242,8 +243,7 @@ Dec 12, 2024
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="1" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDaml0dGVyLXBsb3Q=" data-listing-date-sort="1672383600000" data-listing-file-modified-sort="1733952950361" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="797">
 <a href="./visualizations/2020-10-29-tt-wk3-2020/index.html" class="quarto-grid-link">
@@ -256,18 +256,16 @@ Dec 12, 2024
 Analyzing relative password strength
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('aml0dGVyLXBsb3Q='); return false;">jitter-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('aml0dGVyLXBsb3Q='); return false;">
-jitter-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Using a jitterplot to show the relative distribution of categories
+<div class="card-text listing-description delink">
+<p>Using a jitterplot to show the relative distribution of categories</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -278,8 +276,7 @@ Dec 30, 2022
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="2" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDYXJlYS1wbG90JTJDc21hbGwtbXVsdGlwbGVz" data-listing-date-sort="1672383600000" data-listing-file-modified-sort="1733953215560" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="545">
 <a href="./visualizations/2020-10-09-tt-wk41-2020/index.html" class="quarto-grid-link">
@@ -292,21 +289,18 @@ Dec 30, 2022
 Visualizing Big 12 Basketball program performance
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YXJlYS1wbG90'); return false;">area-plot</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('c21hbGwtbXVsdGlwbGVz'); return false;">small-multiples</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXJlYS1wbG90'); return false;">
-area-plot
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('c21hbGwtbXVsdGlwbGVz'); return false;">
-small-multiples
-</div>
-</div>
-<div class="card-text listing-description">
-Which teams have reigned supreme?
+<div class="card-text listing-description delink">
+<p>Which teams have reigned supreme?</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -317,8 +311,7 @@ Dec 30, 2022
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="3" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDYnVtcC1jaGFydA==" data-listing-date-sort="1672383600000" data-listing-file-modified-sort="1733953251224" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1425">
 <a href="./visualizations/12-30-2022-tt-wk38-2019/index.html" class="quarto-grid-link">
@@ -331,18 +324,16 @@ Dec 30, 2022
 U.S. National Parks Visits (1904-2016)
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YnVtcC1jaGFydA=='); return false;">bump-chart</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YnVtcC1jaGFydA=='); return false;">
-bump-chart
-</div>
-</div>
-<div class="card-text listing-description">
-Evaluating changes in the popularity of U.S. National Parks over time
+<div class="card-text listing-description delink">
+<p>Evaluating changes in the popularity of U.S. National Parks over time</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -353,8 +344,7 @@ Dec 30, 2022
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="4" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDZ3Q=" data-listing-date-sort="1672383600000" data-listing-file-modified-sort="1733953066243" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="693">
 <a href="./visualizations/2020-09-30-tt-wk36-2020/index.html" class="quarto-grid-link">
@@ -367,18 +357,16 @@ Dec 30, 2022
 Visualizing agricultural data using conditionally formatted tables
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Z3Q='); return false;">gt</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Z3Q='); return false;">
-gt
-</div>
-</div>
-<div class="card-text listing-description">
-Using the {gt} package to visualize data in tables
+<div class="card-text listing-description delink">
+<p>Using the {gt} package to visualize data in tables</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -389,8 +377,7 @@ Dec 30, 2022
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="5" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDbGluZS1wbG90JTJDZ3Q=" data-listing-date-sort="1672383600000" data-listing-file-modified-sort="1733953182451" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1299">
 <a href="./visualizations/2022-12-31-tt-wk35-2022/index.html" class="quarto-grid-link">
@@ -403,21 +390,18 @@ Dec 30, 2022
 Visualizing Pell Grant Awards in the U.S. in 2017
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">line-plot</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Z3Q='); return false;">gt</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">
-line-plot
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Z3Q='); return false;">
-gt
-</div>
-</div>
-<div class="card-text listing-description">
-Exploring Colorado trends and the overall state-level Pell grant distribution
+<div class="card-text listing-description delink">
+<p>Exploring Colorado trends and the overall state-level Pell grant distribution</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -428,8 +412,7 @@ Dec 30, 2022
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="6" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDbGluZS1wbG90JTJDcmliYm9uLXBsb3Q=" data-listing-date-sort="1671606000000" data-listing-file-modified-sort="1733953236721" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="823">
 <a href="./visualizations/2022-12-21-tt-wk6-2021/index.html" class="quarto-grid-link">
@@ -442,21 +425,18 @@ Dec 30, 2022
 Visualizing enrollment in HBCUs by gender over time
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">line-plot</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('cmliYm9uLXBsb3Q='); return false;">ribbon-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">
-line-plot
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('cmliYm9uLXBsb3Q='); return false;">
-ribbon-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Women far outnumber men at HBCUs
+<div class="card-text listing-description delink">
+<p>Women far outnumber men at HBCUs</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -467,8 +447,7 @@ Dec 21, 2022
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="7" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDbGluZS1wbG90" data-listing-date-sort="1603951200000" data-listing-file-modified-sort="1733953357083" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="965">
 <a href="./visualizations/2020-10-29-tt-wk44-2020/index.html" class="quarto-grid-link">
@@ -481,18 +460,16 @@ Dec 21, 2022
 Visualizing the expansion of wind turbine projects in Canada over time
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">line-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">
-line-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Showing the major expansion in wind projects in Canada in the 2010s
+<div class="card-text listing-description delink">
+<p>Showing the major expansion in wind projects in Canada in the 2010s</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -503,8 +480,7 @@ Oct 29, 2020
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="8" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDc2NhdHRlci1wbG90" data-listing-date-sort="1602828000000" data-listing-file-modified-sort="1733953073747" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1063">
 <a href="./visualizations/2020-10-16-tt-wk42-2020/index.html" class="quarto-grid-link">
@@ -517,18 +493,16 @@ Oct 29, 2020
 Visualizing Anscombe’s Quartet
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('c2NhdHRlci1wbG90'); return false;">scatter-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('c2NhdHRlci1wbG90'); return false;">
-scatter-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Different shapes can have similar summary statistics
+<div class="card-text listing-description delink">
+<p>Different shapes can have similar summary statistics</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -539,8 +513,7 @@ Oct 16, 2020
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="9" data-categories="UiUyQyUyM01ha2VvdmVyTW9uZGF5JTJDYmFyLXBsb3Q=" data-listing-date-sort="1602655200000" data-listing-file-modified-sort="1733956691100" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="619">
 <a href="./visualizations/2020-10-14-mm-wk41-2020/index.html" class="quarto-grid-link">
@@ -553,18 +526,16 @@ Oct 16, 2020
 Visualizing responses to an analytics strategy survey
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzTWFrZW92ZXJNb25kYXk='); return false;">#MakeoverMonday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YmFyLXBsb3Q='); return false;">bar-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzTWFrZW92ZXJNb25kYXk='); return false;">
-#MakeoverMonday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YmFyLXBsb3Q='); return false;">
-bar-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Refreshing a style-forward graphic to improve understanding
+<div class="card-text listing-description delink">
+<p>Refreshing a style-forward graphic to improve understanding</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -575,8 +546,7 @@ Oct 14, 2020
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="10" data-categories="UiUyQyUyM01ha2VvdmVyTW9uZGF5JTJDYmFyLXBsb3QlMkNjb25uZWN0ZWQtZG90LXBsb3QlMkN0aWxlLW1hcA==" data-listing-date-sort="1602482400000" data-listing-file-modified-sort="1733953228174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2138">
 <a href="./visualizations/2020-10-12-mm-wk39-2020/index.html" class="quarto-grid-link">
@@ -589,24 +559,20 @@ Oct 14, 2020
 Visualizing child marriage globally
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzTWFrZW92ZXJNb25kYXk='); return false;">#MakeoverMonday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YmFyLXBsb3Q='); return false;">bar-plot</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Y29ubmVjdGVkLWRvdC1wbG90'); return false;">connected-dot-plot</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('dGlsZS1tYXA='); return false;">tile-map</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzTWFrZW92ZXJNb25kYXk='); return false;">
-#MakeoverMonday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YmFyLXBsb3Q='); return false;">
-bar-plot
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Y29ubmVjdGVkLWRvdC1wbG90'); return false;">
-connected-dot-plot
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('dGlsZS1tYXA='); return false;">
-tile-map
-</div>
-</div>
-<div class="card-text listing-description">
-Making over a dashboard with a series of plots that tell the story of child marriage
+<div class="card-text listing-description delink">
+<p>Making over a dashboard with a series of plots that tell the story of child marriage</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -617,8 +583,7 @@ Oct 12, 2020
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="11" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDYmFyLXBsb3QlMkNubHA=" data-listing-date-sort="1601791200000" data-listing-file-modified-sort="1733952996319" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1649">
 <a href="./visualizations/2020-10-04-tt-wk40-2020/index.html" class="quarto-grid-link">
@@ -631,21 +596,18 @@ Oct 12, 2020
 How do Beyonce and Taylor Swift lyrics differ?
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('YmFyLXBsb3Q='); return false;">bar-plot</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('bmxw'); return false;">nlp</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YmFyLXBsb3Q='); return false;">
-bar-plot
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bmxw'); return false;">
-nlp
-</div>
-</div>
-<div class="card-text listing-description">
-Using {tidytext} to process and visualize word pairs in song lyrics
+<div class="card-text listing-description delink">
+<p>Using {tidytext} to process and visualize word pairs in song lyrics</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -656,8 +618,7 @@ Oct 4, 2020
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="12" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDdGVybmFyeS1wbG90JTJDcmlkZ2UtcGxvdA==" data-listing-date-sort="1601013600000" data-listing-file-modified-sort="1733953035880" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1078">
 <a href="./visualizations/2020-09-25-tt-wk31-2020/index.html" class="quarto-grid-link">
@@ -670,21 +631,18 @@ Oct 4, 2020
 Analyzing size distributions in the Palmer Penguins dataset
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('dGVybmFyeS1wbG90'); return false;">ternary-plot</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('cmlkZ2UtcGxvdA=='); return false;">ridge-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('dGVybmFyeS1wbG90'); return false;">
-ternary-plot
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('cmlkZ2UtcGxvdA=='); return false;">
-ridge-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Visualizing distributions with some alternative chart types
+<div class="card-text listing-description delink">
+<p>Visualizing distributions with some alternative chart types</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -695,8 +653,7 @@ Sep 25, 2020
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="13" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDbGluZS1wbG90" data-listing-date-sort="1600840800000" data-listing-file-modified-sort="1733953022024" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1102">
 <a href="./visualizations/2020-09-23-tt-wk2-2020/index.html" class="quarto-grid-link">
@@ -709,18 +666,16 @@ Sep 25, 2020
 Visualizing Australian climate data over time
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">line-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">
-line-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Putting Australia’s extreme climate conditions in 2019 into historical context
+<div class="card-text listing-description delink">
+<p>Putting Australia’s extreme climate conditions in 2019 into historical context</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -731,8 +686,7 @@ Sep 23, 2020
 </div>
 </div>
 </div>
-</div>
-</a>
+</div></a>
 </div>
 <div class="g-col-1" data-index="14" data-categories="UiUyQyUyM1RpZHlUdWVzZGF5JTJDaGlzdG9ncmFtJTJDbGluZS1wbG90" data-listing-date-sort="1600754400000" data-listing-file-modified-sort="1733953346310" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1080">
 <a href="./visualizations/2020-09-22-tt-wk39-2020/index.html" class="quarto-grid-link">
@@ -745,21 +699,18 @@ Sep 23, 2020
 Visualizing the Himalayas and expeditions over time
 </h5>
 <div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">
-R
+
+<div class="listing-category" onclick="window.quartoListingCategory('Ug=='); return false;">R</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">#TidyTuesday</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('aGlzdG9ncmFt'); return false;">histogram</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">line-plot</div>
+
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('JTIzVGlkeVR1ZXNkYXk='); return false;">
-#TidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('aGlzdG9ncmFt'); return false;">
-histogram
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bGluZS1wbG90'); return false;">
-line-plot
-</div>
-</div>
-<div class="card-text listing-description">
-Using data from the Himalayan Database to put the scope and expedition activity into perspective
+<div class="card-text listing-description delink">
+<p>Using data from the Himalayan Database to put the scope and expedition activity into perspective</p>
 </div>
 <div class="card-attribution card-text-small justify">
 <div class="listing-author">
@@ -770,245 +721,249 @@ Sep 22, 2020
 </div>
 </div>
 </div>
+</div></a>
 </div>
-</a>
 </div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
+<div class="listing-no-matching d-none">No matching items</div>
 </div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
       }
+      return false;
     }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
       }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
       for (const childEl of codeEl.children) {
         if (isCodeAnnotation(childEl)) {
           childEl.remove();
         }
       }
       return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
     });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
     }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
-    };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
-        }
-      }
-    }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
         }
-        return container.innerHTML
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -1016,185 +971,161 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 </div> <!-- /content -->
 
 
